@@ -118,12 +118,6 @@ function CartControl({ data, onChange, type }) {
     onChange({ ...data, newItems: updatedItems })
   }
 
-  const handleItemDelete = index => {
-    const updatedItems = items.filter((_, i) => i !== index)
-    setItems(updatedItems)
-    onChange({ ...data, items: updatedItems })
-  }
-
   const renderSelect = (label, valueKey, optionsList, additionalProps = {}) => (
     <TextField
       select
@@ -146,7 +140,7 @@ function CartControl({ data, onChange, type }) {
   useEffect(() => {
     if (data.api_url) {
       const items = getApiData.find(item => item.link === data.api_url)?.data
-      onChange({ ...data, items: items })
+      onChange({ ...data, items: data.api_url })
       if (items[0]) {
         setObj(items[0])
       }
@@ -154,7 +148,7 @@ function CartControl({ data, onChange, type }) {
       setObj(false)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data.api_url])
+  }, [data.api_url,getApiData])
 
   return (
     <div>
@@ -465,12 +459,20 @@ function CartControl({ data, onChange, type }) {
                       label={locale === 'ar' ? 'الاسم' : 'Name'}
                       variant='filled'
                     />
-                    {(item.type === 'text' ) && (
+                    {item.type === 'text' && (
                       <TextField
                         fullWidth
                         defaultValue={item.text_ar || ''}
                         onBlur={e => handleItemChange(index, 'text_ar', e.target.value)}
-                        label={obj ? locale === 'ar' ? 'المفتاح الخاص بالعربية' : 'Arabic Key' : locale === 'ar' ? 'النص بالعربية' : 'Text Ar'}
+                        label={
+                          obj
+                            ? locale === 'ar'
+                              ? 'المفتاح الخاص بالعربية'
+                              : 'Arabic Key'
+                            : locale === 'ar'
+                            ? 'النص بالعربية'
+                            : 'Text Ar'
+                        }
                         variant='filled'
                       />
                     )}

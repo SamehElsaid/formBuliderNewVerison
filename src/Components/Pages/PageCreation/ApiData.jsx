@@ -4,14 +4,17 @@ import axios from 'axios'
 import { useState, useEffect } from 'react'
 import { useIntl } from 'react-intl'
 import { useDispatch } from 'react-redux'
-import { toast } from 'react-toastify'
 import { setApiData } from 'src/store/apps/apiSlice/apiSlice'
 
-export default function ApiData({ open, setOpen }) {
+export default function ApiData({ open, setOpen,initialDataApi }) {
   const { locale } = useIntl()
   const [links, setLinks] = useState([])
   const [link, setLink] = useState('')
   const dispatch = useDispatch()
+
+  useEffect(() => {
+    setLinks(initialDataApi)
+  }, [initialDataApi])
 
   useEffect(() => {
     const linksToFetch = links.filter(link => link.loading)
@@ -26,7 +29,6 @@ export default function ApiData({ open, setOpen }) {
         )
       ).then(updatedLinks => {
         dispatch(setApiData(updatedLinks))
-
       })
     }
   }, [links,dispatch])

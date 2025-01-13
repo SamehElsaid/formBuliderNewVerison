@@ -8,9 +8,9 @@ import { decryptData } from 'src/Components/encryption'
 import axios from 'axios'
 import https from 'https';
 
-const Index = ({ pageName, initialData }) => {
+const Index = ({ pageName, initialData,initialDataApi }) => {
   const [loading, setLoading] = useState(true)
-  console.log(initialData)
+  console.log(initialData,initialDataApi)
 
   let ReactPageEditor = null
   try {
@@ -43,7 +43,7 @@ const Index = ({ pageName, initialData }) => {
             <CircularProgress size={50} />
           </div>
         )}
-        <ReactPageEditor pageName={pageName} initialData={initialData} />
+        <ReactPageEditor pageName={pageName} initialData={initialData} initialDataApi={initialDataApi}/>
       </div>
     </div>
   )
@@ -69,12 +69,14 @@ export async function getServerSideProps(context) {
   try {
     const [response] = await Promise.all([axios.get(apiUrl, { headers, httpsAgent })])
 
-    const initialData = response.data ? JSON.parse(response.data.jsonData) : null
+    const initialData = response.data ? JSON.parse(response.data.jsonData)?.editorValue : null
+    const initialDataApi = response.data ? JSON.parse(response.data.jsonData)?.apiData : null
 
     return {
       props: {
         pageName,
-        initialData
+        initialData,
+        initialDataApi
       }
     }
   } catch (error) {

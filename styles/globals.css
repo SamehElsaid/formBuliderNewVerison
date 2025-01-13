@@ -1116,7 +1116,7 @@ sortable-list {
   > :first-child
   > :first-child {
   max-height: 84vh !important;
-  height: 84vh !important;
+  height: 74vh !important;
 }
 .MuiButton-containedError {
   @apply !bg-[#f44336] !text-white hover:!bg-[#e57373];

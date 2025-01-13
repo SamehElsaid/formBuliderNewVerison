@@ -33,8 +33,9 @@ import useFlexControl from './PageCreation/HooksDragDropComponents/useFlexContro
 import useButton from './PageCreation/HooksDragDropComponents/useButton'
 import useCart from './PageCreation/HooksDragDropComponents/useCart'
 import useIconView from './PageCreation/HooksDragDropComponents/useIconView'
+import { useSelector } from 'react-redux'
 
-const ReactPageEditor = ({ pageName, initialData }) => {
+const ReactPageEditor = ({ pageName, initialData, initialDataApi }) => {
   const [editorValue, setEditorValue] = useState(initialData ?? null)
   const [readOnly, setReadOnly] = useState(false)
   const [advancedEdit, setAdvancedEdit] = useState(false)
@@ -78,10 +79,11 @@ const ReactPageEditor = ({ pageName, initialData }) => {
     IconView
   ]
 
-
+  const apiData = useSelector(state => state.api.data)
 
   return (
     <div className='relative'>
+      <ApiData open={openApiData} setOpen={setOpenApiData} initialDataApi={initialDataApi} />
       <Dialog open={openBack} onClose={() => setOpenBack(false)} fullWidth>
         <DialogTitle>
           {locale === 'ar'
@@ -111,12 +113,14 @@ const ReactPageEditor = ({ pageName, initialData }) => {
               loading={loadingSaveData}
               variant='contained'
               onClick={() => {
+                console.log(apiData)
+                const apiUrls = apiData.map(item => item.link)
                 setLoadingSaveData(true)
                 axiosPost(`page/update/${pageName}`, locale, {
                   VersionReason: new Date().toISOString(),
                   description: '',
                   pageComponents: [],
-                  jsonData: JSON.stringify(editorValue)
+                  jsonData: JSON.stringify({ editorValue, apiData })
                 })
                   .then(res => {
                     if (res.status) {
@@ -194,7 +198,6 @@ const ReactPageEditor = ({ pageName, initialData }) => {
           <RiArrowGoBackFill className='text-xl' />
         </Button>
       </div>
-      <ApiData open={openApiData} setOpen={setOpenApiData} />
       <div className={`duration-300 ${readOnly ? 'overflow-auto fixed inset-0 pb-10 bg-white z-[1111111]' : ''}`}>
         {readOnly && (
           <div className='fixed top-[10px] end-[10px] z-[11111111]'>

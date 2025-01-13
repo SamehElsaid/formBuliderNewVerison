@@ -1,8 +1,10 @@
 import { Link, Rating } from '@mui/material'
-import React from 'react'
+import { useEffect, useState } from 'react'
 import ImageLoad from 'src/Components/ImageLoad'
 import { Icon } from '@iconify/react'
 import CardCard from './CardCard'
+import { useSelector } from 'react-redux'
+import download from 'src/Components/img/download.png'
 
 export default function ViewCart({ data, locale, onChange, readOnly }) {
   const childrenView = data.childrenView ?? 'auto'
@@ -15,6 +17,14 @@ export default function ViewCart({ data, locale, onChange, readOnly }) {
   const bottomRight = 'bottom-[5px] end-[5px]'
   const center = 'top-[50%] left-[50%] -translate-x-[50%] -translate-y-[50%]'
   const bottomLeft = 'bottom-[5px] start-[5px]'
+  const apiData = useSelector(state => state.api.data)
+  const [items, setItems] = useState([])
+  useEffect(() => {
+    const findItems = apiData.find(item => item.link === data.api_url)
+    if (findItems) {
+      setItems(findItems?.data ?? [])
+    }
+  }, [apiData, data.api_url])
 
   return (
     <div className=''>
@@ -31,17 +41,18 @@ export default function ViewCart({ data, locale, onChange, readOnly }) {
             alignItems: data.alignItems || 'center'
           }}
         >
-          {data?.items?.map((item, index) => (
+          {items?.map((item, index) => (
             <CardCard
               key={index}
               item={item}
               data={data}
+              download={download}
               locale={locale}
               index={index}
               onChangePerant={onChange}
               readOnly={readOnly}
               api={data.api_url}
-            ></CardCard>
+            />
           ))}
         </div>
       ) : (
@@ -53,7 +64,7 @@ export default function ViewCart({ data, locale, onChange, readOnly }) {
             <ImageLoad
               alt={data.title ?? 'Product'}
               className='w-full'
-              src={data?.image ?? '../images/download.png'}
+              src={data?.image ?? download.src}
               style={{
                 width: '100%',
                 height: data.imageHeight ? data.imageHeight + (data.imageHeightUnit ?? 'px') : '250px',
