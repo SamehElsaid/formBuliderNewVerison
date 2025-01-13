@@ -1,0 +1,58 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+import { CiGrid42 } from "react-icons/ci"
+import FlexControl from "../FlexControl"
+import { useEffect, useMemo, useRef } from "react"
+
+export default function useFlexControl({locale}) {
+  const FlexControlCell = useMemo(() => {
+    return {
+      Renderer: ({ data, children }) => {
+        const ref = useRef(null)
+        useEffect(() => {
+          const childrenView = data.childrenView ?? 'auto'
+          console.log(children[0])
+          if (!Array.isArray(children[0])) {
+            const divContainer = ref.current.querySelector('div:nth-child(1)')
+            console.log(divContainer)
+            if (divContainer) {
+              divContainer.querySelectorAll('.react-page-cell').forEach(div => {
+                div.style.width = 'fit-content'
+                div.style.flexBasis = 'auto'
+              })
+              divContainer.querySelectorAll('.react-page-row').forEach(div => {
+                div.style.flex = 'inherit'
+              })
+              console.log(childrenView)
+
+              divContainer.style.cssText = `
+              display: ${childrenView === 'auto' ? 'flex' : 'grid'};
+              grid-template-columns: ${
+                childrenView === 'auto' ? 'auto' : `repeat(${data.childrenView || 1}, minmax(0, 1fr))`
+              };
+              flex-direction: ${data.flexDirection || 'row'};
+              height: ${data.height + data.heightUnit || 'auto'};
+              gap: ${data.gap + 'px' || '10px'};
+              flex-wrap: ${data.flexWrap || 'nowrap'};
+              justify-content: ${data.justifyContent || 'center'};
+              align-items: ${data.alignItems || 'center'};
+              `
+            }
+          }
+        }, [children])
+
+        return <div ref={ref}>{children}</div>
+      },
+      id: 'flexControl',
+      title: locale === 'ar' ? 'Flex' : 'Flex Control',
+      description: locale === 'ar' ? 'تسطيع التحكم في المحتوى' : 'Flex Control',
+      version: 1,
+      icon: <CiGrid42 className='text-2xl' />,
+      controls: {
+        type: 'custom',
+        Component: ({ data, onChange }) => <FlexControl data={data} onChange={onChange} locale={locale} />
+      }
+    }
+  }, [locale])
+
+  return {FlexControlCell}
+}

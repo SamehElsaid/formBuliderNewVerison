@@ -41,5 +41,13 @@ export const getType = type => {
     return 'LongText'
   }
 
-  return type.charAt(0).toUpperCase() + type.slice(1);
+  if (type === 'radio' || type === 'select') {
+    return 'OneToOne'
+  }
+
+  if (type === 'checkbox') {
+    return 'OneToMany'
+  }
+
+  return type.charAt(0).toUpperCase() + type.slice(1)
 }

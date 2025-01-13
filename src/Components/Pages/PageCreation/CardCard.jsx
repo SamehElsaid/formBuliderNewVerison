@@ -24,6 +24,7 @@ export default function CardCard({ item, data, locale, readOnly, api }) {
         href={`${locale}/${data.href ?? ''}`}
         className=' h-full  ||  || rounded-md || overflow-hidden || flex || flex-col || hover:shadow-lg || hover:cursor-pointer || transition-all || hover:translate-y-[-5px] || duration-300'
       >
+
         <ImageLoad
           alt={item?.[data?.[`title_${locale}`]] ?? 'Product'}
           className='w-full'

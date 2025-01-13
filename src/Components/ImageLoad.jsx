@@ -20,7 +20,7 @@ const CustomCloseButton = styled(IconButton)(() => ({
     transform: 'translate(2px, -2px)'
   }
 }))
-function ImageLoad({ alt, src, className, stop, loading ,defaultImg}) {
+function ImageLoad({ alt, src, className, stop, loading, defaultImg , style}) {
   const [open, setOpen] = useState(false)
   const { locale } = useRouter()
   const [error, setError] = useState(false)
@@ -91,9 +91,9 @@ function ImageLoad({ alt, src, className, stop, loading ,defaultImg}) {
           className={`relative ${className}`}
           debounceDurationMs={800}
           placeholder={({ imageProps, ref }) => (
-            <img {...imageProps} src={loading} ref={ref} style={{ width: '100%', cursor: 'pointer', filter: 'blur(10px)'}} />
+            <img {...imageProps} src={loading} ref={ref} style={{ width: '100%', cursor: 'pointer', filter: 'blur(10px)', ...style }} />
           )}
-          actual={({ imageProps }) => <img {...imageProps} src={error ? defaultImg : imageProps.src} onError={() => setError(true)} style={{ width: '100%', cursor: 'pointer' }} />}
+          actual={({ imageProps }) => <img {...imageProps} src={error ? defaultImg : imageProps.src} onError={() => setError(true)} style={{ width: '100%', cursor: 'pointer', ...style }} />}
         />
       ) : (
         <LazyImage
@@ -111,10 +111,10 @@ function ImageLoad({ alt, src, className, stop, loading ,defaultImg}) {
               <div className='absolute inset-0 z-30 bgControl'>
                 <Skeleton variant='rounded' className='' width={'100%'} height={'100%'} />
               </div>
-              <img {...imageProps} style={{ width: '100%', opacity: 0 }} />
+              <img {...imageProps} style={{ width: '100%', opacity: 0, ...style }} />
             </div>
           )}
-          actual={({ imageProps }) => <img {...imageProps} style={{ width: '100%', cursor: 'pointer' }} />}
+          actual={({ imageProps }) => <img {...imageProps} style={{ width: '100%', cursor: 'pointer', ...style }} />}
         />
       )}
     </>

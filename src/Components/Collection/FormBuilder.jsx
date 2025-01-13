@@ -222,6 +222,7 @@ const FormBuilder = ({ open, setOpen }) => {
   const [collection, setCollection] = useState('')
   const [valueCollection, setValueCollection] = useState('')
   const [selectedOptions, setSelectedOptions] = useState([])
+  const [getFields, setGetFields] = useState([])
 
   useEffect(() => {
     setLoadingCollection(true)
@@ -282,6 +283,7 @@ const FormBuilder = ({ open, setOpen }) => {
     setNewOptionEn('')
     setFileExtensions([])
     setDefaultCountry('EG')
+    setGetFields([])
     setValueCollection('')
     setSelectedOptions([])
     setOptionsCollection([])
@@ -356,7 +358,8 @@ const FormBuilder = ({ open, setOpen }) => {
       descriptionEn: fieldLabelEn,
       type: getType(fieldType),
       uiSchema: {
-        fileType: isFileStep ? fileExtensions : []
+        fileType: isFileStep ? fileExtensions : [],
+        format: getType(fieldType) === 'OneToOne' ? fieldType : ''
       },
       FieldCategory: FindFieldCategory(fieldType),
       options: {
@@ -376,25 +379,12 @@ const FormBuilder = ({ open, setOpen }) => {
       .then(res => {
         if (res.status) {
           toast.success(locale === 'ar' ? 'تم إضافة الحقل بنجاح' : 'Field added successfully')
-
           resetForm()
         }
       })
       .finally(_ => {
         setLoading(false)
       })
-
-    // if (optionType === 'link') {
-    //   console.log('link')
-    //   Data.linkCollection = collection
-    //   Data.valueCollection = valueCollection
-    //   Data.selectedValue = selectedOptions
-    // }
-    // setDataFormBuilder(prev => [...prev, Data])
-    // setTimeout(() => {
-    //   setLoading(false)
-    //   resetForm()
-    // }, 100)
   }
 
   return (
@@ -654,7 +644,7 @@ const FormBuilder = ({ open, setOpen }) => {
               <>
                 <div className='mt-4'></div>
                 <Autocomplete
-                  options={loadingCollection ? [] : optionsCollection}
+                  options={loadingCollection ? [] : optionsCollection.filter(item => item.id !== open)}
                   getOptionLabel={option => (locale === 'ar' ? option.nameAr : option.nameEn) || ''}
                   loading={loadingCollection}
                   onInputChange={handleInputChange}
@@ -663,6 +653,18 @@ const FormBuilder = ({ open, setOpen }) => {
                     setCollection(value)
                     setValueCollection('')
                     setSelectedOptions([])
+                    if (value?.id) {
+                      const loadingToast = toast.loading(locale === 'ar' ? 'يتم التحميل' : 'Loading')
+                      axiosGet(`collection-fields/get?CollectionId=${value.id}`, locale)
+                        .then(res => {
+                          if (res.status) {
+                            setGetFields(res.data)
+                          }
+                        })
+                        .finally(() => {
+                          toast.dismiss(loadingToast)
+                        })
+                    }
                   }}
                   renderInput={params => (
                     <TextField
@@ -688,7 +690,7 @@ const FormBuilder = ({ open, setOpen }) => {
                     ) : null
                   }
                 />
-                <Collapse transition={`height 300ms cubic-bezier(.4, 0, .2, 1)`} isOpen={Boolean(collection?.nameEn)}>
+                <Collapse transition={`height 300ms cubic-bezier(.4, 0, .2, 1)`} isOpen={Boolean(getFields.length)}>
                   <div className='px-4 mt-4'>
                     <FormControl component='fieldset' fullWidth>
                       <FormLabel component='legend'>{messages.collection_Relying_on}</FormLabel>
@@ -698,19 +700,22 @@ const FormBuilder = ({ open, setOpen }) => {
                         value={valueCollection}
                         onChange={e => setValueCollection(e.target.value)}
                       >
-                        {collection &&
-                          Object?.keys(collection)?.map(
-                            key =>
-                              typeof collection[key] !== 'object' && (
-                                <FormControlLabel
-                                  key={key}
-                                  className='!w-fit capitalize'
-                                  value={key}
-                                  control={<Radio />}
-                                  label={key.replace('_', ' ')}
-                                />
-                              )
-                          )}
+                        <FormControlLabel
+                          key={'id'}
+                          className='!w-fit capitalize'
+                          value={'id'}
+                          control={<Radio />}
+                          label={'id'}
+                        />
+                        {getFields.map(field => (
+                          <FormControlLabel
+                            key={field.key}
+                            className='!w-fit capitalize'
+                            value={field.key}
+                            control={<Radio />}
+                            label={field.key.replace('_', ' ')}
+                          />
+                        ))}
                       </RadioGroup>
                     </FormControl>
                   </div>
@@ -718,39 +723,25 @@ const FormBuilder = ({ open, setOpen }) => {
                     <FormControl component='fieldset' fullWidth>
                       <FormLabel component='legend'>{messages.View_Value}</FormLabel>
                       <div className='!flex !flex-row !flex-wrap gap-2'>
-                        {collection &&
-                          Object?.keys(collection)?.map(
-                            key =>
-                              typeof collection[key] !== 'object' && (
-                                <FormControlLabel
-                                  key={key}
-                                  className='!w-fit capitalize'
-                                  control={
-                                    <Checkbox
-                                      value={key}
-                                      checked={selectedOptions.includes(key)}
-                                      onChange={handleChange}
-                                    />
-                                  }
-                                  label={key.replace('_', ' ')}
-                                />
-                              )
-                          )}
+                        <FormControlLabel
+                          key={'id'}
+                          className='!w-fit capitalize'
+                          value={'id'}
+                          control={<Checkbox />}
+                          label={'id'}
+                        />
+                        {getFields.map(field => (
+                          <FormControlLabel
+                            key={field.key}
+                            className='!w-fit capitalize'
+                            value={field.key}
+                            control={<Checkbox />}
+                            label={field.key.replace('_', ' ')}
+                          />
+                        ))}
                       </div>
                     </FormControl>
                   </div>
-
-                  {/* <FormControl fullWidth margin='normal'>
-                    <InputLabel>{messages.Select_Collection}</InputLabel>
-                    <Select
-                      fullWidth
-                      variant='filled'
-                      value={linkCollection}
-                      onChange={e => setLinkCollection(e.target.value)}
-                    >
-                      <MenuItem value=''>{messages.Select_Collection}</MenuItem>
-                    </Select>
-                  </FormControl> */}
                 </Collapse>
               </>
             )}
