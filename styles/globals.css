@@ -1118,3 +1118,12 @@ sortable-list {
   max-height: 84vh !important;
   height: 84vh !important;
 }
+.MuiButton-containedError {
+  @apply !bg-[#f44336] !text-white hover:!bg-[#e57373];
+}
+.MuiButton-containedSuccess {
+  @apply !bg-[#66bb6a]  !text-white hover:!bg-[#388e3c];
+}
+.MuiButton-textSuccess {
+  @apply !text-[#28c76f] hover:!bg-[#28c76f]/50 hover:!text-white;
+}

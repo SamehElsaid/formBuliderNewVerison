@@ -8,7 +8,8 @@ import { toast } from 'react-toastify'
 import TableEdit from 'src/Components/TableEdit/TableEdit'
 import IconifyIcon from 'src/Components/icon'
 import AddCollection from 'src/Components/Collection/AddCollection'
-import FormBuilder from 'src/Components/Collection/FormBuilder'
+import AddPage from 'src/Components/Pages/AddPage'
+import Link from 'next/link'
 
 export default function Index() {
   const { locale, messages } = useIntl()
@@ -20,12 +21,11 @@ export default function Index() {
   const inputRef = useRef(null)
   const [refresh, setRefresh] = useState(0)
   const [data, setData] = useState([])
-  const [openFormBuilder, setOpenFormBuilder] = useState(false)
 
   useEffect(() => {
     setLoading(true)
     const loadingToast = toast.loading(locale === 'ar' ? 'جاري التحميل...' : 'Loading...')
-    axiosGet(`collections/get/?dataSourceId=ba3b7965-7d38-4d91-a147-feff4e23c69c`, locale)
+    axiosGet(`page/get-pages`, locale)
       .then(res => {
         if (res.status) {
           setData(res.data)
@@ -59,56 +59,41 @@ export default function Index() {
     {
       flex: 0.5,
       minWidth: 200,
-      field: 'name_ar',
+      field: 'name',
       disableColumnMenu: true,
-      headerName: messages.collectionNameAR,
+      headerName: messages.name,
       renderCell: ({ row }) => (
-        <Typography variant='subtitle2' className='capitalize' sx={{ fontWeight: 500, color: 'text.secondary' }}>
-          {row.nameAr}
+        <Typography
+          component={Link}
+          href={`/${locale}/setting/pages/${row.name}`}
+          variant='subtitle2'
+          className='underline capitalize !text-main-color'
+          sx={{ fontWeight: 500, color: 'text.secondary' }}
+        >
+          {row.name}
         </Typography>
       )
     },
     {
       flex: 0.5,
       minWidth: 200,
-      field: 'name_en',
+      field: 'description',
       disableColumnMenu: true,
-      headerName: messages.collectionNameEN,
+      headerName: messages.description,
       renderCell: ({ row }) => (
-        <Typography variant='subtitle2' className='capitalize' sx={{ fontWeight: 500, color: 'text.secondary' }}>
-          {row.nameEn}
+        <Typography variant='subtitle2' sx={{ fontWeight: 500, color: 'text.secondary' }}>
+          {row.description}
         </Typography>
       )
     },
     {
-      flex: 0.2,
-      minWidth: 200,
+      flex: 0.1,
+      minWidth: 80,
       field: 'action',
       sortable: false,
       headerName: messages.actions,
       renderCell: params => (
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <Button
-            variant='text'
-            className='!text-nowrap'
-            size='small'
-            color='success'
-            onClick={() => {
-              setOpenFormBuilder(params.row.id)
-            }}
-          >
-            {locale === 'ar' ? 'إضافة حقل' : 'Add Field'}
-          </Button>
-          <Tooltip title={messages.edit}>
-            <IconButton
-              size='small'
-              onClick={e => {
-                setOpen(params.row)
-              }}
-            >
-              <IconifyIcon icon='tabler:edit' />
-            </IconButton>
-          </Tooltip>
           <Tooltip title={messages.delete}>
             <IconButton
               size='small'
@@ -126,8 +111,7 @@ export default function Index() {
 
   return (
     <div>
-      <AddCollection open={open} toggle={handleClose} setRefresh={setRefresh} />
-      <FormBuilder open={openFormBuilder} setOpen={setOpenFormBuilder} />
+      <AddPage open={open} toggle={handleClose} setRefresh={setRefresh} />
 
       <Card className='w-[100%]  mb-5 py-4 '>
         <CardContent
@@ -142,14 +126,14 @@ export default function Index() {
         >
           <div className='flex gap-2 justify-center items-center'>
             <Typography variant='h5' sx={{ color: 'primary.main', fontWeight: 'bold' }}>
-              {locale === 'ar' ? 'التجميعات' : 'Collection'}
+              {locale === 'ar' ? 'الصفحات' : 'Pages'}
             </Typography>
             <Avatar skin='light' sx={{ width: 30, height: 30 }}>
               {data?.length}
             </Avatar>
           </div>
           <Button variant='contained' color='primary' onClick={() => setOpen(true)}>
-            {locale === 'ar' ? 'إضافة تجميعة' : 'Add Collection'}
+            {locale === 'ar' ? 'إضافة صفحة' : 'Add Page'}
           </Button>
         </CardContent>
       </Card>

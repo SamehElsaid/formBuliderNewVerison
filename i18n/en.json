@@ -433,5 +433,7 @@
   "Options": "Options",
   "Select_Collection": "Select Collection",
   "collection_Relying_on": "Relying on",
-  "View_Value": "View Value"
+  "View_Value": "View Value",
+  "key": "Key",
+  "versionReason": "Version Reason"
 }

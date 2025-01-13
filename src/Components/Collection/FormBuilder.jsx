@@ -40,6 +40,7 @@ import PhoneInput from 'react-phone-number-input'
 import { Icon } from '@iconify/react'
 import { axiosGet, axiosPost, UrlTranAr, UrlTranEn } from '../axiosCall'
 import Collapse from '@kunukn/react-collapse'
+import { getType } from '../_Shared'
 
 const FormBuilder = ({ open, setOpen }) => {
   const [activeStep, setActiveStep] = useState(0)
@@ -222,6 +223,19 @@ const FormBuilder = ({ open, setOpen }) => {
   const [valueCollection, setValueCollection] = useState('')
   const [selectedOptions, setSelectedOptions] = useState([])
 
+  useEffect(() => {
+    setLoadingCollection(true)
+    axiosGet(`collections/get/?dataSourceId=ba3b7965-7d38-4d91-a147-feff4e23c69c`, locale)
+      .then(res => {
+        if (res.status) {
+          setOptionsCollection(res.data)
+        }
+      })
+      .finally(() => {
+        setLoadingCollection(false)
+      })
+  }, [locale])
+
   const handleChange = event => {
     const { value, checked } = event.target
     setSelectedOptions(prevSelected =>
@@ -236,12 +250,10 @@ const FormBuilder = ({ open, setOpen }) => {
     }
     setValueCollection(value)
 
-    // setLoadingCollection(true)
-
     try {
-      const res = await axiosGet(`collections`, locale)
-      if (res) {
-        setOptionsCollection(res)
+      const res = await axiosGet(`collections/get/?dataSourceId=ba3b7965-7d38-4d91-a147-feff4e23c69c`, locale)
+      if (res.status) {
+        setOptionsCollection(res.data)
       }
     } finally {
       setLoadingCollection(false)
@@ -278,67 +290,95 @@ const FormBuilder = ({ open, setOpen }) => {
     setLoadingCollection(false)
   }
 
+  const FindFieldCategory = fieldType => {
+    if (fieldType === 'select' || fieldType === 'radio' || fieldType === 'checkbox') {
+      return 'Associations'
+    }
+
+    return 'Basic'
+  }
+
   const handleFinish = () => {
     if (optionType === 'link') {
       if (!valueCollection || !selectedOptions.length) return toast.error(messages.please_enter_label)
     }
-    setLoading(true)
+
+    // setLoading(true)
 
     const Data = {
-      // type: fieldType,
-      // label: fieldLabel,
-      // label_en: fieldLabelEn,
-      // validations,
       options: isOptionsStep ? options : [],
       allowedFileTypes: isFileStep ? fileExtensions : []
-
-      // defaultCountry,
-      // key
     }
 
-    console.log({
-      collectionId: open,
-      key: key,
-      nameAr: fieldLabel,
-      nameEn: fieldLabelEn,
-      type: fieldType,
-      options: {
-        defaultValue: defaultCountry
-      },
-      validationData: [
-        {
-          parameters: validations
-        }
-      ]
-    })
+    const validationData = []
+    if (validations.required) {
+      validationData.push({ RuleType: 'Required', Parameters: {} })
+    }
+
+    // if (validations.includeCamelCase) {
+    //   validationData.push({ RuleType: 'IncludeCamelCase', Parameters: {} })
+    // }
+    // if (validations.includeLowerCase) {
+    //   validationData.push({ RuleType: 'IncludeLowerCase', Parameters: {} })
+    // }
+    // if (validations.onlyNumbers) {
+    //   validationData.push({ "RuleType": "onlyNumbers", "Parameters": {} })
+    // }
+    // if (validations.onlyText) {
+    //   validationData.push({ "RuleType": "onlyText", "Parameters": {} })
+    // }
+    if (validations.maxLength) {
+      validationData.push({ RuleType: 'MaxLength', Parameters: { maxLength: validations.maxLength } })
+    }
+    if (validations.minLength) {
+      validationData.push({ RuleType: 'MinLength', Parameters: { minLength: validations.minLength } })
+    }
+
+    if (fieldType === 'url') {
+      validationData.push({ RuleType: 'Url', Parameters: {} })
+    }
+    if (fieldType === 'email') {
+      validationData.push({ RuleType: 'Email', Parameters: {} })
+    }
+    if (fieldType === 'date') {
+      validationData.push({ RuleType: 'ColumnDataType', Parameters: { expectedType: 'System.DateTime' } })
+    }
+    if (fieldType === 'number') {
+      validationData.push({ RuleType: 'ColumnDataType', Parameters: { expectedType: 'System.number' } })
+    }
 
     const sendData = {
       collectionId: open,
       key: key,
       nameAr: fieldLabel,
       nameEn: fieldLabelEn,
-      type: fieldType,
-      options: {
-        defaultValue: defaultCountry
+      descriptionAr: fieldLabel,
+      descriptionEn: fieldLabelEn,
+      type: getType(fieldType),
+      uiSchema: {
+        fileType: isFileStep ? fileExtensions : []
       },
-      validationData: [
-        {
-          parameters: validations
-        }
-      ]
+      FieldCategory: FindFieldCategory(fieldType),
+      options: {
+        defaultValue: fieldType === 'tel' ? defaultCountry : ''
+      },
+      validationData
     }
 
+    if (fieldType === 'select' || fieldType === 'radio' || fieldType === 'checkbox') {
+      sendData.options.foreignKey = key + 'id'
+      sendData.options.source = collection.key
+      sendData.options.sourceKey = valueCollection
+    }
+
+    console.log(sendData, selectedOptions)
     axiosPost('collection-fields/configure-fields', locale, sendData)
       .then(res => {
         if (res.status) {
           toast.success(locale === 'ar' ? 'تم إضافة الحقل بنجاح' : 'Field added successfully')
-          handleClose()
-          setRefresh(prev => prev + 1)
+
           resetForm()
         }
-      })
-      .catch(err => {
-        toast.error(locale === 'ar' ? 'حدث خطأ' : 'An error occurred')
       })
       .finally(_ => {
         setLoading(false)
@@ -612,153 +652,54 @@ const FormBuilder = ({ open, setOpen }) => {
             {/* Step 4: Setup Options (Checkbox, Radio, Select) */}
             {activeStep === 3 && isOptionsStep && (
               <>
-                <FormControl component='fieldset'>
-                  <FormLabel component='legend'>{messages.Select_Option_Type}</FormLabel>
-                  <RadioGroup value={optionType} onChange={e => setOptionType(e.target.value)}>
-                    <FormControlLabel value='option' control={<Radio />} label={messages.Options} />
-                    <FormControlLabel value='link' control={<Radio />} label={messages.linkToCollection} />
-                  </RadioGroup>
-                </FormControl>
-                <Collapse
-                  transition={`height 300ms cubic-bezier(.4, 0, .2, 1)`}
-                  isOpen={Boolean(optionType === 'option')}
-                >
-                  <>
-                    <TableContainer component={Paper} style={{ marginTop: '20px' }}>
-                      <Table>
-                        <TableHead>
-                          <TableRow>
-                            <TableCell>{messages.Option}</TableCell>
-                            <TableCell>{messages.Actions}</TableCell>
-                          </TableRow>
-                        </TableHead>
-                        <TableBody>
-                          {options.map((option, index) => (
-                            <TableRow key={index}>
-                              <TableCell>{locale === 'ar' ? option.label : option.label_en}</TableCell>
-                              <TableCell>
-                                <div className='flex justify-center items-center h-[40px] w-[40px]'>
-                                  <IconButton color='secondary' size='small' onClick={() => handleDeleteOption(index)}>
-                                    <Delete />
-                                  </IconButton>
-                                </div>
-                              </TableCell>
-                            </TableRow>
-                          ))}
-                        </TableBody>
-                      </Table>
-                    </TableContainer>
-
-                    <div style={{ display: 'flex', marginTop: '10px' }} className='gap-2 items-center'>
-                      <TextField
-                        label={messages.Add_Option_Ar}
+                <div className='mt-4'></div>
+                <Autocomplete
+                  options={loadingCollection ? [] : optionsCollection}
+                  getOptionLabel={option => (locale === 'ar' ? option.nameAr : option.nameEn) || ''}
+                  loading={loadingCollection}
+                  onInputChange={handleInputChange}
+                  value={collection}
+                  onChange={(e, value) => {
+                    setCollection(value)
+                    setValueCollection('')
+                    setSelectedOptions([])
+                  }}
+                  renderInput={params => (
+                    <TextField
+                      {...params}
+                      label={messages.Select_Collection}
+                      variant='outlined'
+                      InputProps={{
+                        ...params.InputProps,
+                        endAdornment: (
+                          <>
+                            {loadingCollection ? <CircularProgress size={20} /> : null}
+                            {params.InputProps.endAdornment}
+                          </>
+                        )
+                      }}
+                    />
+                  )}
+                  renderOption={(props, option) =>
+                    option.nameEn !== collection?.nameEn ? (
+                      <Box sx={{ direction: locale === 'ar' ? 'rtl' : '' }} component='li' {...props}>
+                        {locale === 'ar' ? option.nameAr : option.nameEn}
+                      </Box>
+                    ) : null
+                  }
+                />
+                <Collapse transition={`height 300ms cubic-bezier(.4, 0, .2, 1)`} isOpen={Boolean(collection?.nameEn)}>
+                  <div className='px-4 mt-4'>
+                    <FormControl component='fieldset' fullWidth>
+                      <FormLabel component='legend'>{messages.collection_Relying_on}</FormLabel>
+                      <RadioGroup
                         fullWidth
-                        margin='normal'
-                        value={newOption}
-                        onChange={e => setNewOption(e.target.value)}
-                        InputProps={{
-                          endAdornment: (
-                            <InputAdornment
-                              position='end'
-                              onClick={async () => {
-                                const loading = toast.loading(locale === 'ar' ? 'يتم الترجمه' : 'Translating')
-                                const res = await UrlTranEn(newOption)
-                                setNewOptionEn(res)
-                                toast.dismiss(loading)
-                              }}
-                            >
-                              <IconButton edge='end' onMouseDown={e => e.preventDefault()}>
-                                <Icon fontSize='1.25rem' icon={'material-symbols:g-translate'} />
-                              </IconButton>
-                            </InputAdornment>
-                          )
-                        }}
-                      />
-                      <TextField
-                        label={messages.Add_Option_En}
-                        fullWidth
-                        margin='normal'
-                        value={newOptionEn}
-                        onChange={e => setNewOptionEn(e.target.value)}
-                        InputProps={{
-                          endAdornment: (
-                            <InputAdornment
-                              position='end'
-                              onClick={async () => {
-                                const loading = toast.loading(locale === 'ar' ? 'يتم الترجمه' : 'Translating')
-                                const res = await UrlTranAr(newOptionEn)
-                                setNewOption(res)
-                                toast.dismiss(loading)
-                              }}
-                            >
-                              <IconButton edge='end' onMouseDown={e => e.preventDefault()}>
-                                <Icon fontSize='1.25rem' icon={'material-symbols:g-translate'} />
-                              </IconButton>
-                            </InputAdornment>
-                          )
-                        }}
-                      />
-                      <Button variant='contained' className='w-[40px] h-[40px]' onClick={handleAddOption}>
-                        <Add />
-                      </Button>
-                    </div>
-                  </>
-                </Collapse>
-                <Collapse
-                  transition={`height 300ms cubic-bezier(.4, 0, .2, 1)`}
-                  isOpen={Boolean(optionType === 'link')}
-                >
-                  <div className='mt-4'></div>
-                  <Autocomplete
-                    options={loadingCollection ? [] : optionsCollection}
-                    getOptionLabel={option => (locale === 'ar' ? option.name_ar : option.name_en) || ''}
-                    loading={loadingCollection}
-                    onInputChange={handleInputChange}
-                    value={collection}
-                    onChange={(e, value) => {
-                      setCollection(value)
-                      setValueCollection('')
-                      setSelectedOptions([])
-                    }}
-                    renderInput={params => (
-                      <TextField
-                        {...params}
-                        label={messages.Select_Collection}
-                        variant='outlined'
-                        InputProps={{
-                          ...params.InputProps,
-                          endAdornment: (
-                            <>
-                              {loadingCollection ? <CircularProgress size={20} /> : null}
-                              {params.InputProps.endAdornment}
-                            </>
-                          )
-                        }}
-                      />
-                    )}
-                    renderOption={(props, option) =>
-                      option.name_en !== collection?.name_en ? (
-                        <Box sx={{ direction: locale === 'ar' ? 'rtl' : '' }} component='li' {...props}>
-                          {locale === 'ar' ? option.name_ar : option.name_en}
-                        </Box>
-                      ) : null
-                    }
-                  />
-                  {console.log(collection)}
-                  <Collapse
-                    transition={`height 300ms cubic-bezier(.4, 0, .2, 1)`}
-                    isOpen={Boolean(collection?.name_en)}
-                  >
-                    <div className='px-4 mt-4'>
-                      <FormControl component='fieldset' fullWidth>
-                        <FormLabel component='legend'>{messages.collection_Relying_on}</FormLabel>
-                        <RadioGroup
-                          fullWidth
-                          className='!flex !flex-row !flex-wrap gap-2'
-                          value={valueCollection}
-                          onChange={e => setValueCollection(e.target.value)}
-                        >
-                          {Object.keys(collection).map(
+                        className='!flex !flex-row !flex-wrap gap-2'
+                        value={valueCollection}
+                        onChange={e => setValueCollection(e.target.value)}
+                      >
+                        {collection &&
+                          Object?.keys(collection)?.map(
                             key =>
                               typeof collection[key] !== 'object' && (
                                 <FormControlLabel
@@ -770,14 +711,15 @@ const FormBuilder = ({ open, setOpen }) => {
                                 />
                               )
                           )}
-                        </RadioGroup>
-                      </FormControl>
-                    </div>
-                    <div className='px-4 mt-4'>
-                      <FormControl component='fieldset' fullWidth>
-                        <FormLabel component='legend'>{messages.View_Value}</FormLabel>
-                        <div className='!flex !flex-row !flex-wrap gap-2'>
-                          {Object.keys(collection).map(
+                      </RadioGroup>
+                    </FormControl>
+                  </div>
+                  <div className='px-4 mt-4'>
+                    <FormControl component='fieldset' fullWidth>
+                      <FormLabel component='legend'>{messages.View_Value}</FormLabel>
+                      <div className='!flex !flex-row !flex-wrap gap-2'>
+                        {collection &&
+                          Object?.keys(collection)?.map(
                             key =>
                               typeof collection[key] !== 'object' && (
                                 <FormControlLabel
@@ -794,10 +736,9 @@ const FormBuilder = ({ open, setOpen }) => {
                                 />
                               )
                           )}
-                        </div>
-                      </FormControl>
-                    </div>
-                  </Collapse>
+                      </div>
+                    </FormControl>
+                  </div>
 
                   {/* <FormControl fullWidth margin='normal'>
                     <InputLabel>{messages.Select_Collection}</InputLabel>

@@ -35,6 +35,12 @@ const Navigation = () => {
       title_en: 'Lookup',
       title_ar: 'البيانات',
       path: `setting/lookup`
+    },
+    {
+      icon: 'qlementine-icons:page-portrait-16',
+      title_en: 'Pages',
+      title_ar: 'الصفحات',
+      path: `setting/pages`
     }
   ]
 }

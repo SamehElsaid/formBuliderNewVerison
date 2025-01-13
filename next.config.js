@@ -20,7 +20,9 @@ module.exports = {
   webpack: config => {
     config.resolve.alias = {
       ...config.resolve.alias,
-      apexcharts: path.resolve(__dirname, './node_modules/apexcharts-clevision')
+      apexcharts: path.resolve(__dirname, './node_modules/apexcharts-clevision'),
+      'react/jsx-dev-runtime.js': path.resolve(__dirname, 'node_modules/react/jsx-dev-runtime.js'),
+      'react/jsx-runtime.js': path.resolve(__dirname, 'node_modules/react/jsx-runtime.js')
     }
 
     return config

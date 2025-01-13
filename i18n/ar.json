@@ -431,5 +431,7 @@
   "Options": "خيارات جاهزة",
   "Select_Collection": "اختر المجموعة",
   "collection_Relying_on": "الاعتماد على",
-  "View_Value": "عرض القيمة"
+  "View_Value": "عرض القيمة",
+  "key": "المفتاح",
+  "versionReason": "سبب التحديث"
 }

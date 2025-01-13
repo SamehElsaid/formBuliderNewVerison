@@ -4,11 +4,14 @@ import { configureStore } from '@reduxjs/toolkit'
 import auth from './apps/authSlice/authSlice'
 import LoadingHome from './apps/LoadingMainSlice/LoadingMainSlice'
 import calendar from './apps/calendar/index'
+import api from './apps/apiSlice/apiSlice'
 
 export const store = configureStore({
   reducer: {
     auth,
     LoadingHome,
+    api,
+
     calendar
   },
 
