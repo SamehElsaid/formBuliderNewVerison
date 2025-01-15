@@ -1,32 +1,22 @@
-import styled from '@emotion/styled'
 import {
   Autocomplete,
-  Button,
   Checkbox,
   CircularProgress,
-  Dialog,
   FormControl,
   FormControlLabel,
   FormLabel,
+  MenuItem,
   TextField,
   Typography
 } from '@mui/material'
 import { Box } from '@mui/system'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import Collapse from '@kunukn/react-collapse'
-import { LoadingButton } from '@mui/lab'
 import { axiosGet } from 'src/Components/axiosCall'
-
-const Header = styled(Box)(({ theme }) => ({
-  display: 'flex',
-  alignItems: 'center',
-  padding: theme.spacing(6),
-  justifyContent: 'space-between'
-}))
+import { toast } from 'react-toastify'
 
 function Select({ onChange, data }) {
-  console.log('data', data)
   const { locale } = useIntl()
   const [open, setOpen] = useState(true)
   const [collection, setCollection] = useState('')
@@ -34,27 +24,53 @@ function Select({ onChange, data }) {
   const [loadingCollection, setLoadingCollection] = useState(false)
   const [selectedOptions, setSelectedOptions] = useState([])
   const { messages } = useIntl()
+  const [getFields, setGetFields] = useState([])
+  useEffect(() => {
+    setLoadingCollection(true)
+    axiosGet(`collections/get/?dataSourceId=ba3b7965-7d38-4d91-a147-feff4e23c69c`, locale)
+      .then(res => {
+        if (res.status) {
+          setOptionsCollection(res.data)
+        }
+      })
+      .finally(() => {
+        setLoadingCollection(false)
+      })
+  }, [locale])
 
-  const handleChange = event => {
-    const { value, checked } = event.target
-    setSelectedOptions(prevSelected =>
-      checked ? [...prevSelected, value] : prevSelected.filter(item => item !== value)
-    )
-  }
-
-  const handleClose = () => {
-    setOpen(false)
-  }
+  useEffect(() => {
+    if (data.collectionId) {
+      console.log(data.collectionId, 'data.collectionId')
+      axiosGet(`collections/get-by-id?id=${data.collectionId}`, locale).then(res => {
+        if (res.status) {
+          if (res.data?.id) {
+            const loadingToast = toast.loading(locale === 'ar' ? 'يتم التحميل' : 'Loading')
+            axiosGet(`collection-fields/get?CollectionId=${res.data.id}`, locale)
+              .then(res => {
+                if (res.status) {
+                  setGetFields(res.data)
+                }
+              })
+              .finally(() => {
+                toast.dismiss(loadingToast)
+              })
+          }
+          setCollection(res.data)
+        }
+      })
+    }
+    if (data.selected) {
+      setSelectedOptions(data.selected)
+    }
+  }, [locale, data.collectionId, data.selected])
 
   const handleInputChange = async (event, value) => {
-    console.log(value)
-
-    // setLoadingCollection(true)
-
     try {
-      const res = await axiosGet(`collections`, locale)
-      if (res) {
-        setOptionsCollection(res)
+      const res = await axiosGet(`collections/get/?dataSourceId=ba3b7965-7d38-4d91-a147-feff4e23c69c`, locale)
+      if (res.status) {
+        setOptionsCollection(res.data)
+      } else {
+        setCollection('')
       }
     } finally {
       setLoadingCollection(false)
@@ -63,96 +79,119 @@ function Select({ onChange, data }) {
 
   console.log(selectedOptions, collection)
 
+  const handleChange = event => {
+    const { value, checked } = event.target
+    setSelectedOptions(prevSelected =>
+      checked ? [...prevSelected, value] : prevSelected.filter(item => item !== value)
+    )
+    const selected = checked ? [...selectedOptions, value] : selectedOptions.filter(item => item !== value)
+    onChange({ ...data, selected, type_of_sumbit: data.type_of_sumbit === 'collection' ? '' : data.type_of_sumbit })
+  }
+
   return (
     <div>
-      <Dialog open={open} fullWidth>
-        <Header>
-          <Typography variant='h5'>{locale === 'ar' ? 'اختيار التجميعة' : 'Select Collection'}</Typography>
-        </Header>
-        <Box sx={{ p: theme => theme.spacing(0, 6, 6) }} className='h-full'>
-          <form
-            className='flex flex-col p-4 h-full'
-            onSubmit={e => {
-              e.preventDefault()
-
-              // setSelectCollection({selectedOptions,collection})
-
-              onChange({ ...data, selectCollection: { selectedOptions, collection } }) // Update the title using onChange
-            }}
-          >
-            <Autocomplete
-              options={loadingCollection ? [] : optionsCollection}
-              getOptionLabel={option => (locale === 'ar' ? option.name_ar : option.name_en) || ''}
-              loading={loadingCollection}
-              onInputChange={handleInputChange}
-              value={collection}
-              onChange={(e, value) => {
-                setCollection(value)
-                setSelectedOptions([])
+      <Typography variant='h5'>{locale === 'ar' ? 'اختيار التجميعة' : 'Select Collection'}</Typography>
+      <form
+        className='flex flex-col p-4 h-full'
+        onSubmit={e => {
+          e.preventDefault()
+          onChange({ ...data, selectCollection: { selectedOptions, collection } }) // Update the title using onChange
+        }}
+      >
+        <Autocomplete
+          options={loadingCollection ? [] : optionsCollection}
+          getOptionLabel={option => (locale === 'ar' ? option.nameAr : option.nameEn) || ''}
+          loading={loadingCollection}
+          onInputChange={handleInputChange}
+          value={collection}
+          onChange={(e, value) => {
+            setCollection(value)
+            onChange({ ...data, collectionId: value?.id, collectionName: value?.key,selected: [],sortWithId:false })
+            setSelectedOptions([])
+          }}
+          renderInput={params => (
+            <TextField
+              {...params}
+              label={messages.Select_Collection}
+              variant='outlined'
+              InputProps={{
+                ...params.InputProps,
+                endAdornment: (
+                  <>
+                    {loadingCollection ? <CircularProgress size={20} /> : null}
+                    {params.InputProps.endAdornment}
+                  </>
+                )
               }}
-              renderInput={params => (
-                <TextField
-                  {...params}
-                  label={messages.Select_Collection}
-                  variant='outlined'
-                  InputProps={{
-                    ...params.InputProps,
-                    endAdornment: (
-                      <>
-                        {loadingCollection ? <CircularProgress size={20} /> : null}
-                        {params.InputProps.endAdornment}
-                      </>
-                    )
-                  }}
-                />
-              )}
-              renderOption={(props, option) =>
-                option.name_en !== collection?.name_en ? (
-                  <Box sx={{ direction: locale === 'ar' ? 'rtl' : '' }} component='li' {...props}>
-                    {locale === 'ar' ? option.name_ar : option.name_en}
-                  </Box>
-                ) : null
-              }
             />
+          )}
+          renderOption={(props, option) =>
+            option.nameEn !== collection?.nameEn ? (
+              <Box sx={{ direction: locale === 'ar' ? 'rtl' : '' }} component='li' {...props}>
+                {locale === 'ar' ? option.nameAr : option.nameEn}
+              </Box>
+            ) : null
+          }
+        />
 
-            <Collapse transition={`height 300ms cubic-bezier(.4, 0, .2, 1)`} isOpen={Boolean(collection?.name_en)}>
-              <div className='px-4 mt-4'>
-                <FormControl component='fieldset' fullWidth>
-                  <FormLabel component='legend'>{messages.View_Value}</FormLabel>
-                  <div className='!flex !flex-row !flex-wrap gap-2'>
-                    {collection?.fields?.map(
-                      value =>
-                        value.type !== 'validations' && (
-                          <FormControlLabel
-                            key={value.key}
-                            className='!w-fit capitalize'
-                            control={
-                              <Checkbox
-                                value={value.key}
-                                checked={selectedOptions.includes(value.key)}
-                                onChange={handleChange}
-                              />
-                            }
-                            label={locale === 'ar' ? value.label : value.label_en}
-                          />
-                        )
-                    )}
-                  </div>
-                </FormControl>
+        <Collapse transition={`height 300ms cubic-bezier(.4, 0, .2, 1)`} isOpen={Boolean(collection?.nameEn)}>
+          <div className='px-4 mt-4'>
+            <FormControl component='fieldset' fullWidth>
+              <FormLabel component='legend'>{messages.View_Value}</FormLabel>
+              <div className='!flex !flex-row !flex-wrap gap-2'>
+                {getFields?.map(value => (
+                  <FormControlLabel
+                    key={value.key}
+                    className='!w-fit capitalize'
+                    control={
+                      <Checkbox
+                        value={value.key}
+                        checked={selectedOptions.includes(value.key)}
+                        onChange={handleChange}
+                      />
+                    }
+                    label={value.key}
+                  />
+                ))}
               </div>
-            </Collapse>
 
-            <Box sx={{ display: 'flex', alignItems: 'center' }} className='gap-4 justify-end py-4 mt-auto'>
-              <LoadingButton type='submit' variant='contained'>
-                {locale === 'ar' ? 'ارسال' : 'Submit'}
-              </LoadingButton>
-              <Button variant='tonal' color='secondary' onClick={handleClose}>
-                {locale === 'ar' ? 'إلغاء' : 'Cancel'}
-              </Button>
-            </Box>
-          </form>
-        </Box>
-      </Dialog>
+              <TextField
+                select
+                fullWidth
+                value={data.type_of_sumbit || ''}
+                onChange={e => {
+                  if (e.target.value === 'collection') {
+                    if (selectedOptions.length !== getFields.length) {
+                      toast.error(locale === 'ar' ? 'يجب اختيار كل الحقول' : 'You must select the All fields')
+
+                      return
+                    }
+                  }
+
+                  onChange({ ...data, type_of_sumbit: e.target.value })
+                }}
+                label={locale === 'ar' ? 'نوع الارسال' : 'Type Of Submit'}
+                variant='filled'
+              >
+                <MenuItem value={'collection'}>{locale === 'ar' ? 'هذه التجميعة' : 'This Collection'}</MenuItem>
+                <MenuItem value={'api'}>{locale === 'ar' ? 'الي Api اخر' : 'Other API'}</MenuItem>
+              </TextField>
+              <Collapse
+                transition={`height 300ms cubic-bezier(.4, 0, .2, 1)`}
+                isOpen={Boolean(data.type_of_sumbit === 'api')}
+              >
+                <TextField
+                  fullWidth
+                  value={data.submitApi || ''}
+                  onChange={e => onChange({ ...data, submitApi: e.target.value })}
+                  label={locale === 'ar' ? 'ارسال البيانات الي الAPI' : 'Submit To API'}
+                  variant='filled'
+                />
+              </Collapse>
+            </FormControl>
+          </div>
+        </Collapse>
+      </form>
     </div>
   )
 }

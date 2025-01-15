@@ -1127,3 +1127,33 @@ sortable-list {
 .MuiButton-textSuccess {
   @apply !text-[#28c76f] hover:!bg-[#28c76f]/50 hover:!text-white;
 }
+
+.text-main input ,.text-main textarea{
+  color: rgba(47, 43, 61, 0.68) !important;
+}
+.text-main label.MuiFormLabel-root.MuiInputLabel-root{
+  color: rgba(47, 43, 61, 0.50) !important;
+  @apply !capitalize
+}
+
+.text-main label.MuiFormLabel-root.MuiInputLabel-root[data-shrink="true"]{
+ @apply !text-main-color;
+}
+.text-main label.MuiFormLabel-root.MuiInputLabel-root[data-shrink="true"].Mui-error{
+  @apply !text-[#f44336];
+ }
+ .text-main .Mui-focused .MuiOutlinedInput-notchedOutline{
+  @apply !border-main-color;
+ }
+ .text-main .Mui-error .MuiOutlinedInput-notchedOutline{
+  @apply !border-[#f44336];
+ }
+ .text-main  .MuiOutlinedInput-notchedOutline{
+  @apply !border-[#2f2b3d33];
+ }
+ .text-main  .MuiFormLabel-root ,.text-main .MuiTypography-root.MuiTypography-body1{
+  color: rgba(47, 43, 61, 0.68) !important;
+ }
+ .text-main .MuiButtonBase-root.MuiRadio-root:not(.Mui-checked) svg{
+  stroke: rgba(47, 43, 61, 0.68) !important;
+ }

@@ -94,7 +94,7 @@ export default function Index() {
             size='small'
             color='success'
             onClick={() => {
-              setOpenFormBuilder(params.row.id)
+              setOpenFormBuilder(params.row)
             }}
           >
             {locale === 'ar' ? 'إضافة حقل' : 'Add Field'}

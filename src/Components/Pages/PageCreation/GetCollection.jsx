@@ -71,6 +71,10 @@ function GetCollection({ selectCollection, readOnly, onChange, data }) {
     }
 
     setLoading(true)
+
+
+    console.log(selectCollection)
+
     axios
       .post(`${process.env.API_URL}/${selectCollection.collection.name_en}`, {
         ...dataRef.current

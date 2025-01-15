@@ -1,18 +1,14 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useState } from 'react'
 import Editor from '@react-page/editor'
-import slate from '@react-page/plugins-slate'
-import spacer from '@react-page/plugins-spacer'
+
 import '@react-page/editor/lib/index.css'
-import '@react-page/plugins-slate/lib/index.css'
-import '@react-page/plugins-spacer/lib/index.css'
 import { useIntl } from 'react-intl'
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, IconButton } from '@mui/material'
 import { MdOutlineSaveAs } from 'react-icons/md'
 import { RiArrowGoBackFill } from 'react-icons/ri'
 import { Icon } from '@iconify/react'
 import ApiData from './PageCreation/ApiData'
-import { useDispatch } from 'react-redux'
 import { useTheme } from '@emotion/react'
 import { FaEye } from 'react-icons/fa'
 import { IoSettingsOutline } from 'react-icons/io5'
@@ -21,19 +17,8 @@ import { axiosPost } from '../axiosCall'
 import { toast } from 'react-toastify'
 import { useRouter } from 'next/router'
 import { LoadingButton } from '@mui/lab'
-import useCollection from './PageCreation/HooksDragDropComponents/useCollection'
-import useBackground from './PageCreation/HooksDragDropComponents/useBackground'
-import useTable from './PageCreation/HooksDragDropComponents/useTable'
-import useContainer from './PageCreation/HooksDragDropComponents/useContainer'
-import useBox from './PageCreation/HooksDragDropComponents/useBox'
-import useUploadImage from './PageCreation/HooksDragDropComponents/useUploadImage'
-import useUploadVideo from './PageCreation/HooksDragDropComponents/useUploadVideo'
-import useRichText from './PageCreation/HooksDragDropComponents/useRichText'
-import useFlexControl from './PageCreation/HooksDragDropComponents/useFlexControl'
-import useButton from './PageCreation/HooksDragDropComponents/useButton'
-import useCart from './PageCreation/HooksDragDropComponents/useCart'
-import useIconView from './PageCreation/HooksDragDropComponents/useIconView'
 import { useSelector } from 'react-redux'
+import useCellPlugins from './PageCreation/HooksDragDropComponents/useCellPlugins'
 
 const ReactPageEditor = ({ pageName, initialData, initialDataApi }) => {
   const [editorValue, setEditorValue] = useState(initialData ?? null)
@@ -44,42 +29,12 @@ const ReactPageEditor = ({ pageName, initialData, initialDataApi }) => {
   const [openBack, setOpenBack] = useState(false)
   const [saveData, setSaveData] = useState(false)
   const [loadingSaveData, setLoadingSaveData] = useState(false)
-  const dispatch = useDispatch()
   const theme = useTheme()
   const { push } = useRouter()
-
-  // Hooks Drag Drop Components
-  const { collection } = useCollection({ advancedEdit, locale })
-  const { backgroundPlugin } = useBackground({ locale })
-  const { table } = useTable({ advancedEdit, locale })
-  const { ContainerPlugin } = useContainer({ locale })
-  const { BoxControl } = useBox({ locale })
-  const { UploadImage } = useUploadImage({ locale })
-  const { UploadVideo } = useUploadVideo({ locale })
-  const { RichText } = useRichText({ locale })
-  const { FlexControlCell } = useFlexControl({ locale })
-  const { ButtonCell } = useButton({ locale })
-  const { cartCell } = useCart({ locale, readOnly })
-  const { IconView } = useIconView({ locale })
-
-  const cellPlugins = [
-    slate(),
-    backgroundPlugin,
-    ContainerPlugin,
-    BoxControl,
-    UploadImage,
-    UploadVideo,
-    spacer,
-    collection,
-    table,
-    RichText,
-    ButtonCell,
-    FlexControlCell,
-    cartCell,
-    IconView
-  ]
-
   const apiData = useSelector(state => state.api.data)
+
+  // CellPlugins Hook Calling
+  const { cellPlugins } = useCellPlugins({ advancedEdit,locale,readOnly })
 
   return (
     <div className='relative'>

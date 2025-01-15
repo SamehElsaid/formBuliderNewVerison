@@ -237,13 +237,6 @@ const FormBuilder = ({ open, setOpen }) => {
       })
   }, [locale])
 
-  const handleChange = event => {
-    const { value, checked } = event.target
-    setSelectedOptions(prevSelected =>
-      checked ? [...prevSelected, value] : prevSelected.filter(item => item !== value)
-    )
-  }
-
   const handleInputChange = async (event, value) => {
     console.log(value)
     if (!value) {
@@ -307,11 +300,6 @@ const FormBuilder = ({ open, setOpen }) => {
 
     // setLoading(true)
 
-    const Data = {
-      options: isOptionsStep ? options : [],
-      allowedFileTypes: isFileStep ? fileExtensions : []
-    }
-
     const validationData = []
     if (validations.required) {
       validationData.push({ RuleType: 'Required', Parameters: {} })
@@ -350,7 +338,7 @@ const FormBuilder = ({ open, setOpen }) => {
     }
 
     const sendData = {
-      collectionId: open,
+      collectionId: open.id,
       key: key,
       nameAr: fieldLabel,
       nameEn: fieldLabelEn,
@@ -358,8 +346,7 @@ const FormBuilder = ({ open, setOpen }) => {
       descriptionEn: fieldLabelEn,
       type: getType(fieldType),
       uiSchema: {
-        fileType: isFileStep ? fileExtensions : [],
-        format: getType(fieldType) === 'OneToOne' ? fieldType : ''
+        fileType: isFileStep ? fileExtensions : []
       },
       FieldCategory: FindFieldCategory(fieldType),
       options: {
@@ -369,12 +356,15 @@ const FormBuilder = ({ open, setOpen }) => {
     }
 
     if (fieldType === 'select' || fieldType === 'radio' || fieldType === 'checkbox') {
-      sendData.options.foreignKey = key + 'id'
-      sendData.options.source = collection.key
-      sendData.options.sourceKey = valueCollection
+      sendData.options.foreignKey = key
+      sendData.options.source = open.key
+      sendData.options.sourceKey = 'id'
+      sendData.options.target = collection.key
+      sendData.options.targetKey = collection.key + 'id'
+      sendData.descriptionEn = JSON.stringify(selectedOptions)
     }
 
-    console.log(sendData, selectedOptions)
+    console.log(open.key)
     axiosPost('collection-fields/configure-fields', locale, sendData)
       .then(res => {
         if (res.status) {
@@ -693,52 +683,32 @@ const FormBuilder = ({ open, setOpen }) => {
                 <Collapse transition={`height 300ms cubic-bezier(.4, 0, .2, 1)`} isOpen={Boolean(getFields.length)}>
                   <div className='px-4 mt-4'>
                     <FormControl component='fieldset' fullWidth>
-                      <FormLabel component='legend'>{messages.collection_Relying_on}</FormLabel>
-                      <RadioGroup
-                        fullWidth
-                        className='!flex !flex-row !flex-wrap gap-2'
-                        value={valueCollection}
-                        onChange={e => setValueCollection(e.target.value)}
-                      >
-                        <FormControlLabel
-                          key={'id'}
-                          className='!w-fit capitalize'
-                          value={'id'}
-                          control={<Radio />}
-                          label={'id'}
-                        />
-                        {getFields.map(field => (
-                          <FormControlLabel
-                            key={field.key}
-                            className='!w-fit capitalize'
-                            value={field.key}
-                            control={<Radio />}
-                            label={field.key.replace('_', ' ')}
-                          />
-                        ))}
-                      </RadioGroup>
-                    </FormControl>
-                  </div>
-                  <div className='px-4 mt-4'>
-                    <FormControl component='fieldset' fullWidth>
                       <FormLabel component='legend'>{messages.View_Value}</FormLabel>
                       <div className='!flex !flex-row !flex-wrap gap-2'>
-                        <FormControlLabel
-                          key={'id'}
-                          className='!w-fit capitalize'
-                          value={'id'}
-                          control={<Checkbox />}
-                          label={'id'}
-                        />
-                        {getFields.map(field => (
-                          <FormControlLabel
-                            key={field.key}
-                            className='!w-fit capitalize'
-                            value={field.key}
-                            control={<Checkbox />}
-                            label={field.key.replace('_', ' ')}
-                          />
-                        ))}
+                        {console.log(selectedOptions)}
+                        {getFields.map(field =>
+                          field.type === 'OneToOne' ||
+                          field.type === 'OneToMany' ||
+                          field.type === 'ManyToMany' ? null : (
+                            <FormControlLabel
+                              key={field.key}
+                              className='!w-fit capitalize'
+                              checked={selectedOptions.includes(field.key)}
+                              onChange={() => {
+                                setSelectedOptions(prev => {
+                                  if (prev.includes(field.key)) {
+                                    return prev.filter(item => item !== field.key)
+                                  }
+
+                                  return [...prev, field.key]
+                                })
+                              }}
+                              value={field.key}
+                              control={<Checkbox />}
+                              label={field.key.replace('_', ' ')}
+                            />
+                          )
+                        )}
                       </div>
                     </FormControl>
                   </div>
