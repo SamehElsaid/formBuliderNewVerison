@@ -25,7 +25,7 @@ export default function Index() {
   useEffect(() => {
     setLoading(true)
     const loadingToast = toast.loading(locale === 'ar' ? 'جاري التحميل...' : 'Loading...')
-    axiosGet(`collections/get/?dataSourceId=ba3b7965-7d38-4d91-a147-feff4e23c69c`, locale)
+    axiosGet(`collections/get/?dataSourceId=0a6beba7-3939-4d82-a78c-1810714750e4`, locale)
       .then(res => {
         if (res.status) {
           setData(res.data)

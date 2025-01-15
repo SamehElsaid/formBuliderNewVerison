@@ -226,7 +226,7 @@ const FormBuilder = ({ open, setOpen }) => {
 
   useEffect(() => {
     setLoadingCollection(true)
-    axiosGet(`collections/get/?dataSourceId=ba3b7965-7d38-4d91-a147-feff4e23c69c`, locale)
+    axiosGet(`collections/get/?dataSourceId=0a6beba7-3939-4d82-a78c-1810714750e4`, locale)
       .then(res => {
         if (res.status) {
           setOptionsCollection(res.data)
@@ -245,7 +245,7 @@ const FormBuilder = ({ open, setOpen }) => {
     setValueCollection(value)
 
     try {
-      const res = await axiosGet(`collections/get/?dataSourceId=ba3b7965-7d38-4d91-a147-feff4e23c69c`, locale)
+      const res = await axiosGet(`collections/get/?dataSourceId=0a6beba7-3939-4d82-a78c-1810714750e4`, locale)
       if (res.status) {
         setOptionsCollection(res.data)
       }
@@ -357,11 +357,12 @@ const FormBuilder = ({ open, setOpen }) => {
 
     if (fieldType === 'select' || fieldType === 'radio' || fieldType === 'checkbox') {
       sendData.options.foreignKey = key
-      sendData.options.source = open.key
+      sendData.options.source = collection.key
       sendData.options.sourceKey = 'id'
-      sendData.options.target = collection.key
+      sendData.options.target =  open.key
       sendData.options.targetKey = collection.key + 'id'
       sendData.descriptionEn = JSON.stringify(selectedOptions)
+      sendData.descriptionAr = fieldType
     }
 
     console.log(open.key)

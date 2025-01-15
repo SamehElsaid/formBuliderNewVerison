@@ -6,11 +6,11 @@ import { CircularProgress } from '@mui/material'
 import * as cookie from 'cookie'
 import { decryptData } from 'src/Components/encryption'
 import axios from 'axios'
-import https from 'https';
+import https from 'https'
 
-const Index = ({ pageName, initialData,initialDataApi }) => {
+const Index = ({ pageName, initialData, initialDataApi }) => {
   const [loading, setLoading] = useState(true)
-  console.log(initialData,initialDataApi)
+  console.log(initialData, initialDataApi)
 
   let ReactPageEditor = null
   try {
@@ -43,7 +43,7 @@ const Index = ({ pageName, initialData,initialDataApi }) => {
             <CircularProgress size={50} />
           </div>
         )}
-        <ReactPageEditor pageName={pageName} initialData={initialData} initialDataApi={initialDataApi}/>
+        <ReactPageEditor pageName={pageName} initialData={initialData} initialDataApi={initialDataApi} />
       </div>
     </div>
   )
@@ -60,17 +60,15 @@ export async function getServerSideProps(context) {
 
   const headers = {
     Authorization: `Bearer ${cookies.sub ? decryptData(cookies.sub).token : ''}`,
-    'Accept-Language': context.locale,
-
+    'Accept-Language': context.locale
   }
   const apiUrl = `${process.env.API_URL}/page/get-latest-version/${pageName}/`
-  console.log(headers, apiUrl)
   const httpsAgent = new https.Agent({ rejectUnauthorized: false })
   try {
     const [response] = await Promise.all([axios.get(apiUrl, { headers, httpsAgent })])
-
-    const initialData = response.data ? JSON.parse(response.data.jsonData)?.editorValue : null
-    const initialDataApi = response.data ? JSON.parse(response.data.jsonData)?.apiData : null
+    const data = JSON.parse(response?.data?.jsonData) ?? null
+    const initialData = data?.editorValue ?? null
+    const initialDataApi = data?.apiData ?? null
 
     return {
       props: {

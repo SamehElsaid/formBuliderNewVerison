@@ -6,7 +6,9 @@ import {
   IconButton,
   InputAdornment,
   InputLabel,
+  MenuItem,
   Radio,
+  Select,
   TextField
 } from '@mui/material'
 import { useState, useEffect } from 'react'
@@ -78,7 +80,7 @@ export default function DisplayField({ input, dirtyProps, reload, refError, data
         if (input?.type === 'Phone') {
           setValue(e)
         } else {
-          console.log(e.target.value);
+          console.log(e.target.value)
 
           setValue(e.target.value)
         }
@@ -213,10 +215,12 @@ export default function DisplayField({ input, dirtyProps, reload, refError, data
   const [selectedOptions, setSelectedOptions] = useState([])
 
   useEffect(() => {
-    if (input.type === 'OneToOne') {
-      axiosGet(`generic-entities/${input?.options?.target}`).then(res => {
+    if (input.type === 'OneToOne' || input.type === 'OneToMany' ) {
+      console.log(input)
+      axiosGet(`generic-entities/${input?.options?.source}`).then(res => {
         if (res.status) {
           setSelectedOptions(res.entities)
+          console.log(res.entities)
         }
       })
     }
@@ -327,7 +331,7 @@ export default function DisplayField({ input, dirtyProps, reload, refError, data
   }
 
   console.log(input.type)
-  if (input.type === 'OneToOne') {
+  if (input.type === 'OneToOne' && input.descriptionAr !== 'select') {
     const lable = JSON.parse(input?.descriptionEn)
 
     return (
@@ -338,17 +342,72 @@ export default function DisplayField({ input, dirtyProps, reload, refError, data
             <FormControlLabel
               key={index}
               control={
-                <Radio
-                  value={option.Id}
-                  name={input.Id}
-                  checked={value === option.Id}
-                  onChange={e => onChange(e)}
-                />
+                <Radio value={option.Id} name={input.Id} checked={value === option.Id} onChange={e => onChange(e)} />
               }
-              label={lable.map(ele=>option[ele]).join("-")}
+              label={lable.map(ele => option[ele]).join('-')}
             />
           ))}
           <FormHelperText className='!text-[#f44336]'>{errorView || error}</FormHelperText>
+        </div>
+      </div>
+    )
+  }
+  if (input.type === 'OneToOne' && input.descriptionAr === 'select') {
+    const lable = JSON.parse(input?.descriptionEn)
+
+    return (
+      <div className=''>
+        <div className=''>
+          <div className=''>
+            <InputLabel id='demo-simple-select-label'>{locale === 'ar' ? input.nameAr : input.nameEn}</InputLabel>
+            <Select
+              labelId='demo-simple-select-label'
+              id='demo-simple-select'
+              value={value}
+              fullWidth
+              label={locale === 'ar' ? input.nameAr : input.nameEn}
+              onChange={e => onChange(e)}
+              name={input.nameEn}
+              error={Boolean(findError || error)}
+              helperText={errorView || error}
+            >
+              {selectedOptions.map((option, index) => (
+                <MenuItem key={index} value={option.Id}>
+                  {lable.map(ele => option[ele]).join('-')}
+                </MenuItem>
+              ))}
+            </Select>
+          </div>
+        </div>
+      </div>
+    )
+  }
+  if (input.type === 'OneToMany' ) {
+    const lable = JSON.parse(input?.descriptionEn)
+
+    return (
+      <div className=''>
+        <div className=''>
+          <div className=''>
+            <InputLabel id='demo-simple-select-label'>{locale === 'ar' ? input.nameAr : input.nameEn}</InputLabel>
+            <Select
+              labelId='demo-simple-select-label'
+              id='demo-simple-select'
+              value={value}
+              fullWidth
+              label={locale === 'ar' ? input.nameAr : input.nameEn}
+              onChange={e => onChange(e)}
+              name={input.nameEn}
+              error={Boolean(findError || error)}
+              helperText={errorView || error}
+            >
+              {selectedOptions.map((option, index) => (
+                <MenuItem key={index} value={option.Id}>
+                  {lable.map(ele => option[ele]).join('-')}
+                </MenuItem>
+              ))}
+            </Select>
+          </div>
         </div>
       </div>
     )

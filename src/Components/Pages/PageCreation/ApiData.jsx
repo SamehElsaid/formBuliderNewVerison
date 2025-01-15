@@ -13,7 +13,7 @@ export default function ApiData({ open, setOpen,initialDataApi }) {
   const dispatch = useDispatch()
 
   useEffect(() => {
-    setLinks(initialDataApi)
+    setLinks(initialDataApi ?? [])
   }, [initialDataApi])
 
   useEffect(() => {

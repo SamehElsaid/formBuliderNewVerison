@@ -44,7 +44,7 @@ export const getType = type => {
   // if (type === 'radio' || type === 'select' || type === 'checkbox') {
   //   return 'OneToOne'
   // }
-  if (type === 'radio') {
+  if (type === 'radio' || type === 'select') {
     return 'OneToOne'
   }
 
@@ -52,9 +52,7 @@ export const getType = type => {
     return 'OneToMany'
   }
 
-  if (type === 'select') {
-    return 'ManyToMany'
-  }
+
 
   return type.charAt(0).toUpperCase() + type.slice(1)
 }

@@ -27,7 +27,7 @@ function Select({ onChange, data }) {
   const [getFields, setGetFields] = useState([])
   useEffect(() => {
     setLoadingCollection(true)
-    axiosGet(`collections/get/?dataSourceId=ba3b7965-7d38-4d91-a147-feff4e23c69c`, locale)
+    axiosGet(`collections/get/?dataSourceId=0a6beba7-3939-4d82-a78c-1810714750e4`, locale)
       .then(res => {
         if (res.status) {
           setOptionsCollection(res.data)
@@ -66,7 +66,7 @@ function Select({ onChange, data }) {
 
   const handleInputChange = async (event, value) => {
     try {
-      const res = await axiosGet(`collections/get/?dataSourceId=ba3b7965-7d38-4d91-a147-feff4e23c69c`, locale)
+      const res = await axiosGet(`collections/get/?dataSourceId=0a6beba7-3939-4d82-a78c-1810714750e4`, locale)
       if (res.status) {
         setOptionsCollection(res.data)
       } else {
