@@ -4,8 +4,8 @@ import { useEffect, useRef, useState } from 'react'
 import { axiosGet, axiosPost } from 'src/Components/axiosCall'
 import DisplayField from './DisplayField'
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
-import toast from 'react-hot-toast'
 import { LoadingButton } from '@mui/lab'
+import { toast } from 'react-toastify'
 
 export default function ViewCollection({ data, locale, onChange, readOnly,disabled }) {
   const [getFields, setGetFields] = useState([])
@@ -71,6 +71,7 @@ export default function ViewCollection({ data, locale, onChange, readOnly,disabl
     )
       .then(res => {
         if (res.status) {
+          setReload(prev => prev + 1)
           toast.success(locale === 'ar' ? 'تم إرسال البيانات بنجاح' : 'Data sent successfully')
         }
       })

@@ -229,11 +229,9 @@ export default function DisplayField({ input, dirtyProps, reload, refError, data
 
   useEffect(() => {
     if (input.type === 'OneToOne' || input.type === 'OneToMany') {
-      console.log(input)
       axiosGet(`generic-entities/${input?.options?.source}`).then(res => {
         if (res.status) {
           setSelectedOptions(res.entities)
-          console.log(res.entities)
         }
       })
     }

@@ -30,12 +30,13 @@ const Navigation = () => {
       title_ar: 'التجميعات',
       path: `setting/data-source`
     },
-    {
-      icon: 'solar:folder-with-files-bold-duotone',
-      title_en: 'Lookup',
-      title_ar: 'البيانات',
-      path: `setting/lookup`
-    },
+
+    // {
+    //   icon: 'solar:folder-with-files-bold-duotone',
+    //   title_en: 'Lookup',
+    //   title_ar: 'البيانات',
+    //   path: `setting/lookup`
+    // },
     {
       icon: 'qlementine-icons:page-portrait-16',
       title_en: 'Pages',
