@@ -41,6 +41,7 @@ import { Icon } from '@iconify/react'
 import { axiosGet, axiosPost, UrlTranAr, UrlTranEn } from '../axiosCall'
 import Collapse from '@kunukn/react-collapse'
 import { getType } from '../_Shared'
+import { useRouter } from 'next/router'
 
 const FormBuilder = ({ open, setOpen }) => {
   const [activeStep, setActiveStep] = useState(0)
@@ -223,10 +224,12 @@ const FormBuilder = ({ open, setOpen }) => {
   const [valueCollection, setValueCollection] = useState('')
   const [selectedOptions, setSelectedOptions] = useState([])
   const [getFields, setGetFields] = useState([])
+  const { query: { dataSourceId } } = useRouter()
 
   useEffect(() => {
+    if (!dataSourceId) return
     setLoadingCollection(true)
-    axiosGet(`collections/get/?dataSourceId=0a6beba7-3939-4d82-a78c-1810714750e4`, locale)
+    axiosGet(`collections/get/?dataSourceId=${dataSourceId}`, locale)
       .then(res => {
         if (res.status) {
           setOptionsCollection(res.data)
@@ -235,7 +238,7 @@ const FormBuilder = ({ open, setOpen }) => {
       .finally(() => {
         setLoadingCollection(false)
       })
-  }, [locale])
+  }, [locale, dataSourceId])
 
   const handleInputChange = async (event, value) => {
     console.log(value)
@@ -245,7 +248,7 @@ const FormBuilder = ({ open, setOpen }) => {
     setValueCollection(value)
 
     try {
-      const res = await axiosGet(`collections/get/?dataSourceId=0a6beba7-3939-4d82-a78c-1810714750e4`, locale)
+      const res = await axiosGet(`collections/get/?dataSourceId=${dataSourceId}`, locale)
       if (res.status) {
         setOptionsCollection(res.data)
       }
@@ -298,7 +301,6 @@ const FormBuilder = ({ open, setOpen }) => {
       if (!valueCollection || !selectedOptions.length) return toast.error(messages.please_enter_label)
     }
 
-    // setLoading(true)
 
     const validationData = []
     if (validations.required) {
@@ -363,7 +365,11 @@ const FormBuilder = ({ open, setOpen }) => {
       sendData.options.targetKey = collection.key + 'id'
       sendData.descriptionEn = JSON.stringify(selectedOptions)
       sendData.descriptionAr = fieldType
+      if (selectedOptions.length === 0) {
+        return toast.error(locale === 'ar' ? 'يجب أن تختار حقل من المجموعة' : 'You must select a field from the group')
+      }
     }
+    setLoading(true)
 
     console.log(open.key)
     axiosPost('collection-fields/configure-fields', locale, sendData)

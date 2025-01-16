@@ -18,16 +18,36 @@ import { toast } from 'react-toastify'
 
 function Select({ onChange, data }) {
   const { locale } = useIntl()
-  const [open, setOpen] = useState(true)
   const [collection, setCollection] = useState('')
   const [optionsCollection, setOptionsCollection] = useState([])
   const [loadingCollection, setLoadingCollection] = useState(false)
   const [selectedOptions, setSelectedOptions] = useState([])
   const { messages } = useIntl()
   const [getFields, setGetFields] = useState([])
+  const [dataSources, setDataSources] = useState([])
+
   useEffect(() => {
     setLoadingCollection(true)
-    axiosGet(`collections/get/?dataSourceId=0a6beba7-3939-4d82-a78c-1810714750e4`, locale)
+    axiosGet(`data-source/get`, locale)
+      .then(res => {
+        if (res.status) {
+          setDataSources(res.data)
+          onChange({
+            ...data,
+            data_source_id: res.data[0].id
+          })
+        }
+      })
+      .finally(() => {
+        setLoadingCollection(false)
+      })
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [locale, onChange])
+
+  useEffect(() => {
+    if (!data.data_source_id) return
+    setLoadingCollection(true)
+    axiosGet(`collections/get/?dataSourceId=${data.data_source_id}`, locale)
       .then(res => {
         if (res.status) {
           setOptionsCollection(res.data)
@@ -36,7 +56,7 @@ function Select({ onChange, data }) {
       .finally(() => {
         setLoadingCollection(false)
       })
-  }, [locale])
+  }, [locale, data.data_source_id])
 
   useEffect(() => {
     if (data.collectionId) {
@@ -77,8 +97,6 @@ function Select({ onChange, data }) {
     }
   }
 
-  console.log(selectedOptions, collection)
-
   const handleChange = event => {
     const { value, checked } = event.target
     setSelectedOptions(prevSelected =>
@@ -95,9 +113,32 @@ function Select({ onChange, data }) {
         className='flex flex-col p-4 h-full'
         onSubmit={e => {
           e.preventDefault()
-          onChange({ ...data, selectCollection: { selectedOptions, collection } }) // Update the title using onChange
         }}
       >
+        <TextField
+          select
+          fullWidth
+          value={data.data_source_id}
+          onChange={e => {
+            onChange({
+              ...data,
+              data_source_id: e.target.value,
+              collectionId: false,
+              collectionName: false,
+              selected: [],
+              sortWithId: false
+            })
+          }}
+          label={locale === 'ar' ? 'نوع الارسال' : 'Type Of Submit'}
+          variant='filled'
+        >
+          {dataSources.map(item => (
+            <MenuItem key={item.id} value={item.id}>
+              {item.name}
+            </MenuItem>
+          ))}
+        </TextField>
+        <div className='mb-4'></div>
         <Autocomplete
           options={loadingCollection ? [] : optionsCollection}
           getOptionLabel={option => (locale === 'ar' ? option.nameAr : option.nameEn) || ''}
@@ -106,7 +147,7 @@ function Select({ onChange, data }) {
           value={collection}
           onChange={(e, value) => {
             setCollection(value)
-            onChange({ ...data, collectionId: value?.id, collectionName: value?.key,selected: [],sortWithId:false })
+            onChange({ ...data, collectionId: value?.id, collectionName: value?.key, selected: [], sortWithId: false })
             setSelectedOptions([])
           }}
           renderInput={params => (
@@ -135,7 +176,7 @@ function Select({ onChange, data }) {
         />
 
         <Collapse transition={`height 300ms cubic-bezier(.4, 0, .2, 1)`} isOpen={Boolean(collection?.nameEn)}>
-          <div className='px-4 mt-4'>
+          <div className='mt-4'>
             <FormControl component='fieldset' fullWidth>
               <FormLabel component='legend'>{messages.View_Value}</FormLabel>
               <div className='!flex !flex-row !flex-wrap gap-2'>

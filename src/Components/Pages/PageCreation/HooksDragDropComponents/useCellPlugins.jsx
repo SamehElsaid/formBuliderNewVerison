@@ -18,7 +18,7 @@ import '@react-page/plugins-spacer/lib/index.css'
 
 export default function useCellPlugins({advancedEdit,locale,readOnly}) {
    // Hooks Drag Drop Components
-   const { collection } = useCollection({ advancedEdit, locale })
+   const { collection } = useCollection({ advancedEdit, locale,readOnly })
    const { backgroundPlugin } = useBackground({ locale })
    const { table } = useTable({ advancedEdit, locale })
    const { ContainerPlugin } = useContainer({ locale })

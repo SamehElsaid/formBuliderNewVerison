@@ -9,6 +9,7 @@ import TableEdit from 'src/Components/TableEdit/TableEdit'
 import IconifyIcon from 'src/Components/icon'
 import AddCollection from 'src/Components/Collection/AddCollection'
 import FormBuilder from 'src/Components/Collection/FormBuilder'
+import { useRouter } from 'next/router'
 
 export default function Index() {
   const { locale, messages } = useIntl()
@@ -22,10 +23,15 @@ export default function Index() {
   const [data, setData] = useState([])
   const [openFormBuilder, setOpenFormBuilder] = useState(false)
 
+  const {
+    query: { dataSourceId }
+  } = useRouter()
+
   useEffect(() => {
+    if (!dataSourceId) return
     setLoading(true)
     const loadingToast = toast.loading(locale === 'ar' ? 'جاري التحميل...' : 'Loading...')
-    axiosGet(`collections/get/?dataSourceId=0a6beba7-3939-4d82-a78c-1810714750e4`, locale)
+    axiosGet(`collections/get/?dataSourceId=${dataSourceId}`, locale)
       .then(res => {
         if (res.status) {
           setData(res.data)
@@ -35,7 +41,7 @@ export default function Index() {
         setLoading(false)
         toast.dismiss(loadingToast)
       })
-  }, [locale, paginationModel.page, paginationModel.pageSize, startSearch, refresh])
+  }, [locale, paginationModel.page, paginationModel.pageSize, startSearch, refresh, dataSourceId])
 
   const handleClose = () => {
     setOpen(false)

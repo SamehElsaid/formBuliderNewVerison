@@ -1,4 +1,4 @@
-import { Avatar, Button, Card, CardContent,  IconButton, Tooltip, Typography } from '@mui/material'
+import { Avatar, Button, Card, CardContent,  IconButton,  Tooltip, Typography } from '@mui/material'
 import { Box } from '@mui/system'
 import React, { useEffect, useRef, useState } from 'react'
 import CustomTextField from 'src/@core/components/mui/text-field'
@@ -7,7 +7,7 @@ import { axiosGet } from 'src/Components/axiosCall'
 import { toast } from 'react-toastify'
 import TableEdit from 'src/Components/TableEdit/TableEdit'
 import IconifyIcon from 'src/Components/icon'
-import AddPage from 'src/Components/Pages/AddPage'
+import AddDataSource from 'src/Components/Collection/AddDataSource'
 import Link from 'next/link'
 
 export default function Index() {
@@ -24,7 +24,7 @@ export default function Index() {
   useEffect(() => {
     setLoading(true)
     const loadingToast = toast.loading(locale === 'ar' ? 'جاري التحميل...' : 'Loading...')
-    axiosGet(`page/get-pages`, locale)
+    axiosGet(`data-source/get`, locale)
       .then(res => {
         if (res.status) {
           setData(res.data)
@@ -62,37 +62,30 @@ export default function Index() {
       disableColumnMenu: true,
       headerName: messages.name,
       renderCell: ({ row }) => (
-        <Typography
-          component={Link}
-          href={`/${locale}/setting/pages/${row.name}`}
-          variant='subtitle2'
-          className='underline capitalize !text-main-color'
-          sx={{ fontWeight: 500, color: 'text.secondary' }}
-        >
+        <Typography  component={Link} href={`/${locale}/setting/data-source/collaction?dataSourceId=${row.id}`} variant='subtitle2' className='capitalize !text-main-color underline' sx={{ fontWeight: 500, color: 'text.secondary' }}>
           {row.name}
         </Typography>
       )
     },
+
     {
-      flex: 0.5,
+      flex: 0.2,
       minWidth: 200,
-      field: 'description',
-      disableColumnMenu: true,
-      headerName: messages.description,
-      renderCell: ({ row }) => (
-        <Typography variant='subtitle2' sx={{ fontWeight: 500, color: 'text.secondary' }}>
-          {row.description}
-        </Typography>
-      )
-    },
-    {
-      flex: 0.1,
-      minWidth: 80,
       field: 'action',
       sortable: false,
       headerName: messages.actions,
       renderCell: params => (
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          <Tooltip title={messages.edit}>
+            <IconButton
+              size='small'
+              onClick={e => {
+                setOpen(params.row)
+              }}
+            >
+              <IconifyIcon icon='tabler:edit' />
+            </IconButton>
+          </Tooltip>
           <Tooltip title={messages.delete}>
             <IconButton
               size='small'
@@ -110,7 +103,7 @@ export default function Index() {
 
   return (
     <div>
-      <AddPage open={open} toggle={handleClose} setRefresh={setRefresh} />
+      <AddDataSource open={open} toggle={handleClose} setRefresh={setRefresh} />
 
       <Card className='w-[100%]  mb-5 py-4 '>
         <CardContent
@@ -125,15 +118,15 @@ export default function Index() {
         >
           <div className='flex gap-2 justify-center items-center'>
             <Typography variant='h5' sx={{ color: 'primary.main', fontWeight: 'bold' }}>
-              {locale === 'ar' ? 'الصفحات' : 'Pages'}
+              {locale === 'ar' ? 'المصادر' : 'Data Source'}
             </Typography>
             <Avatar skin='light' sx={{ width: 30, height: 30 }}>
               {data?.length}
             </Avatar>
           </div>
-          <Button variant='contained' color='primary' onClick={() => setOpen(true)}>
-            {locale === 'ar' ? 'إضافة صفحة' : 'Add Page'}
-          </Button>
+          {/* <Button variant='contained' color='primary' onClick={() => setOpen(true)}>
+            {locale === 'ar' ? 'إضافة مصدر' : 'Add Data Source'}
+          </Button> */}
         </CardContent>
       </Card>
       <Box sx={{ mb: 4 }}>

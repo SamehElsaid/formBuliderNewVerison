@@ -28,7 +28,7 @@ const Navigation = () => {
       icon: 'proicons:box-drag',
       title_en: 'Collaction',
       title_ar: 'التجميعات',
-      path: `setting/collaction`
+      path: `setting/data-source`
     },
     {
       icon: 'solar:folder-with-files-bold-duotone',

@@ -7,7 +7,7 @@ import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
 import toast from 'react-hot-toast'
 import { LoadingButton } from '@mui/lab'
 
-export default function ViewCollection({ data, locale, onChange, readOnly }) {
+export default function ViewCollection({ data, locale, onChange, readOnly,disabled }) {
   console.log(data)
   const [getFields, setGetFields] = useState([])
   const [loading, setLoading] = useState(true)
@@ -100,7 +100,7 @@ export default function ViewCollection({ data, locale, onChange, readOnly }) {
   }
 
   return (
-    <div className='text-main'>
+    <div className={`${disabled ? 'text-main' : ''}`}>
       {loading ? (
         <div className='h-[300px]  flex justify-center items-center'>
           <CircularProgress size={50} />

@@ -1,5 +1,6 @@
 import { Icon } from '@iconify/react'
 import {
+  Checkbox,
   FormControlLabel,
   FormHelperText,
   FormLabel,
@@ -50,6 +51,18 @@ export default function DisplayField({ input, dirtyProps, reload, refError, data
   }, [input])
 
   useEffect(() => {
+    if (input?.type === 'OneToMany') {
+      setValue([])
+    }
+    if (input?.type === 'date') {
+      setValue(new Date())
+    }
+    if (input?.type === 'file') {
+      setValue([])
+    }
+  }, [input])
+
+  useEffect(() => {
     if (reload !== 0) {
       setValue('')
       setError(false)
@@ -62,7 +75,7 @@ export default function DisplayField({ input, dirtyProps, reload, refError, data
   const onChange = e => {
     setDirty(true)
     let isTypeNew = true
-    if (input?.type === 'checkbox') {
+    if (input?.type === 'OneToMany') {
       isTypeNew = false
     }
     if (input?.type === 'date') {
@@ -70,7 +83,7 @@ export default function DisplayField({ input, dirtyProps, reload, refError, data
     }
 
     let newData = value
-    if (input?.type === 'checkbox') {
+    if (input?.type === 'OneToMany') {
       setValue(e.target.checked ? [...value, e.target.value] : value.filter(v => v !== e.target.value))
       newData = e.target.checked ? [...value, e.target.value] : value.filter(v => v !== e.target.value)
     } else {
@@ -215,7 +228,7 @@ export default function DisplayField({ input, dirtyProps, reload, refError, data
   const [selectedOptions, setSelectedOptions] = useState([])
 
   useEffect(() => {
-    if (input.type === 'OneToOne' || input.type === 'OneToMany' ) {
+    if (input.type === 'OneToOne' || input.type === 'OneToMany') {
       console.log(input)
       axiosGet(`generic-entities/${input?.options?.source}`).then(res => {
         if (res.status) {
@@ -336,7 +349,9 @@ export default function DisplayField({ input, dirtyProps, reload, refError, data
 
     return (
       <div className=''>
-        <FormLabel htmlFor={input.key}>{locale === 'ar' ? input.nameAr : input.nameEn}</FormLabel>
+        <FormLabel htmlFor={input.key} className='!text-xl capitalize'>
+          {locale === 'ar' ? input.nameAr : input.nameEn}
+        </FormLabel>
         <div className=''>
           {selectedOptions.map((option, index) => (
             <FormControlLabel
@@ -359,7 +374,9 @@ export default function DisplayField({ input, dirtyProps, reload, refError, data
       <div className=''>
         <div className=''>
           <div className=''>
-            <InputLabel id='demo-simple-select-label'>{locale === 'ar' ? input.nameAr : input.nameEn}</InputLabel>
+            <InputLabel id='demo-simple-select-label' className='!text-xl capitalize'>
+              {locale === 'ar' ? input.nameAr : input.nameEn}
+            </InputLabel>
             <Select
               labelId='demo-simple-select-label'
               id='demo-simple-select'
@@ -369,7 +386,6 @@ export default function DisplayField({ input, dirtyProps, reload, refError, data
               onChange={e => onChange(e)}
               name={input.nameEn}
               error={Boolean(findError || error)}
-              helperText={errorView || error}
             >
               {selectedOptions.map((option, index) => (
                 <MenuItem key={index} value={option.Id}>
@@ -378,35 +394,40 @@ export default function DisplayField({ input, dirtyProps, reload, refError, data
               ))}
             </Select>
           </div>
+          <FormHelperText className='!text-[#f44336]'>{errorView || error}</FormHelperText>
         </div>
       </div>
     )
   }
-  if (input.type === 'OneToMany' ) {
+  if (input.type === 'OneToMany') {
     const lable = JSON.parse(input?.descriptionEn)
 
     return (
       <div className=''>
         <div className=''>
           <div className=''>
-            <InputLabel id='demo-simple-select-label'>{locale === 'ar' ? input.nameAr : input.nameEn}</InputLabel>
-            <Select
-              labelId='demo-simple-select-label'
-              id='demo-simple-select'
-              value={value}
-              fullWidth
-              label={locale === 'ar' ? input.nameAr : input.nameEn}
-              onChange={e => onChange(e)}
-              name={input.nameEn}
-              error={Boolean(findError || error)}
-              helperText={errorView || error}
-            >
-              {selectedOptions.map((option, index) => (
-                <MenuItem key={index} value={option.Id}>
-                  {lable.map(ele => option[ele]).join('-')}
-                </MenuItem>
-              ))}
-            </Select>
+            <div className='flex flex-col gap-1'>
+              <FormLabel htmlFor={input.nameEn} className='!text-xl capitalize'>
+                {locale === 'ar' ? input.nameAr : input.nameEn}
+              </FormLabel>
+              <div className=''>
+                {selectedOptions.map((option, index) => (
+                  <FormControlLabel
+                    key={index}
+                    control={
+                      <Checkbox
+                        value={option.Id}
+                        name={input.nameEn}
+                        checked={typeof value === 'object' ? value?.find(v => v === option.Id) : false}
+                        onChange={e => onChange(e)}
+                      />
+                    }
+                    label={lable.map(ele => option[ele]).join('-')}
+                  />
+                ))}
+                <FormHelperText className='!text-[#f44336]'>{errorView || error}</FormHelperText>
+              </div>
+            </div>
           </div>
         </div>
       </div>

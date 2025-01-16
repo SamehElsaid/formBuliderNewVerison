@@ -1157,3 +1157,16 @@ sortable-list {
  .text-main .MuiButtonBase-root.MuiRadio-root:not(.Mui-checked) svg{
   stroke: rgba(47, 43, 61, 0.68) !important;
  }
+
+ .text-main  .MuiFormLabel-root ,.text-main .MuiButtonBase-root.MuiCheckbox-root{
+  color: rgba(47, 43, 61, 0.68) !important;
+ }
+
+ .text-main .MuiTypography-root.MuiTypography-body1.MuiFormControlLabel-label{
+  color: rgba(47, 43, 61, 0.68) !important;
+ }
+
+
+ .text-main .MuiButtonBase-root.MuiCheckbox-root:not(.Mui-checked) svg{
+  stroke: rgba(47, 43, 61, 0.68) !important;
+ }

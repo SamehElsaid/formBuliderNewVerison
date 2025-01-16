@@ -27,13 +27,6 @@ const Index = ({ pageName, initialData, initialDataApi }) => {
     )
   } catch (err) {}
 
-  // useEffect(()=>{
-  //   axiosGet(`page/get-latest-version/${pageName}`).then(res=>{
-  //     if(res.status){
-
-  //     }
-  //   })
-  // },[pageName])
 
   return (
     <div className=''>

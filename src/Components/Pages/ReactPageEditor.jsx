@@ -1,7 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useState } from 'react'
 import Editor from '@react-page/editor'
-
 import '@react-page/editor/lib/index.css'
 import { useIntl } from 'react-intl'
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, IconButton } from '@mui/material'
@@ -32,6 +31,7 @@ const ReactPageEditor = ({ pageName, initialData, initialDataApi }) => {
   const theme = useTheme()
   const { push } = useRouter()
   const apiData = useSelector(state => state.api.data)
+  console.log(theme.palette)
 
   // CellPlugins Hook Calling
   const { cellPlugins } = useCellPlugins({ advancedEdit,locale,readOnly })
@@ -153,7 +153,9 @@ const ReactPageEditor = ({ pageName, initialData, initialDataApi }) => {
           <RiArrowGoBackFill className='text-xl' />
         </Button>
       </div>
-      <div className={`duration-300 ${readOnly ? 'overflow-auto fixed inset-0 pb-10 bg-white z-[1111111]' : ''}`}>
+      <div style={{
+        background:theme.palette.background.default
+      }} className={`duration-300 ${readOnly ? `overflow-auto fixed inset-0 pb-10` : '!bg-white'}`}>
         {readOnly && (
           <div className='fixed top-[10px] end-[10px] z-[11111111]'>
             <IconButton
