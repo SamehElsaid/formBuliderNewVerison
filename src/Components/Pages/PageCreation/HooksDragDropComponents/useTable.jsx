@@ -7,15 +7,13 @@ export default function useTable({ advancedEdit, locale }) {
   const table = useMemo(() => {
     return {
       Renderer: ({ data, onChange }) => {
-        return data.selectCollection?.collection ? (
+        return (
           <TableView
             readOnly={!advancedEdit}
             selectCollection={data.selectCollection}
             onChange={onChange}
             data={data}
           />
-        ) : (
-          <Select onChange={onChange} data={data} />
         )
       },
       id: locale === 'ar' ? 'جدول' : 'Table',
@@ -23,17 +21,8 @@ export default function useTable({ advancedEdit, locale }) {
       description: locale === 'ar' ? 'جدول' : 'Table',
       version: 1,
       controls: {
-        type: 'autoform',
-        schema: {
-          properties: {
-            selectCollection: {
-              type: 'object',
-
-              default: {}
-            }
-          },
-          required: ['selectCollection']
-        }
+        type: 'custom',
+        Component: ({ data, onChange }) => <Select type='table' onChange={onChange} data={data} />
       },
       icon: <FaTableCells className='text-2xl' />
     }

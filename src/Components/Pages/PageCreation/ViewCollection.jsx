@@ -8,7 +8,6 @@ import toast from 'react-hot-toast'
 import { LoadingButton } from '@mui/lab'
 
 export default function ViewCollection({ data, locale, onChange, readOnly,disabled }) {
-  console.log(data)
   const [getFields, setGetFields] = useState([])
   const [loading, setLoading] = useState(true)
   const [loadingSubmit, setLoadingSubmit] = useState(false)

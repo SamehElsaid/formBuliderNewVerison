@@ -2,7 +2,7 @@ import { Stack } from '@mui/system'
 import { DataGrid } from '@mui/x-data-grid'
 import React from 'react'
 
-function PagnationTable({ data, Invitationscolumns, paginationModel, setPaginationModel, locale, noRow, loading, totalRows }) {
+function PagnationTable({ data, Invitationscolumns, paginationModel, setPaginationModel, locale, noRow, loading, totalRows,getRowId }) {
   const handleSortModelChange = (sortModel) => {
     console.log(sortModel)
   }
@@ -24,6 +24,7 @@ function PagnationTable({ data, Invitationscolumns, paginationModel, setPaginati
         columns={Invitationscolumns}
         disableRowSelectionOnClick
         pageSizeOptions={[10, 25, 50]}
+        getRowId={getRowId ?? null}
         paginationModel={paginationModel}
         disableColumnFilter
         onPaginationModelChange={setPaginationModel}
