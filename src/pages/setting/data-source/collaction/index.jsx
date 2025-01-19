@@ -10,7 +10,6 @@ import IconifyIcon from 'src/Components/icon'
 import AddCollection from 'src/Components/Collection/AddCollection'
 import FormBuilder from 'src/Components/Collection/FormBuilder'
 import { useRouter } from 'next/router'
-import dynamic from 'next/dynamic'
 
 export default function Index() {
   const { locale, messages } = useIntl()
@@ -23,10 +22,6 @@ export default function Index() {
   const [refresh, setRefresh] = useState(0)
   const [data, setData] = useState([])
   const [openFormBuilder, setOpenFormBuilder] = useState(false)
-
-  const FormEngine = dynamic(() => import('src/Components/FormEngine/FormEngine'), {
-    ssr: false
-  })
 
   const {
     query: { dataSourceId }
@@ -163,7 +158,6 @@ export default function Index() {
           </Button>
         </CardContent>
       </Card>
-      <FormEngine />
       <Box sx={{ mb: 4 }}>
         <Card className='flex gap-3 flex-wrap md:px-[36px] px-0' sx={{ mb: 6, width: '100%', py: '3.5rem' }}>
           <div className='w-full'>
