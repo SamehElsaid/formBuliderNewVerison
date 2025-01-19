@@ -10,6 +10,7 @@ import IconifyIcon from 'src/Components/icon'
 import AddCollection from 'src/Components/Collection/AddCollection'
 import FormBuilder from 'src/Components/Collection/FormBuilder'
 import { useRouter } from 'next/router'
+import FormEngine from 'src/Components/FormEngine/FormEngine'
 
 export default function Index() {
   const { locale, messages } = useIntl()
@@ -134,7 +135,7 @@ export default function Index() {
     <div>
       <AddCollection open={open} toggle={handleClose} setRefresh={setRefresh} />
       <FormBuilder open={openFormBuilder} setOpen={setOpenFormBuilder} />
-
+      <FormEngine/>
       <Card className='w-[100%]  mb-5 py-4 '>
         <CardContent
           className='h-full'
