@@ -1,6 +1,7 @@
 // ** Next Imports
 import Head from 'next/head'
 import { useRouter } from 'next/router'
+import 'monaco-editor/esm/vs/base/browser/ui/actionbar/actionbar.css';
 import 'react-phone-number-input/style.css'
 import 'react-datepicker/dist/react-datepicker.css'
 import 'keen-slider/keen-slider.min.css'

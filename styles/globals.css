@@ -1170,3 +1170,7 @@ sortable-list {
  .text-main .MuiButtonBase-root.MuiCheckbox-root:not(.Mui-checked) svg{
   stroke: rgba(47, 43, 61, 0.68) !important;
  }
+
+ .css-154bp2h > div:nth-child(1){
+  display: none !important;
+ }
