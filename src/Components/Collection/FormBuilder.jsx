@@ -224,7 +224,10 @@ const FormBuilder = ({ open, setOpen }) => {
   const [valueCollection, setValueCollection] = useState('')
   const [selectedOptions, setSelectedOptions] = useState([])
   const [getFields, setGetFields] = useState([])
-  const { query: { dataSourceId } } = useRouter()
+
+  const {
+    query: { dataSourceId }
+  } = useRouter()
 
   useEffect(() => {
     if (!dataSourceId) return
@@ -301,7 +304,6 @@ const FormBuilder = ({ open, setOpen }) => {
       if (!valueCollection || !selectedOptions.length) return toast.error(messages.please_enter_label)
     }
 
-
     const validationData = []
     if (validations.required) {
       validationData.push({ RuleType: 'Required', Parameters: {} })
@@ -347,12 +349,13 @@ const FormBuilder = ({ open, setOpen }) => {
       descriptionAr: fieldLabel,
       descriptionEn: fieldLabelEn,
       type: getType(fieldType),
-      uiSchema: {
-        fileType: isFileStep ? fileExtensions : []
-      },
       FieldCategory: FindFieldCategory(fieldType),
+
       options: {
-        defaultValue: fieldType === 'tel' ? defaultCountry : ''
+        defaultValue: fieldType === 'tel' ? defaultCountry : '',
+        uiSchema: {
+          fileType: isFileStep ? fileExtensions : [],
+        },
       },
       validationData
     }
@@ -361,7 +364,7 @@ const FormBuilder = ({ open, setOpen }) => {
       sendData.options.foreignKey = key
       sendData.options.source = collection.key
       sendData.options.sourceKey = 'id'
-      sendData.options.target =  open.key
+      sendData.options.target = open.key
       sendData.options.targetKey = collection.key + 'id'
       sendData.descriptionEn = JSON.stringify(selectedOptions)
       sendData.descriptionAr = fieldType

@@ -113,37 +113,38 @@ function Select({ onChange, data, type }) {
   }
 
   const [viewTable, setViewTable] = useState([])
-  useEffect(() => {
-    if (type) {
-      console.log(selectedOptions, 'selected')
 
-      const getSelected = getFields.filter(
-        item => selectedOptions.includes(item.key) && (item.type === 'OneToMany' || item.type === 'OneToOne')
-      )
-      if (getSelected.length === 0) {
-        setViewTable([])
+  // useEffect(() => {
+  //   if (type) {
+  //     console.log(selectedOptions, 'selected')
 
-        return
-      }
+  //     const getSelected = getFields.filter(
+  //       item => selectedOptions.includes(item.key) && (item.type === 'OneToMany' || item.type === 'OneToOne')
+  //     )
+  //     if (getSelected.length === 0) {
+  //       setViewTable([])
 
-      const dataTable = []
+  //       return
+  //     }
 
-      const loadingToast = toast.loading(locale === 'ar' ? 'يتم التحميل' : 'Loading')
-      console.log(getSelected, 'getSelected')
-      Promise.all(
-        getSelected.map(item => {
-          axiosGet(`collection-fields/get?CollectionId=${item.collectionId}`, locale).then(res => {
-            if (res.status) {
-              dataTable.push({ data: res.data, collectionName: item.key })
-            }
-          })
-        })
-      ).finally(() => {
-        toast.dismiss(loadingToast)
-      })
-      setViewTable(dataTable)
-    }
-  }, [type, selectedOptions.length, locale])
+  //     const dataTable = []
+
+  //     const loadingToast = toast.loading(locale === 'ar' ? 'يتم التحميل' : 'Loading')
+  //     console.log(getSelected, 'getSelected')
+  //     Promise.all(
+  //       getSelected.map(item => {
+  //         axiosGet(`collection-fields/get?CollectionId=${item.collectionId}`, locale).then(res => {
+  //           if (res.status) {
+  //             dataTable.push({ data: res.data, collectionName: item.key })
+  //           }
+  //         })
+  //       })
+  //     ).finally(() => {
+  //       toast.dismiss(loadingToast)
+  //     })
+  //     setViewTable(dataTable)
+  //   }
+  // }, [type, selectedOptions.length, locale])
 
 
   return (

@@ -165,9 +165,9 @@ import { useEffect, useState } from 'react'
 import { axiosGet } from 'src/Components/axiosCall'
 import PagnationTable from 'src/Components/TableEdit/PagnationTable'
 import { SortableContainer, SortableElement, arrayMove } from 'react-sortable-hoc'
+import ViewValueInTable from './ViewValueInTable'
 
-
-function TableView({ data, locale, onChange ,readOnly }) {
+function TableView({ data, locale, onChange, readOnly }) {
   const [getFields, setGetFields] = useState([])
   const [loading, setLoading] = useState(true)
   const [dataTable, setDataTable] = useState([])
@@ -193,7 +193,6 @@ function TableView({ data, locale, onChange ,readOnly }) {
       )
         .then(res => {
           if (res.status) {
-
             setGetFields(res.entities)
             setTotalCount(res.totalCount)
           }
@@ -223,52 +222,53 @@ function TableView({ data, locale, onChange ,readOnly }) {
   const [filterWithSelect, setFilterWithSelect] = useState([])
 
   useEffect(() => {
-    if(collectionFields.length === 0) return
+    if (collectionFields.length === 0) return
     let filteredFields = collectionFields.filter(ele => data.selected.includes(ele.key))
-    if(filteredFields.length !== data.sortWithId?.length){
+    if (filteredFields.length !== data.sortWithId?.length) {
       onChange({ ...data, sortWithId: filteredFields.map(ele => ele.id) })
-    }else{
+    } else {
       filteredFields = data.sortWithId.map(ele => filteredFields.find(e => e?.id === ele))
     }
     setFilterWithSelect(filteredFields)
 
     setColumns([
-    {
-      flex: 0.05,
-      minWidth: 60,
-      field: 'index',
-      disableColumnMenu: true,
-      headerName: '#',
-      renderCell: ({ row }) => (
-        <Typography variant='subtitle2' sx={{ fontWeight: 500, color: 'text.secondary' }}>
-          {`${row.index + 1}`}
-        </Typography>
-      )
-    },
-    ...filteredFields.map(ele => ({
-      flex: 0.5,
-      minWidth: 200,
-      disableColumnMenu: true,
-      field: ele.key,
-      headerName: locale === 'ar' ? ele.nameAr.toUpperCase() : ele.nameEn.toUpperCase(),
-      renderCell: ({ row }) => (
-        <Typography variant='subtitle2' sx={{ fontWeight: 500, color: 'text.secondary' }}>
-          {row[ele.key]}
-        </Typography>
-      )
-    }))
-  ])
-
-
-  
-  }, [collectionFields.length, data?.selected?.length,data.sortWithId])
+      {
+        flex: 0.05,
+        minWidth: 60,
+        field: 'index',
+        disableColumnMenu: true,
+        headerName: '#',
+        renderCell: ({ row }) => (
+          <Typography variant='subtitle2' sx={{ fontWeight: 500, color: 'text.secondary' }}>
+            {`${row.index + 1}`}
+          </Typography>
+        )
+      },
+      ...filteredFields.map(ele => ({
+        flex: 0.5,
+        minWidth: 200,
+        disableColumnMenu: true,
+        field: ele.key,
+        headerName: locale === 'ar' ? ele.nameAr.toUpperCase() : ele.nameEn.toUpperCase(),
+        renderCell: ({ row }) => (
+          <Typography variant='subtitle2' sx={{ fontWeight: 500, color: 'text.secondary' }}>
+            {console.log(ele)}
+            {ele?.fieldCategory === 'Associations' ? (
+              <ViewValueInTable data={ele} value={row[ele.key]} />
+            ) : (
+              row[ele.key]
+            )}
+          </Typography>
+        )
+      }))
+    ])
+  }, [collectionFields.length, data?.selected?.length, data.sortWithId])
   useEffect(() => {
     // // if(filterWithSelect.length === 0) return
     // console.log(filterWithSelect.length === data.sortWithId?.length)
     // if(filterWithSelect.length === data.sortWithId?.length){
     //   console.log('sd')
     // }
-    
     // const SortTable = data.sortWithId.map(ele => filterWithSelect.find(e => e?.id === ele))
     // setFilterWithSelect(SortTable)
     // setColumns([
@@ -297,17 +297,15 @@ function TableView({ data, locale, onChange ,readOnly }) {
     //     )
     //   }))
     // ])
+  }, [filterWithSelect.length, data.sortWithId, data?.selected?.length])
 
-  }, [filterWithSelect.length, data.sortWithId,data?.selected?.length])
-
-    const SortableButton = SortableElement(({ value }) => (
+  const SortableButton = SortableElement(({ value }) => (
     <div className='flex gap-2 items-center p-2 text-white rounded-md cursor-pointer select-none text-nowrap bg-main-color'>
-      {locale === 'ar' ? value.nameAr.toUpperCase() : value.nameEn.toUpperCase()} 
+      {locale === 'ar' ? value.nameAr.toUpperCase() : value.nameEn.toUpperCase()}
     </div>
   ))
 
   const SortableList = SortableContainer(({ items }) => {
-
     return (
       <div className='flex flex-wrap gap-3 p-5'>
         {items.map((value, index) => (
@@ -317,7 +315,7 @@ function TableView({ data, locale, onChange ,readOnly }) {
     )
   })
 
-    const onSortEnd = ({ oldIndex, newIndex }) => {
+  const onSortEnd = ({ oldIndex, newIndex }) => {
     const newSelectedOptions = arrayMove(filterWithSelect, oldIndex, newIndex)
     setFilterWithSelect(newSelectedOptions)
 
@@ -327,7 +325,6 @@ function TableView({ data, locale, onChange ,readOnly }) {
     })
   }
 
-
   return (
     <div>
       {loading ? (
@@ -336,7 +333,7 @@ function TableView({ data, locale, onChange ,readOnly }) {
         </div>
       ) : (
         <>
-        {!readOnly && <SortableList items={filterWithSelect} onSortEnd={onSortEnd} axis='xy' />}
+          {!readOnly && <SortableList items={filterWithSelect} onSortEnd={onSortEnd} axis='xy' />}
           <PagnationTable
             Invitationscolumns={columns}
             data={getFields?.map((ele, i) => {

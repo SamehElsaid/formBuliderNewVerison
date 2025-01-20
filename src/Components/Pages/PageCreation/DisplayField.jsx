@@ -1,5 +1,6 @@
 import { Icon } from '@iconify/react'
 import {
+  Button,
   Checkbox,
   FormControlLabel,
   FormHelperText,
@@ -27,8 +28,6 @@ export default function DisplayField({ input, dirtyProps, reload, refError, data
   const [showPassword, setShowPassword] = useState(false)
   const [active, setActive] = useState(false)
   const { locale } = useIntl()
-  const [linkCollection, setLinkCollection] = useState(false)
-  const [data, setData] = useState([])
   const [validations, setValidations] = useState({})
 
   console.log(validations)
@@ -237,6 +236,28 @@ export default function DisplayField({ input, dirtyProps, reload, refError, data
     }
   }, [input])
 
+  console.log(input)
+
+  const onChangeFile = e => {
+    const errorType = []
+    input.allowedFileTypes.forEach(type => {
+      if (e?.target?.files[0]?.type.includes(type.replace('.', '/'))) {
+        errorType.push(true)
+      }
+    })
+    console.log(errorType.includes(true))
+    if (!errorType.includes(true)) {
+      setValue([])
+      e.target.value = ''
+
+      return setError('Invalid File Type')
+    }
+    setError(false)
+    setValue(e?.target?.files[0] ? [e.target.files[0]] : [])
+
+    e.target.value = ''
+  }
+
   if (input.type === 'SingleText' || input.type === 'Number' || input.type === 'Email' || input.type === 'URL') {
     return (
       <TextField
@@ -294,6 +315,31 @@ export default function DisplayField({ input, dirtyProps, reload, refError, data
       />
     )
   }
+  if (input.type === 'File') {
+    return (
+
+      <div>
+        <Button variant='contained' component='label' startIcon={<Icon icon='ph:upload-fill' />} fullWidth>
+          <input
+            type='file'
+
+            // accept={input.allowedFileTypes.map(type => `${type}`).join(',')}
+            hidden
+            name={locale === 'ar' ? input.nameAr : input.nameEn}
+            onChange={e => onChangeFile(e)}
+          />
+          {value.length > 0 && (
+            <div className='flex gap-2'>
+              {value.map(file => (
+                <div key={file.name}>{file.name}</div>
+              ))}
+            </div>
+          )}
+        </Button>
+        <FormHelperText>{error || errorView}</FormHelperText>
+      </div>
+    )
+  }
   if (input.type === 'Date') {
     return (
       <DatePicker
@@ -341,7 +387,6 @@ export default function DisplayField({ input, dirtyProps, reload, refError, data
     )
   }
 
-  console.log(input.type)
   if (input.type === 'OneToOne' && input.descriptionAr !== 'select') {
     const lable = JSON.parse(input?.descriptionEn)
 
