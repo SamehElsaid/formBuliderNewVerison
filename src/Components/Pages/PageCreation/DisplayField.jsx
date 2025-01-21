@@ -50,7 +50,7 @@ export default function DisplayField({ input, dirtyProps, reload, refError, data
   }, [input])
 
   useEffect(() => {
-    if (input?.type === 'OneToMany') {
+    if (input?.type === 'ManyToMany') {
       setValue([])
     }
     if (input?.type === 'date') {
@@ -74,7 +74,7 @@ export default function DisplayField({ input, dirtyProps, reload, refError, data
   const onChange = e => {
     setDirty(true)
     let isTypeNew = true
-    if (input?.type === 'OneToMany') {
+    if (input?.type === 'ManyToMany') {
       isTypeNew = false
     }
     if (input?.type === 'date') {
@@ -82,7 +82,7 @@ export default function DisplayField({ input, dirtyProps, reload, refError, data
     }
 
     let newData = value
-    if (input?.type === 'OneToMany') {
+    if (input?.type === 'ManyToMany') {
       setValue(e.target.checked ? [...value, e.target.value] : value.filter(v => v !== e.target.value))
       newData = e.target.checked ? [...value, e.target.value] : value.filter(v => v !== e.target.value)
     } else {
@@ -227,7 +227,7 @@ export default function DisplayField({ input, dirtyProps, reload, refError, data
   const [selectedOptions, setSelectedOptions] = useState([])
 
   useEffect(() => {
-    if (input.type === 'OneToOne' || input.type === 'OneToMany') {
+    if (input.type === 'OneToOne' || input.type === 'ManyToMany') {
       axiosGet(`generic-entities/${input?.options?.source}`).then(res => {
         if (res.status) {
           setSelectedOptions(res.entities)
@@ -442,7 +442,7 @@ export default function DisplayField({ input, dirtyProps, reload, refError, data
       </div>
     )
   }
-  if (input.type === 'OneToMany') {
+  if (input.type === 'ManyToMany') {
     const lable = JSON.parse(input?.descriptionEn)
 
     return (

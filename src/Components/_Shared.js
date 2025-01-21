@@ -49,7 +49,7 @@ export const getType = type => {
   }
 
   if (type === 'checkbox' ) {
-    return 'OneToMany'
+    return 'ManyToMany'
   }
 
 

@@ -119,7 +119,7 @@ function Select({ onChange, data, type }) {
   //     console.log(selectedOptions, 'selected')
 
   //     const getSelected = getFields.filter(
-  //       item => selectedOptions.includes(item.key) && (item.type === 'OneToMany' || item.type === 'OneToOne')
+  //       item => selectedOptions.includes(item.key) && (item.type === 'ManyToMany' || item.type === 'OneToOne')
   //     )
   //     if (getSelected.length === 0) {
   //       setViewTable([])

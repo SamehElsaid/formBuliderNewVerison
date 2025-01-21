@@ -698,7 +698,7 @@ const FormBuilder = ({ open, setOpen }) => {
                         {console.log(selectedOptions)}
                         {getFields.map(field =>
                           field.type === 'OneToOne' ||
-                          field.type === 'OneToMany' ||
+                          field.type === 'ManyToMany' ||
                           field.type === 'ManyToMany' ? null : (
                             <FormControlLabel
                               key={field.key}
