@@ -18,11 +18,11 @@ import { Icon } from '@iconify/react'
 import { UrlTranAr, UrlTranEn } from 'src/Components/axiosCall'
 import toast from 'react-hot-toast'
 
-export default function InputControl({ data, onChange }) {
+export default function InputControl({ data, onChange, type }) {
   const { locale } = useIntl()
   const [selected, setSelect] = useState('main')
 
-  const Css = cssToObject(data.css || DefaultStyle())
+  const Css = cssToObject(data.css || DefaultStyle(type))
 
   const getData = key => {
     const keys = key.split('.')
@@ -40,7 +40,7 @@ export default function InputControl({ data, onChange }) {
   }
 
   const UpdateData = (key, value) => {
-    const Css = cssToObject(data.css || DefaultStyle())
+    const Css = cssToObject(data.css || DefaultStyle(type))
 
     const keys = key.split('.')
 
@@ -91,7 +91,7 @@ export default function InputControl({ data, onChange }) {
         </ButtonGroup>
       </div>{' '}
       <Collapse transition={`height 300ms cubic-bezier(.4, 0, .2, 1)`} isOpen={Boolean(selected === 'main')}>
-        <TextField
+       {!type &&  <TextField
           fullWidth
           type='text'
           value={data.type || 'text'}
@@ -106,7 +106,7 @@ export default function InputControl({ data, onChange }) {
           <MenuItem value='password'>Password</MenuItem>
           <MenuItem value='tel'>Tel</MenuItem>
           <MenuItem value='url'>Url</MenuItem>
-        </TextField>
+        </TextField>}
         <TextField
           fullWidth
           type='text'
@@ -220,28 +220,38 @@ export default function InputControl({ data, onChange }) {
             )
           }}
         />
+        {type && (
+          <TextField
+            fullWidth
+            type='number'
+            value={data.rows || 5}
+            onChange={e => onChange({ ...data, rows: e.target.value })}
+            variant='filled'
+            label={locale === 'ar' ? 'الأسطر' : 'Rows'}
+          />
+        )}
       </Collapse>
       <Collapse transition={`height 300ms cubic-bezier(.4, 0, .2, 1)`} isOpen={Boolean(selected === 'style')}>
         <TextField
           fullWidth
           type='number'
-          value={getData('input.width.value') || ''}
-          onChange={e => UpdateData('input.width.value', e.target.value)}
+          value={getData(type ? 'textarea.width.value' : 'input.width.value') || ''}
+          onChange={e => UpdateData(type ? 'textarea.width.value' : 'input.width.value', e.target.value)}
           variant='filled'
           label={locale === 'ar' ? 'العرض' : 'Width'}
           disabled={
-            getData('input.width.unit') === 'Max-Content' ||
-            getData('input.width.unit') === 'Min-Content' ||
-            getData('input.width.unit') === 'Fit-Content' ||
-            getData('input.width.unit') === 'Auto' ||
-            !getData('input.width.unit')
+            getData(type ? 'textarea.width.unit' : 'input.width.unit') === 'Max-Content' ||
+            getData(type ? 'textarea.width.unit' : 'input.width.unit') === 'Min-Content' ||
+            getData(type ? 'textarea.width.unit' : 'input.width.unit') === 'Fit-Content' ||
+            getData(type ? 'textarea.width.unit' : 'input.width.unit') === 'Auto' ||
+            !getData(type ? 'textarea.width.unit' : 'input.width.unit')
           }
           InputProps={{
             endAdornment: (
               <InputAdornment position='end'>
                 <Select
-                  value={getData('input.width.unit') || '%'} // الافتراضي px
-                  onChange={e => UpdateData('input.width.unit', e.target.value)}
+                  value={getData(type ? 'textarea.width.unit' : 'input.width.unit') || '%'} // الافتراضي px
+                  onChange={e => UpdateData(type ? 'textarea.width.unit' : 'input.width.unit', e.target.value)}
                   displayEmpty
                   variant='standard'
                 >
@@ -264,23 +274,23 @@ export default function InputControl({ data, onChange }) {
         <TextField
           fullWidth
           type='number'
-          value={getData('input.height.value') || ''}
-          onChange={e => UpdateData('input.height.value', e.target.value)}
+          value={getData(type ? 'textarea.height.value' : 'input.height.value') || ''}
+          onChange={e => UpdateData(type ? 'textarea.height.value' : 'input.height.value', e.target.value)}
           variant='filled'
           label={locale === 'ar' ? 'الطول' : 'Height'}
           disabled={
-            getData('input.height.unit') === 'Max-Content' ||
-            getData('input.height.unit') === 'Min-Content' ||
-            getData('input.height.unit') === 'Fit-Content' ||
-            getData('input.height.unit') === 'Auto' ||
-            !getData('input.height.unit')
+            getData(type ? 'textarea.height.unit' : 'input.height.unit') === 'Max-Content' ||
+            getData(type ? 'textarea.height.unit' : 'input.height.unit') === 'Min-Content' ||
+            getData(type ? 'textarea.height.unit' : 'input.height.unit') === 'Fit-Content' ||
+            getData(type ? 'textarea.height.unit' : 'input.height.unit') === 'Auto' ||
+            !getData(type ? 'textarea.height.unit' : 'input.height.unit')
           }
           InputProps={{
             endAdornment: (
               <InputAdornment position='end'>
                 <Select
-                  value={getData('input.height.unit') || 'Auto'} // الافتراضي px
-                  onChange={e => UpdateData('input.height.unit', e.target.value)}
+                  value={getData(type ? 'textarea.height.unit' : 'input.height.unit') || 'Auto'} // الافتراضي px
+                  onChange={e => UpdateData(type ? 'textarea.height.unit' : 'input.height.unit', e.target.value)}
                   displayEmpty
                   variant='standard'
                 >
@@ -301,23 +311,23 @@ export default function InputControl({ data, onChange }) {
         <TextField
           fullWidth
           type='number'
-          value={getData('input.margin-top.value') || ''}
-          onChange={e => UpdateData('input.margin-top.value', e.target.value)}
+          value={getData(type ? 'textarea.margin-top.value' : 'input.margin-top.value') || ''}
+          onChange={e => UpdateData(type ? 'textarea.margin-top.value' : 'input.margin-top.value', e.target.value)}
           variant='filled'
           label={locale === 'ar' ? 'المسافة العلوية' : 'Margin Top'}
           disabled={
-            getData('input.margin-top.unit') === 'Max-Content' ||
-            getData('input.margin-top.unit') === 'Min-Content' ||
-            getData('input.margin-top.unit') === 'Fit-Content' ||
-            getData('input.margin-top.unit') === 'Auto' ||
-            !getData('input.margin-top.unit')
+            getData(type ? 'textarea.margin-top.unit' : 'input.margin-top.unit') === 'Max-Content' ||
+            getData(type ? 'textarea.margin-top.unit' : 'input.margin-top.unit') === 'Min-Content' ||
+            getData(type ? 'textarea.margin-top.unit' : 'input.margin-top.unit') === 'Fit-Content' ||
+            getData(type ? 'textarea.margin-top.unit' : 'input.margin-top.unit') === 'Auto' ||
+            !getData(type ? 'textarea.margin-top.unit' : 'input.margin-top.unit')
           }
           InputProps={{
             endAdornment: (
               <InputAdornment position='end'>
                 <Select
-                  value={getData('input.margin-top.unit') || 'Auto'} // الافتراضي px
-                  onChange={e => UpdateData('input.margin-top.unit', e.target.value)}
+                  value={getData(type ? 'textarea.margin-top.unit' : 'input.margin-top.unit') || 'Auto'} // الافتراضي px
+                  onChange={e => UpdateData(type ? 'textarea.margin-top.unit' : 'input.margin-top.unit', e.target.value)}
                   displayEmpty
                   variant='standard'
                 >
@@ -338,23 +348,23 @@ export default function InputControl({ data, onChange }) {
         <TextField
           fullWidth
           type='number'
-          value={getData('input.margin-bottom.value') || ''}
-          onChange={e => UpdateData('input.margin-bottom.value', e.target.value)}
+          value={getData(type ? 'textarea.margin-bottom.value' : 'input.margin-bottom.value') || ''}
+          onChange={e => UpdateData(type ? 'textarea.margin-bottom.value' : 'input.margin-bottom.value', e.target.value)}
           variant='filled'
           label={locale === 'ar' ? 'المسافة السفلية' : 'Margin Bottom'}
           disabled={
-            getData('input.margin-bottom.unit') === 'Max-Content' ||
-            getData('input.margin-bottom.unit') === 'Min-Content' ||
-            getData('input.margin-bottom.unit') === 'Fit-Content' ||
-            getData('input.margin-bottom.unit') === 'Auto' ||
-            !getData('input.margin-bottom.unit')
+            getData(type ? 'textarea.margin-bottom.unit' : 'input.margin-bottom.unit') === 'Max-Content' ||
+            getData(type ? 'textarea.margin-bottom.unit' : 'input.margin-bottom.unit') === 'Min-Content' ||
+            getData(type ? 'textarea.margin-bottom.unit' : 'input.margin-bottom.unit') === 'Fit-Content' ||
+            getData(type ? 'textarea.margin-bottom.unit' : 'input.margin-bottom.unit') === 'Auto' ||
+            !getData(type ? 'textarea.margin-bottom.unit' : 'input.margin-bottom.unit')
           }
           InputProps={{
             endAdornment: (
               <InputAdornment position='end'>
                 <Select
-                  value={getData('input.margin-bottom.unit') || 'Auto'} // الافتراضي px
-                  onChange={e => UpdateData('input.margin-bottom.unit', e.target.value)}
+                  value={getData(type ? 'textarea.margin-bottom.unit' : 'input.margin-bottom.unit') || 'Auto'} // الافتراضي px
+                  onChange={e => UpdateData(type ? 'textarea.margin-bottom.unit' : 'input.margin-bottom.unit', e.target.value)}
                   displayEmpty
                   variant='standard'
                 >
@@ -375,23 +385,23 @@ export default function InputControl({ data, onChange }) {
         <TextField
           fullWidth
           type='number'
-          value={getData('input.margin-inline-start.value') || ''}
-          onChange={e => UpdateData('input.margin-inline-start.value', e.target.value)}
+          value={getData(type ? 'textarea.margin-inline-start.value' : 'input.margin-inline-start.value') || ''}
+          onChange={e => UpdateData(type ? 'textarea.margin-inline-start.value' : 'input.margin-inline-start.value', e.target.value)}
           variant='filled'
           label={locale === 'ar' ? 'المسافة اليسرى' : 'Margin Left'}
           disabled={
-            getData('input.margin-inline-start.unit') === 'Max-Content' ||
-            getData('input.margin-inline-start.unit') === 'Min-Content' ||
-            getData('input.margin-inline-start.unit') === 'Fit-Content' ||
-            getData('input.margin-inline-start.unit') === 'Auto' ||
-            !getData('input.margin-inline-start.unit')
+            getData(type ? 'textarea.margin-inline-start.unit' : 'input.margin-inline-start.unit') === 'Max-Content' ||
+            getData(type ? 'textarea.margin-inline-start.unit' : 'input.margin-inline-start.unit') === 'Min-Content' ||
+            getData(type ? 'textarea.margin-inline-start.unit' : 'input.margin-inline-start.unit') === 'Fit-Content' ||
+            getData(type ? 'textarea.margin-inline-start.unit' : 'input.margin-inline-start.unit') === 'Auto' ||
+            !getData(type ? 'textarea.margin-inline-start.unit' : 'input.margin-inline-start.unit')
           }
           InputProps={{
             endAdornment: (
               <InputAdornment position='end'>
                 <Select
-                  value={getData('input.margin-inline-start.unit') || 'Auto'} // الافتراضي px
-                  onChange={e => UpdateData('input.margin-inline-start.unit', e.target.value)}
+                  value={getData(type ? 'textarea.margin-inline-start.unit' : 'input.margin-inline-start.unit') || 'Auto'} // الافتراضي px
+                  onChange={e => UpdateData(type ? 'textarea.margin-inline-start.unit' : 'input.margin-inline-start.unit', e.target.value)}
                   displayEmpty
                   variant='standard'
                 >
@@ -412,23 +422,23 @@ export default function InputControl({ data, onChange }) {
         <TextField
           fullWidth
           type='number'
-          value={getData('input.margin-inline-end.value') || ''}
-          onChange={e => UpdateData('input.margin-inline-end.value', e.target.value)}
+          value={getData(type ? 'textarea.margin-inline-end.value' : 'input.margin-inline-end.value') || ''}
+          onChange={e => UpdateData(type ? 'textarea.margin-inline-end.value' : 'input.margin-inline-end.value', e.target.value)}
           variant='filled'
           label={locale === 'ar' ? 'المسافة اليمنى' : 'Margin Right'}
           disabled={
-            getData('input.margin-inline-end.unit') === 'Max-Content' ||
-            getData('input.margin-inline-end.unit') === 'Min-Content' ||
-            getData('input.margin-inline-end.unit') === 'Fit-Content' ||
-            getData('input.margin-inline-end.unit') === 'Auto' ||
-            !getData('input.margin-inline-end.unit')
+            getData(type ? 'textarea.margin-inline-end.unit' : 'input.margin-inline-end.unit') === 'Max-Content' ||
+            getData(type ? 'textarea.margin-inline-end.unit' : 'input.margin-inline-end.unit') === 'Min-Content' ||
+            getData(type ? 'textarea.margin-inline-end.unit' : 'input.margin-inline-end.unit') === 'Fit-Content' ||
+            getData(type ? 'textarea.margin-inline-end.unit' : 'input.margin-inline-end.unit') === 'Auto' ||
+            !getData(type ? 'textarea.margin-inline-end.unit' : 'input.margin-inline-end.unit')
           }
           InputProps={{
             endAdornment: (
               <InputAdornment position='end'>
                 <Select
-                  value={getData('input.margin-inline-end.unit') || 'Auto'} // الافتراضي px
-                  onChange={e => UpdateData('input.margin-inline-end.unit', e.target.value)}
+                  value={getData(type ? 'textarea.margin-inline-end.unit' : 'input.margin-inline-end.unit') || 'Auto'} // الافتراضي px
+                  onChange={e => UpdateData(type ? 'textarea.margin-inline-end.unit' : 'input.margin-inline-end.unit', e.target.value)}
                   displayEmpty
                   variant='standard'
                 >
@@ -450,8 +460,8 @@ export default function InputControl({ data, onChange }) {
           <TextField
             fullWidth
             type='color'
-            defaultValue={getData('input.background-color.unit') || '#575757'}
-            onBlur={e => UpdateData('input.background-color.unit', e.target.value)}
+            defaultValue={getData(type ? 'textarea.background-color.unit' : 'input.background-color.unit') || '#575757'}
+            onBlur={e => UpdateData(type ? 'textarea.background-color.unit' : 'input.background-color.unit', e.target.value)}
             label={locale === 'ar' ? 'اللون الخلفي' : 'Background Color'}
             variant='filled'
           />
@@ -461,8 +471,8 @@ export default function InputControl({ data, onChange }) {
           <TextField
             fullWidth
             type='color'
-            defaultValue={getData('input.color.unit') || '#575757'}
-            onBlur={e => UpdateData('input.color.unit', e.target.value)}
+            defaultValue={getData(type ? 'textarea.color.unit' : 'input.color.unit') || '#575757'}
+            onBlur={e => UpdateData(type ? 'textarea.color.unit' : 'input.color.unit', e.target.value)}
             label={locale === 'ar' ? 'اللون' : 'Color'}
             variant='filled'
           />
@@ -471,8 +481,8 @@ export default function InputControl({ data, onChange }) {
           <TextField
             fullWidth
             type='color'
-            defaultValue={getData('input::placeholder.color.unit') || '#dfdfdf'}
-            onBlur={e => UpdateData('input::placeholder.color.unit', e.target.value)}
+            defaultValue={getData(type ? 'textarea::placeholder.color.unit' : 'input::placeholder.color.unit') || '#dfdfdf'}
+            onBlur={e => UpdateData(type ? 'textarea::placeholder.color.unit' : 'input::placeholder.color.unit', e.target.value)}
             label={locale === 'ar' ? 'لون المكان المشغول' : 'PlaceHolder Color'}
             variant='filled'
           />
@@ -481,280 +491,14 @@ export default function InputControl({ data, onChange }) {
           <TextField
             fullWidth
             type='color'
-            defaultValue={getData('label.color.unit') || '#555'}
-            onBlur={e => UpdateData('label.color.unit', e.target.value)}
+            defaultValue={getData(type ? 'textarea.label.color.unit' : 'input.label.color.unit') || '#555'}
+            onBlur={e => UpdateData(type ? 'textarea.label.color.unit' : 'input.label.color.unit', e.target.value)}
             label={locale === 'ar' ? 'لون التسمية' : 'Label Color'}
             variant='filled'
           />
         </div>
       </Collapse>
-      <Collapse transition={`height 300ms cubic-bezier(.4, 0, .2, 1)`} isOpen={Boolean(selected === 'style')}>
-        <TextField
-          fullWidth
-          type='number'
-          value={getData('input.width.value') || ''}
-          onChange={e => UpdateData('input.width.value', e.target.value)}
-          variant='filled'
-          label={locale === 'ar' ? 'العرض' : 'Width'}
-          disabled={
-            getData('input.width.unit') === 'Max-Content' ||
-            getData('input.width.unit') === 'Min-Content' ||
-            getData('input.width.unit') === 'Fit-Content' ||
-            getData('input.width.unit') === 'Auto' ||
-            !getData('input.width.unit')
-          }
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position='end'>
-                <Select
-                  value={getData('input.width.unit') || '%'} // الافتراضي px
-                  onChange={e => UpdateData('input.width.unit', e.target.value)}
-                  displayEmpty
-                  variant='standard'
-                >
-                  <MenuItem value='px'>PX</MenuItem>
-                  <MenuItem value='%'>%</MenuItem>
-                  <MenuItem value='EM'>EM</MenuItem>
-                  <MenuItem value='VW'>VW</MenuItem>
-                  <MenuItem value='Max-Content'>Max-Content</MenuItem>
-                  <MenuItem value='Min-Content'>Min-Content</MenuItem>
-                  <MenuItem value='Fit-Content'>Fit-Content</MenuItem>
-                  <MenuItem value='Auto'>Auto</MenuItem>
-                </Select>
-                {/* <FormControl>
-              </FormControl> */}
-              </InputAdornment>
-            )
-          }}
-        />
-        <div className='mt-1'></div>
-        <TextField
-          fullWidth
-          type='number'
-          value={getData('input.height.value') || ''}
-          onChange={e => UpdateData('input.height.value', e.target.value)}
-          variant='filled'
-          label={locale === 'ar' ? 'الطول' : 'Height'}
-          disabled={
-            getData('input.height.unit') === 'Max-Content' ||
-            getData('input.height.unit') === 'Min-Content' ||
-            getData('input.height.unit') === 'Fit-Content' ||
-            getData('input.height.unit') === 'Auto' ||
-            !getData('input.height.unit')
-          }
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position='end'>
-                <Select
-                  value={getData('input.height.unit') || 'Auto'} // الافتراضي px
-                  onChange={e => UpdateData('input.height.unit', e.target.value)}
-                  displayEmpty
-                  variant='standard'
-                >
-                  <MenuItem value='px'>PX</MenuItem>
-                  <MenuItem value='%'>%</MenuItem>
-                  <MenuItem value='EM'>EM</MenuItem>
-                  <MenuItem value='VW'>VW</MenuItem>
-                  <MenuItem value='Max-Content'>Max-Content</MenuItem>
-                  <MenuItem value='Min-Content'>Min-Content</MenuItem>
-                  <MenuItem value='Fit-Content'>Fit-Content</MenuItem>
-                  <MenuItem value='Auto'>Auto</MenuItem>
-                </Select>
-              </InputAdornment>
-            )
-          }}
-        />
-        <div className='mt-1'></div>
-        <TextField
-          fullWidth
-          type='number'
-          value={getData('input.margin-top.value') || ''}
-          onChange={e => UpdateData('input.margin-top.value', e.target.value)}
-          variant='filled'
-          label={locale === 'ar' ? 'المسافة العلوية' : 'Margin Top'}
-          disabled={
-            getData('input.margin-top.unit') === 'Max-Content' ||
-            getData('input.margin-top.unit') === 'Min-Content' ||
-            getData('input.margin-top.unit') === 'Fit-Content' ||
-            getData('input.margin-top.unit') === 'Auto' ||
-            !getData('input.margin-top.unit')
-          }
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position='end'>
-                <Select
-                  value={getData('input.margin-top.unit') || 'Auto'} // الافتراضي px
-                  onChange={e => UpdateData('input.margin-top.unit', e.target.value)}
-                  displayEmpty
-                  variant='standard'
-                >
-                  <MenuItem value='px'>PX</MenuItem>
-                  <MenuItem value='%'>%</MenuItem>
-                  <MenuItem value='EM'>EM</MenuItem>
-                  <MenuItem value='VW'>VW</MenuItem>
-                  <MenuItem value='Max-Content'>Max-Content</MenuItem>
-                  <MenuItem value='Min-Content'>Min-Content</MenuItem>
-                  <MenuItem value='Fit-Content'>Fit-Content</MenuItem>
-                  <MenuItem value='Auto'>Auto</MenuItem>
-                </Select>
-              </InputAdornment>
-            )
-          }}
-        />
-        <div className='mt-1'></div>
-        <TextField
-          fullWidth
-          type='number'
-          value={getData('input.margin-bottom.value') || ''}
-          onChange={e => UpdateData('input.margin-bottom.value', e.target.value)}
-          variant='filled'
-          label={locale === 'ar' ? 'المسافة السفلية' : 'Margin Bottom'}
-          disabled={
-            getData('input.margin-bottom.unit') === 'Max-Content' ||
-            getData('input.margin-bottom.unit') === 'Min-Content' ||
-            getData('input.margin-bottom.unit') === 'Fit-Content' ||
-            getData('input.margin-bottom.unit') === 'Auto' ||
-            !getData('input.margin-bottom.unit')
-          }
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position='end'>
-                <Select
-                  value={getData('input.margin-bottom.unit') || 'Auto'} // الافتراضي px
-                  onChange={e => UpdateData('input.margin-bottom.unit', e.target.value)}
-                  displayEmpty
-                  variant='standard'
-                >
-                  <MenuItem value='px'>PX</MenuItem>
-                  <MenuItem value='%'>%</MenuItem>
-                  <MenuItem value='EM'>EM</MenuItem>
-                  <MenuItem value='VW'>VW</MenuItem>
-                  <MenuItem value='Max-Content'>Max-Content</MenuItem>
-                  <MenuItem value='Min-Content'>Min-Content</MenuItem>
-                  <MenuItem value='Fit-Content'>Fit-Content</MenuItem>
-                  <MenuItem value='Auto'>Auto</MenuItem>
-                </Select>
-              </InputAdornment>
-            )
-          }}
-        />
-        <div className='mt-1'></div>
-        <TextField
-          fullWidth
-          type='number'
-          value={getData('input.margin-inline-start.value') || ''}
-          onChange={e => UpdateData('input.margin-inline-start.value', e.target.value)}
-          variant='filled'
-          label={locale === 'ar' ? 'المسافة اليسرى' : 'Margin Left'}
-          disabled={
-            getData('input.margin-inline-start.unit') === 'Max-Content' ||
-            getData('input.margin-inline-start.unit') === 'Min-Content' ||
-            getData('input.margin-inline-start.unit') === 'Fit-Content' ||
-            getData('input.margin-inline-start.unit') === 'Auto' ||
-            !getData('input.margin-inline-start.unit')
-          }
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position='end'>
-                <Select
-                  value={getData('input.margin-inline-start.unit') || 'Auto'} // الافتراضي px
-                  onChange={e => UpdateData('input.margin-inline-start.unit', e.target.value)}
-                  displayEmpty
-                  variant='standard'
-                >
-                  <MenuItem value='px'>PX</MenuItem>
-                  <MenuItem value='%'>%</MenuItem>
-                  <MenuItem value='EM'>EM</MenuItem>
-                  <MenuItem value='VW'>VW</MenuItem>
-                  <MenuItem value='Max-Content'>Max-Content</MenuItem>
-                  <MenuItem value='Min-Content'>Min-Content</MenuItem>
-                  <MenuItem value='Fit-Content'>Fit-Content</MenuItem>
-                  <MenuItem value='Auto'>Auto</MenuItem>
-                </Select>
-              </InputAdornment>
-            )
-          }}
-        />
-        <div className='mt-1'></div>
-        <TextField
-          fullWidth
-          type='number'
-          value={getData('input.margin-inline-end.value') || ''}
-          onChange={e => UpdateData('input.margin-inline-end.value', e.target.value)}
-          variant='filled'
-          label={locale === 'ar' ? 'المسافة اليمنى' : 'Margin Right'}
-          disabled={
-            getData('input.margin-inline-end.unit') === 'Max-Content' ||
-            getData('input.margin-inline-end.unit') === 'Min-Content' ||
-            getData('input.margin-inline-end.unit') === 'Fit-Content' ||
-            getData('input.margin-inline-end.unit') === 'Auto' ||
-            !getData('input.margin-inline-end.unit')
-          }
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position='end'>
-                <Select
-                  value={getData('input.margin-inline-end.unit') || 'Auto'} // الافتراضي px
-                  onChange={e => UpdateData('input.margin-inline-end.unit', e.target.value)}
-                  displayEmpty
-                  variant='standard'
-                >
-                  <MenuItem value='px'>PX</MenuItem>
-                  <MenuItem value='%'>%</MenuItem>
-                  <MenuItem value='EM'>EM</MenuItem>
-                  <MenuItem value='VW'>VW</MenuItem>
-                  <MenuItem value='Max-Content'>Max-Content</MenuItem>
-                  <MenuItem value='Min-Content'>Min-Content</MenuItem>
-                  <MenuItem value='Fit-Content'>Fit-Content</MenuItem>
-                  <MenuItem value='Auto'>Auto</MenuItem>
-                </Select>
-              </InputAdornment>
-            )
-          }}
-        />
 
-        <div className='bg-[#f0f0f0] p-2 mt-1 rounded-md cursor-pointer'>
-          <TextField
-            fullWidth
-            type='color'
-            defaultValue={getData('input.background-color.unit') || '#575757'}
-            onBlur={e => UpdateData('input.background-color.unit', e.target.value)}
-            label={locale === 'ar' ? 'اللون الخلفي' : 'Background Color'}
-            variant='filled'
-          />
-        </div>
-        {console.log(Css)}
-        <div className='bg-[#f0f0f0] p-2 mt-1 rounded-md cursor-pointer'>
-          <TextField
-            fullWidth
-            type='color'
-            defaultValue={getData('input.color.unit') || '#575757'}
-            onBlur={e => UpdateData('input.color.unit', e.target.value)}
-            label={locale === 'ar' ? 'اللون' : 'Color'}
-            variant='filled'
-          />
-        </div>
-        <div className='bg-[#f0f0f0] p-2 mt-1 rounded-md cursor-pointer'>
-          <TextField
-            fullWidth
-            type='color'
-            defaultValue={getData('input::placeholder.color.unit') || '#dfdfdf'}
-            onBlur={e => UpdateData('input::placeholder.color.unit', e.target.value)}
-            label={locale === 'ar' ? 'لون المكان المشغول' : 'PlaceHolder Color'}
-            variant='filled'
-          />
-        </div>
-        <div className='bg-[#f0f0f0] p-2 mt-1 rounded-md cursor-pointer'>
-          <TextField
-            fullWidth
-            type='color'
-            defaultValue={getData('label.color.unit') || '#555'}
-            onBlur={e => UpdateData('label.color.unit', e.target.value)}
-            label={locale === 'ar' ? 'لون التسمية' : 'Label Color'}
-            variant='filled'
-          />
-        </div>
-      </Collapse>
       <Collapse transition={`height 300ms cubic-bezier(.4, 0, .2, 1)`} isOpen={Boolean(selected === 'roles')}>
         <FormControlLabel
           control={

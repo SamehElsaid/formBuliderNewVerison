@@ -55,7 +55,42 @@ export const getType = type => {
   return type.charAt(0).toUpperCase() + type.slice(1)
 }
 
-export const DefaultStyle = () => {
+export const DefaultStyle = type => {
+  console.log(type)
+  if (type === 'textarea') {
+    return `
+     label{
+margin-bottom:5px;
+display:block;
+color:#555;
+}
+textarea:focus,
+textarea:hover {
+  border-color: #3498ff;
+}
+textarea:focus {
+  outline: 3px solid #3498ff40 ;
+}
+textarea {
+  width:100%;
+  padding:10px 20px;
+  border-radius:5px;
+  border:1px solid #e5e5ea;
+  height:0Auto;
+  margin-top:0px;
+  margin-bottom:0px;
+  margin-inline-start:0px;
+  margin-inline-end:0px;
+  background-color:transparent;
+  color:#575757;
+}
+textarea::placeholder {
+  height:0Auto;
+  color: #dfdfdf;
+}
+      `
+  }
+
   return `
 label{
 margin-bottom:5px;

@@ -119,13 +119,12 @@ const ReactPageEditor = () => {
                     if (dataMain.type === 'number') {
                       validationData.push({ RuleType: 'ColumnDataType', Parameters: { expectedType: 'System.number' } })
                     }
-                    if (cell.plugin.id === 'input') {
-                      console.log(validationData)
-                      data.type = getType(dataMain.type || 'text')
+                    if (cell.plugin.id === 'input' || cell.plugin.id === 'textarea') {
+                      data.type = getType(cell.plugin.id === 'textarea' ? 'textarea' : dataMain.type || 'text')
                       data.collectionId = addFiles
                       data.key = dataMain.key
                       data.descriptionAr = dataMain.labelAr || ''
-                      data.descriptionEn = dataMain.labelEn || ''
+                      data.descriptionEn = cell.plugin.id === 'textarea' ? data.rows || '5' : dataMain.labelEn || ''
                       data.nameAr = dataMain.labelAr || ''
                       data.nameEn = dataMain.labelEn || ''
                       const placeholderAr = dataMain.placeholderAr || ''
@@ -137,7 +136,7 @@ const ReactPageEditor = () => {
                       const regexMessageEn = dataMain.regexMessageEn || ''
                       data.options.uiSchema.errorMessage =
                         JSON.stringify({ ar: regexMessageAr, en: regexMessageEn }) || ''
-                      data.options.uiSchema.cssClass = dataMain.css || DefaultStyle()
+                      data.options.uiSchema.cssClass = dataMain.css || DefaultStyle(cell.plugin.id)
                       data.validationData = validationData
                       if (!data.key) {
                         toast.error(

@@ -108,6 +108,17 @@ export default function Index() {
           >
             {locale === 'ar' ? 'إضافة حقل' : 'Add Field'}
           </Button>
+          <Button
+            variant='text'
+            className='!text-nowrap'
+            size='small'
+            color='error'
+            onClick={() => {
+              setOpenFormBuilder(params.row)
+            }}
+          >
+            {locale === 'ar' ? 'إضافة حقل' : 'Add Field'}
+          </Button>
           <Tooltip title={messages.edit}>
             <IconButton
               size='small'
