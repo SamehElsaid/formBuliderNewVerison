@@ -14,9 +14,12 @@ import { TbApi } from 'react-icons/tb'
 import { useRouter } from 'next/router'
 import { LoadingButton } from '@mui/lab'
 import useCellPlugins from './PageCreation/HooksDragDropComponents/useCellPlugins'
+import { toast } from 'react-toastify'
+import { DefaultStyle, getType } from '../_Shared'
+import { axiosPost } from '../axiosCall'
 
 const ReactPageEditor = () => {
-  const [editorValue, setEditorValue] = useState( null)
+  const [editorValue, setEditorValue] = useState(null)
   const [readOnly, setReadOnly] = useState(false)
   const [advancedEdit, setAdvancedEdit] = useState(false)
   const { locale } = useIntl()
@@ -25,10 +28,14 @@ const ReactPageEditor = () => {
   const [saveData, setSaveData] = useState(false)
   const [loadingSaveData, setLoadingSaveData] = useState(false)
   const theme = useTheme()
-  const { push } = useRouter()
+
+  const {
+    push,
+    query: { addFiles,dataSourceId }
+  } = useRouter()
 
   // CellPlugins Hook Calling
-  const { cellPlugins } = useCellPlugins({ advancedEdit,locale,readOnly })
+  const { cellPlugins } = useCellPlugins({ advancedEdit, locale, readOnly })
 
   return (
     <div className='relative'>
@@ -60,7 +67,138 @@ const ReactPageEditor = () => {
             <LoadingButton
               loading={loadingSaveData}
               variant='contained'
+              onClick={() => {
+                const stop = []
+                const addData = []
+                editorValue?.rows.map((row, index) => {
+                  console.log(row)
+                  row.cells.map(cell => {
+                    const data = { options: { uiSchema: {} } }
+                    const dataMain = cell?.dataI18n?.default || {}
+                    const validationData = []
+                    if (dataMain.required) {
+                      validationData.push({ RuleType: 'Required', Parameters: {} })
+                    }
+                    if (dataMain.unique) {
+                      validationData.push({
+                        RuleType: 'Unique',
+                        Parameters: {
+                          // tableName: 'Tests',
+                          // columnNames: [dataMain.key]
+                        }
+                      })
+                    }
+                    if (dataMain.maxLength) {
+                      validationData.push({ RuleType: 'MaxLength', Parameters: { maxLength: dataMain.maxLength } })
+                    }
+                    if (dataMain.minLength) {
+                      validationData.push({ RuleType: 'MinLength', Parameters: { minLength: dataMain.minLength } })
+                    }
+                    {
+                      console.log(dataMain.type)
+                    }
+                    if (dataMain.maxValue && dataMain.type === 'number') {
+                      validationData.push({ RuleType: 'MaxValue', Parameters: { maxValue: dataMain.maxValue } })
+                    }
+                    if (dataMain.minValue && dataMain.type === 'number') {
+                      validationData.push({ RuleType: 'MinValue', Parameters: { minValue: dataMain.minValue } })
+                    }
 
+                    if (dataMain.type === 'url') {
+                      validationData.push({ RuleType: 'Url', Parameters: {} })
+                    }
+                    if (dataMain.type === 'email') {
+                      validationData.push({ RuleType: 'Email', Parameters: {} })
+                    }
+                    if (dataMain.type === 'date') {
+                      validationData.push({
+                        RuleType: 'ColumnDataType',
+                        Parameters: { expectedType: 'System.DateTime' }
+                      })
+                    }
+                    if (dataMain.type === 'number') {
+                      validationData.push({ RuleType: 'ColumnDataType', Parameters: { expectedType: 'System.number' } })
+                    }
+                    if (cell.plugin.id === 'input') {
+                      console.log(validationData)
+                      data.type = getType(dataMain.type || 'text')
+                      data.collectionId = addFiles
+                      data.key = dataMain.key
+                      data.descriptionAr = dataMain.labelAr || ''
+                      data.descriptionEn = dataMain.labelEn || ''
+                      data.nameAr = dataMain.labelAr || ''
+                      data.nameEn = dataMain.labelEn || ''
+                      const placeholderAr = dataMain.placeholderAr || ''
+                      const placeholderEn = dataMain.placeholderEn || ''
+                      data.options.uiSchema.placeholder = JSON.stringify({ ar: placeholderAr, en: placeholderEn })
+                      data.FieldCategory = 'Basic'
+                      data.options.uiSchema.regex = dataMain.regex || ''
+                      const regexMessageAr = dataMain.regexMessageAr || ''
+                      const regexMessageEn = dataMain.regexMessageEn || ''
+                      data.options.uiSchema.errorMessage =
+                        JSON.stringify({ ar: regexMessageAr, en: regexMessageEn }) || ''
+                      data.options.uiSchema.cssClass = dataMain.css || DefaultStyle()
+                      data.validationData = validationData
+                      if (!data.key) {
+                        toast.error(
+                          locale === 'ar'
+                            ? `المفتاح مطلوب في الحقل ${index + 1}`
+                            : `Key is required in  Field  ${index + 1}`
+                        )
+                        stop.push(false)
+                      }
+                      if (!data.nameAr) {
+                        toast.error(
+                          locale === 'ar'
+                            ? `الحقل بالعربي مطلوب في الحقل ${index + 1}`
+                            : `Label in Arabic is required in  Field  ${index + 1}`
+                        )
+                        stop.push(false)
+                      }
+                      if (!data.nameEn) {
+                        toast.error(
+                          locale === 'ar'
+                            ? `الحقل بالانجليزي مطلوب في الحقل ${index + 1}`
+                            : `Label in English is required in  Field  ${index + 1}`
+                        )
+                        stop.push(false)
+                      }
+                      addData.push(data)
+                    }
+                  })
+                })
+                if (stop.includes(false)) {
+                  return
+                }
+                if (addData.length === 0) {
+                  toast.error(locale === 'ar' ? 'لا يوجد حقول للاضافة' : 'No fields to add')
+
+                  return
+                }
+                setLoadingSaveData(true)
+                Promise.all(
+                  addData.map(item =>
+                    axiosPost('collection-fields/configure-fields', locale, item).then(res => {
+                      if (res.status) {
+                        console.log(res)
+                      }
+
+                      return res.status
+                    })
+                  )
+                )
+                  .then(res => {
+                    if (res.includes(false)) {
+                      toast.error(locale === 'ar' ? 'حدث خطأ ما' : 'An error occurred')
+                    } else {
+                      toast.success(locale === 'ar' ? 'تم حفظ التغييرات بنجاح' : 'Changes saved successfully')
+                      push(`/${locale}/setting/data-source/collaction?dataSourceId=${dataSourceId}`)
+                    }
+                  })
+                  .finally(() => {
+                    setLoadingSaveData(false)
+                  })
+              }}
             >
               {locale === 'ar' ? 'حفظ' : 'Save'}
             </LoadingButton>
@@ -79,7 +217,7 @@ const ReactPageEditor = () => {
           }}
         >
           <MdOutlineSaveAs className='text-xl me-1' />
-          {locale === 'ar' ? ' حفظ التغيرات' : 'Save Changes'}
+          {locale === 'ar' ? ' اضافة الحقول' : 'Add Inputs'}
         </Button>
         <Button
           variant='contained'
@@ -127,9 +265,12 @@ const ReactPageEditor = () => {
           <RiArrowGoBackFill className='text-xl' />
         </Button>
       </div>
-      <div style={{
-        background:theme.palette.background.default
-      }} className={`duration-300 ${readOnly ? `overflow-auto fixed inset-0 pb-10` : '!bg-white'}`}>
+      <div
+        style={{
+          background: theme.palette.background.default
+        }}
+        className={`duration-300 ${readOnly ? `overflow-auto fixed inset-0 pb-10` : '!bg-white'}`}
+      >
         {readOnly && (
           <div className='fixed top-[10px] end-[10px] z-[11111111]'>
             <IconButton

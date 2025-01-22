@@ -47,6 +47,8 @@ export default function Index() {
     setOpen(false)
   }
 
+  const {push} = useRouter()
+
   const columns = [
     {
       flex: 0.05,
@@ -100,7 +102,8 @@ export default function Index() {
             size='small'
             color='success'
             onClick={() => {
-              setOpenFormBuilder(params.row)
+              // setOpenFormBuilder(params.row)
+              push(`/${locale}/setting/data-source/collaction/${params.row.id}?dataSourceId=${dataSourceId}`)
             }}
           >
             {locale === 'ar' ? 'إضافة حقل' : 'Add Field'}

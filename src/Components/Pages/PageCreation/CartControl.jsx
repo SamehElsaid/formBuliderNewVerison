@@ -2,19 +2,13 @@ import React, { useEffect, useState } from 'react'
 import {
   Button,
   CircularProgress,
-  FormControl,
-  FormControlLabel,
-  FormLabel,
   InputAdornment,
   MenuItem,
-  Radio,
-  RadioGroup,
   Select,
   TextField
 } from '@mui/material'
 import { useIntl } from 'react-intl'
 import { Icon } from '@iconify/react'
-import axios from 'axios'
 import Collapse from '@kunukn/react-collapse'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { docco } from 'react-syntax-highlighter/dist/esm/styles/prism'

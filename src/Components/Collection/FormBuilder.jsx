@@ -11,14 +11,7 @@ import {
   TextField,
   Checkbox,
   FormControlLabel,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
   IconButton,
-  Paper,
   Select,
   MenuItem,
   FormControl,
@@ -26,8 +19,6 @@ import {
   Grid,
   InputAdornment,
   FormLabel,
-  RadioGroup,
-  Radio,
   CircularProgress,
   Autocomplete,
   Box
@@ -198,17 +189,6 @@ const FormBuilder = ({ open, setOpen }) => {
   }
   const [loading, setLoading] = useState(false)
 
-  const handleAddOption = () => {
-    if (newOption.trim() && newOptionEn.trim()) {
-      setOptions([...options, { label: newOption, label_en: newOptionEn }])
-      setNewOption('')
-      setNewOptionEn('')
-    }
-  }
-
-  const handleDeleteOption = index => {
-    setOptions(options.filter((_, i) => i !== index))
-  }
 
   const handleToggleFileExtension = extension => {
     if (fileExtensions.includes(extension)) {
@@ -354,23 +334,26 @@ const FormBuilder = ({ open, setOpen }) => {
       options: {
         defaultValue: fieldType === 'tel' ? defaultCountry : '',
         uiSchema: {
-          fileType: isFileStep ? fileExtensions : [],
-        },
+          fileType: isFileStep ? fileExtensions : []
+        }
       },
       validationData
     }
 
     if (fieldType === 'select' || fieldType === 'radio' || fieldType === 'checkbox') {
-      sendData.options.foreignKey = key
+      sendData.options.foreignKey = key + "id"
       sendData.options.source = collection.key
       sendData.options.sourceKey = 'id'
       sendData.options.target = open.key
-      sendData.options.targetKey = collection.key + 'id'
+      sendData.options.targetKey = open.key + 'id'
       sendData.descriptionEn = JSON.stringify(selectedOptions)
       sendData.descriptionAr = fieldType
       if (selectedOptions.length === 0) {
         return toast.error(locale === 'ar' ? 'يجب أن تختار حقل من المجموعة' : 'You must select a field from the group')
       }
+    }
+    if(fieldType === 'checkbox'){
+      sendData.options.junctionTable = `${open.key}${collection.key}`
     }
     setLoading(true)
 

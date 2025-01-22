@@ -48,11 +48,108 @@ export const getType = type => {
     return 'OneToOne'
   }
 
-  if (type === 'checkbox' ) {
+  if (type === 'checkbox') {
     return 'ManyToMany'
   }
 
-
-
   return type.charAt(0).toUpperCase() + type.slice(1)
+}
+
+export const DefaultStyle = () => {
+  return `
+label{
+margin-bottom:5px;
+display:block;
+color:#555;
+}
+input:focus,
+input:hover {
+  border-color: #3498ff;
+}
+input:focus {
+  outline: 3px solid #3498ff40 ;
+}
+input {
+  width:100%;
+  padding:10px 20px;
+  border-radius:5px;
+  border:1px solid #e5e5ea;
+  height:0Auto;
+  margin-top:0px;
+  margin-bottom:0px;
+  margin-inline-start:0px;
+  margin-inline-end:0px;
+  background-color:transparent;
+  color:#575757;
+}
+  input::placeholder {
+  height:0Auto;
+  color: #dfdfdf;
+}
+
+`
+}
+
+export const cssToObject = cssString => {
+  const result = {}
+  const rules = cssString.split('}')
+
+  rules.forEach(rule => {
+    if (rule.trim() === '') return
+
+    const [selector, styles] = rule.split('{')
+    const cleanedSelector = selector.trim()
+
+    if (!cleanedSelector || !styles) return
+
+    const styleObject = {}
+    styles.split(';').forEach(style => {
+      if (style.trim() === '') return
+
+      const [property, value] = style.split(':').map(s => s.trim())
+      if (property && value) {
+        // تقسيم القيمة إلى value و unit
+        const numericValue = parseFloat(value)
+        const unit = value.replace(numericValue, '').trim()
+
+        styleObject[property] = {
+          value: numericValue,
+          unit: unit || 'px'
+        }
+      }
+    })
+
+    result[cleanedSelector] = styleObject
+  })
+
+  return result
+}
+
+export const objectToCss = cssObject => {
+  let cssString = ''
+
+  for (const selector in cssObject) {
+    if (cssObject.hasOwnProperty(selector)) {
+      const styles = cssObject[selector]
+      let styleString = ''
+
+      for (const property in styles) {
+        if (styles.hasOwnProperty(property)) {
+          const styleValue = styles[property]
+
+          // إذا كانت القيمة تحتوي على value و unit
+          if (typeof styleValue === 'object' && styleValue.value !== undefined) {
+            styleString += `${property}:${styleValue.value}${styleValue.unit};`
+          } else {
+            // إذا كانت القيمة سلسلة عادية
+            styleString += `${property}:${styleValue};`
+          }
+        }
+      }
+
+      cssString += `${selector} { ${styleString} }\n`
+    }
+  }
+
+  return cssString.trim() // إزالة المسافات الزائدة في النهاية
 }
