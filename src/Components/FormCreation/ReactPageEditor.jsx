@@ -86,7 +86,7 @@ const ReactPageEditor = () => {
                 editorValue?.rows.map((row, index) => {
                   console.log(row)
                   row.cells.map(cell => {
-                    const data = { options: { uiSchema: {} } }
+                    const data = { options: { uiSchema: { xComponentProps: {} } } }
                     const dataMain = cell?.dataI18n?.default || {}
                     const validationData = []
                     if (dataMain.required) {
@@ -142,14 +142,17 @@ const ReactPageEditor = () => {
                       data.nameEn = dataMain.labelEn || ''
                       const placeholderAr = dataMain.placeholderAr || ''
                       const placeholderEn = dataMain.placeholderEn || ''
-                      data.options.uiSchema.placeholder = JSON.stringify({ ar: placeholderAr, en: placeholderEn })
+                      data.options.uiSchema.xComponentProps.placeholder = JSON.stringify({
+                        ar: placeholderAr,
+                        en: placeholderEn
+                      })
                       data.FieldCategory = 'Basic'
-                      data.options.uiSchema.regex = dataMain.regex || ''
+                      data.options.uiSchema.xComponentProps.regex = dataMain.regex || ''
                       const regexMessageAr = dataMain.regexMessageAr || ''
                       const regexMessageEn = dataMain.regexMessageEn || ''
-                      data.options.uiSchema.errorMessage =
+                      data.options.uiSchema.xComponentProps.errorMessage =
                         JSON.stringify({ ar: regexMessageAr, en: regexMessageEn }) || ''
-                      data.options.uiSchema.cssClass = dataMain.css || DefaultStyle(cell.plugin.id)
+                      data.options.uiSchema.xComponentProps.cssClass = dataMain.css || DefaultStyle(cell.plugin.id)
                       data.validationData = validationData
                       if (!data.key) {
                         toast.error(
@@ -189,7 +192,7 @@ const ReactPageEditor = () => {
                       data.nameAr = dataMain.labelAr || ''
                       data.nameEn = dataMain.labelEn || ''
                       data.FieldCategory = 'Associations'
-                      data.options.uiSchema.cssClass = dataMain.css || DefaultStyle(cell.plugin.id)
+                      data.options.uiSchema.xComponentProps.cssClass = dataMain.css || DefaultStyle(cell.plugin.id)
                       data.validationData = validationData
                       data.options.source = dataMain.collectionName
                       data.options.target = fields.key

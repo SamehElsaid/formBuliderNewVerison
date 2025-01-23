@@ -2,7 +2,7 @@
     body {
       display: block;
       margin: 8px;
-      
+
     }
     body:-webkit-full-page-media {
       background-color: rgb(0, 0, 0);
@@ -859,6 +859,7 @@
       white-space: pre;
       margin: 1__qem 0;
     }
+
     mark {
       background-color: yellow;
       color: black;
@@ -900,7 +901,7 @@
     object:focus {
       outline: none;
     }
-  
+
     input:focus,
     textarea:focus,
     keygen:focus,
@@ -919,7 +920,7 @@
     input[type="file" i]:focus::-webkit-file-upload-button {
       outline-offset: 0;
     }
-  
+
     a:-webkit-any-link {
       color: -webkit-link;
       text-decoration: underline;
@@ -1021,4 +1022,5 @@
         -webkit-columns: auto !important;
       }
     }
+
   }

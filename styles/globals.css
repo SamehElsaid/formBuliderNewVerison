@@ -1181,3 +1181,7 @@ sortable-list {
   @apply !z-[1111111111111];
 }
 
+.error{
+  border-color: #f44336 !important;
+  outline-color: #f44336 !important;
+}
