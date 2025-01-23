@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Editor from '@react-page/editor'
 import '@react-page/editor/lib/index.css'
 import { useIntl } from 'react-intl'
@@ -16,7 +16,7 @@ import { LoadingButton } from '@mui/lab'
 import useCellPlugins from './PageCreation/HooksDragDropComponents/useCellPlugins'
 import { toast } from 'react-toastify'
 import { DefaultStyle, getType } from '../_Shared'
-import { axiosPost } from '../axiosCall'
+import { axiosGet, axiosPost } from '../axiosCall'
 
 const ReactPageEditor = () => {
   const [editorValue, setEditorValue] = useState(null)
@@ -28,14 +28,27 @@ const ReactPageEditor = () => {
   const [saveData, setSaveData] = useState(false)
   const [loadingSaveData, setLoadingSaveData] = useState(false)
   const theme = useTheme()
+  console.log(editorValue)
 
   const {
     push,
-    query: { addFiles,dataSourceId }
+    query: { addFiles, dataSourceId }
   } = useRouter()
 
   // CellPlugins Hook Calling
   const { cellPlugins } = useCellPlugins({ advancedEdit, locale, readOnly })
+
+  const [fields, setFields] = useState([])
+
+  useEffect(() => {
+    if (addFiles) {
+      axiosGet(`collections/get-by-id?id=${addFiles}`, locale).then(res => {
+        if (res.status) {
+          setFields(res.data)
+        }
+      })
+    }
+  }, [addFiles])
 
   return (
     <div className='relative'>
@@ -162,24 +175,78 @@ const ReactPageEditor = () => {
                         )
                         stop.push(false)
                       }
+                      if (!data.nameAr || !data.nameEn || !data.key) {
+                        return
+                      }
+                      addData.push(data)
+                    }
+                    if (cell.plugin.id === 'checkbox') {
+                      data.type = getType(cell.plugin.id === 'checkbox' ? 'checkbox' : dataMain.type || 'text')
+                      data.collectionId = addFiles
+                      data.key = dataMain.key
+                      data.descriptionAr = 'checkbox'
+                      data.descriptionEn = JSON.stringify(dataMain.selected) || ''
+                      data.nameAr = dataMain.labelAr || ''
+                      data.nameEn = dataMain.labelEn || ''
+                      data.FieldCategory = 'Associations'
+                      data.options.uiSchema.cssClass = dataMain.css || DefaultStyle(cell.plugin.id)
+                      data.validationData = validationData
+                      data.options.source = dataMain.collectionName
+                      data.options.target = fields.key
+                      data.options.junctionTable = `${dataMain.collectionName}${fields.key}`
+                      data.key = `${dataMain.collectionName}${fields.key}`
+
+                      console.log(data, dataMain)
+
+                      if (!data.nameAr) {
+                        toast.error(
+                          locale === 'ar'
+                            ? `الحقل بالعربي مطلوب في الحقل ${index + 1}`
+                            : `Label in Arabic is required in  Field  ${index + 1}`
+                        )
+                        stop.push(false)
+                      }
+                      if (!data.nameEn) {
+                        toast.error(
+                          locale === 'ar'
+                            ? `الحقل بالانجليزي مطلوب في الحقل ${index + 1}`
+                            : `Label in English is required in  Field  ${index + 1}`
+                        )
+                        stop.push(false)
+                      }
+                      if (!dataMain.collectionName) {
+                        toast.error(
+                          locale === 'ar'
+                            ? `اسم المجموعة مطلوب في الحقل ${index + 1}`
+                            : `Collection Name is required in  Field  ${index + 1}`
+                        )
+                        stop.push(false)
+                      }
+                      if (!data.nameAr || !data.nameEn || !dataMain.collectionName) {
+                        return
+                      }
+
                       addData.push(data)
                     }
                   })
                 })
-                if (stop.includes(false)) {
-                  return
-                }
                 if (addData.length === 0) {
                   toast.error(locale === 'ar' ? 'لا يوجد حقول للاضافة' : 'No fields to add')
 
                   return
                 }
+
+                // return
                 setLoadingSaveData(true)
                 Promise.all(
                   addData.map(item =>
                     axiosPost('collection-fields/configure-fields', locale, item).then(res => {
                       if (res.status) {
-                        console.log(res)
+                        const find = editorValue.rows.find(row => row.cells[0].dataI18n.default.key === item.key)
+                        if (find?.id) {
+                          const filter = editorValue.rows.filter(ele => ele.id !== find.id)
+                          setEditorValue(prev => ({ ...prev, rows: filter }))
+                        }
                       }
 
                       return res.status
@@ -191,8 +258,8 @@ const ReactPageEditor = () => {
                       toast.error(locale === 'ar' ? 'حدث خطأ ما' : 'An error occurred')
                     } else {
                       toast.success(locale === 'ar' ? 'تم حفظ التغييرات بنجاح' : 'Changes saved successfully')
-                      push(`/${locale}/setting/data-source/collaction?dataSourceId=${dataSourceId}`)
                     }
+                    setSaveData(false)
                   })
                   .finally(() => {
                     setLoadingSaveData(false)

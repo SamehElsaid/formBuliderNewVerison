@@ -341,13 +341,15 @@ const FormBuilder = ({ open, setOpen }) => {
     }
 
     if (fieldType === 'select' || fieldType === 'radio' || fieldType === 'checkbox') {
-      sendData.options.foreignKey = key + "id"
       sendData.options.source = collection.key
-      sendData.options.sourceKey = 'id'
       sendData.options.target = open.key
-      sendData.options.targetKey = open.key + 'id'
       sendData.descriptionEn = JSON.stringify(selectedOptions)
       sendData.descriptionAr = fieldType
+      if(fieldType !== 'checkbox'){
+        sendData.options.foreignKey = key
+        sendData.options.sourceKey = 'id'
+        sendData.options.targetKey = open.key
+      }
       if (selectedOptions.length === 0) {
         return toast.error(locale === 'ar' ? 'يجب أن تختار حقل من المجموعة' : 'You must select a field from the group')
       }

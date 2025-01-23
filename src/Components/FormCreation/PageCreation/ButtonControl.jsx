@@ -110,8 +110,8 @@ export default function InputControl({ data, onChange, type }) {
         <TextField
           fullWidth
           type='text'
-          defaultValue={data.key}
-          onBlur={e => onChange({ ...data, key: e.target.value })}
+          value={data.key}
+          onChange={e => onChange({ ...data, key: e.target.value })}
           variant='filled'
           label={locale === 'ar' ? 'المفتاح' : 'Key'}
         />

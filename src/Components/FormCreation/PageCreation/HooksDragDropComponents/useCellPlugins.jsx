@@ -3,12 +3,14 @@ import '@react-page/plugins-slate/lib/index.css'
 import '@react-page/plugins-spacer/lib/index.css'
 import useInput from './useInput'
 import useTextArea from './useTextArea'
+import useCheckbox from './useCheckbox'
 
 export default function useCellPlugins({ advancedEdit, locale, readOnly }) {
   // Hooks Drag Drop Components
   const { Input } = useInput({ locale, advancedEdit })
   const { TextArea } = useTextArea({ locale, advancedEdit })
-  const cellPlugins = [slate(), Input, TextArea]
+  const { Checkbox } = useCheckbox({ locale, advancedEdit })
+  const cellPlugins = [slate(), Input, TextArea, Checkbox]
 
   return { cellPlugins }
 }

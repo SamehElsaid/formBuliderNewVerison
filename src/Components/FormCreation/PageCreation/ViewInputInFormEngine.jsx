@@ -1,66 +1,96 @@
-import React from 'react'
-import CssEditor from './CssEditor'
-import { renderToString } from 'react-dom/server'
-import { DefaultStyle } from 'src/Components/_Shared'
+import React, { useEffect, useMemo, useRef } from 'react';
+import CssEditor from './CssEditor';
+import { renderToString } from 'react-dom/server';
+import { DefaultStyle } from 'src/Components/_Shared';
 
 const CssEditorView = ({ data, locale, defaultValue, type }) => {
-  const inputElement = type ? (
-    <textarea
-      id={data.key ?? new Date().getTime()}
-      style={{
-        transition: '0.3s',
-        height: `${data.rows || 5 * 20}px`
-      }}
-      placeholder={
-        locale === 'ar' ? data.placeholderAr || 'الحقل بالعربية' : data.placeholderEn || 'The field in English'
+  const shadowContainerRef = useRef(null);
+
+  const inputElement = useMemo(() => {
+    return type === 'textarea' ? (
+      <textarea
+        id={data.key ?? new Date().getTime()}
+        rows={data.rows || 5}
+        style={{
+          transition: '0.3s',
+        }}
+        placeholder={
+          locale === 'ar' ? data.placeholderAr || 'الحقل بالعربية' : data.placeholderEn || 'The field in English'
+        }
+      />
+    ) : type === 'checkbox' ? (
+      <div>
+        <input type='checkbox' id='fruit1' name='fruit-1' value='Apple' />
+        <label htmlFor='fruit1'>Apple</label>
+        <input type='checkbox' id='fruit3' name='fruit-3' value='Cherry' checked />
+        <label htmlFor='fruit3'>Cherry</label>
+        <input type='checkbox' id='fruit4' name='fruit-4' value='Strawberry' />
+        <label htmlFor='fruit4'>Strawberry</label>
+      </div>
+    ) : (
+      <input
+        id={data.key ?? new Date().getTime()}
+        type={data.type ?? 'text'}
+        style={{
+          transition: '0.3s',
+        }}
+        placeholder={
+          locale === 'ar' ? data.placeholderAr || 'الحقل بالعربية' : data.placeholderEn || 'The field in English'
+        }
+      />
+    );
+  }, [data.key, locale, type, data.type, data.rows, data.placeholderAr, data.placeholderEn]);
+
+  const label = useMemo(() => {
+    return (
+      <label htmlFor={data.key ?? new Date().getTime()} id='first-label'>
+        {defaultValue(
+          data,
+          locale === 'ar' ? 'labelAr' : 'labelEn',
+          locale === 'ar' ? 'الحقل بالعربية' : 'The field in English'
+        )}
+      </label>
+    );
+  }, [data, defaultValue, locale]);
+
+  const inputHtml = renderToString(inputElement);
+  const labelHtml = renderToString(label);
+
+  useEffect(() => {
+    if (shadowContainerRef.current) {
+      // إنشاء Shadow DOM إذا لم يكن موجودًا
+      if (!shadowContainerRef.current.shadowRoot) {
+        shadowContainerRef.current.attachShadow({ mode: 'open' });
       }
-    />
-  ) : (
-    <input
-      id={data.key ?? new Date().getTime()}
-      type={data.type ?? 'text'}
-      style={{
-        transition: '0.3s'
-      }}
-      placeholder={
-        locale === 'ar' ? data.placeholderAr || 'الحقل بالعربية' : data.placeholderEn || 'The field in English'
-      }
-    />
-  )
 
-  const label = (
-    <label htmlFor={data.key ?? new Date().getTime()}>
-      {defaultValue(
-        data,
-        locale === 'ar' ? 'labelAr' : 'labelEn',
-        locale === 'ar' ? 'الحقل بالعربية' : 'The field in English'
-      )}
-    </label>
-  )
-
-  const inputHtml = renderToString(inputElement)
-  const labelHtml = renderToString(label)
-
-  return (
-    <iframe
-      title='CSS Preview'
-      className='iFrameControl'
-      style={{ width: '100%', boxSizing: 'border-box', height: !type ? 'auto' : data.rows ? `${data.rows || 5 * 20 + 50}px` : 'auto' }}
-      srcDoc={`
+      // إضافة المحتوى والتنسيقات إلى Shadow DOM
+      shadowContainerRef.current.shadowRoot.innerHTML = `
         <style>
-        * {
-  font-family: 'Public Sans', 'cairo', sans-serif !important;
-}
-        *{box-sizing: border-box}
-        ${data?.css || DefaultStyle(type)}</style>
-        <div className="" >${labelHtml}</div>
-        <div className="" style="display: flex;">
-        ${inputHtml}
-        </div>
-      `}
-    />
-  )
-}
+          * {
+            font-family: 'Public Sans', 'cairo', sans-serif !important;
+            box-sizing: border-box;
+          }
+          label {
+            display: block;
+            margin-bottom: 8px;
+          }
+          input, textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            transition: 0.3s;
+          }
+          ${data?.css || DefaultStyle(type)}
+        </style>
+        <div>${labelHtml}</div>
+        <div style="display: flex;">${inputHtml}</div>
+      `;
+    }
+  }, [data, locale, type, inputHtml, labelHtml]);
+
+  return <div ref={shadowContainerRef}></div>;
+};
 
 export default function ViewInputInFormEngine({ data, locale, defaultValue, onChange, advancedEdit, type }) {
   return (
@@ -72,10 +102,10 @@ export default function ViewInputInFormEngine({ data, locale, defaultValue, onCh
             <h2 className='text-xl font-bold text-main-color'>
               {locale === 'ar' ? 'محرر CSS للحقل' : 'CSS Editor For Input'}
             </h2>
-            <CssEditor data={data} onChange={onChange} />
+            <CssEditor data={data} onChange={onChange} type={type} />
           </div>
         )}
       </div>
     </div>
-  )
+  );
 }
