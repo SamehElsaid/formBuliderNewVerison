@@ -98,14 +98,15 @@ color:#555;
 }
 
   input[type=checkbox] + label {
-    display: block;
-    margin-top:0.3em;
-    margin-bottom:0.3em;
-    margin-inline-start:0.3em;
-    margin-inline-end:0.3em;
-   color:#555;
-  cursor: pointer;
-  padding: 0.2em;
+   margin-top: 0.3em;
+    margin-bottom: 0.3em;
+    margin-inline-start: 0.3em;
+    margin-inline-end: 0.3em;
+    display: flex;
+    align-items: center;
+    color: #555;
+    cursor: pointer;
+    padding: 0.2em;
 }
 
 input[type=checkbox] {
@@ -144,7 +145,74 @@ input[type=checkbox]:disabled + label:before {
 
 input[type=checkbox]:checked:disabled + label:before {
   transform: scale(1);
-  background-color: #3498ffab
+  background-color: #3498ffab;
+  border-color: #3498ffab;
+}
+#view-input-in-form-engine{
+  display:flex;
+  flex-direction:column;
+  flex-wrap:wrap;
+}
+      `
+  } else if (type === 'radio') {
+    return `
+#first-label{
+margin-top:0px;
+margin-bottom:5px;
+display:block;
+color:#555;
+}
+
+  input[type=radio] + label {
+   margin-top: 0.3em;
+    margin-bottom: 0.3em;
+    margin-inline-start: 0.3em;
+    margin-inline-end: 0.3em;
+    display: flex;
+    align-items: center;
+    color: #555;
+    cursor: pointer;
+    padding: 0.2em;
+}
+
+input[type=radio] {
+  display: none;
+}
+
+input[type=radio] + label:before {
+  content: "\\25CF";
+  border: 0.1em solid #999;
+  border-radius: 0.2em;
+  width: 1em;
+  height: 1em;
+   display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-inline-end: 0.2em;
+  vertical-align: bottom;
+  color: transparent;
+  transition: .2s;
+  border-radius:50%;
+}
+
+input[type=radio] + label:active:before {
+  transform: scale(0);
+}
+
+input[type=radio]:checked + label:before {
+  background-color: #3498ff;
+  border-color: #3498ff;
+  color: #fff;
+}
+
+input[type=radio]:disabled + label:before {
+  transform: scale(1);
+  border-color: #aaa;
+}
+
+input[type=radio]:checked:disabled + label:before {
+  transform: scale(1);
+  background-color: #3498ffab;
   border-color: #3498ffab;
 }
 #view-input-in-form-engine{

@@ -370,23 +370,23 @@ export default function CheckboxControl({ data, onChange, type }) {
         <TextField
           fullWidth
           type='number'
-          value={getData('input[type=checkbox] + label:before.width.value') || ''}
-          onChange={e => UpdateData('input[type=checkbox] + label:before.width.value', e.target.value)}
+          value={getData(`input[type=${type}] + label:before.width.value`) || ''}
+          onChange={e => UpdateData(`input[type=${type}] + label:before.width.value`, e.target.value)}
           variant='filled'
           label={locale === 'ar' ? 'العرض' : 'Width'}
           disabled={
-            getData('input[type=checkbox] + label:before.width.unit') === 'max-content' ||
-            getData('input[type=checkbox] + label:before.width.unit') === 'min-content' ||
-            getData('input[type=checkbox] + label:before.width.unit') === 'fit-content' ||
-            getData('input[type=checkbox] + label:before.width.unit') === 'auto' ||
-            !getData('input[type=checkbox] + label:before.width.unit')
+            getData(`input[type=${type}] + label:before.width.unit`) === 'max-content' ||
+            getData(`input[type=${type}] + label:before.width.unit`) === 'min-content' ||
+            getData(`input[type=${type}] + label:before.width.unit`) === 'fit-content' ||
+            getData(`input[type=${type}] + label:before.width.unit`) === 'auto' ||
+            !getData(`input[type=${type}] + label:before.width.unit`)
           }
           InputProps={{
             endAdornment: (
               <InputAdornment position='end'>
                 <Select
-                  value={getData('input[type=checkbox] + label:before.width.unit') || '%'} // الافتراضي px
-                  onChange={e => UpdateData('input[type=checkbox] + label:before.width.unit', e.target.value)}
+                  value={getData(`input[type=${type}] + label:before.width.unit`) || '%'} // الافتراضي px
+                  onChange={e => UpdateData(`input[type=${type}] + label:before.width.unit`, e.target.value)}
                   displayEmpty
                   variant='standard'
                 >
@@ -407,23 +407,23 @@ export default function CheckboxControl({ data, onChange, type }) {
         <TextField
           fullWidth
           type='number'
-          value={getData('input[type=checkbox] + label:before.height.value') || ''}
-          onChange={e => UpdateData('input[type=checkbox] + label:before.height.value', e.target.value)}
+          value={getData(`input[type=${type}] + label:before.height.value`) || ''}
+          onChange={e => UpdateData(`input[type=${type}] + label:before.height.value`, e.target.value)}
           variant='filled'
           label={locale === 'ar' ? 'الطول' : 'Height'}
           disabled={
-            getData('input[type=checkbox] + label:before.height.unit') === 'max-content' ||
-            getData('input[type=checkbox] + label:before.height.unit') === 'min-content' ||
-            getData('input[type=checkbox] + label:before.height.unit') === 'fit-content' ||
-            getData('input[type=checkbox] + label:before.height.unit') === 'auto' ||
-            !getData('input[type=checkbox] + label:before.height.unit')
+            getData(`input[type=${type}] + label:before.height.unit`) === 'max-content' ||
+            getData(`input[type=${type}] + label:before.height.unit`) === 'min-content' ||
+            getData(`input[type=${type}] + label:before.height.unit`) === 'fit-content' ||
+            getData(`input[type=${type}] + label:before.height.unit`) === 'auto' ||
+            !getData(`input[type=${type}] + label:before.height.unit`)
           }
           InputProps={{
             endAdornment: (
               <InputAdornment position='end'>
                 <Select
-                  value={getData('input[type=checkbox] + label:before.height.unit') || '%'} // الافتراضي px
-                  onChange={e => UpdateData('input[type=checkbox] + label:before.height.unit', e.target.value)}
+                  value={getData(`input[type=${type}] + label:before.height.unit`) || '%'} // الافتراضي px
+                  onChange={e => UpdateData(`input[type=${type}] + label:before.height.unit`, e.target.value)}
                   displayEmpty
                   variant='standard'
                 >
@@ -444,23 +444,23 @@ export default function CheckboxControl({ data, onChange, type }) {
         <TextField
           fullWidth
           type='number'
-          value={getData('input[type=checkbox] + label.margin-top.value') || ''}
-          onChange={e => UpdateData('input[type=checkbox] + label.margin-top.value', e.target.value)}
+          value={getData(`input[type=${type}] + label.margin-top.value`) || ''}
+          onChange={e => UpdateData(`input[type=${type}] + label.margin-top.value`, e.target.value)}
           variant='filled'
           label={locale === 'ar' ? 'المسافة العلوية' : 'Margin Top'}
           disabled={
-            getData('input[type=checkbox] + label.margin-top.unit') === 'max-content' ||
-            getData('input[type=checkbox] + label.margin-top.unit') === 'min-content' ||
-            getData('input[type=checkbox] + label.margin-top.unit') === 'fit-content' ||
-            getData('input[type=checkbox] + label.margin-top.unit') === 'auto' ||
-            !getData('input[type=checkbox] + label.margin-top.unit')
+            getData(`input[type=${type}] + label.margin-top.unit`) === 'max-content' ||
+            getData(`input[type=${type}] + label.margin-top.unit`) === 'min-content' ||
+            getData(`input[type=${type}] + label.margin-top.unit`) === 'fit-content' ||
+            getData(`input[type=${type}] + label.margin-top.unit`) === 'auto' ||
+            !getData(`input[type=${type}] + label.margin-top.unit`)
           }
           InputProps={{
             endAdornment: (
               <InputAdornment position='end'>
                 <Select
-                  value={getData('input[type=checkbox] + label.margin-top.unit') || 'auto'} // الافتراضي px
-                  onChange={e => UpdateData('input[type=checkbox] + label.margin-top.unit', e.target.value)}
+                  value={getData(`input[type=${type}] + label.margin-top.unit`) || 'auto'} // الافتراضي px
+                  onChange={e => UpdateData(`input[type=${type}] + label.margin-top.unit`, e.target.value)}
                   displayEmpty
                   variant='standard'
                 >
@@ -478,26 +478,27 @@ export default function CheckboxControl({ data, onChange, type }) {
           }}
         />
         <div className='mt-1'></div>
+        {console.log(Css)}
         <TextField
           fullWidth
           type='number'
-          value={getData('input[type=checkbox] + label.margin-bottom.value') || ''}
-          onChange={e => UpdateData('input[type=checkbox] + label.margin-bottom.value', e.target.value)}
+          value={getData(`input[type=${type}] + label.margin-bottom.value`) || ''}
+          onChange={e => UpdateData(`input[type=${type}] + label.margin-bottom.value`, e.target.value)}
           variant='filled'
           label={locale === 'ar' ? 'المسافة السفلية' : 'Margin Bottom'}
           disabled={
-            getData('input[type=checkbox] + label.margin-bottom.unit') === 'max-content' ||
-            getData('input[type=checkbox] + label.margin-bottom.unit') === 'min-content' ||
-            getData('input[type=checkbox] + label.margin-bottom.unit') === 'fit-content' ||
-            getData('input[type=checkbox] + label.margin-bottom.unit') === 'auto' ||
-            !getData('input[type=checkbox] + label.margin-bottom.unit')
+            getData(`input[type=${type}] + label.margin-bottom.unit`) === 'max-content' ||
+            getData(`input[type=${type}] + label.margin-bottom.unit`) === 'min-content' ||
+            getData(`input[type=${type}] + label.margin-bottom.unit`) === 'fit-content' ||
+            getData(`input[type=${type}] + label.margin-bottom.unit`) === 'auto' ||
+            !getData(`input[type=${type}] + label.margin-bottom.unit`)
           }
           InputProps={{
             endAdornment: (
               <InputAdornment position='end'>
                 <Select
-                  value={getData('input[type=checkbox] + label.margin-bottom.unit') || 'Auto'} // الافتراضي px
-                  onChange={e => UpdateData('input[type=checkbox] + label.margin-bottom.unit', e.target.value)}
+                  value={getData(`input[type=${type}] + label.margin-bottom.unit`) || 'auto'} // الافتراضي px
+                  onChange={e => UpdateData(`input[type=${type}] + label.margin-bottom.unit`, e.target.value)}
                   displayEmpty
                   variant='standard'
                 >
@@ -518,23 +519,23 @@ export default function CheckboxControl({ data, onChange, type }) {
         <TextField
           fullWidth
           type='number'
-          value={getData('input[type=checkbox] + label.margin-inline-start.value') || ''}
-          onChange={e => UpdateData('input[type=checkbox] + label.margin-inline-start.value', e.target.value)}
+          value={getData(`input[type=${type}] + label.margin-inline-start.value`) || ''}
+          onChange={e => UpdateData(`input[type=${type}] + label.margin-inline-start.value`, e.target.value)}
           variant='filled'
           label={locale === 'ar' ? 'المسافة اليسرى' : 'Margin Left'}
           disabled={
-            getData('input[type=checkbox] + label.margin-inline-start.unit') === 'max-content' ||
-            getData('input[type=checkbox] + label.margin-inline-start.unit') === 'min-content' ||
-            getData('input[type=checkbox] + label.margin-inline-start.unit') === 'fit-content' ||
-            getData('input[type=checkbox] + label.margin-inline-start.unit') === 'auto' ||
-            !getData('input[type=checkbox] + label.margin-inline-start.unit')
+            getData(`input[type=${type}] + label.margin-inline-start.unit`) === 'max-content' ||
+            getData(`input[type=${type}] + label.margin-inline-start.unit`) === 'min-content' ||
+            getData(`input[type=${type}] + label.margin-inline-start.unit`) === 'fit-content' ||
+            getData(`input[type=${type}] + label.margin-inline-start.unit`) === 'auto' ||
+            !getData(`input[type=${type}] + label.margin-inline-start.unit`)
           }
           InputProps={{
             endAdornment: (
               <InputAdornment position='end'>
                 <Select
-                  value={getData('input[type=checkbox] + label.margin-inline-start.unit') || 'auto'} // الافتراضي px
-                  onChange={e => UpdateData('input[type=checkbox] + label.margin-inline-start.unit', e.target.value)}
+                  value={getData(`input[type=${type}] + label.margin-inline-start.unit`) || 'auto'} // الافتراضي px
+                  onChange={e => UpdateData(`input[type=${type}] + label.margin-inline-start.unit`, e.target.value)}
                   displayEmpty
                   variant='standard'
                 >
@@ -555,23 +556,23 @@ export default function CheckboxControl({ data, onChange, type }) {
         <TextField
           fullWidth
           type='number'
-          value={getData('input[type=checkbox] + label.margin-inline-end.value') || ''}
-          onChange={e => UpdateData('input[type=checkbox] + label.margin-inline-end.value', e.target.value)}
+          value={getData(`input[type=${type}] + label.margin-inline-end.value`) || ''}
+          onChange={e => UpdateData(`input[type=${type}] + label.margin-inline-end.value`, e.target.value)}
           variant='filled'
           label={locale === 'ar' ? 'المسافة اليمنى' : 'Margin Right'}
           disabled={
-            getData('input[type=checkbox] + label.margin-inline-end.unit') === 'max-content' ||
-            getData('input[type=checkbox] + label.margin-inline-end.unit') === 'min-content' ||
-            getData('input[type=checkbox] + label.margin-inline-end.unit') === 'fit-content' ||
-            getData('input[type=checkbox] + label.margin-inline-end.unit') === 'auto' ||
-            !getData('input[type=checkbox] + label.margin-inline-end.unit')
+            getData(`input[type=${type}] + label.margin-inline-end.unit`) === 'max-content' ||
+            getData(`input[type=${type}] + label.margin-inline-end.unit`) === 'min-content' ||
+            getData(`input[type=${type}] + label.margin-inline-end.unit`) === 'fit-content' ||
+            getData(`input[type=${type}] + label.margin-inline-end.unit`) === 'auto' ||
+            !getData(`input[type=${type}] + label.margin-inline-end.unit`)
           }
           InputProps={{
             endAdornment: (
               <InputAdornment position='end'>
                 <Select
-                  value={getData('input[type=checkbox] + label.margin-inline-end.unit') || 'auto'} // الافتراضي px
-                  onChange={e => UpdateData('input[type=checkbox] + label.margin-inline-end.unit', e.target.value)}
+                  value={getData(`input[type=${type}] + label.margin-inline-end.unit`) || 'auto'} // الافتراضي px
+                  onChange={e => UpdateData(`input[type=${type}] + label.margin-inline-end.unit`, e.target.value)}
                   displayEmpty
                   variant='standard'
                 >
@@ -593,9 +594,9 @@ export default function CheckboxControl({ data, onChange, type }) {
           <TextField
             fullWidth
             type='color'
-            defaultValue={getData('input[type=checkbox]:checked + label:before.background-color.unit') || '#575757'}
+            defaultValue={getData(`input[type=${type}]:checked + label:before.background-color.unit`) || '#575757'}
             onBlur={e =>
-              UpdateData('input[type=checkbox]:checked + label:before.background-color.unit', e.target.value)
+              UpdateData(`input[type=${type}]:checked + label:before.background-color.unit`, e.target.value)
             }
             label={locale === 'ar' ? 'اللون الخلفي' : 'Background Color'}
             variant='filled'
@@ -605,8 +606,8 @@ export default function CheckboxControl({ data, onChange, type }) {
           <TextField
             fullWidth
             type='color'
-            defaultValue={getData('input[type=checkbox]:checked + label:before.border-color.unit') || '#575757'}
-            onBlur={e => UpdateData('input[type=checkbox]:checked + label:before.border-color.unit', e.target.value)}
+            defaultValue={getData(`input[type=${type}]:checked + label:before.border-color.unit`) || '#575757'}
+            onBlur={e => UpdateData(`input[type=${type}]:checked + label:before.border-color.unit`, e.target.value)}
             label={locale === 'ar' ? 'اللون الحدود' : 'Border Color'}
             variant='filled'
           />
@@ -615,8 +616,8 @@ export default function CheckboxControl({ data, onChange, type }) {
           <TextField
             fullWidth
             type='color'
-            defaultValue={getData('input[type=checkbox]:checked + label:before.color.unit') || '#fff'}
-            onBlur={e => UpdateData('input[type=checkbox]:checked + label:before.color.unit', e.target.value)}
+            defaultValue={getData(`input[type=${type}]:checked + label:before.color.unit`) || '#fff'}
+            onBlur={e => UpdateData(`input[type=${type}]:checked + label:before.color.unit`, e.target.value)}
             label={locale === 'ar' ? 'اللون' : 'Color'}
             variant='filled'
           />
@@ -662,6 +663,8 @@ export default function CheckboxControl({ data, onChange, type }) {
           }
           label={locale === 'ar' ? 'مطلوب' : 'Unique'}
         />
+        {type === "checkbox" &&
+        <>
         <TextField
           label={locale === 'ar' ? 'الحد الأدنى' : 'Min Length'}
           type='number'
@@ -688,6 +691,8 @@ export default function CheckboxControl({ data, onChange, type }) {
             })
           }
         />
+        </>
+        }
       </Collapse>
     </div>
   )

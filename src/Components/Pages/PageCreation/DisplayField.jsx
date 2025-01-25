@@ -299,7 +299,7 @@ const ViewInput = ({
           }
           value={value}
           name={input.nameEn}
-     
+
           onChange={e => {
             onChange(e)
           }}
@@ -394,20 +394,27 @@ const ViewInput = ({
 
     return (
       <div className=''>
-        <FormLabel htmlFor={input.key} className='!text-xl capitalize'>
-          {locale === 'ar' ? input.nameAr : input.nameEn}
-        </FormLabel>
         <div className=''>
-          {selectedOptions.map((option, index) => (
-            <FormControlLabel
-              key={index}
-              control={
-                <Radio value={option.Id} name={input.Id} checked={value === option.Id} onChange={e => onChange(e)} />
-              }
-              label={lable.map(ele => option[ele]).join('-')}
-            />
-          ))}
-          <FormHelperText className='!text-[#f44336]'>{errorView || error}</FormHelperText>
+          <div className=''>
+            <div className='flex flex-col gap-1'>
+
+              <div className=''>
+                {selectedOptions.map((option, index) => (
+                  <div key={option.Id} className=''>
+                    <input
+                      value={option.Id}
+                      name={input.nameEn}
+                      checked={value === option.Id}
+                      onChange={e => onChange(e)}
+                      type='radio'
+                      id={option.Id}
+                    />
+                    <label htmlFor={option.Id} >{lable.map(ele => option[ele]).join('-')}</label>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     )
@@ -419,9 +426,7 @@ const ViewInput = ({
       <div className=''>
         <div className=''>
           <div className=''>
-            <InputLabel id='demo-simple-select-label' className='!text-xl capitalize'>
-              {locale === 'ar' ? input.nameAr : input.nameEn}
-            </InputLabel>
+
             <Select
               labelId='demo-simple-select-label'
               id='demo-simple-select'

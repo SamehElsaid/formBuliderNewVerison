@@ -179,11 +179,11 @@ const ReactPageEditor = () => {
                       }
                       addData.push(data)
                     }
-                    if (cell.plugin.id === 'checkbox') {
-                      data.type = getType(cell.plugin.id === 'checkbox' ? 'checkbox' : dataMain.type || 'text')
+                    if (cell.plugin.id === 'checkbox' || cell.plugin.id === 'radio') {
+                      data.type = getType(cell.plugin.id === 'checkbox' ? 'checkbox' : 'radio')
                       data.collectionId = addFiles
                       data.key = dataMain.key
-                      data.descriptionAr = 'checkbox'
+                      data.descriptionAr = cell.plugin.id === 'checkbox' ? 'checkbox' : 'radio'
                       data.descriptionEn = JSON.stringify(dataMain.selected) || ''
                       data.nameAr = dataMain.labelAr || ''
                       data.nameEn = dataMain.labelEn || ''
@@ -192,9 +192,14 @@ const ReactPageEditor = () => {
                       data.validationData = validationData
                       data.options.source = dataMain.collectionName
                       data.options.target = fields.key
-                      data.options.junctionTable = `${dataMain.collectionName}${fields.key}`
                       data.key = `${dataMain.collectionName}${fields.key}`
-
+                      if (cell.plugin.id === 'checkbox') {
+                        data.options.junctionTable = `${dataMain.collectionName}${fields.key}`
+                      } else {
+                        data.options.foreignKey = `${dataMain.collectionName}${fields.key}`
+                        data.options.sourceKey = 'id'
+                        data.options.targetKey = fields.key
+                      }
 
                       if (!data.nameAr) {
                         toast.error(

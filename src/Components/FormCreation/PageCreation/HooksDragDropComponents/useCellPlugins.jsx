@@ -4,13 +4,15 @@ import '@react-page/plugins-spacer/lib/index.css'
 import useInput from './useInput'
 import useTextArea from './useTextArea'
 import useCheckbox from './useCheckbox'
+import useRadio from './useRadio'
 
 export default function useCellPlugins({ advancedEdit, locale, readOnly }) {
   // Hooks Drag Drop Components
   const { Input } = useInput({ locale, advancedEdit })
   const { TextArea } = useTextArea({ locale, advancedEdit })
   const { Checkbox } = useCheckbox({ locale, advancedEdit })
-  const cellPlugins = [slate(), Input, TextArea, Checkbox]
+  const { Radio } = useRadio({ locale, advancedEdit })
+  const cellPlugins = [slate(), Input, TextArea, Checkbox, Radio]
 
   return { cellPlugins }
 }

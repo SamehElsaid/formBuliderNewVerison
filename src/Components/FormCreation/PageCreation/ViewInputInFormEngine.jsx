@@ -27,6 +27,15 @@ const CssEditorView = ({ data, locale, defaultValue, type }) => {
         <input type='checkbox' id='fruit4' name='fruit-4' value='Strawberry' />
         <label htmlFor='fruit4'>Strawberry</label>
       </div>
+    ) : type === 'radio' ? (
+      <div id='view-input-in-form-engine'>
+        <input type='radio' id='fruit1' name='fruit'  value='Apple' />
+        <label htmlFor='fruit1'>Apple</label>
+        <input type='radio' id='fruit3' name='fruit' checked value='Cherry' />
+        <label htmlFor='fruit3'>Cherry</label>
+        <input type='radio' id='fruit4' name='fruit' value='Strawberry' />
+        <label htmlFor='fruit4'>Strawberry</label>
+      </div>
     ) : (
       <input
         id={data.key ?? new Date().getTime()}
