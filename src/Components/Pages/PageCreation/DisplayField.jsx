@@ -1,8 +1,6 @@
 import { useState, useEffect, useRef, useMemo } from 'react'
-import { renderToString } from 'react-dom/server'
 import {
   Button,
-  Checkbox,
   FormControlLabel,
   FormHelperText,
   FormLabel,
@@ -22,18 +20,15 @@ import en from 'date-fns/locale/en-US'
 import { axiosGet } from 'src/Components/axiosCall'
 import { Icon } from '@iconify/react'
 import Collapse from '@kunukn/react-collapse'
-import styled from 'styled-components'
 
 export default function DisplayField({ input, dirtyProps, reload, refError, dataRef, errorView, findError }) {
   const [value, setValue] = useState('')
   const [error, setError] = useState(false)
   const [dirty, setDirty] = useState(dirtyProps)
   const [showPassword, setShowPassword] = useState(false)
-  const [active, setActive] = useState(false)
   const { locale } = useIntl()
   const [validations, setValidations] = useState({})
   const [selectedOptions, setSelectedOptions] = useState([])
-  const shadowContainerRef = useRef(null)
   const xComponentProps = useMemo(() => input?.options?.uiSchema?.xComponentProps ?? {}, [input])
 
   useEffect(() => {
@@ -42,7 +37,6 @@ export default function DisplayField({ input, dirtyProps, reload, refError, data
       setError(false)
       setDirty(false)
       setShowPassword(false)
-      setActive(false)
       setValidations({})
     } else {
       const dataValidations = {}
@@ -71,7 +65,6 @@ export default function DisplayField({ input, dirtyProps, reload, refError, data
       setError(false)
       setDirty(false)
       setShowPassword(false)
-      setActive(false)
     }
   }, [reload])
 
