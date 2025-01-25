@@ -3,7 +3,6 @@ import { BsPaperclip, BsTrash } from 'react-icons/bs'
 import { useIntl } from 'react-intl'
 
 function Design() {
-  const [selectedFruit, setSelectedFruit] = useState('Cherry') // Default to 'Cherry'
   const [fileNames, setFileNames] = useState([]) // State to store file names
   const { locale } = useIntl()
 

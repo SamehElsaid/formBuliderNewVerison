@@ -8,6 +8,7 @@ import {
   FormControl,
   FormControlLabel,
   FormLabel,
+  Grid,
   IconButton,
   InputAdornment,
   InputLabel,
@@ -180,6 +181,120 @@ export default function CheckboxControl({ data, onChange, type }) {
       setSelectedOptions(data.selected)
     }
   }, [data.selected])
+  useEffect(() => {
+    if (data.fileTypes) {
+      setFileExtensions(data.fileTypes)
+    }
+  }, [data.fileTypes])
+
+  const fileTypes = [
+    // Images
+    '.png',
+    '.jpg',
+    '.jpeg',
+    '.gif',
+    '.bmp',
+    '.svg',
+    '.tiff',
+    '.webp',
+
+    // Documents
+    '.pdf',
+    '.doc',
+    '.docx',
+    '.txt',
+    '.rtf',
+    '.odt',
+    '.tex',
+
+    // Spreadsheets
+    '.xls',
+    '.xlsx',
+    '.csv',
+    '.ods',
+
+    // Presentations
+    '.ppt',
+    '.pptx',
+    '.odp',
+
+    // Audio
+    '.mp3',
+    '.wav',
+    '.ogg',
+    '.m4a',
+    '.aac',
+    '.flac',
+
+    // Video
+    '.mp4',
+    '.mov',
+    '.wmv',
+    '.avi',
+    '.mkv',
+    '.flv',
+    '.webm',
+    '.3gp',
+
+    // Archives
+    '.zip',
+    '.rar',
+    '.7z',
+    '.tar',
+    '.gz',
+    '.bz2',
+
+    // Code
+    '.html',
+    '.css',
+    '.js',
+    '.jsx',
+    '.ts',
+    '.tsx',
+    '.json',
+    '.xml',
+    '.yaml',
+    '.yml',
+    '.py',
+    '.java',
+    '.c',
+    '.cpp',
+    '.cs',
+    '.php',
+    '.rb',
+    '.go',
+    '.sh',
+    '.bat',
+
+    // Fonts
+    '.ttf',
+    '.otf',
+    '.woff',
+    '.woff2',
+
+    // Other
+    '.iso',
+    '.dmg',
+    '.exe',
+    '.apk',
+    '.bin',
+    '.dll',
+    '.icns',
+    '.ico'
+  ]
+  const [fileExtensions, setFileExtensions] = useState([])
+
+  const handleToggleFileExtension = extension => {
+    let fileTypes
+    if (fileExtensions.includes(extension)) {
+      fileTypes = fileExtensions.filter(ext => ext !== extension)
+      setFileExtensions(fileTypes)
+    } else {
+      fileTypes = [...fileExtensions, extension]
+      setFileExtensions(fileTypes)
+    }
+    onChange({ ...data, fileTypes: fileTypes })
+  }
 
   return (
     <div>
@@ -215,141 +330,126 @@ export default function CheckboxControl({ data, onChange, type }) {
         <TextField
           fullWidth
           type='text'
-          value={data.labelAr}
-          onChange={e => onChange({ ...data, labelAr: e.target.value })}
+          defaultValue={data.key}
+          onBlur={e => onChange({ ...data, key: e.target.value })}
           variant='filled'
-          label={locale === 'ar' ? 'الحقل بالعربية' : 'Label Ar'}
-          InputProps={{
-            endAdornment: (
-              <InputAdornment
-                position='end'
-                type='button'
-                onClick={async () => {
-                  const loading = toast.loading(locale === 'ar' ? 'يتم الترجمه' : 'Translating')
-                  const res = await UrlTranAr(data.labelAr)
-                  onChange({ ...data, labelEn: res })
-                  toast.dismiss(loading)
-                }}
-              >
-                <IconButton edge='end' onMouseDown={e => e.preventDefault()}>
-                  <Icon fontSize='1.25rem' icon={'material-symbols:g-translate'} />
-                </IconButton>
-              </InputAdornment>
-            )
-          }}
+          label={locale === 'ar' ? 'المفتاح' : 'Key'}
         />
         <TextField
           fullWidth
           type='text'
-          value={data.labelEn}
-          onChange={e => onChange({ ...data, labelEn: e.target.value })}
+          defaultValue={data.labelAr}
+          onBlur={e => onChange({ ...data, labelAr: e.target.value })}
+          variant='filled'
+          label={locale === 'ar' ? 'الحقل بالعربية' : 'Label Ar'}
+        />
+        <TextField
+          fullWidth
+          type='text'
+          defaultValue={data.labelEn}
+          onBlur={e => onChange({ ...data, labelEn: e.target.value })}
           variant='filled'
           label={locale === 'ar' ? 'الحقل بالانجليزية' : 'Label En'}
-          InputProps={{
-            endAdornment: (
-              <InputAdornment
-                position='end'
-                type='button'
-                onClick={async () => {
-                  const loading = toast.loading(locale === 'ar' ? 'يتم الترجمه' : 'Translating')
-                  const res = await UrlTranEn(data.labelEn)
-                  onChange({ ...data, labelAr: res })
-                  toast.dismiss(loading)
-                }}
-              >
-                <IconButton edge='end' onMouseDown={e => e.preventDefault()}>
-                  <Icon fontSize='1.25rem' icon={'material-symbols:g-translate'} />
-                </IconButton>
-              </InputAdornment>
-            )
-          }}
         />
 
-        <TextField
-          select
-          fullWidth
-          value={data.data_source_id}
-          onChange={e => {
-            onChange({
-              ...data,
-              data_source_id: e.target.value,
-              collectionId: false,
-              collectionName: false,
-              selected: [],
-              sortWithId: false
-            })
-          }}
-          label={locale === 'ar' ? 'المصدر' : 'Data Source'}
-          variant='filled'
-        >
-          {dataSources.map(item => (
-            <MenuItem key={item.id} value={item.id}>
-              {item.name}
-            </MenuItem>
-          ))}
-        </TextField>
-        <div className='mb-4'></div>
-        <Autocomplete
-          options={loadingCollection ? [] : optionsCollection.filter(item => item.id !== addFiles)}
-          getOptionLabel={option => (locale === 'ar' ? option.nameAr : option.nameEn) || ''}
-          loading={loadingCollection}
-          onInputChange={handleInputChange}
-          value={collection}
-          onChange={(e, value) => {
-            setCollection(value)
-            onChange({ ...data, collectionId: value?.id, collectionName: value?.key, selected: [], sortWithId: false })
-            setSelectedOptions([])
-          }}
-          renderInput={params => (
+        {type !== 'file' && (
+          <>
             <TextField
-              {...params}
-              label={messages.Select_Collection}
-              variant='outlined'
-              InputProps={{
-                ...params.InputProps,
-                endAdornment: (
-                  <>
-                    {loadingCollection ? <CircularProgress size={20} /> : null}
-                    {params.InputProps.endAdornment}
-                  </>
-                )
+              select
+              fullWidth
+              value={data.data_source_id}
+              onChange={e => {
+                onChange({
+                  ...data,
+                  data_source_id: e.target.value,
+                  collectionId: false,
+                  collectionName: false,
+                  selected: [],
+                  sortWithId: false
+                })
               }}
+              label={locale === 'ar' ? 'المصدر' : 'Data Source'}
+              variant='filled'
+            >
+              {dataSources.map(item => (
+                <MenuItem key={item.id} value={item.id}>
+                  {item.name}
+                </MenuItem>
+              ))}
+            </TextField>
+            <div className='mb-4'></div>
+            <Autocomplete
+              options={loadingCollection ? [] : optionsCollection.filter(item => item.id !== addFiles)}
+              getOptionLabel={option => (locale === 'ar' ? option.nameAr : option.nameEn) || ''}
+              loading={loadingCollection}
+              onInputChange={handleInputChange}
+              value={collection}
+              onChange={(e, value) => {
+                setCollection(value)
+                onChange({
+                  ...data,
+                  collectionId: value?.id,
+                  collectionName: value?.key,
+                  selected: [],
+                  sortWithId: false
+                })
+                setSelectedOptions([])
+              }}
+              renderInput={params => (
+                <TextField
+                  {...params}
+                  label={messages.Select_Collection}
+                  variant='outlined'
+                  InputProps={{
+                    ...params.InputProps,
+                    endAdornment: (
+                      <>
+                        {loadingCollection ? <CircularProgress size={20} /> : null}
+                        {params.InputProps.endAdornment}
+                      </>
+                    )
+                  }}
+                />
+              )}
+              renderOption={(props, option) =>
+                option.nameEn !== collection?.nameEn ? (
+                  <Box sx={{ direction: locale === 'ar' ? 'rtl' : '' }} component='li' {...props}>
+                    {locale === 'ar' ? option.nameAr : option.nameEn}
+                  </Box>
+                ) : null
+              }
             />
-          )}
-          renderOption={(props, option) =>
-            option.nameEn !== collection?.nameEn ? (
-              <Box sx={{ direction: locale === 'ar' ? 'rtl' : '' }} component='li' {...props}>
-                {locale === 'ar' ? option.nameAr : option.nameEn}
-              </Box>
-            ) : null
-          }
-        />
 
-        <Collapse transition={`height 300ms cubic-bezier(.4, 0, .2, 1)`} isOpen={Boolean(collection?.nameEn)}>
-          <div className='mt-4'>
-            <FormControl component='fieldset' fullWidth>
-              <FormLabel component='legend'>{messages.View_Value}</FormLabel>
-              <div className='!flex !flex-row !flex-wrap gap-2'>
-                {console.log(getFields)}
-                {getFields?.map(value => (
-                  (value.type !== "ManyToMany" && value.type !== "OneToOne") &&
-                  <FormControlLabel
-                    key={value.key}
-                    className='!w-fit capitalize'
-                    control={
-                      <Checkbox
-                        value={value.key}
-                        checked={selectedOptions.includes(value.key)}
-                        onChange={handleChange}
-                      />
-                    }
-                    label={value.key}
-                  />
-                ))}
+            <Collapse transition={`height 300ms cubic-bezier(.4, 0, .2, 1)`} isOpen={Boolean(collection?.nameEn)}>
+              <div className='mt-4'>
+                <FormControl component='fieldset' fullWidth>
+                  <FormLabel component='legend'>{messages.View_Value}</FormLabel>
+                  <div className='!flex !flex-row !flex-wrap gap-2'>
+                    {console.log(getFields)}
+                    {getFields?.map(
+                      value =>
+                        value.type !== 'ManyToMany' &&
+                        value.type !== 'OneToOne' && (
+                          <FormControlLabel
+                            key={value.key}
+                            className='!w-fit capitalize'
+                            control={
+                              <Checkbox
+                                value={value.key}
+                                checked={selectedOptions.includes(value.key)}
+                                onChange={handleChange}
+                              />
+                            }
+                            label={value.key}
+                          />
+                        )
+                    )}
+                  </div>
+                </FormControl>
               </div>
-            </FormControl>
-          </div>
-        </Collapse>
+            </Collapse>
+          </>
+        )}
       </Collapse>
       {type === 'select' ? (
         <Collapse transition={`height 300ms cubic-bezier(.4, 0, .2, 1)`} isOpen={Boolean(selected === 'style')}>
@@ -392,15 +492,12 @@ export default function CheckboxControl({ data, onChange, type }) {
             }}
           />
 
-
           <div className='bg-[#f0f0f0] p-2 mt-1 rounded-md cursor-pointer'>
             <TextField
               fullWidth
               type='color'
               defaultValue={getData(`#custom-select select.background-color.unit`) || '#575757'}
-              onBlur={e =>
-                UpdateData(`#custom-select select.background-color.unit`, e.target.value)
-              }
+              onBlur={e => UpdateData(`#custom-select select.background-color.unit`, e.target.value)}
               label={locale === 'ar' ? 'اللون الخلفي' : 'Background Color'}
               variant='filled'
             />
@@ -432,6 +529,52 @@ export default function CheckboxControl({ data, onChange, type }) {
               type='color'
               defaultValue={getData(`#first-label.color.unit`) || '#555'}
               onBlur={e => UpdateData(`#first-label.color.unit`, e.target.value)}
+              label={locale === 'ar' ? 'لون التسمية' : 'Label Color'}
+              variant='filled'
+            />
+          </div>
+        </Collapse>
+      ) : type === 'file' ? (
+        <Collapse transition={`height 300ms cubic-bezier(.4, 0, .2, 1)`} isOpen={Boolean(selected === 'style')}>
+          {console.log(Css)}
+
+          <div className='bg-[#f0f0f0] p-2 mt-1 rounded-md cursor-pointer'>
+            <TextField
+              fullWidth
+              type='color'
+              defaultValue={getData(`#file-upload-label.background-color.unit`) || '#575757'}
+              onBlur={e => UpdateData(`#file-upload-label.background-color.unit`, e.target.value)}
+              label={locale === 'ar' ? 'اللون الخلفي' : 'Background Color'}
+              variant='filled'
+            />
+          </div>
+          <div className='bg-[#f0f0f0] p-2 mt-1 rounded-md cursor-pointer'>
+            <TextField
+              fullWidth
+              type='color'
+              defaultValue={getData(`#file-upload-label.border-color.unit`) || '#575757'}
+              onBlur={e => UpdateData(`#file-upload-label.border-color.unit`, e.target.value)}
+              label={locale === 'ar' ? 'اللون الحدود' : 'Border Color'}
+              variant='filled'
+            />
+          </div>
+          <div className='bg-[#f0f0f0] p-2 mt-1 rounded-md cursor-pointer'>
+            <TextField
+              fullWidth
+              type='color'
+              defaultValue={getData(`#file-upload-content.color.unit`) || '#fff'}
+              onBlur={e => UpdateData(`#file-upload-content.color.unit`, e.target.value)}
+              label={locale === 'ar' ? 'اللون' : 'Color'}
+              variant='filled'
+            />
+          </div>
+
+          <div className='bg-[#f0f0f0] p-2 mt-1 rounded-md cursor-pointer'>
+            <TextField
+              fullWidth
+              type='color'
+              defaultValue={getData('#label-color.color.unit') || '#555'}
+              onBlur={e => UpdateData('#label-color.color.unit', e.target.value)}
               label={locale === 'ar' ? 'لون التسمية' : 'Label Color'}
               variant='filled'
             />
@@ -754,6 +897,44 @@ export default function CheckboxControl({ data, onChange, type }) {
           }
           label={locale === 'ar' ? 'مطلوب' : 'Unique'}
         />
+        {type === 'file' && (
+          <>
+            <div className='p-2 mt-2 rounded-md border-2 border-gray-300'>
+              <h4>{locale === 'ar' ? 'الملفات المسموحة' : 'Allowed Files'}:</h4>
+              <Grid container spacing={2}>
+                <Grid item xs={4} key={type}>
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={data.multiple}
+                        onChange={() => onChange({ ...data, multiple: !data.multiple })}
+                      />
+                    }
+                    label={locale === 'ar' ? 'متعددة' : 'Multiple'}
+                  />
+                </Grid>
+              </Grid>
+            </div>
+            <div className='p-2 mt-2 rounded-md border-2 border-gray-300'>
+              <h4>{locale === 'ar' ? 'الملفات المسموحة' : 'Allowed Files'}:</h4>
+              <Grid container spacing={2}>
+                {fileTypes.map(type => (
+                  <Grid item xs={4} key={type}>
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={fileExtensions.includes(type)}
+                          onChange={() => handleToggleFileExtension(type)}
+                        />
+                      }
+                      label={type}
+                    />
+                  </Grid>
+                ))}
+              </Grid>
+            </div>
+          </>
+        )}
         {type === 'checkbox' && (
           <>
             <TextField

@@ -128,12 +128,24 @@ const ReactPageEditor = () => {
                     if (dataMain.type === 'number') {
                       validationData.push({ RuleType: 'ColumnDataType', Parameters: { expectedType: 'System.number' } })
                     }
-                    if (cell.plugin.id === 'input' || cell.plugin.id === 'textarea') {
-                      data.type = getType(cell.plugin.id === 'textarea' ? 'textarea' : dataMain.type || 'text')
+                    if (cell.plugin.id === 'input' || cell.plugin.id === 'textarea' || cell.plugin.id === 'file') {
+                      data.type = getType(
+                        cell.plugin.id === 'textarea'
+                          ? 'textarea'
+                          : cell.plugin.id === 'file'
+                          ? 'file'
+                          : dataMain.type || 'text'
+                      )
                       data.collectionId = addFiles
                       data.key = dataMain.key
                       data.descriptionAr = dataMain.labelAr || ''
-                      data.descriptionEn = cell.plugin.id === 'textarea' ? data.rows || '5' : dataMain.labelEn || ''
+                      console.log(dataMain)
+                      data.descriptionEn =
+                        cell.plugin.id === 'textarea'
+                          ? data.rows || '5'
+                          : cell.plugin.id === 'file'
+                          ? `${dataMain.multiple ? 'true' : 'false'}` || ''
+                          : dataMain.labelEn || ''
                       data.nameAr = dataMain.labelAr || ''
                       data.nameEn = dataMain.labelEn || ''
                       const placeholderAr = dataMain.placeholderAr || ''
@@ -143,6 +155,7 @@ const ReactPageEditor = () => {
                         en: placeholderEn
                       })
                       data.FieldCategory = 'Basic'
+                      data.options.uiSchema.xComponentProps.fileTypes = dataMain.fileTypes|| []
                       data.options.uiSchema.xComponentProps.regex = dataMain.regex || ''
                       const regexMessageAr = dataMain.regexMessageAr || ''
                       const regexMessageEn = dataMain.regexMessageEn || ''
@@ -180,10 +193,13 @@ const ReactPageEditor = () => {
                       addData.push(data)
                     }
                     if (cell.plugin.id === 'checkbox' || cell.plugin.id === 'radio' || cell.plugin.id === 'select') {
-                      data.type = getType(cell.plugin.id === 'checkbox' ? 'checkbox' :  cell.plugin.id === 'radio' ? 'radio' : "select")
+                      data.type = getType(
+                        cell.plugin.id === 'checkbox' ? 'checkbox' : cell.plugin.id === 'radio' ? 'radio' : 'select'
+                      )
                       data.collectionId = addFiles
                       data.key = dataMain.key
-                      data.descriptionAr = cell.plugin.id === 'checkbox' ? 'checkbox' :  cell.plugin.id === 'radio' ? 'radio' : "select"
+                      data.descriptionAr =
+                        cell.plugin.id === 'checkbox' ? 'checkbox' : cell.plugin.id === 'radio' ? 'radio' : 'select'
                       data.descriptionEn = JSON.stringify(dataMain.selected) || ''
                       data.nameAr = dataMain.labelAr || ''
                       data.nameEn = dataMain.labelEn || ''

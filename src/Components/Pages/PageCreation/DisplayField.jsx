@@ -1,17 +1,5 @@
-import { useState, useEffect, useRef, useMemo } from 'react'
-import {
-  Button,
-  FormControlLabel,
-  FormHelperText,
-  FormLabel,
-  IconButton,
-  InputAdornment,
-  InputLabel,
-  MenuItem,
-  Radio,
-  Select,
-  TextField
-} from '@mui/material'
+import { useState, useEffect, useMemo } from 'react'
+import { FormLabel, IconButton, InputAdornment, TextField } from '@mui/material'
 import { useIntl } from 'react-intl'
 import { isPossiblePhoneNumber } from 'react-phone-number-input'
 import DatePicker from 'react-datepicker'
@@ -20,6 +8,7 @@ import en from 'date-fns/locale/en-US'
 import { axiosGet } from 'src/Components/axiosCall'
 import { Icon } from '@iconify/react'
 import Collapse from '@kunukn/react-collapse'
+import { BsPaperclip, BsTrash } from 'react-icons/bs'
 
 export default function DisplayField({ input, dirtyProps, reload, refError, dataRef, errorView, findError }) {
   const [value, setValue] = useState('')
@@ -192,23 +181,69 @@ export default function DisplayField({ input, dirtyProps, reload, refError, data
       })
     }
   }, [input])
+  console.log(input?.options?.uiSchema?.xComponentProps?.fileTypes)
 
   const onChangeFile = e => {
-    const errorType = []
-    input.allowedFileTypes.forEach(type => {
-      if (e?.target?.files[0]?.type.includes(type.replace('.', '/'))) {
-        errorType.push(true)
-      }
-    })
-    if (!errorType.includes(true)) {
-      setValue([])
-      e.target.value = ''
+    console.log(e, value, input)
+    if (input.descriptionEn) {
+      const newFiles = Array.from(e.target.files) // تحويل FileList إلى مصفوفة
+      console.log(newFiles)
+      const validFiles = [] // لتخزين الملفات الصحيحة
+      const invalidFiles = [] // لتخزين الملفات الخاطئة
 
-      return setError('Invalid File Type')
+      // التحقق من أنواع الملفات
+      newFiles.forEach(file => {
+        console.log(input?.options?.uiSchema?.xComponentProps?.fileTypes, file.type)
+        let isValid = false
+        input?.options?.uiSchema?.xComponentProps?.fileTypes?.forEach(type => {
+          if (file.type.includes(type.replace('.', '/'))) {
+            isValid = true
+          }
+        })
+        if (isValid) {
+          validFiles.push(file) // إذا كان الملف صحيحًا
+        } else {
+          invalidFiles.push(file) // إذا كان الملف خاطئًا
+        }
+      })
+      console.log(validFiles, input?.options?.uiSchema?.xComponentProps?.fileTypes)
+      // إذا كان هناك ملفات خاطئة
+      if (invalidFiles.length > 0 && validFiles.length === 0 && value.length === 0) {
+        setError('Invalid File Type') // عرض رسالة خطأ
+      } else {
+        setError(false) // إخفاء الخطأ
+      }
+
+      // إذا كان هناك ملفات صحيحة
+      if (validFiles.length > 0) {
+        setValue(prevFiles => [...prevFiles, ...validFiles]) // إضافة الملفات الصحيحة
+      }
+
+      e.target.value = '' // مسح قيمة الـ input
+    } else {
+      const errorType = []
+      // input.allowedFileTypes.forEach(type => {
+      //   if (e?.target?.files[0]?.type.includes(type.replace('.', '/'))) {
+      //     errorType.push(true)
+      //   }
+      // })
+      // if (!errorType.includes(true)) {
+      //   setValue([])
+      //   e.target.value = ''
+
+      //   return setError('Invalid File Type')
+      // }
+      // setError(false)
+      // setValue(e?.target?.files[0] ? [e.target.files[0]] : [])
+      // e.target.value = ''
     }
-    setError(false)
-    setValue(e?.target?.files[0] ? [e.target.files[0]] : [])
-    e.target.value = ''
+  }
+
+  const handleDelete = (index, e) => {
+    e.stopPropagation()
+    setTimeout(() => {
+      setValue(prevNames => prevNames.filter((_, i) => i !== index)) // Remove the file at the specified index
+    }, 0)
   }
 
   const label = (
@@ -219,7 +254,7 @@ export default function DisplayField({ input, dirtyProps, reload, refError, data
 
   return (
     <div className='reset' id={input.key + input.nameEn}>
-      <div>{label}</div>
+      <div>{input.type !== 'File' && label}</div>
       <style>{`#${input.key + input.nameEn} {
         ${xComponentProps?.cssClass}
       }`}</style>
@@ -229,10 +264,12 @@ export default function DisplayField({ input, dirtyProps, reload, refError, data
           xComponentProps={xComponentProps}
           value={value}
           onChange={onChange}
+          onChangeFile={onChangeFile}
           locale={locale}
           findError={findError}
           selectedOptions={selectedOptions}
           errorView={errorView}
+          handleDelete={handleDelete}
           error={error}
           setShowPassword={setShowPassword}
           showPassword={showPassword}
@@ -248,8 +285,10 @@ export default function DisplayField({ input, dirtyProps, reload, refError, data
 const ViewInput = ({
   input,
   value,
+  onChangeFile,
   onChange,
   locale,
+  handleDelete,
   findError,
   errorView,
   error,
@@ -340,8 +379,63 @@ const ViewInput = ({
 
   if (input.type === 'File') {
     return (
-      <div>
-        <Button variant='contained' component='label' startIcon={<Icon icon='ph:upload-fill' />} fullWidth>
+      <div className='px-4 w-full'>
+        <div id='file-upload-container'>
+          <label htmlFor='file-upload-input' id='file-upload-label'>
+            <div id='label-color'>{locale === 'ar' ? input.nameAr : input.nameEn}</div>
+            <div id='file-upload-content'>
+              <svg
+                id='file-upload-icon'
+                aria-hidden='true'
+                xmlns='http://www.w3.org/2000/svg'
+                fill='none'
+                viewBox='0 0 20 16'
+              >
+                <path
+                  stroke='currentColor'
+                  strokeLinecap='round'
+                  strokeLinejoin='round'
+                  strokeWidth='2'
+                  d='M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2'
+                />
+              </svg>
+
+              <p id='file-upload-text'>
+                <span className='font-semibold'>{locale === 'ar' ? 'اضف الصورة' : 'Add Image'} </span>
+                {locale === 'ar' ? 'أو اسحب وأفلت' : 'or drag and drop'}
+              </p>
+              <p id='file-upload-subtext'>
+                {locale === 'ar' ? 'SVG, PNG, JPG or GIF (MAX. 800x400px)' : 'SVG, PNG, JPG or GIF (MAX. 800x400px)'}
+              </p>
+              {console.log(value)}
+              {Array.from(value).length !== 0 && (
+                <div className='flex flex-col gap-1 p-2 mt-5 rounded-md shadow-inner shadow-gray-300 file-names-container'>
+                  {Array.from(value).map((file, index) => (
+                    <div key={index} className='flex gap-3 items-center file-name-item'>
+                      <span className='flex gap-1 items-center file-name w-[calc(100%-25px)]'>
+                        <BsPaperclip className='text-xl text-main-color' />
+                        <span className='flex-1'>{file.name}</span>
+                      </span>
+                      <button
+                        className='delete-button w-[25px] h-[25px] bg-red-500/70 rounded-full text-white hover:bg-red-500/90 transition-all duration-300 flex items-center justify-center'
+                        onClick={e => handleDelete(index, e)}
+                      >
+                        <BsTrash />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+            <input
+              type='file'
+              id='file-upload-input'
+              onChange={onChangeFile}
+              multiple // Allow multiple files
+            />
+          </label>
+        </div>
+        {/* <Button variant='contained' component='label' startIcon={<Icon icon='ph:upload-fill' />} fullWidth>
           <input
             type='file'
             hidden
@@ -356,7 +450,7 @@ const ViewInput = ({
             </div>
           )}
         </Button>
-        <FormHelperText>{error || errorView}</FormHelperText>
+        <FormHelperText>{error || errorView}</FormHelperText> */}
       </div>
     )
   }

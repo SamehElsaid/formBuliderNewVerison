@@ -6,6 +6,7 @@ import useTextArea from './useTextArea'
 import useCheckbox from './useCheckbox'
 import useRadio from './useRadio'
 import useSelect from './useSelect'
+import useFile from './useFile'
 
 export default function useCellPlugins({ advancedEdit, locale, readOnly }) {
   // Hooks Drag Drop Components
@@ -14,7 +15,8 @@ export default function useCellPlugins({ advancedEdit, locale, readOnly }) {
   const { Checkbox } = useCheckbox({ locale, advancedEdit })
   const { Radio } = useRadio({ locale, advancedEdit })
   const { Select } = useSelect({ locale, advancedEdit })
-  const cellPlugins = [slate(), Input, TextArea, Checkbox, Radio, Select]
+  const { File } = useFile({ locale, advancedEdit })
+  const cellPlugins = [slate(), Input, TextArea, Checkbox, Radio, Select, File]
 
   return { cellPlugins }
 }
