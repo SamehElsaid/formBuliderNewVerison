@@ -58,7 +58,6 @@ export const axiosPatch = async (url, locale, data, file, close) => {
 
 export const axiosPost = async (url, locale, data, file, close) => {
   const authToken = Cookies.get('sub')
-  console.log(authToken)
   const HeaderImg = { 'Content-Type': 'multipart/form-data' }
 
   const headerToken = file

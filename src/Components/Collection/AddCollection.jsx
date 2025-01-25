@@ -82,7 +82,6 @@ const AddCollection = props => {
         if (res.status) {
           toast.success(locale === 'ar' ? 'تم إضافة التجميعة بنجاح' : 'Collection added successfully')
           handleClose()
-          console.log(res)
           setRefresh(prev => prev + 1)
         }
       })

@@ -20,7 +20,6 @@ export default function Background({ data, onChange }) {
       const blob = new Blob([file], { type: file.type }) // إنشاء Blob من الملف
       const blobUrl = URL.createObjectURL(blob) // إنشاء رابط من Blob
       onChange({ ...data, backgroundImage: blobUrl }) // تخزين Blob والرابط
-      console.log(blobUrl)
     }
   }
 

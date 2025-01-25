@@ -1,13 +1,12 @@
 import { useMemo } from 'react'
-import { GiClick } from 'react-icons/gi'
 import InputControl from '../ButtonControl'
 import ViewInputInFormEngine from '../ViewInputInFormEngine'
+import { FaRegEdit } from 'react-icons/fa'
 
-export default function useInput({ locale, advancedEdit  }) {
+export default function useInput({ locale, advancedEdit }) {
   const Input = useMemo(() => {
     return {
       Renderer: ({ data, onChange }) => {
-
         const defaultValue = (data, key, defaultValue) => {
           if (data[key]) {
             return data[key]
@@ -18,7 +17,13 @@ export default function useInput({ locale, advancedEdit  }) {
 
         return (
           <>
-            <ViewInputInFormEngine data={data} advancedEdit={advancedEdit} locale={locale} defaultValue={defaultValue} onChange={onChange}/>
+            <ViewInputInFormEngine
+              data={data}
+              advancedEdit={advancedEdit}
+              locale={locale}
+              defaultValue={defaultValue}
+              onChange={onChange}
+            />
           </>
         )
       },
@@ -26,7 +31,7 @@ export default function useInput({ locale, advancedEdit  }) {
       title: locale === 'ar' ? 'حقل' : 'Input',
       description: locale === 'ar' ? 'حقل' : 'Input',
       version: 1,
-      icon: <GiClick className='text-2xl' />,
+      icon: <FaRegEdit className='text-2xl' />,
       controls: {
         type: 'custom',
         Component: ({ data, onChange }) => <InputControl data={data} onChange={onChange} locale={locale} />

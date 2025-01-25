@@ -19,7 +19,6 @@ export default function UpdateImage({ data, onChange, locale, type }) {
       } else {
         onChange({ ...data, image: blobUrl }) // تخزين Blob والرابط
       }
-      console.log(blobUrl)
     }
   }
 

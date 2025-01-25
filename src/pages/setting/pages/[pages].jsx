@@ -10,7 +10,6 @@ import https from 'https'
 
 const Index = ({ pageName, initialData, initialDataApi }) => {
   const [loading, setLoading] = useState(true)
-  console.log(initialData, initialDataApi)
 
   let ReactPageEditor = null
   try {
@@ -71,7 +70,6 @@ export async function getServerSideProps(context) {
       }
     }
   } catch (error) {
-    console.log(error.message)
 
     return {
       notFound: true

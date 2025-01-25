@@ -10,6 +10,7 @@ import {
   FormLabel,
   IconButton,
   InputAdornment,
+  InputLabel,
   MenuItem,
   Select,
   TextField
@@ -31,7 +32,6 @@ export default function CheckboxControl({ data, onChange, type }) {
   const {
     query: { addFiles }
   } = useRouter()
-  console.log(addFiles, 'addFiles')
 
   const Css = cssToObject(data.css || DefaultStyle(type))
 
@@ -66,7 +66,6 @@ export default function CheckboxControl({ data, onChange, type }) {
 
     current[keys[keys.length - 1]] = value
 
-    console.log(Css, objectToCss(Css))
 
     onChange({ ...data, css: objectToCss(Css).replaceAll('NaN', '') })
   }
@@ -96,7 +95,6 @@ export default function CheckboxControl({ data, onChange, type }) {
 
   useEffect(() => {
     if (data.collectionId) {
-      console.log(data.collectionId, 'data.collectionId')
       axiosGet(`collections/get-by-id?id=${data.collectionId}`, locale).then(res => {
         if (res.status) {
           if (res.data?.id) {
@@ -119,7 +117,6 @@ export default function CheckboxControl({ data, onChange, type }) {
   const [getFields, setGetFields] = useState([])
   const [collection, setCollection] = useState('')
 
-  console.log(getFields, 'getFields')
   useEffect(() => {
     if (data.collectionId) {
       axiosGet(`collections/get-by-id?id=${data.collectionId}`, locale).then(res => {
@@ -181,7 +178,6 @@ export default function CheckboxControl({ data, onChange, type }) {
   }
   useEffect(() => {
     if (data.selected) {
-      console.log(data, 'data.selected')
       setSelectedOptions(data.selected)
     }
   }, [data.selected])
@@ -355,7 +351,22 @@ export default function CheckboxControl({ data, onChange, type }) {
         </Collapse>
       </Collapse>
       <Collapse transition={`height 300ms cubic-bezier(.4, 0, .2, 1)`} isOpen={Boolean(selected === 'style')}>
-        {console.log(Css['input[type=checkbox]:checked + label:before'])}
+        <div className='mt-1'></div>
+        <FormControl variant='filled' fullWidth>
+          <InputLabel id='demo-simple-select-filled-label'>{locale === 'ar' ? 'الاتجاه' : 'Flex Direction'}</InputLabel>
+          <Select
+            fullWidth
+            labelId='demo-simple-select-filled-label'
+            value={getData('#view-input-in-form-engine.flex-direction.unit') || 'row'} // الافتراضي px
+            onChange={e => UpdateData('#view-input-in-form-engine.flex-direction.unit', e.target.value)}
+            label={locale === 'ar' ? 'الاتجاه' : 'Flex Direction'}
+          >
+            <MenuItem value='row'>Row</MenuItem>
+            <MenuItem value='column'>Column</MenuItem>
+            <MenuItem value='row-reverse'>Row Reverse</MenuItem>
+            <MenuItem value='column-reverse'>Column Reverse</MenuItem>
+          </Select>
+        </FormControl>
         <TextField
           fullWidth
           type='number'
@@ -467,7 +478,6 @@ export default function CheckboxControl({ data, onChange, type }) {
           }}
         />
         <div className='mt-1'></div>
-        {console.log(getData('input[type=checkbox] + label.margin-bottom.unit'))}
         <TextField
           fullWidth
           type='number'
@@ -601,7 +611,6 @@ export default function CheckboxControl({ data, onChange, type }) {
             variant='filled'
           />
         </div>
-        {console.log(Css)}
         <div className='bg-[#f0f0f0] p-2 mt-1 rounded-md cursor-pointer'>
           <TextField
             fullWidth

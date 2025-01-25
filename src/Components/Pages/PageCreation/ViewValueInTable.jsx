@@ -26,7 +26,6 @@ export default function ViewValueInTable({ data, value }) {
     }
   }, [data, value])
 
-  console.log(dataView)
 
   return <div>{dataView ? dataView : <CircularProgress size={25} />}</div>
 }

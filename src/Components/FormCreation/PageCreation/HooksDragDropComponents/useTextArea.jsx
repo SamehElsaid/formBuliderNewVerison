@@ -2,6 +2,7 @@ import { useMemo } from 'react'
 import { GiClick } from 'react-icons/gi'
 import InputControl from '../ButtonControl'
 import ViewInputInFormEngine from '../ViewInputInFormEngine'
+import { TbDeviceIpadHorizontalPlus } from 'react-icons/tb'
 
 export default function useTextArea({ locale, advancedEdit  }) {
   const TextArea = useMemo(() => {
@@ -26,7 +27,7 @@ export default function useTextArea({ locale, advancedEdit  }) {
       title: locale === 'ar' ? 'حقل نص' : 'Textarea',
       description: locale === 'ar' ? 'حقل نص' : 'Textarea',
       version: 1,
-      icon: <GiClick className='text-2xl' />,
+      icon: <TbDeviceIpadHorizontalPlus className='text-2xl' />,
       controls: {
         type: 'custom',
         Component: ({ data, onChange }) => <InputControl data={data} onChange={onChange} locale={locale} type='textarea' />

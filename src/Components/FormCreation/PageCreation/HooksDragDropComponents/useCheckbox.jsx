@@ -2,6 +2,7 @@ import { useMemo } from 'react'
 import { GiClick } from 'react-icons/gi'
 import ViewInputInFormEngine from '../ViewInputInFormEngine'
 import CheckboxControl from '../CheckboxControl'
+import { IoIosCheckboxOutline } from 'react-icons/io'
 
 export default function useCheckbox({ locale, advancedEdit  }) {
   const Checkbox = useMemo(() => {
@@ -26,7 +27,7 @@ export default function useCheckbox({ locale, advancedEdit  }) {
       title: locale === 'ar' ? 'خانة الاختيار' : 'Checkbox',
       description: locale === 'ar' ? 'خانة الاختيار' : 'Checkbox',
       version: 1,
-      icon: <GiClick className='text-2xl' />,
+      icon: <IoIosCheckboxOutline  className='text-2xl' />,
       controls: {
         type: 'custom',
         Component: ({ data, onChange }) => <CheckboxControl data={data} onChange={onChange} locale={locale} type='checkbox' />

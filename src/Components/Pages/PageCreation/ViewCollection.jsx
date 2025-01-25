@@ -21,7 +21,6 @@ export default function ViewCollection({ data, locale, onChange, readOnly,disabl
       axiosGet(`collection-fields/get?CollectionId=${data.collectionId}`, locale)
         .then(res => {
           if (res.status) {
-            console.log(res.data)
             if (data.sortWithId) {
               setGetFields(data.sortWithId.map(ele => res.data.find(e => e.id === ele)))
             } else {
@@ -56,13 +55,7 @@ export default function ViewCollection({ data, locale, onChange, readOnly,disabl
 
     setLoadingSubmit(true)
     const sendData = { ...dataRef.current }
-    console.log(
-      getFields.map(ele => {
-        if (ele.type === 'Number') {
-          sendData[ele.key] = Number(sendData[ele.key])
-        }
-      })
-    )
+
 
     axiosPost(
       data.type_of_sumbit === 'collection' ? `generic-entities/${data.collectionName}` : data.submitApi,
@@ -157,7 +150,6 @@ export default function ViewCollection({ data, locale, onChange, readOnly,disabl
                 </div>
               ))
           )}
-          {console.log({ getFields, dsad: data?.selected })}
           <div className='flex justify-center'>
             <LoadingButton
               loading={loadingSubmit}

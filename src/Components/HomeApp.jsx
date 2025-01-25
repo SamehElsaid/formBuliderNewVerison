@@ -122,7 +122,6 @@ function HomeApp({ children }) {
 
         return
       }
-      console.log(data.message)
 
       for (const key in data.message) {
         const messages = data.message[key]

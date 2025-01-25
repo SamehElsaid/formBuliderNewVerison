@@ -224,7 +224,6 @@ const FormBuilder = ({ open, setOpen }) => {
   }, [locale, dataSourceId])
 
   const handleInputChange = async (event, value) => {
-    console.log(value)
     if (!value) {
       setValueCollection('')
     }
@@ -359,7 +358,6 @@ const FormBuilder = ({ open, setOpen }) => {
     }
     setLoading(true)
 
-    console.log(open.key)
     axiosPost('collection-fields/configure-fields', locale, sendData)
       .then(res => {
         if (res.status) {
@@ -680,7 +678,6 @@ const FormBuilder = ({ open, setOpen }) => {
                     <FormControl component='fieldset' fullWidth>
                       <FormLabel component='legend'>{messages.View_Value}</FormLabel>
                       <div className='!flex !flex-row !flex-wrap gap-2'>
-                        {console.log(selectedOptions)}
                         {getFields.map(field =>
                           field.type === 'OneToOne' ||
                           field.type === 'ManyToMany' ||

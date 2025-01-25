@@ -98,7 +98,6 @@ export default function DisplayField({ input, dirtyProps, reload, refError, data
       if (input.type === 'Phone' && validations.Required && e?.length === 0 && isTypeNew) {
         return setError('Required')
       }
-      console.log(e.target.value, 'value', isPossiblePhoneNumber(e.target.value))
       if (input.type === 'Phone' && !isPossiblePhoneNumber('+' + e?.target?.value ?? '')) {
         return setError('Invalid_Phone')
       }
@@ -282,7 +281,6 @@ const ViewInput = ({
   ) {
     const placeholderInText = xComponentProps?.placeholder
     const placeholder = JSON.parse(placeholderInText) ?? { ar: '', en: '' }
-    console.log(placeholder)
 
     return (
       <>
@@ -301,11 +299,8 @@ const ViewInput = ({
           }
           value={value}
           name={input.nameEn}
-          onClick={() => {
-            console.log('click')
-          }}
+     
           onChange={e => {
-            console.log(e)
             onChange(e)
           }}
           onKeyDown={handleKeyDown}

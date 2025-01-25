@@ -56,7 +56,6 @@ export const getType = type => {
 }
 
 export const DefaultStyle = type => {
-  console.log(type)
   if (type === 'textarea') {
     return `
      label{
@@ -147,6 +146,11 @@ input[type=checkbox]:checked:disabled + label:before {
   transform: scale(1);
   background-color: #3498ffab
   border-color: #3498ffab;
+}
+#view-input-in-form-engine{
+  display:flex;
+  flex-direction:column;
+  flex-wrap:wrap;
 }
       `
   }

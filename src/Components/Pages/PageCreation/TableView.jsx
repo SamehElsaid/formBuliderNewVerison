@@ -252,7 +252,6 @@ function TableView({ data, locale, onChange, readOnly }) {
         headerName: locale === 'ar' ? ele.nameAr.toUpperCase() : ele.nameEn.toUpperCase(),
         renderCell: ({ row }) => (
           <Typography variant='subtitle2' sx={{ fontWeight: 500, color: 'text.secondary' }}>
-            {console.log(ele)}
             {ele?.fieldCategory === 'Associations' ? (
               <ViewValueInTable data={ele} value={row[ele.key]} />
             ) : (

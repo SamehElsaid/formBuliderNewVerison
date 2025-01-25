@@ -17,7 +17,6 @@ const Editor = ({ initialTemplateName, type, setValue, trigger, setLoadingBtn, s
       onChange={e => {
         setTemplateName(e)
         setValue(type, e)
-        console.log(type)
         trigger(type)
         ref.current = e
         if (setShowDescription) {
@@ -31,11 +30,9 @@ const Editor = ({ initialTemplateName, type, setValue, trigger, setLoadingBtn, s
           setLoadingBtn(true)
           try {
             const res = await axios.get(UrlTranAr(ref.current.replace(/<[^>]*>/g, ''), 'en'))
-            console.log(to)
             setValue(to, res.data)
             setLoadingBtn(false)
           } catch (err) {
-            console.log(err)
             setLoadingBtn(false)
           }
         }

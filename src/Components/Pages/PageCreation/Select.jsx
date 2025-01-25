@@ -45,7 +45,6 @@ function Select({ onChange, data, type }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [locale, data.data_source_id])
 
-  console.log(getFields, 'type')
 
   useEffect(() => {
     if (!data.data_source_id) return
@@ -63,7 +62,6 @@ function Select({ onChange, data, type }) {
 
   useEffect(() => {
     if (data.collectionId) {
-      console.log(data.collectionId, 'data.collectionId')
       axiosGet(`collections/get-by-id?id=${data.collectionId}`, locale).then(res => {
         if (res.status) {
           if (res.data?.id) {
@@ -241,7 +239,6 @@ function Select({ onChange, data, type }) {
           {viewTable.map(item => {
             return (
               <div className='mt-4' key={item.key}>
-                {console.log(item, 'item')}
                 <FormControl component='fieldset' fullWidth>
                   <FormLabel component='legend'>
                     {messages.View_Value} {item.collectionName}{' '}

@@ -10,10 +10,8 @@ export default function useFlexControl({locale}) {
         const ref = useRef(null)
         useEffect(() => {
           const childrenView = data.childrenView ?? 'auto'
-          console.log(children[0])
           if (!Array.isArray(children[0])) {
             const divContainer = ref.current.querySelector('div:nth-child(1)')
-            console.log(divContainer)
             if (divContainer) {
               divContainer.querySelectorAll('.react-page-cell').forEach(div => {
                 div.style.width = 'fit-content'
@@ -22,7 +20,6 @@ export default function useFlexControl({locale}) {
               divContainer.querySelectorAll('.react-page-row').forEach(div => {
                 div.style.flex = 'inherit'
               })
-              console.log(childrenView)
 
               divContainer.style.cssText = `
               display: ${childrenView === 'auto' ? 'flex' : 'grid'};

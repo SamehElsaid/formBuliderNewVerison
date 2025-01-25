@@ -97,7 +97,6 @@ const LoginPage = () => {
               last_name: 'Doe',
               token: res.data.token
             }
-            console.log(userData)
             toast.success(`Welcome ${userData?.first_name}`)
             dispatch(SET_ACTIVE_USER(userData))
             setCookie('sub', encryptData(userData), {

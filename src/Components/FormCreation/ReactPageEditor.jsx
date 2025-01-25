@@ -28,7 +28,6 @@ const ReactPageEditor = () => {
   const [saveData, setSaveData] = useState(false)
   const [loadingSaveData, setLoadingSaveData] = useState(false)
   const theme = useTheme()
-  console.log(editorValue)
 
   const {
     push,
@@ -84,7 +83,6 @@ const ReactPageEditor = () => {
                 const stop = []
                 const addData = []
                 editorValue?.rows.map((row, index) => {
-                  console.log(row)
                   row.cells.map(cell => {
                     const data = { options: { uiSchema: { xComponentProps: {} } } }
                     const dataMain = cell?.dataI18n?.default || {}
@@ -107,9 +105,7 @@ const ReactPageEditor = () => {
                     if (dataMain.minLength) {
                       validationData.push({ RuleType: 'MinLength', Parameters: { minLength: dataMain.minLength } })
                     }
-                    {
-                      console.log(dataMain.type)
-                    }
+
                     if (dataMain.maxValue && dataMain.type === 'number') {
                       validationData.push({ RuleType: 'MaxValue', Parameters: { maxValue: dataMain.maxValue } })
                     }
@@ -199,7 +195,6 @@ const ReactPageEditor = () => {
                       data.options.junctionTable = `${dataMain.collectionName}${fields.key}`
                       data.key = `${dataMain.collectionName}${fields.key}`
 
-                      console.log(data, dataMain)
 
                       if (!data.nameAr) {
                         toast.error(
@@ -356,7 +351,6 @@ const ReactPageEditor = () => {
           theme={theme}
           value={editorValue}
           onChange={(e, editor) => {
-            console.log(editor)
             setEditorValue(e)
           }}
           readOnly={readOnly}

@@ -26,7 +26,6 @@ export default function useRichText({ locale }) {
               : locale === 'ar'
               ? 'المحتوى'
               : 'Content'}
-            {console.log(data)}
           </div>
         )
       },

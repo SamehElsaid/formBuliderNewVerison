@@ -1,10 +1,10 @@
-import React, { useEffect, useMemo, useRef } from 'react';
-import CssEditor from './CssEditor';
-import { renderToString } from 'react-dom/server';
-import { DefaultStyle } from 'src/Components/_Shared';
+import React, { useEffect, useMemo, useRef } from 'react'
+import CssEditor from './CssEditor'
+import { renderToString } from 'react-dom/server'
+import { DefaultStyle } from 'src/Components/_Shared'
 
 const CssEditorView = ({ data, locale, defaultValue, type }) => {
-  const shadowContainerRef = useRef(null);
+  const shadowContainerRef = useRef(null)
 
   const inputElement = useMemo(() => {
     return type === 'textarea' ? (
@@ -12,14 +12,14 @@ const CssEditorView = ({ data, locale, defaultValue, type }) => {
         id={data.key ?? new Date().getTime()}
         rows={data.rows || 5}
         style={{
-          transition: '0.3s',
+          transition: '0.3s'
         }}
         placeholder={
           locale === 'ar' ? data.placeholderAr || 'الحقل بالعربية' : data.placeholderEn || 'The field in English'
         }
       />
     ) : type === 'checkbox' ? (
-      <div>
+      <div id='view-input-in-form-engine'>
         <input type='checkbox' id='fruit1' name='fruit-1' value='Apple' />
         <label htmlFor='fruit1'>Apple</label>
         <input type='checkbox' id='fruit3' name='fruit-3' value='Cherry' checked />
@@ -32,14 +32,14 @@ const CssEditorView = ({ data, locale, defaultValue, type }) => {
         id={data.key ?? new Date().getTime()}
         type={data.type ?? 'text'}
         style={{
-          transition: '0.3s',
+          transition: '0.3s'
         }}
         placeholder={
           locale === 'ar' ? data.placeholderAr || 'الحقل بالعربية' : data.placeholderEn || 'The field in English'
         }
       />
-    );
-  }, [data.key, locale, type, data.type, data.rows, data.placeholderAr, data.placeholderEn]);
+    )
+  }, [data.key, locale, type, data.type, data.rows, data.placeholderAr, data.placeholderEn])
 
   const label = useMemo(() => {
     return (
@@ -50,17 +50,17 @@ const CssEditorView = ({ data, locale, defaultValue, type }) => {
           locale === 'ar' ? 'الحقل بالعربية' : 'The field in English'
         )}
       </label>
-    );
-  }, [data, defaultValue, locale]);
+    )
+  }, [data, defaultValue, locale])
 
-  const inputHtml = renderToString(inputElement);
-  const labelHtml = renderToString(label);
+  const inputHtml = renderToString(inputElement)
+  const labelHtml = renderToString(label)
 
   useEffect(() => {
     if (shadowContainerRef.current) {
       // إنشاء Shadow DOM إذا لم يكن موجودًا
       if (!shadowContainerRef.current.shadowRoot) {
-        shadowContainerRef.current.attachShadow({ mode: 'open' });
+        shadowContainerRef.current.attachShadow({ mode: 'open' })
       }
 
       // إضافة المحتوى والتنسيقات إلى Shadow DOM
@@ -85,12 +85,12 @@ const CssEditorView = ({ data, locale, defaultValue, type }) => {
         </style>
         <div>${labelHtml}</div>
         <div style="display: flex;">${inputHtml}</div>
-      `;
+      `
     }
-  }, [data, locale, type, inputHtml, labelHtml]);
+  }, [data, locale, type, inputHtml, labelHtml])
 
-  return <div ref={shadowContainerRef}></div>;
-};
+  return <div ref={shadowContainerRef}></div>
+}
 
 export default function ViewInputInFormEngine({ data, locale, defaultValue, onChange, advancedEdit, type }) {
   return (
@@ -107,5 +107,5 @@ export default function ViewInputInFormEngine({ data, locale, defaultValue, onCh
         )}
       </div>
     </div>
-  );
+  )
 }

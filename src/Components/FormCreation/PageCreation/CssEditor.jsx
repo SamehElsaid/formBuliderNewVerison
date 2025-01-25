@@ -4,7 +4,6 @@ import { DefaultStyle } from 'src/Components/_Shared'
 
 const CssEditor = ({ data, onChange, type }) => {
   const handleChange = value => {
-    console.log(value)
     onChange({ ...data, css: value })
   }
 

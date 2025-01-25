@@ -73,7 +73,6 @@ const UserDropdown = props => {
   }
   const { messages } = useIntl()
   const profile = useSelector(rx => rx.auth.data)
-  console.log(profile)
 
   const styles = {
     px: 4,

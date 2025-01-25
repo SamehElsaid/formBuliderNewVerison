@@ -55,7 +55,6 @@ export default function InputControl({ data, onChange, type }) {
 
     current[keys[keys.length - 1]] = value
 
-    console.log(Css, objectToCss(Css))
 
     onChange({ ...data, css: objectToCss(Css).replaceAll('NaN', '') })
   }
@@ -466,7 +465,6 @@ export default function InputControl({ data, onChange, type }) {
             variant='filled'
           />
         </div>
-        {console.log(Css)}
         <div className='bg-[#f0f0f0] p-2 mt-1 rounded-md cursor-pointer'>
           <TextField
             fullWidth

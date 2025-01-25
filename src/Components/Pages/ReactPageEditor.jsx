@@ -31,7 +31,6 @@ const ReactPageEditor = ({ pageName, initialData, initialDataApi }) => {
   const theme = useTheme()
   const { push } = useRouter()
   const apiData = useSelector(state => state.api.data)
-  console.log(theme.palette)
 
   // CellPlugins Hook Calling
   const { cellPlugins } = useCellPlugins({ advancedEdit,locale,readOnly })
@@ -68,7 +67,6 @@ const ReactPageEditor = ({ pageName, initialData, initialDataApi }) => {
               loading={loadingSaveData}
               variant='contained'
               onClick={() => {
-                console.log(apiData)
                 const apiUrls = apiData.map(item => item.link)
                 setLoadingSaveData(true)
                 axiosPost(`page/update/${pageName}`, locale, {
@@ -172,7 +170,6 @@ const ReactPageEditor = ({ pageName, initialData, initialDataApi }) => {
           theme={theme}
           value={editorValue}
           onChange={(e, editor) => {
-            console.log(editor)
             setEditorValue(e)
           }}
           readOnly={readOnly}
