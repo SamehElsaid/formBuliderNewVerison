@@ -15,13 +15,14 @@ import {
   TextField
 } from '@mui/material'
 import { useIntl } from 'react-intl'
-import PhoneInput, { isPossiblePhoneNumber } from 'react-phone-number-input'
+import { isPossiblePhoneNumber } from 'react-phone-number-input'
 import DatePicker from 'react-datepicker'
 import ar from 'date-fns/locale/ar-EG'
 import en from 'date-fns/locale/en-US'
 import { axiosGet } from 'src/Components/axiosCall'
 import { Icon } from '@iconify/react'
 import Collapse from '@kunukn/react-collapse'
+import styled from 'styled-components'
 
 export default function DisplayField({ input, dirtyProps, reload, refError, dataRef, errorView, findError }) {
   const [value, setValue] = useState('')
@@ -92,11 +93,7 @@ export default function DisplayField({ input, dirtyProps, reload, refError, data
       if (input?.type === 'Date') {
         setValue(new Date(e))
       } else {
-        if (input?.type === 'Phone') {
-          setValue(e)
-        } else {
-          setValue(e.target.value)
-        }
+        setValue(e.target.value)
       }
     }
 
@@ -108,8 +105,8 @@ export default function DisplayField({ input, dirtyProps, reload, refError, data
       if (input.type === 'Phone' && validations.Required && e?.length === 0 && isTypeNew) {
         return setError('Required')
       }
-
-      if (input.type === 'Phone' && !isPossiblePhoneNumber(e ?? '')) {
+      console.log(e.target.value, 'value', isPossiblePhoneNumber(e.target.value))
+      if (input.type === 'Phone' && !isPossiblePhoneNumber('+' + e?.target?.value ?? '')) {
         return setError('Invalid_Phone')
       }
 
@@ -228,12 +225,14 @@ export default function DisplayField({ input, dirtyProps, reload, refError, data
     </label>
   )
 
+
+
   return (
     <div className='reset' id={input.key + input.nameEn}>
-      <style>{`#${input.key + input.nameEn}{
-        ${xComponentProps?.cssClass}
-        }`}</style>
       <div>{label}</div>
+      <style>{`#${input.key + input.nameEn} {
+        ${xComponentProps?.cssClass}
+      }`}</style>
       <div className='relative' style={{ display: 'flex' }}>
         <ViewInput
           input={input}
@@ -242,6 +241,7 @@ export default function DisplayField({ input, dirtyProps, reload, refError, data
           onChange={onChange}
           locale={locale}
           findError={findError}
+          selectedOptions={selectedOptions}
           errorView={errorView}
           error={error}
           setShowPassword={setShowPassword}
@@ -255,13 +255,37 @@ export default function DisplayField({ input, dirtyProps, reload, refError, data
   )
 }
 
-const ViewInput = ({ input, value, onChange, locale, findError, errorView, error, xComponentProps,showPassword,setShowPassword }) => {
+const ViewInput = ({
+  input,
+  value,
+  onChange,
+  locale,
+  findError,
+  errorView,
+  error,
+  xComponentProps,
+  showPassword,
+  setShowPassword,
+  selectedOptions
+}) => {
+  const handleKeyDown = event => {
+    if (input.type !== 'Phone') return
+    if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
+      event.preventDefault()
+    }
+  }
+
+  const handleWheel = event => {
+    if (input.type !== 'Phone') return
+    event.preventDefault()
+  }
   if (
     input.type === 'SingleText' ||
     input.type === 'Number' ||
     input.type === 'Email' ||
     input.type === 'URL' ||
-    input.type === 'Password'
+    input.type === 'Password' ||
+    input.type === 'Phone'
   ) {
     const placeholderInText = xComponentProps?.placeholder
     const placeholder = JSON.parse(placeholderInText) ?? { ar: '', en: '' }
@@ -271,7 +295,17 @@ const ViewInput = ({ input, value, onChange, locale, findError, errorView, error
       <>
         <input
           id={input.key}
-          type={showPassword ?"text" :input.type === 'URL' ? 'text' : input.type === 'SingleText' ? 'text' : input.type}
+          type={
+            showPassword
+              ? 'text'
+              : input.type === 'URL'
+              ? 'text'
+              : input.type === 'SingleText'
+              ? 'text'
+              : input.type === 'Phone'
+              ? 'number'
+              : input.type
+          }
           value={value}
           name={input.nameEn}
           onClick={() => {
@@ -281,20 +315,25 @@ const ViewInput = ({ input, value, onChange, locale, findError, errorView, error
             console.log(e)
             onChange(e)
           }}
+          onKeyDown={handleKeyDown}
+          onWheel={handleWheel}
           className={`${errorView || error ? 'error' : ''} `}
           style={{ transition: '0.3s' }}
           placeholder={locale === 'ar' ? placeholder.ar : placeholder.en}
         />
-        {input.type === "Password" &&
-        <div className="absolute top-1/2 || -translate-y-1/2 || end-[15px]">
-        <InputAdornment position='end'>
-          <IconButton edge='end' onMouseDown={e => e.preventDefault()} onClick={() => setShowPassword(!showPassword)}>
-            <Icon fontSize='1.25rem' icon={showPassword ? 'tabler:eye' : 'tabler:eye-off'} />
-          </IconButton>
-        </InputAdornment>
-
-        </div>
-        }
+        {input.type === 'Password' && (
+          <div className='absolute top-1/2 || -translate-y-1/2 || end-[15px]'>
+            <InputAdornment position='end'>
+              <IconButton
+                edge='end'
+                onMouseDown={e => e.preventDefault()}
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                <Icon fontSize='1.25rem' icon={showPassword ? 'tabler:eye' : 'tabler:eye-off'} />
+              </IconButton>
+            </InputAdornment>
+          </div>
+        )}
       </>
     )
   }
@@ -313,33 +352,7 @@ const ViewInput = ({ input, value, onChange, locale, findError, errorView, error
       />
     )
   }
-  if (input.type === 'Password') {
-    return (
-      <TextField
-        label={locale === 'ar' ? input.nameAr : input.nameEn}
-        // type={showPassword ? 'text' : 'password'}
-        value={value}
-        name={input.nameEn}
-        fullWidth
-        onChange={e => onChange(e)}
-        error={Boolean(findError || error)}
-        helperText={errorView || error}
-        InputProps={{
-          endAdornment: (
-            <InputAdornment position='end'>
-              <IconButton
-                edge='end'
-                onMouseDown={e => e.preventDefault()}
-                onClick={() => setShowPassword(!showPassword)}
-              >
-                {/* <Icon fontSize='1.25rem' icon={showPassword ? 'tabler:eye' : 'tabler:eye-off'} /> */}
-              </IconButton>
-            </InputAdornment>
-          )
-        }}
-      />
-    )
-  }
+
   if (input.type === 'File') {
     return (
       <div>
@@ -385,27 +398,6 @@ const ViewInput = ({ input, value, onChange, locale, findError, errorView, error
         }
         onChange={e => onChange(e)}
       />
-    )
-  }
-  if (input.type === 'Phone') {
-    return (
-      <div className=''>
-        <InputLabel id='demo-simple-select-label'>{locale === 'ar' ? input.nameAr : input.nameEn}</InputLabel>
-        <PhoneInput
-          style={{
-            border: value === undefined && '1px solid #00cfe8'
-          }}
-          defaultCountry={input.options.defaultValue ?? 'EG'}
-          className={`phoneNumber ${Boolean(errorView || error) ? 'error' : ''} ${active ? 'main' : ''} ${
-            value === undefined ? 'error' : ''
-          } `}
-          placeholder={locale === 'ar' ? '123-456-7890' : '123-456-7890'}
-          name={input.nameEn}
-          value={value}
-          onChange={onChange}
-        />
-        <FormHelperText className='!text-[#f44336]'>{errorView || error}</FormHelperText>
-      </div>
     )
   }
 
@@ -477,20 +469,18 @@ const ViewInput = ({ input, value, onChange, locale, findError, errorView, error
               </FormLabel>
               <div className=''>
                 {selectedOptions.map((option, index) => (
-                  <FormControlLabel
-                    key={index}
-                    control={
-                      <Checkbox
-                        value={option.Id}
-                        name={input.nameEn}
-                        checked={typeof value === 'object' ? value?.find(v => v === option.Id) : false}
-                        onChange={e => onChange(e)}
-                      />
-                    }
-                    label={lable.map(ele => option[ele]).join('-')}
-                  />
+                  <div key={option.Id} className=''>
+                    <input
+                      value={option.Id}
+                      name={input.nameEn}
+                      checked={typeof value === 'object' ? value?.find(v => v === option.Id) : false}
+                      onChange={e => onChange(e)}
+                      type='checkbox'
+                      id={option.Id}
+                    />
+                    <label htmlFor={option.Id} >{lable.map(ele => option[ele]).join('-')}</label>
+                  </div>
                 ))}
-                <FormHelperText className='!text-[#f44336]'>{errorView || error}</FormHelperText>
               </div>
             </div>
           </div>

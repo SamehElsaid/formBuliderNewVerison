@@ -1185,3 +1185,14 @@ sortable-list {
   border-color: #f44336 !important;
   outline-color: #f44336 !important;
 }
+input[type="number"] {
+  -moz-appearance: textfield; /* Firefox */
+  appearance: textfield; /* متصفحات أخرى */
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none; /* Safari و Chrome */
+  margin: 0;
+}
+

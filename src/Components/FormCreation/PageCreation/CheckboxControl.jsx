@@ -22,10 +22,16 @@ import { Icon } from '@iconify/react'
 import { axiosGet, UrlTranAr, UrlTranEn } from 'src/Components/axiosCall'
 import toast from 'react-hot-toast'
 import { Box } from '@mui/system'
+import { useRouter } from 'next/router'
 
 export default function CheckboxControl({ data, onChange, type }) {
   const { locale } = useIntl()
   const [selected, setSelect] = useState('main')
+
+  const {
+    query: { addFiles }
+  } = useRouter()
+  console.log(addFiles, 'addFiles')
 
   const Css = cssToObject(data.css || DefaultStyle(type))
 
@@ -116,7 +122,6 @@ export default function CheckboxControl({ data, onChange, type }) {
   console.log(getFields, 'getFields')
   useEffect(() => {
     if (data.collectionId) {
-      console.log(data.collectionId, 'data.collectionId')
       axiosGet(`collections/get-by-id?id=${data.collectionId}`, locale).then(res => {
         if (res.status) {
           if (res.data?.id) {
@@ -176,6 +181,7 @@ export default function CheckboxControl({ data, onChange, type }) {
   }
   useEffect(() => {
     if (data.selected) {
+      console.log(data, 'data.selected')
       setSelectedOptions(data.selected)
     }
   }, [data.selected])
@@ -264,7 +270,6 @@ export default function CheckboxControl({ data, onChange, type }) {
           }}
         />
 
-
         <TextField
           select
           fullWidth
@@ -290,7 +295,7 @@ export default function CheckboxControl({ data, onChange, type }) {
         </TextField>
         <div className='mb-4'></div>
         <Autocomplete
-          options={loadingCollection ? [] : optionsCollection}
+          options={loadingCollection ? [] : optionsCollection.filter(item => item.id !== addFiles)}
           getOptionLabel={option => (locale === 'ar' ? option.nameAr : option.nameEn) || ''}
           loading={loadingCollection}
           onInputChange={handleInputChange}
@@ -674,7 +679,6 @@ export default function CheckboxControl({ data, onChange, type }) {
             })
           }
         />
-
       </Collapse>
     </div>
   )
