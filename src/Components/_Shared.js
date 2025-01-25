@@ -221,6 +221,50 @@ input[type=radio]:checked:disabled + label:before {
   flex-wrap:wrap;
 }
       `
+  } else if (type === 'select') {
+    return `
+#first-label{
+margin-top:0px;
+margin-bottom:5px;
+display:block;
+color:#555;
+}
+    #custom-select {
+      position: relative;
+      width: 100%; /* عرض الـ select */
+    }
+
+    #custom-select select {
+      width: 100%;
+      padding: 10px;
+      border: 2px solid ;
+      border-color: #3498ff;
+      border-radius: 8px;
+      background-color: #f9f9f9;
+      color: #333;
+      font-size: 16px;
+      appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      cursor: pointer;
+    }
+
+    #custom-select::after {
+      content: '\\25BC';
+      position: absolute;
+      top: 50%;
+      right: 10px;
+      transform: translateY(-50%);
+      pointer-events: none;
+      color: #3498ff;
+      font-size: 14px;
+    }
+
+    #custom-select select:focus {
+      outline: none;
+    }
+
+      `
   }
 
   return `

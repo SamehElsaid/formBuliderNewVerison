@@ -66,7 +66,6 @@ export default function CheckboxControl({ data, onChange, type }) {
 
     current[keys[keys.length - 1]] = value
 
-
     onChange({ ...data, css: objectToCss(Css).replaceAll('NaN', '') })
   }
 
@@ -331,7 +330,9 @@ export default function CheckboxControl({ data, onChange, type }) {
             <FormControl component='fieldset' fullWidth>
               <FormLabel component='legend'>{messages.View_Value}</FormLabel>
               <div className='!flex !flex-row !flex-wrap gap-2'>
+                {console.log(getFields)}
                 {getFields?.map(value => (
+                  (value.type !== "ManyToMany" && value.type !== "OneToOne") &&
                   <FormControlLabel
                     key={value.key}
                     className='!w-fit capitalize'
@@ -350,290 +351,380 @@ export default function CheckboxControl({ data, onChange, type }) {
           </div>
         </Collapse>
       </Collapse>
-      <Collapse transition={`height 300ms cubic-bezier(.4, 0, .2, 1)`} isOpen={Boolean(selected === 'style')}>
-        <div className='mt-1'></div>
-        <FormControl variant='filled' fullWidth>
-          <InputLabel id='demo-simple-select-filled-label'>{locale === 'ar' ? 'الاتجاه' : 'Flex Direction'}</InputLabel>
-          <Select
-            fullWidth
-            labelId='demo-simple-select-filled-label'
-            value={getData('#view-input-in-form-engine.flex-direction.unit') || 'row'} // الافتراضي px
-            onChange={e => UpdateData('#view-input-in-form-engine.flex-direction.unit', e.target.value)}
-            label={locale === 'ar' ? 'الاتجاه' : 'Flex Direction'}
-          >
-            <MenuItem value='row'>Row</MenuItem>
-            <MenuItem value='column'>Column</MenuItem>
-            <MenuItem value='row-reverse'>Row Reverse</MenuItem>
-            <MenuItem value='column-reverse'>Column Reverse</MenuItem>
-          </Select>
-        </FormControl>
-        <TextField
-          fullWidth
-          type='number'
-          value={getData(`input[type=${type}] + label:before.width.value`) || ''}
-          onChange={e => UpdateData(`input[type=${type}] + label:before.width.value`, e.target.value)}
-          variant='filled'
-          label={locale === 'ar' ? 'العرض' : 'Width'}
-          disabled={
-            getData(`input[type=${type}] + label:before.width.unit`) === 'max-content' ||
-            getData(`input[type=${type}] + label:before.width.unit`) === 'min-content' ||
-            getData(`input[type=${type}] + label:before.width.unit`) === 'fit-content' ||
-            getData(`input[type=${type}] + label:before.width.unit`) === 'auto' ||
-            !getData(`input[type=${type}] + label:before.width.unit`)
-          }
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position='end'>
-                <Select
-                  value={getData(`input[type=${type}] + label:before.width.unit`) || '%'} // الافتراضي px
-                  onChange={e => UpdateData(`input[type=${type}] + label:before.width.unit`, e.target.value)}
-                  displayEmpty
-                  variant='standard'
-                >
-                  <MenuItem value='px'>PX</MenuItem>
-                  <MenuItem value='%'>%</MenuItem>
-                  <MenuItem value='em'>EM</MenuItem>
-                  <MenuItem value='vw'>VW</MenuItem>
-                  <MenuItem value='max-content'>Max-Content</MenuItem>
-                  <MenuItem value='min-content'>Min-Content</MenuItem>
-                  <MenuItem value='fit-content'>Fit-Content</MenuItem>
-                  <MenuItem value='auto'>Auto</MenuItem>
-                </Select>
-              </InputAdornment>
-            )
-          }}
-        />
-        <div className='mt-1'></div>
-        <TextField
-          fullWidth
-          type='number'
-          value={getData(`input[type=${type}] + label:before.height.value`) || ''}
-          onChange={e => UpdateData(`input[type=${type}] + label:before.height.value`, e.target.value)}
-          variant='filled'
-          label={locale === 'ar' ? 'الطول' : 'Height'}
-          disabled={
-            getData(`input[type=${type}] + label:before.height.unit`) === 'max-content' ||
-            getData(`input[type=${type}] + label:before.height.unit`) === 'min-content' ||
-            getData(`input[type=${type}] + label:before.height.unit`) === 'fit-content' ||
-            getData(`input[type=${type}] + label:before.height.unit`) === 'auto' ||
-            !getData(`input[type=${type}] + label:before.height.unit`)
-          }
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position='end'>
-                <Select
-                  value={getData(`input[type=${type}] + label:before.height.unit`) || '%'} // الافتراضي px
-                  onChange={e => UpdateData(`input[type=${type}] + label:before.height.unit`, e.target.value)}
-                  displayEmpty
-                  variant='standard'
-                >
-                  <MenuItem value='px'>PX</MenuItem>
-                  <MenuItem value='%'>%</MenuItem>
-                  <MenuItem value='em'>EM</MenuItem>
-                  <MenuItem value='vw'>VW</MenuItem>
-                  <MenuItem value='max-content'>Max-Content</MenuItem>
-                  <MenuItem value='min-content'>Min-Content</MenuItem>
-                  <MenuItem value='fit-content'>Fit-Content</MenuItem>
-                  <MenuItem value='auto'>Auto</MenuItem>
-                </Select>
-              </InputAdornment>
-            )
-          }}
-        />
-        <div className='mt-1'></div>
-        <TextField
-          fullWidth
-          type='number'
-          value={getData(`input[type=${type}] + label.margin-top.value`) || ''}
-          onChange={e => UpdateData(`input[type=${type}] + label.margin-top.value`, e.target.value)}
-          variant='filled'
-          label={locale === 'ar' ? 'المسافة العلوية' : 'Margin Top'}
-          disabled={
-            getData(`input[type=${type}] + label.margin-top.unit`) === 'max-content' ||
-            getData(`input[type=${type}] + label.margin-top.unit`) === 'min-content' ||
-            getData(`input[type=${type}] + label.margin-top.unit`) === 'fit-content' ||
-            getData(`input[type=${type}] + label.margin-top.unit`) === 'auto' ||
-            !getData(`input[type=${type}] + label.margin-top.unit`)
-          }
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position='end'>
-                <Select
-                  value={getData(`input[type=${type}] + label.margin-top.unit`) || 'auto'} // الافتراضي px
-                  onChange={e => UpdateData(`input[type=${type}] + label.margin-top.unit`, e.target.value)}
-                  displayEmpty
-                  variant='standard'
-                >
-                  <MenuItem value='px'>PX</MenuItem>
-                  <MenuItem value='%'>%</MenuItem>
-                  <MenuItem value='em'>EM</MenuItem>
-                  <MenuItem value='vw'>VW</MenuItem>
-                  <MenuItem value='max-content'>Max-Content</MenuItem>
-                  <MenuItem value='min-content'>Min-Content</MenuItem>
-                  <MenuItem value='fit-content'>Fit-Content</MenuItem>
-                  <MenuItem value='auto'>Auto</MenuItem>
-                </Select>
-              </InputAdornment>
-            )
-          }}
-        />
-        <div className='mt-1'></div>
-        {console.log(Css)}
-        <TextField
-          fullWidth
-          type='number'
-          value={getData(`input[type=${type}] + label.margin-bottom.value`) || ''}
-          onChange={e => UpdateData(`input[type=${type}] + label.margin-bottom.value`, e.target.value)}
-          variant='filled'
-          label={locale === 'ar' ? 'المسافة السفلية' : 'Margin Bottom'}
-          disabled={
-            getData(`input[type=${type}] + label.margin-bottom.unit`) === 'max-content' ||
-            getData(`input[type=${type}] + label.margin-bottom.unit`) === 'min-content' ||
-            getData(`input[type=${type}] + label.margin-bottom.unit`) === 'fit-content' ||
-            getData(`input[type=${type}] + label.margin-bottom.unit`) === 'auto' ||
-            !getData(`input[type=${type}] + label.margin-bottom.unit`)
-          }
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position='end'>
-                <Select
-                  value={getData(`input[type=${type}] + label.margin-bottom.unit`) || 'auto'} // الافتراضي px
-                  onChange={e => UpdateData(`input[type=${type}] + label.margin-bottom.unit`, e.target.value)}
-                  displayEmpty
-                  variant='standard'
-                >
-                  <MenuItem value='px'>PX</MenuItem>
-                  <MenuItem value='%'>%</MenuItem>
-                  <MenuItem value='em'>EM</MenuItem>
-                  <MenuItem value='vw'>VW</MenuItem>
-                  <MenuItem value='max-content'>Max-Content</MenuItem>
-                  <MenuItem value='min-content'>Min-Content</MenuItem>
-                  <MenuItem value='fit-content'>Fit-Content</MenuItem>
-                  <MenuItem value='auto'>Auto</MenuItem>
-                </Select>
-              </InputAdornment>
-            )
-          }}
-        />
-        <div className='mt-1'></div>
-        <TextField
-          fullWidth
-          type='number'
-          value={getData(`input[type=${type}] + label.margin-inline-start.value`) || ''}
-          onChange={e => UpdateData(`input[type=${type}] + label.margin-inline-start.value`, e.target.value)}
-          variant='filled'
-          label={locale === 'ar' ? 'المسافة اليسرى' : 'Margin Left'}
-          disabled={
-            getData(`input[type=${type}] + label.margin-inline-start.unit`) === 'max-content' ||
-            getData(`input[type=${type}] + label.margin-inline-start.unit`) === 'min-content' ||
-            getData(`input[type=${type}] + label.margin-inline-start.unit`) === 'fit-content' ||
-            getData(`input[type=${type}] + label.margin-inline-start.unit`) === 'auto' ||
-            !getData(`input[type=${type}] + label.margin-inline-start.unit`)
-          }
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position='end'>
-                <Select
-                  value={getData(`input[type=${type}] + label.margin-inline-start.unit`) || 'auto'} // الافتراضي px
-                  onChange={e => UpdateData(`input[type=${type}] + label.margin-inline-start.unit`, e.target.value)}
-                  displayEmpty
-                  variant='standard'
-                >
-                  <MenuItem value='px'>PX</MenuItem>
-                  <MenuItem value='%'>%</MenuItem>
-                  <MenuItem value='em'>EM</MenuItem>
-                  <MenuItem value='vw'>VW</MenuItem>
-                  <MenuItem value='max-content'>Max-Content</MenuItem>
-                  <MenuItem value='min-content'>Min-Content</MenuItem>
-                  <MenuItem value='fit-content'>Fit-Content</MenuItem>
-                  <MenuItem value='auto'>Auto</MenuItem>
-                </Select>
-              </InputAdornment>
-            )
-          }}
-        />
-        <div className='mt-1'></div>
-        <TextField
-          fullWidth
-          type='number'
-          value={getData(`input[type=${type}] + label.margin-inline-end.value`) || ''}
-          onChange={e => UpdateData(`input[type=${type}] + label.margin-inline-end.value`, e.target.value)}
-          variant='filled'
-          label={locale === 'ar' ? 'المسافة اليمنى' : 'Margin Right'}
-          disabled={
-            getData(`input[type=${type}] + label.margin-inline-end.unit`) === 'max-content' ||
-            getData(`input[type=${type}] + label.margin-inline-end.unit`) === 'min-content' ||
-            getData(`input[type=${type}] + label.margin-inline-end.unit`) === 'fit-content' ||
-            getData(`input[type=${type}] + label.margin-inline-end.unit`) === 'auto' ||
-            !getData(`input[type=${type}] + label.margin-inline-end.unit`)
-          }
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position='end'>
-                <Select
-                  value={getData(`input[type=${type}] + label.margin-inline-end.unit`) || 'auto'} // الافتراضي px
-                  onChange={e => UpdateData(`input[type=${type}] + label.margin-inline-end.unit`, e.target.value)}
-                  displayEmpty
-                  variant='standard'
-                >
-                  <MenuItem value='px'>PX</MenuItem>
-                  <MenuItem value='%'>%</MenuItem>
-                  <MenuItem value='em'>EM</MenuItem>
-                  <MenuItem value='vw'>VW</MenuItem>
-                  <MenuItem value='max-content'>Max-Content</MenuItem>
-                  <MenuItem value='min-content'>Min-Content</MenuItem>
-                  <MenuItem value='fit-content'>Fit-Content</MenuItem>
-                  <MenuItem value='auto'>Auto</MenuItem>
-                </Select>
-              </InputAdornment>
-            )
-          }}
-        />
-
-        <div className='bg-[#f0f0f0] p-2 mt-1 rounded-md cursor-pointer'>
+      {type === 'select' ? (
+        <Collapse transition={`height 300ms cubic-bezier(.4, 0, .2, 1)`} isOpen={Boolean(selected === 'style')}>
+          <div className='mt-1'></div>
+          {console.log(Css)}
           <TextField
             fullWidth
-            type='color'
-            defaultValue={getData(`input[type=${type}]:checked + label:before.background-color.unit`) || '#575757'}
-            onBlur={e =>
-              UpdateData(`input[type=${type}]:checked + label:before.background-color.unit`, e.target.value)
+            type='number'
+            value={getData(`#custom-select.width.value`) || ''}
+            onChange={e => UpdateData(`#custom-select.width.value`, e.target.value)}
+            variant='filled'
+            label={locale === 'ar' ? 'العرض' : 'Width'}
+            disabled={
+              getData(`#custom-select.width.unit`) === 'max-content' ||
+              getData(`#custom-select.width.unit`) === 'min-content' ||
+              getData(`#custom-select.width.unit`) === 'fit-content' ||
+              getData(`#custom-select.width.unit`) === 'auto' ||
+              !getData(`#custom-select.width.unit`)
             }
-            label={locale === 'ar' ? 'اللون الخلفي' : 'Background Color'}
-            variant='filled'
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position='end'>
+                  <Select
+                    value={getData(`input[type=${type}] + label:before.width.unit`) || '%'} // الافتراضي px
+                    onChange={e => UpdateData(`input[type=${type}] + label:before.width.unit`, e.target.value)}
+                    displayEmpty
+                    variant='standard'
+                  >
+                    <MenuItem value='px'>PX</MenuItem>
+                    <MenuItem value='%'>%</MenuItem>
+                    <MenuItem value='em'>EM</MenuItem>
+                    <MenuItem value='vw'>VW</MenuItem>
+                    <MenuItem value='max-content'>Max-Content</MenuItem>
+                    <MenuItem value='min-content'>Min-Content</MenuItem>
+                    <MenuItem value='fit-content'>Fit-Content</MenuItem>
+                    <MenuItem value='auto'>Auto</MenuItem>
+                  </Select>
+                </InputAdornment>
+              )
+            }}
           />
-        </div>
-        <div className='bg-[#f0f0f0] p-2 mt-1 rounded-md cursor-pointer'>
-          <TextField
-            fullWidth
-            type='color'
-            defaultValue={getData(`input[type=${type}]:checked + label:before.border-color.unit`) || '#575757'}
-            onBlur={e => UpdateData(`input[type=${type}]:checked + label:before.border-color.unit`, e.target.value)}
-            label={locale === 'ar' ? 'اللون الحدود' : 'Border Color'}
-            variant='filled'
-          />
-        </div>
-        <div className='bg-[#f0f0f0] p-2 mt-1 rounded-md cursor-pointer'>
-          <TextField
-            fullWidth
-            type='color'
-            defaultValue={getData(`input[type=${type}]:checked + label:before.color.unit`) || '#fff'}
-            onBlur={e => UpdateData(`input[type=${type}]:checked + label:before.color.unit`, e.target.value)}
-            label={locale === 'ar' ? 'اللون' : 'Color'}
-            variant='filled'
-          />
-        </div>
 
-        <div className='bg-[#f0f0f0] p-2 mt-1 rounded-md cursor-pointer'>
+
+          <div className='bg-[#f0f0f0] p-2 mt-1 rounded-md cursor-pointer'>
+            <TextField
+              fullWidth
+              type='color'
+              defaultValue={getData(`#custom-select select.background-color.unit`) || '#575757'}
+              onBlur={e =>
+                UpdateData(`#custom-select select.background-color.unit`, e.target.value)
+              }
+              label={locale === 'ar' ? 'اللون الخلفي' : 'Background Color'}
+              variant='filled'
+            />
+          </div>
+          <div className='bg-[#f0f0f0] p-2 mt-1 rounded-md cursor-pointer'>
+            <TextField
+              fullWidth
+              type='color'
+              defaultValue={getData(`#custom-select select.border-color.unit`) || '#575757'}
+              onBlur={e => UpdateData(`#custom-select select.border-color.unit`, e.target.value)}
+              label={locale === 'ar' ? 'اللون الحدود' : 'Border Color'}
+              variant='filled'
+            />
+          </div>
+          <div className='bg-[#f0f0f0] p-2 mt-1 rounded-md cursor-pointer'>
+            <TextField
+              fullWidth
+              type='color'
+              defaultValue={getData(`#custom-select select.color.unit`) || '#fff'}
+              onBlur={e => UpdateData(`#custom-select select.color.unit`, e.target.value)}
+              label={locale === 'ar' ? 'اللون' : 'Color'}
+              variant='filled'
+            />
+          </div>
+
+          <div className='bg-[#f0f0f0] p-2 mt-1 rounded-md cursor-pointer'>
+            <TextField
+              fullWidth
+              type='color'
+              defaultValue={getData(`#first-label.color.unit`) || '#555'}
+              onBlur={e => UpdateData(`#first-label.color.unit`, e.target.value)}
+              label={locale === 'ar' ? 'لون التسمية' : 'Label Color'}
+              variant='filled'
+            />
+          </div>
+        </Collapse>
+      ) : (
+        <Collapse transition={`height 300ms cubic-bezier(.4, 0, .2, 1)`} isOpen={Boolean(selected === 'style')}>
+          <div className='mt-1'></div>
+          <FormControl variant='filled' fullWidth>
+            <InputLabel id='demo-simple-select-filled-label'>
+              {locale === 'ar' ? 'الاتجاه' : 'Flex Direction'}
+            </InputLabel>
+            <Select
+              fullWidth
+              labelId='demo-simple-select-filled-label'
+              value={getData('#view-input-in-form-engine.flex-direction.unit') || 'row'} // الافتراضي px
+              onChange={e => UpdateData('#view-input-in-form-engine.flex-direction.unit', e.target.value)}
+              label={locale === 'ar' ? 'الاتجاه' : 'Flex Direction'}
+            >
+              <MenuItem value='row'>Row</MenuItem>
+              <MenuItem value='column'>Column</MenuItem>
+              <MenuItem value='row-reverse'>Row Reverse</MenuItem>
+              <MenuItem value='column-reverse'>Column Reverse</MenuItem>
+            </Select>
+          </FormControl>
           <TextField
             fullWidth
-            type='color'
-            defaultValue={getData('#first-label.color.unit') || '#555'}
-            onBlur={e => UpdateData('#first-label.color.unit', e.target.value)}
-            label={locale === 'ar' ? 'لون التسمية' : 'Label Color'}
+            type='number'
+            value={getData(`input[type=${type}] + label:before.width.value`) || ''}
+            onChange={e => UpdateData(`input[type=${type}] + label:before.width.value`, e.target.value)}
             variant='filled'
+            label={locale === 'ar' ? 'العرض' : 'Width'}
+            disabled={
+              getData(`input[type=${type}] + label:before.width.unit`) === 'max-content' ||
+              getData(`input[type=${type}] + label:before.width.unit`) === 'min-content' ||
+              getData(`input[type=${type}] + label:before.width.unit`) === 'fit-content' ||
+              getData(`input[type=${type}] + label:before.width.unit`) === 'auto' ||
+              !getData(`input[type=${type}] + label:before.width.unit`)
+            }
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position='end'>
+                  <Select
+                    value={getData(`input[type=${type}] + label:before.width.unit`) || '%'} // الافتراضي px
+                    onChange={e => UpdateData(`input[type=${type}] + label:before.width.unit`, e.target.value)}
+                    displayEmpty
+                    variant='standard'
+                  >
+                    <MenuItem value='px'>PX</MenuItem>
+                    <MenuItem value='%'>%</MenuItem>
+                    <MenuItem value='em'>EM</MenuItem>
+                    <MenuItem value='vw'>VW</MenuItem>
+                    <MenuItem value='max-content'>Max-Content</MenuItem>
+                    <MenuItem value='min-content'>Min-Content</MenuItem>
+                    <MenuItem value='fit-content'>Fit-Content</MenuItem>
+                    <MenuItem value='auto'>Auto</MenuItem>
+                  </Select>
+                </InputAdornment>
+              )
+            }}
           />
-        </div>
-      </Collapse>
+          <div className='mt-1'></div>
+          <TextField
+            fullWidth
+            type='number'
+            value={getData(`input[type=${type}] + label:before.height.value`) || ''}
+            onChange={e => UpdateData(`input[type=${type}] + label:before.height.value`, e.target.value)}
+            variant='filled'
+            label={locale === 'ar' ? 'الطول' : 'Height'}
+            disabled={
+              getData(`input[type=${type}] + label:before.height.unit`) === 'max-content' ||
+              getData(`input[type=${type}] + label:before.height.unit`) === 'min-content' ||
+              getData(`input[type=${type}] + label:before.height.unit`) === 'fit-content' ||
+              getData(`input[type=${type}] + label:before.height.unit`) === 'auto' ||
+              !getData(`input[type=${type}] + label:before.height.unit`)
+            }
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position='end'>
+                  <Select
+                    value={getData(`input[type=${type}] + label:before.height.unit`) || '%'} // الافتراضي px
+                    onChange={e => UpdateData(`input[type=${type}] + label:before.height.unit`, e.target.value)}
+                    displayEmpty
+                    variant='standard'
+                  >
+                    <MenuItem value='px'>PX</MenuItem>
+                    <MenuItem value='%'>%</MenuItem>
+                    <MenuItem value='em'>EM</MenuItem>
+                    <MenuItem value='vw'>VW</MenuItem>
+                    <MenuItem value='max-content'>Max-Content</MenuItem>
+                    <MenuItem value='min-content'>Min-Content</MenuItem>
+                    <MenuItem value='fit-content'>Fit-Content</MenuItem>
+                    <MenuItem value='auto'>Auto</MenuItem>
+                  </Select>
+                </InputAdornment>
+              )
+            }}
+          />
+          <div className='mt-1'></div>
+          <TextField
+            fullWidth
+            type='number'
+            value={getData(`input[type=${type}] + label.margin-top.value`) || ''}
+            onChange={e => UpdateData(`input[type=${type}] + label.margin-top.value`, e.target.value)}
+            variant='filled'
+            label={locale === 'ar' ? 'المسافة العلوية' : 'Margin Top'}
+            disabled={
+              getData(`input[type=${type}] + label.margin-top.unit`) === 'max-content' ||
+              getData(`input[type=${type}] + label.margin-top.unit`) === 'min-content' ||
+              getData(`input[type=${type}] + label.margin-top.unit`) === 'fit-content' ||
+              getData(`input[type=${type}] + label.margin-top.unit`) === 'auto' ||
+              !getData(`input[type=${type}] + label.margin-top.unit`)
+            }
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position='end'>
+                  <Select
+                    value={getData(`input[type=${type}] + label.margin-top.unit`) || 'auto'} // الافتراضي px
+                    onChange={e => UpdateData(`input[type=${type}] + label.margin-top.unit`, e.target.value)}
+                    displayEmpty
+                    variant='standard'
+                  >
+                    <MenuItem value='px'>PX</MenuItem>
+                    <MenuItem value='%'>%</MenuItem>
+                    <MenuItem value='em'>EM</MenuItem>
+                    <MenuItem value='vw'>VW</MenuItem>
+                    <MenuItem value='max-content'>Max-Content</MenuItem>
+                    <MenuItem value='min-content'>Min-Content</MenuItem>
+                    <MenuItem value='fit-content'>Fit-Content</MenuItem>
+                    <MenuItem value='auto'>Auto</MenuItem>
+                  </Select>
+                </InputAdornment>
+              )
+            }}
+          />
+          <div className='mt-1'></div>
+          {console.log(Css)}
+          <TextField
+            fullWidth
+            type='number'
+            value={getData(`input[type=${type}] + label.margin-bottom.value`) || ''}
+            onChange={e => UpdateData(`input[type=${type}] + label.margin-bottom.value`, e.target.value)}
+            variant='filled'
+            label={locale === 'ar' ? 'المسافة السفلية' : 'Margin Bottom'}
+            disabled={
+              getData(`input[type=${type}] + label.margin-bottom.unit`) === 'max-content' ||
+              getData(`input[type=${type}] + label.margin-bottom.unit`) === 'min-content' ||
+              getData(`input[type=${type}] + label.margin-bottom.unit`) === 'fit-content' ||
+              getData(`input[type=${type}] + label.margin-bottom.unit`) === 'auto' ||
+              !getData(`input[type=${type}] + label.margin-bottom.unit`)
+            }
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position='end'>
+                  <Select
+                    value={getData(`input[type=${type}] + label.margin-bottom.unit`) || 'auto'} // الافتراضي px
+                    onChange={e => UpdateData(`input[type=${type}] + label.margin-bottom.unit`, e.target.value)}
+                    displayEmpty
+                    variant='standard'
+                  >
+                    <MenuItem value='px'>PX</MenuItem>
+                    <MenuItem value='%'>%</MenuItem>
+                    <MenuItem value='em'>EM</MenuItem>
+                    <MenuItem value='vw'>VW</MenuItem>
+                    <MenuItem value='max-content'>Max-Content</MenuItem>
+                    <MenuItem value='min-content'>Min-Content</MenuItem>
+                    <MenuItem value='fit-content'>Fit-Content</MenuItem>
+                    <MenuItem value='auto'>Auto</MenuItem>
+                  </Select>
+                </InputAdornment>
+              )
+            }}
+          />
+          <div className='mt-1'></div>
+          <TextField
+            fullWidth
+            type='number'
+            value={getData(`input[type=${type}] + label.margin-inline-start.value`) || ''}
+            onChange={e => UpdateData(`input[type=${type}] + label.margin-inline-start.value`, e.target.value)}
+            variant='filled'
+            label={locale === 'ar' ? 'المسافة اليسرى' : 'Margin Left'}
+            disabled={
+              getData(`input[type=${type}] + label.margin-inline-start.unit`) === 'max-content' ||
+              getData(`input[type=${type}] + label.margin-inline-start.unit`) === 'min-content' ||
+              getData(`input[type=${type}] + label.margin-inline-start.unit`) === 'fit-content' ||
+              getData(`input[type=${type}] + label.margin-inline-start.unit`) === 'auto' ||
+              !getData(`input[type=${type}] + label.margin-inline-start.unit`)
+            }
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position='end'>
+                  <Select
+                    value={getData(`input[type=${type}] + label.margin-inline-start.unit`) || 'auto'} // الافتراضي px
+                    onChange={e => UpdateData(`input[type=${type}] + label.margin-inline-start.unit`, e.target.value)}
+                    displayEmpty
+                    variant='standard'
+                  >
+                    <MenuItem value='px'>PX</MenuItem>
+                    <MenuItem value='%'>%</MenuItem>
+                    <MenuItem value='em'>EM</MenuItem>
+                    <MenuItem value='vw'>VW</MenuItem>
+                    <MenuItem value='max-content'>Max-Content</MenuItem>
+                    <MenuItem value='min-content'>Min-Content</MenuItem>
+                    <MenuItem value='fit-content'>Fit-Content</MenuItem>
+                    <MenuItem value='auto'>Auto</MenuItem>
+                  </Select>
+                </InputAdornment>
+              )
+            }}
+          />
+          <div className='mt-1'></div>
+          <TextField
+            fullWidth
+            type='number'
+            value={getData(`input[type=${type}] + label.margin-inline-end.value`) || ''}
+            onChange={e => UpdateData(`input[type=${type}] + label.margin-inline-end.value`, e.target.value)}
+            variant='filled'
+            label={locale === 'ar' ? 'المسافة اليمنى' : 'Margin Right'}
+            disabled={
+              getData(`input[type=${type}] + label.margin-inline-end.unit`) === 'max-content' ||
+              getData(`input[type=${type}] + label.margin-inline-end.unit`) === 'min-content' ||
+              getData(`input[type=${type}] + label.margin-inline-end.unit`) === 'fit-content' ||
+              getData(`input[type=${type}] + label.margin-inline-end.unit`) === 'auto' ||
+              !getData(`input[type=${type}] + label.margin-inline-end.unit`)
+            }
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position='end'>
+                  <Select
+                    value={getData(`input[type=${type}] + label.margin-inline-end.unit`) || 'auto'} // الافتراضي px
+                    onChange={e => UpdateData(`input[type=${type}] + label.margin-inline-end.unit`, e.target.value)}
+                    displayEmpty
+                    variant='standard'
+                  >
+                    <MenuItem value='px'>PX</MenuItem>
+                    <MenuItem value='%'>%</MenuItem>
+                    <MenuItem value='em'>EM</MenuItem>
+                    <MenuItem value='vw'>VW</MenuItem>
+                    <MenuItem value='max-content'>Max-Content</MenuItem>
+                    <MenuItem value='min-content'>Min-Content</MenuItem>
+                    <MenuItem value='fit-content'>Fit-Content</MenuItem>
+                    <MenuItem value='auto'>Auto</MenuItem>
+                  </Select>
+                </InputAdornment>
+              )
+            }}
+          />
+
+          <div className='bg-[#f0f0f0] p-2 mt-1 rounded-md cursor-pointer'>
+            <TextField
+              fullWidth
+              type='color'
+              defaultValue={getData(`input[type=${type}]:checked + label:before.background-color.unit`) || '#575757'}
+              onBlur={e =>
+                UpdateData(`input[type=${type}]:checked + label:before.background-color.unit`, e.target.value)
+              }
+              label={locale === 'ar' ? 'اللون الخلفي' : 'Background Color'}
+              variant='filled'
+            />
+          </div>
+          <div className='bg-[#f0f0f0] p-2 mt-1 rounded-md cursor-pointer'>
+            <TextField
+              fullWidth
+              type='color'
+              defaultValue={getData(`input[type=${type}]:checked + label:before.border-color.unit`) || '#575757'}
+              onBlur={e => UpdateData(`input[type=${type}]:checked + label:before.border-color.unit`, e.target.value)}
+              label={locale === 'ar' ? 'اللون الحدود' : 'Border Color'}
+              variant='filled'
+            />
+          </div>
+          <div className='bg-[#f0f0f0] p-2 mt-1 rounded-md cursor-pointer'>
+            <TextField
+              fullWidth
+              type='color'
+              defaultValue={getData(`input[type=${type}]:checked + label:before.color.unit`) || '#fff'}
+              onBlur={e => UpdateData(`input[type=${type}]:checked + label:before.color.unit`, e.target.value)}
+              label={locale === 'ar' ? 'اللون' : 'Color'}
+              variant='filled'
+            />
+          </div>
+
+          <div className='bg-[#f0f0f0] p-2 mt-1 rounded-md cursor-pointer'>
+            <TextField
+              fullWidth
+              type='color'
+              defaultValue={getData('#first-label.color.unit') || '#555'}
+              onBlur={e => UpdateData('#first-label.color.unit', e.target.value)}
+              label={locale === 'ar' ? 'لون التسمية' : 'Label Color'}
+              variant='filled'
+            />
+          </div>
+        </Collapse>
+      )}
       <Collapse transition={`height 300ms cubic-bezier(.4, 0, .2, 1)`} isOpen={Boolean(selected === 'roles')}>
         <FormControlLabel
           control={
@@ -663,36 +754,36 @@ export default function CheckboxControl({ data, onChange, type }) {
           }
           label={locale === 'ar' ? 'مطلوب' : 'Unique'}
         />
-        {type === "checkbox" &&
-        <>
-        <TextField
-          label={locale === 'ar' ? 'الحد الأدنى' : 'Min Length'}
-          type='number'
-          fullWidth
-          margin='normal'
-          value={data.minLength}
-          onChange={e =>
-            onChange({
-              ...data,
-              minLength: e.target.value
-            })
-          }
-        />
-        <TextField
-          label={locale === 'ar' ? 'الحد الأقصى' : 'Max Length'}
-          type='number'
-          fullWidth
-          margin='normal'
-          value={data.maxLength}
-          onChange={e =>
-            onChange({
-              ...data,
-              maxLength: e.target.value
-            })
-          }
-        />
-        </>
-        }
+        {type === 'checkbox' && (
+          <>
+            <TextField
+              label={locale === 'ar' ? 'الحد الأدنى' : 'Min Length'}
+              type='number'
+              fullWidth
+              margin='normal'
+              value={data.minLength}
+              onChange={e =>
+                onChange({
+                  ...data,
+                  minLength: e.target.value
+                })
+              }
+            />
+            <TextField
+              label={locale === 'ar' ? 'الحد الأقصى' : 'Max Length'}
+              type='number'
+              fullWidth
+              margin='normal'
+              value={data.maxLength}
+              onChange={e =>
+                onChange({
+                  ...data,
+                  maxLength: e.target.value
+                })
+              }
+            />
+          </>
+        )}
       </Collapse>
     </div>
   )

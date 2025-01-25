@@ -217,8 +217,6 @@ export default function DisplayField({ input, dirtyProps, reload, refError, data
     </label>
   )
 
-
-
   return (
     <div className='reset' id={input.key + input.nameEn}>
       <div>{label}</div>
@@ -299,7 +297,6 @@ const ViewInput = ({
           }
           value={value}
           name={input.nameEn}
-
           onChange={e => {
             onChange(e)
           }}
@@ -397,7 +394,6 @@ const ViewInput = ({
         <div className=''>
           <div className=''>
             <div className='flex flex-col gap-1'>
-
               <div className=''>
                 {selectedOptions.map((option, index) => (
                   <div key={option.Id} className=''>
@@ -409,7 +405,7 @@ const ViewInput = ({
                       type='radio'
                       id={option.Id}
                     />
-                    <label htmlFor={option.Id} >{lable.map(ele => option[ele]).join('-')}</label>
+                    <label htmlFor={option.Id}>{lable.map(ele => option[ele]).join('-')}</label>
                   </div>
                 ))}
               </div>
@@ -423,29 +419,14 @@ const ViewInput = ({
     const lable = JSON.parse(input?.descriptionEn)
 
     return (
-      <div className=''>
-        <div className=''>
-          <div className=''>
-
-            <Select
-              labelId='demo-simple-select-label'
-              id='demo-simple-select'
-              value={value}
-              fullWidth
-              label={locale === 'ar' ? input.nameAr : input.nameEn}
-              onChange={e => onChange(e)}
-              name={input.nameEn}
-              error={Boolean(findError || error)}
-            >
-              {selectedOptions.map((option, index) => (
-                <MenuItem key={index} value={option.Id}>
-                  {lable.map(ele => option[ele]).join('-')}
-                </MenuItem>
-              ))}
-            </Select>
-          </div>
-          <FormHelperText className='!text-[#f44336]'>{errorView || error}</FormHelperText>
-        </div>
+      <div id='custom-select'>
+        <select value={value} onChange={e => onChange(e)}>
+          {selectedOptions.map((option, index) => (
+            <option key={option.Id} value={option.Id}>
+              {lable.map(ele => option[ele]).join('-')}
+            </option>
+          ))}
+        </select>
       </div>
     )
   }
@@ -471,7 +452,7 @@ const ViewInput = ({
                       type='checkbox'
                       id={option.Id}
                     />
-                    <label htmlFor={option.Id} >{lable.map(ele => option[ele]).join('-')}</label>
+                    <label htmlFor={option.Id}>{lable.map(ele => option[ele]).join('-')}</label>
                   </div>
                 ))}
               </div>

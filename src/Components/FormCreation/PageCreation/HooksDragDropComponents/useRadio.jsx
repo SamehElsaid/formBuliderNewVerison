@@ -1,8 +1,7 @@
 import { useMemo } from 'react'
-import { GiClick } from 'react-icons/gi'
 import ViewInputInFormEngine from '../ViewInputInFormEngine'
 import CheckboxControl from '../CheckboxControl'
-import { IoIosCheckboxOutline, IoMdRadioButtonOn } from 'react-icons/io'
+import { IoMdRadioButtonOn } from 'react-icons/io'
 
 export default function useRadio({ locale, advancedEdit  }) {
   const Radio = useMemo(() => {

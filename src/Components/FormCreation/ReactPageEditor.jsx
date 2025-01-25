@@ -179,11 +179,11 @@ const ReactPageEditor = () => {
                       }
                       addData.push(data)
                     }
-                    if (cell.plugin.id === 'checkbox' || cell.plugin.id === 'radio') {
-                      data.type = getType(cell.plugin.id === 'checkbox' ? 'checkbox' : 'radio')
+                    if (cell.plugin.id === 'checkbox' || cell.plugin.id === 'radio' || cell.plugin.id === 'select') {
+                      data.type = getType(cell.plugin.id === 'checkbox' ? 'checkbox' :  cell.plugin.id === 'radio' ? 'radio' : "select")
                       data.collectionId = addFiles
                       data.key = dataMain.key
-                      data.descriptionAr = cell.plugin.id === 'checkbox' ? 'checkbox' : 'radio'
+                      data.descriptionAr = cell.plugin.id === 'checkbox' ? 'checkbox' :  cell.plugin.id === 'radio' ? 'radio' : "select"
                       data.descriptionEn = JSON.stringify(dataMain.selected) || ''
                       data.nameAr = dataMain.labelAr || ''
                       data.nameEn = dataMain.labelEn || ''
