@@ -1185,3 +1185,51 @@ sortable-list {
   border-color: #f44336 !important;
   outline-color: #f44336 !important;
 }
+.custom-input-date {
+  position: relative;
+  width: 100%;
+}
+.custom-input-date:before {
+  content: '';
+  display: block;
+  inset: 0;
+  position: absolute;
+  z-index: 1;
+}
+.react-datepicker-popper{
+  z-index: 111111111;
+}
+
+.input-calendar {
+  position: relative;
+  padding-inline-end: 20px;
+  display: block;
+}
+
+.input-calendar::after {
+  content: 'dsad'; /* Add content if you want to display something */
+  display: block;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 1;
+  background-color: #009fff;
+  width: 100%; /* Set a width */
+  height: 100%; /* Set a height */
+}
+
+.input-calendar::before {
+  content: ''; /* Add content if you want to display something */
+  display: block;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 1;
+  background-color: #009fff;
+  width: 100%; /* Set a width */
+  height: 100%; /* Set a height */
+}

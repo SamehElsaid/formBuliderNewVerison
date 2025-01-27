@@ -281,7 +281,7 @@ color:#555;
     font-size:20px;
     text-transform:capitalize;
 }
-#file-upload-label {
+label {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -294,10 +294,11 @@ color:#555;
   background-color: #f9fafb;
   transition: background-color 0.2s;
   min-height: 16rem;
+  transition: all 0.3s ease-in-out;
 }
 
-#file-upload-label:hover {
- order-radius: 1rem;
+label:hover {
+ border-radius: 1rem;
 }
 
 #file-upload-content {
@@ -331,11 +332,48 @@ color:#555;
   margin-top:0px;
 }
 
-#file-upload-input {
+input {
   display: none;
 }
 
     `
+  }
+  if (type === 'date') {
+    return `
+label{
+margin-bottom:5px;
+display:block;
+color:#555;
+}
+input:focus,
+input:hover {
+  border-color: #3498ff;
+}
+input:focus {
+  outline: 3px solid #3498ff40 ;
+}
+input {
+  width:100%;
+  padding:10px 20px;
+  border-radius:5px;
+  border:1px solid #e5e5ea;
+  height:0Auto;
+  margin-top:0px;
+  margin-bottom:0px;
+  margin-inline-start:0px;
+  margin-inline-end:0px;
+  background-color:transparent;
+  color:#575757;
+}
+  input::placeholder {
+  height:0Auto;
+  color: #dfdfdf;
+}
+  #calendar-icon{
+  color:#555;
+  }
+
+`
   }
 
   return `

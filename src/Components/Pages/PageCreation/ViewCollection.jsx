@@ -7,7 +7,7 @@ import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
 import { LoadingButton } from '@mui/lab'
 import { toast } from 'react-toastify'
 
-export default function ViewCollection({ data, locale, onChange, readOnly,disabled }) {
+export default function ViewCollection({ data, locale, onChange, readOnly, disabled }) {
   const [getFields, setGetFields] = useState([])
   const [loading, setLoading] = useState(true)
   const [loadingSubmit, setLoadingSubmit] = useState(false)
@@ -55,12 +55,22 @@ export default function ViewCollection({ data, locale, onChange, readOnly,disabl
 
     setLoadingSubmit(true)
     const sendData = { ...dataRef.current }
+    let sendDataForm = {}
+    Object.keys(sendData).forEach(key => {
+      if (typeof sendData[key] === 'string') {
+        if (sendData[key]) {
+          sendDataForm[key] = sendData[key]
+        }
+      } else {
+        sendDataForm[key] = sendData[key]
+      }
 
+    })
 
     axiosPost(
       data.type_of_sumbit === 'collection' ? `generic-entities/${data.collectionName}` : data.submitApi,
       locale,
-      sendData
+      sendDataForm
     )
       .then(res => {
         if (res.status) {
@@ -119,6 +129,7 @@ export default function ViewCollection({ data, locale, onChange, readOnly,disabl
                               <div className='absolute inset-0 z-20'></div>
                               <DisplayField
                                 input={filed}
+                                readOnly={disabled}
                                 refError={refError}
                                 dataRef={dataRef}
                                 reload={reload}
@@ -141,6 +152,7 @@ export default function ViewCollection({ data, locale, onChange, readOnly,disabl
                 <div key={filed.id}>
                   <DisplayField
                     input={filed}
+                    readOnly={disabled}
                     refError={refError}
                     dataRef={dataRef}
                     reload={reload}

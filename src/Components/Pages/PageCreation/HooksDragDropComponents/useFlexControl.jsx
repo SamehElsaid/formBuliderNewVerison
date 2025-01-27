@@ -10,7 +10,7 @@ export default function useFlexControl({locale}) {
         const ref = useRef(null)
         useEffect(() => {
           const childrenView = data.childrenView ?? 'auto'
-          if (!Array.isArray(children[0])) {
+          if (!Array.isArray(children?.[0])) {
             const divContainer = ref.current.querySelector('div:nth-child(1)')
             if (divContainer) {
               divContainer.querySelectorAll('.react-page-cell').forEach(div => {

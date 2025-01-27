@@ -1,14 +1,26 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import React, { forwardRef, useCallback, useMemo, useRef, useState } from 'react'
 import CssEditor from './CssEditor'
-import { renderToString } from 'react-dom/server'
 import { DefaultStyle } from 'src/Components/_Shared'
 import { BsPaperclip, BsTrash } from 'react-icons/bs'
+import DatePicker from 'react-datepicker'
+import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'
+import { FaCalendarAlt } from 'react-icons/fa'
 
-const CssEditorView = ({ data, locale, defaultValue, type }) => {
-  const shadowContainerRef = useRef(null)
+const CssEditorView = ({ data, locale, defaultValue, type, readOnly }) => {
   const [fileNames, setFileNames] = useState([])
-  console.log(fileNames)
+  const [startDate, setStartDate] = useState(new Date())
+
+  const ExampleCustomInput = forwardRef(({ value, onClick }, ref) => (
+    <div className='relative w-full'>
+      <input className='!ps-[35px] relative ' onClick={onClick} ref={ref} value={value} />
+      <div className='absolute top-[0] start-[10px]  w-[20px] h-[100%] flex items-center justify-center z-10'>
+        <span className='' id='calendar-icon'>
+          <FaCalendarAlt className='text-xl' />
+        </span>
+      </div>
+    </div>
+  ))
 
   const handleChange = useCallback(e => {
     const files = e.target.files
@@ -62,16 +74,44 @@ const CssEditorView = ({ data, locale, defaultValue, type }) => {
           <option value='strawberry'>Strawberry</option>
         </select>
       </div>
+    ) : type === 'date' ? (
+      <div style={{ width: '100%' }} className='mainParent-date'>
+        {readOnly ? (
+          <DatePickerWrapper>
+            <DatePicker
+              selected={startDate}
+              onChange={date => setStartDate(date)}
+              timeInputLabel='Time:'
+              dateFormat={`${data.format ? data.format : 'MM/dd/yyyy'}`}
+              showMonthDropdown
+              showYearDropdown
+              showTimeInput={data.showTime === 'true'}
+              customInput={<ExampleCustomInput className='example-custom-input' />}
+            />
+          </DatePickerWrapper>
+        ) : (
+          <DatePicker
+            selected={startDate}
+            onChange={date => setStartDate(date)}
+            timeInputLabel='Time:'
+            dateFormat={`${data.format ? data.format : 'MM/dd/yyyy'}`}
+            showMonthDropdown
+            showYearDropdown
+            showTimeInput={data.showTime === 'true'}
+            customInput={<ExampleCustomInput className='example-custom-input' />}
+          />
+        )}
+      </div>
     ) : type === 'file' ? (
       <div id='file-upload-container'>
         <label htmlFor='file-upload-input' id='file-upload-label'>
-            <div id='label-color'>
-              {defaultValue(
-                data,
-                locale === 'ar' ? 'labelAr' : 'labelEn',
-                locale === 'ar' ? 'الحقل بالعربية' : 'The field in English'
-              )}
-            </div>
+          <div id='label-color'>
+            {defaultValue(
+              data,
+              locale === 'ar' ? 'labelAr' : 'labelEn',
+              locale === 'ar' ? 'الحقل بالعربية' : 'The field in English'
+            )}
+          </div>
           <div id='file-upload-content'>
             <svg
               id='file-upload-icon'
@@ -144,6 +184,7 @@ const CssEditorView = ({ data, locale, defaultValue, type }) => {
     data.type,
     locale,
     fileNames,
+    readOnly,
     handleChange,
     handleDelete,
     defaultValue
@@ -163,49 +204,23 @@ const CssEditorView = ({ data, locale, defaultValue, type }) => {
     )
   }, [data, defaultValue, locale, type])
 
-  const inputHtml = renderToString(inputElement)
-  const labelHtml = renderToString(label)
-
-  useEffect(() => {
-    if (shadowContainerRef.current) {
-      // إنشاء Shadow DOM إذا لم يكن موجودًا
-      if (!shadowContainerRef.current.shadowRoot) {
-        shadowContainerRef.current.attachShadow({ mode: 'open' })
-      }
-
-      // إضافة المحتوى والتنسيقات إلى Shadow DOM
-      shadowContainerRef.current.shadowRoot.innerHTML = `
-        <style>
-          * {
-            font-family: 'Public Sans', 'cairo', sans-serif !important;
-            box-sizing: border-box;
-          }
-          label {
-            display: block;
-            margin-bottom: 8px;
-          }
-          input, textarea {
-            width: 100%;
-            padding: 8px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            transition: 0.3s;
-          }
-          ${data?.css || DefaultStyle(type)}
-        </style>
-        <div>${labelHtml}</div>
-        <div style="display: flex;">${inputHtml}</div>
-      `
-    }
-  }, [data, locale, type, inputHtml, labelHtml])
-
-  return <div ref={shadowContainerRef}></div>
+  return (
+    <div className='reset' id={`s${new Date().getTime()}`}>
+      <div>{label}</div>
+      <style>{`#s${new Date().getTime()} {
+    ${data?.css || DefaultStyle(type)}
+  }`}</style>
+      <div className='relative' style={{ display: 'flex' }}>
+        {inputElement}
+      </div>
+    </div>
+  )
 }
 
-export default function ViewInputInFormEngine({ data, locale, defaultValue, onChange, advancedEdit, type }) {
+export default function ViewInputInFormEngine({ data, locale, defaultValue, onChange, advancedEdit, type, readOnly }) {
   return (
     <div className='flex flex-col gap-2 w-full h-full'>
-      <CssEditorView data={data} locale={locale} defaultValue={defaultValue} type={type} />
+      <CssEditorView data={data} locale={locale} defaultValue={defaultValue} type={type} readOnly={readOnly} />
       <div className='text-blue-500'>
         {advancedEdit && (
           <div className='overflow-scroll w-full h-full'>

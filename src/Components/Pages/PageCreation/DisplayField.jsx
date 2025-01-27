@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo, forwardRef } from 'react'
 import { FormLabel, IconButton, InputAdornment, TextField } from '@mui/material'
 import { useIntl } from 'react-intl'
 import { isPossiblePhoneNumber } from 'react-phone-number-input'
@@ -9,8 +9,11 @@ import { axiosGet } from 'src/Components/axiosCall'
 import { Icon } from '@iconify/react'
 import Collapse from '@kunukn/react-collapse'
 import { BsPaperclip, BsTrash } from 'react-icons/bs'
+import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'
+import { FaCalendarAlt } from 'react-icons/fa'
 
-export default function DisplayField({ input, dirtyProps, reload, refError, dataRef, errorView, findError }) {
+export default function DisplayField({ input, dirtyProps, reload, refError, dataRef, errorView, findError, readOnly }) {
+  console.log(readOnly)
   const [value, setValue] = useState('')
   const [error, setError] = useState(false)
   const [dirty, setDirty] = useState(dirtyProps)
@@ -19,10 +22,14 @@ export default function DisplayField({ input, dirtyProps, reload, refError, data
   const [validations, setValidations] = useState({})
   const [selectedOptions, setSelectedOptions] = useState([])
   const xComponentProps = useMemo(() => input?.options?.uiSchema?.xComponentProps ?? {}, [input])
+  const [fileName, setFile] = useState('')
+
+
 
   useEffect(() => {
     if (!input) {
       setValue('')
+      setFile('')
       setError(false)
       setDirty(false)
       setShowPassword(false)
@@ -43,14 +50,12 @@ export default function DisplayField({ input, dirtyProps, reload, refError, data
     if (input?.type === 'date') {
       setValue(new Date())
     }
-    if (input?.type === 'file') {
-      setValue([])
-    }
   }, [input])
 
   useEffect(() => {
     if (reload !== 0) {
       setValue('')
+      setFile('')
       setError(false)
       setDirty(false)
       setShowPassword(false)
@@ -128,6 +133,7 @@ export default function DisplayField({ input, dirtyProps, reload, refError, data
       errorWithoutDirty.push(true)
       errorMessages.push('Required')
     }
+
     if (input.type === 'Email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
       errorWithoutDirty.push(true)
       errorMessages.push('Invalid_Email')
@@ -181,69 +187,43 @@ export default function DisplayField({ input, dirtyProps, reload, refError, data
       })
     }
   }, [input])
-  console.log(input?.options?.uiSchema?.xComponentProps?.fileTypes)
+  console.log(value)
 
-  const onChangeFile = e => {
-    console.log(e, value, input)
-    if (input.descriptionEn) {
-      const newFiles = Array.from(e.target.files) // تحويل FileList إلى مصفوفة
-      console.log(newFiles)
-      const validFiles = [] // لتخزين الملفات الصحيحة
-      const invalidFiles = [] // لتخزين الملفات الخاطئة
+  const onChangeFile = async e => {
+    const file = e.target.files[0]
 
-      // التحقق من أنواع الملفات
-      newFiles.forEach(file => {
-        console.log(input?.options?.uiSchema?.xComponentProps?.fileTypes, file.type)
-        let isValid = false
-        input?.options?.uiSchema?.xComponentProps?.fileTypes?.forEach(type => {
-          if (file.type.includes(type.replace('.', '/'))) {
-            isValid = true
-          }
-        })
-        if (isValid) {
-          validFiles.push(file) // إذا كان الملف صحيحًا
-        } else {
-          invalidFiles.push(file) // إذا كان الملف خاطئًا
-        }
-      })
-      console.log(validFiles, input?.options?.uiSchema?.xComponentProps?.fileTypes)
-      // إذا كان هناك ملفات خاطئة
-      if (invalidFiles.length > 0 && validFiles.length === 0 && value.length === 0) {
-        setError('Invalid File Type') // عرض رسالة خطأ
-      } else {
-        setError(false) // إخفاء الخطأ
-      }
+    if (!file) {
+      toast.error(locale === 'ar' ? 'لم يتم اختيار الملف' : 'No file selected')
 
-      // إذا كان هناك ملفات صحيحة
-      if (validFiles.length > 0) {
-        setValue(prevFiles => [...prevFiles, ...validFiles]) // إضافة الملفات الصحيحة
-      }
-
-      e.target.value = '' // مسح قيمة الـ input
-    } else {
-      const errorType = []
-      // input.allowedFileTypes.forEach(type => {
-      //   if (e?.target?.files[0]?.type.includes(type.replace('.', '/'))) {
-      //     errorType.push(true)
-      //   }
-      // })
-      // if (!errorType.includes(true)) {
-      //   setValue([])
-      //   e.target.value = ''
-
-      //   return setError('Invalid File Type')
-      // }
-      // setError(false)
-      // setValue(e?.target?.files[0] ? [e.target.files[0]] : [])
-      // e.target.value = ''
+      return
     }
+
+    const isValid = input?.options?.uiSchema?.xComponentProps?.fileTypes?.some(type =>
+      file.type.includes(type.replace('.', '/'))
+    )
+
+    if (isValid) {
+      setFile(file.name)
+      const base64File = await fileToBase64(file)
+      setValue(base64File)
+    } else {
+      setError('Invalid File Type')
+      setValue('')
+      setFile('')
+    }
+
+    e.target.value = ''
   }
 
-  const handleDelete = (index, e) => {
+  const handleDelete = e => {
     e.stopPropagation()
     setTimeout(() => {
-      setValue(prevNames => prevNames.filter((_, i) => i !== index)) // Remove the file at the specified index
+      setValue('')
+      setFile('')
     }, 0)
+    if (validations.Required) {
+      setError('Required')
+    }
   }
 
   const label = (
@@ -251,6 +231,15 @@ export default function DisplayField({ input, dirtyProps, reload, refError, data
       {locale === 'ar' ? input.nameAr : input.nameEn}
     </label>
   )
+
+  const fileToBase64 = file => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader()
+      reader.readAsDataURL(file)
+      reader.onload = () => resolve(reader.result)
+      reader.onerror = error => reject(error)
+    })
+  }
 
   return (
     <div className='reset' id={input.key + input.nameEn}>
@@ -262,9 +251,11 @@ export default function DisplayField({ input, dirtyProps, reload, refError, data
         <ViewInput
           input={input}
           xComponentProps={xComponentProps}
+          readOnly={readOnly}
           value={value}
           onChange={onChange}
           onChangeFile={onChangeFile}
+          fileName={fileName}
           locale={locale}
           findError={findError}
           selectedOptions={selectedOptions}
@@ -286,17 +277,39 @@ const ViewInput = ({
   input,
   value,
   onChangeFile,
+  readOnly,
   onChange,
   locale,
   handleDelete,
   findError,
   errorView,
+  fileName,
   error,
   xComponentProps,
   showPassword,
   setShowPassword,
   selectedOptions
 }) => {
+
+  const ExampleCustomInput = forwardRef(({ value, onClick }, ref) =>
+ {
+
+  const lable = JSON.parse(input?.descriptionEn) ?? {
+    format: 'yyyy-MM-dd',
+    showTime: 'false'
+  }
+
+    return <div className='relative w-full'>
+      <input placeholder={lable.format} className='!ps-[35px] relative ' onClick={onClick} ref={ref} value={value} />
+      <div className='absolute top-[0] start-[10px]  w-[20px] h-[100%] flex items-center justify-center z-10'>
+        <span className='' id='calendar-icon'>
+          <FaCalendarAlt className='text-xl' />
+        </span>
+      </div>
+    </div>
+ }
+  )
+
   const handleKeyDown = event => {
     if (input.type !== 'Phone') return
     if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
@@ -381,7 +394,7 @@ const ViewInput = ({
     return (
       <div className='px-4 w-full'>
         <div id='file-upload-container'>
-          <label htmlFor='file-upload-input' id='file-upload-label'>
+          <label htmlFor={input.key} id='file-upload-label'>
             <div id='label-color'>{locale === 'ar' ? input.nameAr : input.nameEn}</div>
             <div id='file-upload-content'>
               <svg
@@ -407,76 +420,71 @@ const ViewInput = ({
               <p id='file-upload-subtext'>
                 {locale === 'ar' ? 'SVG, PNG, JPG or GIF (MAX. 800x400px)' : 'SVG, PNG, JPG or GIF (MAX. 800x400px)'}
               </p>
-              {console.log(value)}
-              {Array.from(value).length !== 0 && (
+
+              {value && (
                 <div className='flex flex-col gap-1 p-2 mt-5 rounded-md shadow-inner shadow-gray-300 file-names-container'>
-                  {Array.from(value).map((file, index) => (
-                    <div key={index} className='flex gap-3 items-center file-name-item'>
-                      <span className='flex gap-1 items-center file-name w-[calc(100%-25px)]'>
-                        <BsPaperclip className='text-xl text-main-color' />
-                        <span className='flex-1'>{file.name}</span>
-                      </span>
-                      <button
-                        className='delete-button w-[25px] h-[25px] bg-red-500/70 rounded-full text-white hover:bg-red-500/90 transition-all duration-300 flex items-center justify-center'
-                        onClick={e => handleDelete(index, e)}
-                      >
-                        <BsTrash />
-                      </button>
-                    </div>
-                  ))}
+                  <div className='flex gap-3 items-center file-name-item'>
+                    <span className='flex gap-1 items-center file-name w-[calc(100%-25px)]'>
+                      <BsPaperclip className='text-xl text-main-color' />
+                      <span className='flex-1'>{fileName}</span>
+                    </span>
+                    <button
+                      type='button'
+                      className='delete-button w-[25px] h-[25px] bg-red-500/70 rounded-full text-white hover:bg-red-500/90 transition-all duration-300 flex items-center justify-center'
+                      onClick={e => handleDelete(e)}
+                    >
+                      <BsTrash />
+                    </button>
+                  </div>
                 </div>
               )}
             </div>
             <input
               type='file'
-              id='file-upload-input'
+              id={input.key}
               onChange={onChangeFile}
-              multiple // Allow multiple files
+              accept={input?.options?.uiSchema?.xComponentProps?.fileTypes?.join(',')}
             />
           </label>
         </div>
-        {/* <Button variant='contained' component='label' startIcon={<Icon icon='ph:upload-fill' />} fullWidth>
-          <input
-            type='file'
-            hidden
-            name={locale === 'ar' ? input.nameAr : input.nameEn}
-            onChange={e => onChangeFile(e)}
-          />
-          {value.length > 0 && (
-            <div className='flex gap-2'>
-              {value.map(file => (
-                <div key={file.name}>{file.name}</div>
-              ))}
-            </div>
-          )}
-        </Button>
-        <FormHelperText>{error || errorView}</FormHelperText> */}
       </div>
     )
   }
   if (input.type === 'Date') {
+    const lable = JSON.parse(input?.descriptionEn) ?? {
+      format: 'yyyy-MM-dd',
+      showTime: 'false'
+    }
+
+    console.log(input)
+
     return (
-      <DatePicker
-        fullWidth
-        selectsStart
-        id='event-start-date'
-        locale={locale === 'ar' ? ar : en}
-        selected={value}
-        startDate={value}
-        dateFormat={'yyyy-MM-dd'}
-        customInput={
-          <TextField
-            name={input.nameEn}
-            error={Boolean(findError || error)}
-            helperText={errorView || error}
-            {...(error && { helperText: error })}
-            fullWidth
-            label={locale === 'ar' ? input.nameAr : input.nameEn}
-            registername={input.nameEn}
+
+      !readOnly ? (
+        <DatePickerWrapper className='w-full'>
+          <DatePicker
+            selected={value}
+            onChange={date => onChange(date)}
+            timeInputLabel='Time:'
+            dateFormat={`${lable.format ? lable.format : 'MM/dd/yyyy'}`}
+            showMonthDropdown
+            showYearDropdown
+            showTimeInput={lable.showTime === 'true'}
+            customInput={<ExampleCustomInput className='example-custom-input'  />}
           />
-        }
-        onChange={e => onChange(e)}
+        </DatePickerWrapper>
+      ) : (
+        <DatePicker
+        selected={value}
+        onChange={date => onChange(date)}
+        timeInputLabel='Time:'
+        dateFormat={`${lable.format ? lable.format : 'MM/dd/yyyy'}`}
+        showMonthDropdown
+        showYearDropdown
+        showTimeInput={lable.showTime === 'true'}
+        customInput={<ExampleCustomInput className='example-custom-input'  />}
       />
+      )
     )
   }
 

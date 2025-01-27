@@ -542,8 +542,8 @@ export default function CheckboxControl({ data, onChange, type }) {
             <TextField
               fullWidth
               type='color'
-              defaultValue={getData(`#file-upload-label.background-color.unit`) || '#575757'}
-              onBlur={e => UpdateData(`#file-upload-label.background-color.unit`, e.target.value)}
+              defaultValue={getData(`label.background-color.unit`) || '#575757'}
+              onBlur={e => UpdateData(`label.background-color.unit`, e.target.value)}
               label={locale === 'ar' ? 'اللون الخلفي' : 'Background Color'}
               variant='filled'
             />
@@ -552,8 +552,8 @@ export default function CheckboxControl({ data, onChange, type }) {
             <TextField
               fullWidth
               type='color'
-              defaultValue={getData(`#file-upload-label.border-color.unit`) || '#575757'}
-              onBlur={e => UpdateData(`#file-upload-label.border-color.unit`, e.target.value)}
+              defaultValue={getData(`label.border-color.unit`) || '#575757'}
+              onBlur={e => UpdateData(`label.border-color.unit`, e.target.value)}
               label={locale === 'ar' ? 'اللون الحدود' : 'Border Color'}
               variant='filled'
             />
@@ -899,7 +899,7 @@ export default function CheckboxControl({ data, onChange, type }) {
         />
         {type === 'file' && (
           <>
-            <div className='p-2 mt-2 rounded-md border-2 border-gray-300'>
+            {/* <div className='p-2 mt-2 rounded-md border-2 border-gray-300'>
               <h4>{locale === 'ar' ? 'الملفات المسموحة' : 'Allowed Files'}:</h4>
               <Grid container spacing={2}>
                 <Grid item xs={4} key={type}>
@@ -914,7 +914,7 @@ export default function CheckboxControl({ data, onChange, type }) {
                   />
                 </Grid>
               </Grid>
-            </div>
+            </div> */}
             <div className='p-2 mt-2 rounded-md border-2 border-gray-300'>
               <h4>{locale === 'ar' ? 'الملفات المسموحة' : 'Allowed Files'}:</h4>
               <Grid container spacing={2}>

@@ -119,7 +119,7 @@ const ReactPageEditor = () => {
                     if (dataMain.type === 'email') {
                       validationData.push({ RuleType: 'Email', Parameters: {} })
                     }
-                    if (dataMain.type === 'date') {
+                    if (cell.plugin.id  === 'date') {
                       validationData.push({
                         RuleType: 'ColumnDataType',
                         Parameters: { expectedType: 'System.DateTime' }
@@ -128,12 +128,14 @@ const ReactPageEditor = () => {
                     if (dataMain.type === 'number') {
                       validationData.push({ RuleType: 'ColumnDataType', Parameters: { expectedType: 'System.number' } })
                     }
-                    if (cell.plugin.id === 'input' || cell.plugin.id === 'textarea' || cell.plugin.id === 'file') {
+                    if (cell.plugin.id === 'input' || cell.plugin.id === 'textarea' || cell.plugin.id === 'file' || cell.plugin.id === 'date') {
                       data.type = getType(
                         cell.plugin.id === 'textarea'
                           ? 'textarea'
                           : cell.plugin.id === 'file'
                           ? 'file'
+                          : cell.plugin.id === 'date'
+                          ? 'date'
                           : dataMain.type || 'text'
                       )
                       data.collectionId = addFiles
@@ -145,6 +147,11 @@ const ReactPageEditor = () => {
                           ? data.rows || '5'
                           : cell.plugin.id === 'file'
                           ? `${dataMain.multiple ? 'true' : 'false'}` || ''
+                          : cell.plugin.id === 'date'
+                          ? JSON.stringify({
+                              format: dataMain.format || 'MM/dd/yyyy',
+                              showTime: dataMain.showTime || 'false'
+                            })
                           : dataMain.labelEn || ''
                       data.nameAr = dataMain.labelAr || ''
                       data.nameEn = dataMain.labelEn || ''
