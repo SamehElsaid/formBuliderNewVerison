@@ -11,20 +11,20 @@ import https from 'https'
 const Index = ({ pageName, initialData, initialDataApi }) => {
   const [loading, setLoading] = useState(true)
 
-  let ReactPageEditor = null
-  try {
-    ReactPageEditor = dynamic(
-      () =>
-        import('src/Components/Pages/ReactPageEditor').then(e => {
-          setLoading(false)
+  let ReactPageEditor = dynamic(
+    () =>
+      import('src/Components/Pages/ReactPageEditor').then(e => {
+        setLoading(false)
 
-          return e
-        }),
-      {
-        ssr: false
-      }
-    )
-  } catch (err) {}
+        return e
+      }),
+    {
+      ssr: false
+    }
+  )
+
+  console.log('her2e')
+
 
 
   return (

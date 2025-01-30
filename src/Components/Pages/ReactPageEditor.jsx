@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useState } from 'react'
+import { memo, useEffect, useState } from 'react'
 import Editor from '@react-page/editor'
 import '@react-page/editor/lib/index.css'
 import { useIntl } from 'react-intl'
@@ -34,6 +34,13 @@ const ReactPageEditor = ({ pageName, initialData, initialDataApi }) => {
 
   // CellPlugins Hook Calling
   const { cellPlugins } = useCellPlugins({ advancedEdit,locale,readOnly })
+
+  // Loading State To Stop Rendering Editor
+  const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    setLoading(true)
+  }, [])
 
   return (
     <div className='relative'>
@@ -165,6 +172,7 @@ const ReactPageEditor = ({ pageName, initialData, initialDataApi }) => {
             </IconButton>
           </div>
         )}
+        {loading &&
         <Editor
           cellPlugins={cellPlugins}
           theme={theme}
@@ -174,9 +182,10 @@ const ReactPageEditor = ({ pageName, initialData, initialDataApi }) => {
           }}
           readOnly={readOnly}
         />
+        }
       </div>
     </div>
   )
 }
 
-export default ReactPageEditor
+export default memo(ReactPageEditor)

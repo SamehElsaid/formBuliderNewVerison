@@ -8,6 +8,7 @@ export default function useTable({ advancedEdit, locale }) {
     return {
       Renderer: ({ data, onChange }) => {
         return (
+
           <TableView
             readOnly={!advancedEdit}
             selectCollection={data.selectCollection}

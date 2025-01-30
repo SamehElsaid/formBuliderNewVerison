@@ -90,15 +90,7 @@ const ReactPageEditor = () => {
                     if (dataMain.required) {
                       validationData.push({ RuleType: 'Required', Parameters: {} })
                     }
-                    if (dataMain.unique) {
-                      validationData.push({
-                        RuleType: 'Unique',
-                        Parameters: {
-                          // tableName: 'Tests',
-                          // columnNames: [dataMain.key]
-                        }
-                      })
-                    }
+
                     if (dataMain.maxLength) {
                       validationData.push({ RuleType: 'MaxLength', Parameters: { maxLength: dataMain.maxLength } })
                     }
@@ -258,6 +250,16 @@ const ReactPageEditor = () => {
 
                       addData.push(data)
                     }
+                    console.log(dataMain)
+                    if (dataMain.unique) {
+                      validationData.push({
+                        RuleType: 'Unique',
+                        Parameters: {
+                          tableName: fields.key,
+                          columnNames: [dataMain.key.trim()]
+                        }
+                      })
+                    }
                   })
                 })
                 if (addData.length === 0) {
@@ -273,9 +275,9 @@ const ReactPageEditor = () => {
                     axiosPost('collection-fields/configure-fields', locale, item).then(res => {
                       if (res.status) {
                         const find = editorValue.rows.find(row => row.cells[0].dataI18n.default.key === item.key)
+
                         if (find?.id) {
-                          const filter = editorValue.rows.filter(ele => ele.id !== find.id)
-                          setEditorValue(prev => ({ ...prev, rows: filter }))
+                          setEditorValue(prev => ({ ...prev, rows: prev.rows.filter(ele => ele.id !== find.id) }))
                         }
                       }
 
