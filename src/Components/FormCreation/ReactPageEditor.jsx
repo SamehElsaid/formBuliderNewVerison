@@ -119,16 +119,21 @@ const ReactPageEditor = () => {
                     if (dataMain.type === 'email') {
                       validationData.push({ RuleType: 'Email', Parameters: {} })
                     }
-                    if (cell.plugin.id  === 'date') {
+                    if (cell.plugin.id === 'date') {
                       validationData.push({
                         RuleType: 'ColumnDataType',
                         Parameters: { expectedType: 'System.DateTime' }
                       })
                     }
                     if (dataMain.type === 'number') {
-                      validationData.push({ RuleType: 'ColumnDataType', Parameters: { expectedType: 'System.number' } })
+                      validationData.push({ RuleType: 'ColumnDataType', Parameters: { expectedType: 'System.Int64' } })
                     }
-                    if (cell.plugin.id === 'input' || cell.plugin.id === 'textarea' || cell.plugin.id === 'file' || cell.plugin.id === 'date') {
+                    if (
+                      cell.plugin.id === 'input' ||
+                      cell.plugin.id === 'textarea' ||
+                      cell.plugin.id === 'file' ||
+                      cell.plugin.id === 'date'
+                    ) {
                       data.type = getType(
                         cell.plugin.id === 'textarea'
                           ? 'textarea'
@@ -141,7 +146,6 @@ const ReactPageEditor = () => {
                       data.collectionId = addFiles
                       data.key = dataMain.key
                       data.descriptionAr = dataMain.labelAr || ''
-                      console.log(dataMain)
                       data.descriptionEn =
                         cell.plugin.id === 'textarea'
                           ? data.rows || '5'
@@ -162,7 +166,7 @@ const ReactPageEditor = () => {
                         en: placeholderEn
                       })
                       data.FieldCategory = 'Basic'
-                      data.options.uiSchema.xComponentProps.fileTypes = dataMain.fileTypes|| []
+                      data.options.uiSchema.xComponentProps.fileTypes = dataMain.fileTypes || []
                       data.options.uiSchema.xComponentProps.regex = dataMain.regex || ''
                       const regexMessageAr = dataMain.regexMessageAr || ''
                       const regexMessageEn = dataMain.regexMessageEn || ''

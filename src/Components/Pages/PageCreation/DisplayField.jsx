@@ -62,6 +62,8 @@ export default function DisplayField({ input, dirtyProps, reload, refError, data
     }
   }, [reload])
 
+  console.log("value",typeof value, value)
+
   const onChange = e => {
     setDirty(true)
     let isTypeNew = true
@@ -80,7 +82,7 @@ export default function DisplayField({ input, dirtyProps, reload, refError, data
       if (input?.type === 'Date') {
         setValue(new Date(e))
       } else {
-        setValue(e.target.value)
+        input.type === "Number" ? setValue(+e.target.value) : setValue(e.target.value)
       }
     }
 
