@@ -6,6 +6,7 @@ export default function ViewValueInTable({ data, value }) {
   const [dataView, setDataView] = useState(false)
 
   useEffect(() => {
+    console.log(value)
     if (data?.options?.source) {
       axiosGet(`generic-entities/${data?.options?.source}/${value}`).then(res => {
         if (res.status) {
@@ -21,6 +22,8 @@ export default function ViewValueInTable({ data, value }) {
 
           setDataView(Values.join('-') ?? '')
         } else {
+          console.log(res)
+          setDataView("-")
         }
       })
     }

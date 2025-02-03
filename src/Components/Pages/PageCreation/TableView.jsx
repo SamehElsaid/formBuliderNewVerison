@@ -1,21 +1,26 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 
-
-import { CircularProgress, Typography } from '@mui/material'
+import { Box, Button, CircularProgress, Dialog, DialogContent, IconButton, Tooltip, Typography } from '@mui/material'
 import { useEffect, useState } from 'react'
-import { axiosGet } from 'src/Components/axiosCall'
+import { axiosDelete, axiosGet } from 'src/Components/axiosCall'
 import PagnationTable from 'src/Components/TableEdit/PagnationTable'
 import { SortableContainer, SortableElement, arrayMove } from 'react-sortable-hoc'
 import ViewValueInTable from './ViewValueInTable'
+import IconifyIcon from 'src/Components/icon'
+import { useIntl } from 'react-intl'
+import { LoadingButton } from '@mui/lab'
+import OpenEditDialog from './OpenEditDialog'
+import GetTimeinTable from 'src/Components/GetTimeinTable'
 
-function TableView({ data, locale, onChange, readOnly }) {
+function TableView({ data, locale, onChange, readOnly, disabled }) {
   const [getFields, setGetFields] = useState([])
   const [loading, setLoading] = useState(true)
-  const [dataTable, setDataTable] = useState([])
-  const [loadingTable, setLoadingTable] = useState(false)
   const [columns, setColumns] = useState([])
   const [collectionFields, setCollectionFields] = useState([])
-  const [loadingCollectionFields, setLoadingCollectionFields] = useState(false)
+  const [deleteOpen, setDeleteOpen] = useState(false)
+  const [editOpen, setEditOpen] = useState(false)
+  const { messages } = useIntl()
+  console.log(deleteOpen)
 
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
@@ -47,16 +52,13 @@ function TableView({ data, locale, onChange, readOnly }) {
 
   useEffect(() => {
     if (data.collectionId) {
-      axiosGet(`collection-fields/get?CollectionId=${data.collectionId}`, locale)
-        .then(res => {
-          if (res.status) {
-            setCollectionFields(res.data)
-          }
-        })
-        .finally(() => setLoadingCollectionFields(false))
+      axiosGet(`collection-fields/get?CollectionId=${data.collectionId}`, locale).then(res => {
+        if (res.status) {
+          setCollectionFields(res.data)
+        }
+      })
     } else {
       setCollectionFields([])
-      setLoadingCollectionFields(true)
     }
   }, [locale, data.collectionId])
 
@@ -85,59 +87,73 @@ function TableView({ data, locale, onChange, readOnly }) {
           </Typography>
         )
       },
-      ...filteredFields.map(ele => ({
-        flex: 0.5,
-        minWidth: 200,
-        disableColumnMenu: true,
-        field: ele.key,
-        headerName: locale === 'ar' ? ele.nameAr.toUpperCase() : ele.nameEn.toUpperCase(),
-        renderCell: ({ row }) => (
-          <Typography variant='subtitle2' sx={{ fontWeight: 500, color: 'text.secondary' }}>
-            {ele?.fieldCategory === 'Associations' ? (
-              <ViewValueInTable data={ele} value={row[ele.key]} />
-            ) : (
-              row[ele.key]
-            )}
-          </Typography>
-        )
-      }))
+      ...filteredFields.map(ele => {
+        const mainTable = {
+          flex: 1,
+          minWidth: 200,
+          disableColumnMenu: true,
+          field: ele.key,
+          headerName: locale === 'ar' ? ele.nameAr.toUpperCase() : ele.nameEn.toUpperCase(),
+          renderCell: ({ row }) => (
+            <Typography variant='subtitle2' sx={{ fontWeight: 500, color: 'text.secondary' }}>
+              {console.log(ele)}
+              {ele?.fieldCategory === 'Associations' ? (
+                <ViewValueInTable data={ele} value={row[ele.key]} />
+              ) : ele.type === 'Date' ? (
+                <><GetTimeinTable data={row[ele.key]}/></>
+              ) : (
+                row[ele.key]
+              )}
+            </Typography>
+          )
+        }
+
+        return mainTable
+      })
     ])
-  }, [collectionFields.length, data?.selected?.length, data.sortWithId])
+  }, [collectionFields.length, data?.selected?.length, data.sortWithId, data.edit, data.delete])
+  const [actions, setAction] = useState([])
   useEffect(() => {
-    // // if(filterWithSelect.length === 0) return
-    // console.log(filterWithSelect.length === data.sortWithId?.length)
-    // if(filterWithSelect.length === data.sortWithId?.length){
-    //   console.log('sd')
-    // }
-    // const SortTable = data.sortWithId.map(ele => filterWithSelect.find(e => e?.id === ele))
-    // setFilterWithSelect(SortTable)
-    // setColumns([
-    //   {
-    //     flex: 0.05,
-    //     minWidth: 60,
-    //     field: 'index',
-    //     disableColumnMenu: true,
-    //     headerName: '#',
-    //     renderCell: ({ row }) => (
-    //       <Typography variant='subtitle2' sx={{ fontWeight: 500, color: 'text.secondary' }}>
-    //         {`${row.index + 1}`}
-    //       </Typography>
-    //     )
-    //   },
-    //   ...SortTable.map(ele => ({
-    //     flex: 0.5,
-    //     minWidth: 200,
-    //     disableColumnMenu: true,
-    //     field: ele.key,
-    //     headerName: locale === 'ar' ? ele.nameAr.toUpperCase() : ele.nameEn.toUpperCase(),
-    //     renderCell: ({ row }) => (
-    //       <Typography variant='subtitle2' sx={{ fontWeight: 500, color: 'text.secondary' }}>
-    //         {row[ele.key]}
-    //       </Typography>
-    //     )
-    //   }))
-    // ])
-  }, [filterWithSelect.length, data.sortWithId, data?.selected?.length])
+    if (data.edit || data.delete) {
+      setAction([
+        {
+          flex: 0.1,
+          minWidth: 120,
+          field: 'action',
+          sortable: false,
+          headerName: messages.actions.toUpperCase(),
+          renderCell: params => (
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+              {data.edit && (
+                <Tooltip title={messages.edit}>
+                  <IconButton
+                    size='small'
+                    onClick={e => {
+                      setEditOpen(params.row)
+                    }}
+                  >
+                    <IconifyIcon icon='tabler:edit' />
+                  </IconButton>
+                </Tooltip>
+              )}
+              {data.delete && (
+                <Tooltip title={messages.delete}>
+                  <IconButton
+                    size='small'
+                    onClick={e => {
+                      setDeleteOpen(params.row)
+                    }}
+                  >
+                    <IconifyIcon icon='tabler:trash' />
+                  </IconButton>
+                </Tooltip>
+              )}
+            </Box>
+          )
+        }
+      ])
+    }
+  }, [data.edit, data.delete])
 
   const SortableButton = SortableElement(({ value }) => (
     <div className='flex gap-2 items-center p-2 text-white rounded-md cursor-pointer select-none text-nowrap bg-main-color'>
@@ -165,8 +181,63 @@ function TableView({ data, locale, onChange, readOnly }) {
     })
   }
 
+  const handleClose = () => {
+    setDeleteOpen(false)
+  }
+  const [loadingButton, setLoadingButton] = useState(false)
+
   return (
     <div>
+      <OpenEditDialog
+        data={setGetFields}
+        open={editOpen}
+        onClose={() => setEditOpen(false)}
+        collectionName={data.collectionName}
+        filterWithSelect={collectionFields}
+        sortWithId={data.sortWithId}
+        disabled={disabled}
+      />
+      <Dialog
+        open={Boolean(deleteOpen)}
+        aria-labelledby='alert-dialog-title'
+        aria-describedby='alert-dialog-description'
+        onClose={(event, reason) => {
+          handleClose()
+        }}
+      >
+        <DialogContent>
+          <div className='flex flex-col gap-5 justify-center items-center px-1 py-5'>
+            <Typography variant='body1' className='!text-lg' id='alert-dialog-description'>
+              {messages.areYouSure}
+            </Typography>
+            <div className='flex gap-5 justify-between items-end'>
+              <LoadingButton
+                variant='contained'
+                loading={loadingButton}
+                onClick={() => {
+                  setLoadingButton(true)
+                  axiosDelete(`generic-entities/${data.collectionName}?Id=${deleteOpen.Id}`, locale)
+                    .then(res => {
+                      if (res.status) {
+                        setGetFields(getFields.filter(ele => ele.Id !== deleteOpen.Id))
+                        setTotalCount(totalCount - 1)
+                      }
+                    })
+                    .finally(_ => {
+                      handleClose()
+                      setLoadingButton(false)
+                    })
+                }}
+              >
+                {messages.delete}
+              </LoadingButton>
+              <Button color='secondary' variant='contained' disabled={loading} onClick={handleClose}>
+                {messages.cancel}
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
       {loading ? (
         <div className='h-[300px]  flex justify-center items-center'>
           <CircularProgress size={50} />
@@ -175,7 +246,7 @@ function TableView({ data, locale, onChange, readOnly }) {
         <>
           {!readOnly && <SortableList items={filterWithSelect} onSortEnd={onSortEnd} axis='xy' />}
           <PagnationTable
-            Invitationscolumns={columns}
+            Invitationscolumns={[...columns, ...actions]}
             data={getFields?.map((ele, i) => {
               const fData = { ...ele }
               fData.index = i + paginationModel.page * paginationModel.pageSize
@@ -184,7 +255,7 @@ function TableView({ data, locale, onChange, readOnly }) {
             })}
             totalRows={totalCount}
             getRowId={row => row.index}
-            loading={loading || loadingTable}
+            loading={loading}
             locale={locale}
             noRow={locale === 'ar' ? 'لا يوجد' : 'Not Found'}
             paginationModel={paginationModel}

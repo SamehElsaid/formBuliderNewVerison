@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo, forwardRef } from 'react'
-import { FormLabel, IconButton, InputAdornment, TextField } from '@mui/material'
+import { FormLabel, IconButton, InputAdornment } from '@mui/material'
 import { useIntl } from 'react-intl'
 import { isPossiblePhoneNumber } from 'react-phone-number-input'
 import DatePicker from 'react-datepicker'
@@ -12,8 +12,7 @@ import { BsPaperclip, BsTrash } from 'react-icons/bs'
 import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'
 import { FaCalendarAlt } from 'react-icons/fa'
 
-export default function DisplayField({ input, dirtyProps, reload, refError, dataRef, errorView, findError, readOnly }) {
-  console.log(readOnly)
+export default function DisplayField({ input, dirtyProps, reload, refError, dataRef, errorView, findError, readOnly, findValue }) {
   const [value, setValue] = useState('')
   const [error, setError] = useState(false)
   const [dirty, setDirty] = useState(dirtyProps)
@@ -23,6 +22,27 @@ export default function DisplayField({ input, dirtyProps, reload, refError, data
   const [selectedOptions, setSelectedOptions] = useState([])
   const xComponentProps = useMemo(() => input?.options?.uiSchema?.xComponentProps ?? {}, [input])
   const [fileName, setFile] = useState('')
+
+  const formatDate = (value, format) => {
+
+    const date = new Date(value);
+
+    const year = date.getFullYear();
+
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+
+    const day = String(date.getDate()).padStart(2, '0');
+
+    let time = '';
+    if (format.includes('HH:mm')) {
+      const hours = String(date.getHours()).padStart(2, '0');
+      const minutes = String(date.getMinutes()).padStart(2, '0');
+      time = `T${hours}:${minutes}`;
+    }
+
+    return `${year}-${month}-${day}${time}`;
+
+  };
 
 
 
@@ -34,6 +54,7 @@ export default function DisplayField({ input, dirtyProps, reload, refError, data
       setDirty(false)
       setShowPassword(false)
       setValidations({})
+
     } else {
       const dataValidations = {}
       input.validationData.forEach(item => {
@@ -44,25 +65,34 @@ export default function DisplayField({ input, dirtyProps, reload, refError, data
   }, [input])
 
   useEffect(() => {
-    if (input?.type === 'ManyToMany') {
-      setValue([])
+    if(findValue){
+      setValue(findValue)
+      if (input?.type === 'date') {
+        setValue(new Date(findValue))
+      }
+    }else{
+      if (input?.type === 'ManyToMany') {
+        setValue([])
+      }
+      if (input?.type === 'date') {
+        setValue(new Date())
+      }
     }
-    if (input?.type === 'date') {
-      setValue(new Date())
-    }
-  }, [input])
+  }, [input,findValue])
 
   useEffect(() => {
     if (reload !== 0) {
       setValue('')
+      if (input?.type === 'ManyToMany') {
+        setValue([])
+      }
       setFile('')
       setError(false)
       setDirty(false)
       setShowPassword(false)
     }
-  }, [reload])
+  }, [reload,input])
 
-  console.log("value",typeof value, value)
 
   const onChange = e => {
     setDirty(true)
@@ -82,7 +112,7 @@ export default function DisplayField({ input, dirtyProps, reload, refError, data
       if (input?.type === 'Date') {
         setValue(new Date(e))
       } else {
-        input.type === "Number" ? setValue(+e.target.value) : setValue(e.target.value)
+        input.type === 'Number' ? setValue(+e.target.value) : setValue(e.target.value)
       }
     }
 
@@ -136,7 +166,7 @@ export default function DisplayField({ input, dirtyProps, reload, refError, data
       errorMessages.push('Required')
     }
 
-    if (input.type === 'Email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+    if (input.type === 'Email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) && value !== '') {
       errorWithoutDirty.push(true)
       errorMessages.push('Invalid_Email')
     }
@@ -145,6 +175,7 @@ export default function DisplayField({ input, dirtyProps, reload, refError, data
       !/^(https?:\/\/)?(www\.)?[a-zA-Z0-9@:%._\+~#?&//=]{2,256}\.[a-z]{2,4}\b([-a-zA-Z0-9@:%._\+~#?&//=]*)$/i.test(
         value
       )
+      && value !== ''
     ) {
       errorWithoutDirty.push(true)
       errorMessages.push('Invalid_URL')
@@ -157,14 +188,19 @@ export default function DisplayField({ input, dirtyProps, reload, refError, data
       errorWithoutDirty.push(true)
       errorMessages.push('Max_Length')
     }
-    if (input.type === 'Phone' && !isPossiblePhoneNumber(value ?? '')) {
+    if (input.type === 'Phone' && !isPossiblePhoneNumber('+' + value ?? '') && value !== '') {
       errorWithoutDirty.push(true)
       errorMessages.push('Invalid_Phone')
     }
     if (dataRef) {
       if (input.type === 'Date') {
         try {
-          dataRef.current[input.key] = new Date(value).toISOString()
+          const lable = JSON.parse(input?.descriptionEn) ?? {
+            format: 'yyyy-MM-dd',
+            showTime: 'false'
+          }
+
+          dataRef.current[input.key] = value??formatDate(value,lable.format)
         } catch (error) {
           dataRef.current[input.key] = ''
         }
@@ -181,15 +217,21 @@ export default function DisplayField({ input, dirtyProps, reload, refError, data
   }, [refError, input, value, dataRef, validations])
 
   useEffect(() => {
-    if (input.type === 'OneToOne' || input.type === 'ManyToMany') {
+    if (input.type === 'OneToOne') {
       axiosGet(`generic-entities/${input?.options?.source}`).then(res => {
         if (res.status) {
           setSelectedOptions(res.entities)
         }
       })
     }
+    if (input.type === 'ManyToMany') {
+      axiosGet(`generic-entities/${input?.options?.target}`).then(res => {
+        if (res.status) {
+          setSelectedOptions(res.entities)
+        }
+      })
+    }
   }, [input])
-  console.log(value)
 
   const onChangeFile = async e => {
     const file = e.target.files[0]
@@ -244,9 +286,9 @@ export default function DisplayField({ input, dirtyProps, reload, refError, data
   }
 
   return (
-    <div className='reset' id={input.key + input.nameEn}>
+    <div className='reset' id={input.key.trim() + input.nameEn.trim().replaceAll(" ","")}>
       <div>{input.type !== 'File' && label}</div>
-      <style>{`#${input.key + input.nameEn} {
+      <style>{`#${input.key.trim() + input.nameEn.trim().replaceAll(" ","")} {
         ${xComponentProps?.cssClass}
       }`}</style>
       <div className='relative' style={{ display: 'flex' }}>
@@ -275,6 +317,8 @@ export default function DisplayField({ input, dirtyProps, reload, refError, data
   )
 }
 
+
+
 const ViewInput = ({
   input,
   value,
@@ -293,24 +337,24 @@ const ViewInput = ({
   selectedOptions
 }) => {
 
-  const ExampleCustomInput = forwardRef(({ value, onClick }, ref) =>
- {
+  const ExampleCustomInput = forwardRef(({ value, onClick }, ref) => {
+    const lable = JSON.parse(input?.descriptionEn) ?? {
+      format: 'yyyy-MM-dd',
+      showTime: 'false'
+    }
 
-  const lable = JSON.parse(input?.descriptionEn) ?? {
-    format: 'yyyy-MM-dd',
-    showTime: 'false'
-  }
 
-    return <div className='relative w-full'>
-      <input placeholder={lable.format} className='!ps-[35px] relative ' onClick={onClick} ref={ref} value={value} />
-      <div className='absolute top-[0] start-[10px]  w-[20px] h-[100%] flex items-center justify-center z-10'>
-        <span className='' id='calendar-icon'>
-          <FaCalendarAlt className='text-xl' />
-        </span>
+    return (
+      <div className='relative w-full'>
+        <input placeholder={lable.format} className='!ps-[35px] relative ' onClick={onClick} ref={ref} value={value} />
+        <div className='absolute top-[0] start-[10px]  w-[20px] h-[100%] flex items-center justify-center z-10'>
+          <span className='' id='calendar-icon'>
+            <FaCalendarAlt className='text-xl' />
+          </span>
+        </div>
       </div>
-    </div>
- }
-  )
+    )
+  })
 
   const handleKeyDown = event => {
     if (input.type !== 'Phone') return
@@ -331,8 +375,6 @@ const ViewInput = ({
     input.type === 'Password' ||
     input.type === 'Phone'
   ) {
-    const placeholderInText = xComponentProps?.placeholder
-    const placeholder = JSON.parse(placeholderInText) ?? { ar: '', en: '' }
 
     return (
       <>
@@ -358,7 +400,6 @@ const ViewInput = ({
           onWheel={handleWheel}
           className={`${errorView || error ? 'error' : ''} `}
           style={{ transition: '0.3s' }}
-          placeholder={locale === 'ar' ? placeholder.ar : placeholder.en}
         />
         {input.type === 'Password' && (
           <div className='absolute top-1/2 || -translate-y-1/2 || end-[15px]'>
@@ -378,17 +419,18 @@ const ViewInput = ({
   }
   if (input.type === 'LongText') {
     return (
-      <TextField
-        label={locale === 'ar' ? input.nameAr : input.nameEn}
+      <textarea
+        id={input.key}
         value={value}
-        fullWidth
-        multiline
-        rows={4}
         name={input.nameEn}
-        onChange={e => onChange(e)}
-        error={Boolean(findError || error)}
-        helperText={errorView || error}
+        onChange={e => {
+          onChange(e)
+        }}
+        rows={4}
+        className={`${errorView || error ? 'error' : ''} `}
+        style={{ transition: '0.3s' }}
       />
+
     )
   }
 
@@ -458,35 +500,33 @@ const ViewInput = ({
       showTime: 'false'
     }
 
-    console.log(input)
 
-    return (
-
-      !readOnly ? (
-        <DatePickerWrapper className='w-full'>
-          <DatePicker
-            selected={value}
-            onChange={date => onChange(date)}
-            timeInputLabel='Time:'
-            dateFormat={`${lable.format ? lable.format : 'MM/dd/yyyy'}`}
-            showMonthDropdown
-            showYearDropdown
-            showTimeInput={lable.showTime === 'true'}
-            customInput={<ExampleCustomInput className='example-custom-input'  />}
-          />
-        </DatePickerWrapper>
-      ) : (
+    return !readOnly ? (
+      <DatePickerWrapper className='w-full'>
         <DatePicker
+          selected={value}
+          onChange={date => onChange(date)}
+          timeInputLabel='Time:'
+          dateFormat={`${lable.format ? lable.format : 'MM/dd/yyyy'}`}
+          showMonthDropdown
+          locale={locale === 'ar' ? ar : en}
+          showYearDropdown
+          showTimeInput={lable.showTime === 'true'}
+          customInput={<ExampleCustomInput className='example-custom-input' />}
+        />
+      </DatePickerWrapper>
+    ) : (
+      <DatePicker
         selected={value}
+        locale={locale === 'ar' ? ar : en}
         onChange={date => onChange(date)}
         timeInputLabel='Time:'
         dateFormat={`${lable.format ? lable.format : 'MM/dd/yyyy'}`}
         showMonthDropdown
         showYearDropdown
         showTimeInput={lable.showTime === 'true'}
-        customInput={<ExampleCustomInput className='example-custom-input'  />}
+        customInput={<ExampleCustomInput className='example-custom-input' />}
       />
-      )
     )
   }
 
@@ -521,10 +561,13 @@ const ViewInput = ({
   }
   if (input.type === 'OneToOne' && input.descriptionAr === 'select') {
     const lable = JSON.parse(input?.descriptionEn)
+    console.log(input)
 
     return (
       <div id='custom-select'>
         <select value={value} onChange={e => onChange(e)}>
+          {console.log(lable,input?.descriptionEn)}
+          <option disabled selected value={''}>{locale === 'ar' ? 'اختر ' : 'Select'}</option>
           {selectedOptions.map((option, index) => (
             <option key={option.Id} value={option.Id}>
               {lable.map(ele => option[ele]).join('-')}
@@ -542,16 +585,13 @@ const ViewInput = ({
         <div className=''>
           <div className=''>
             <div className='flex flex-col gap-1'>
-              <FormLabel htmlFor={input.nameEn} className='!text-xl capitalize'>
-                {locale === 'ar' ? input.nameAr : input.nameEn}
-              </FormLabel>
               <div className=''>
                 {selectedOptions.map((option, index) => (
                   <div key={option.Id} className=''>
                     <input
                       value={option.Id}
                       name={input.nameEn}
-                      checked={typeof value === 'object' ? value?.find(v => v === option.Id) : false}
+                      checked={value?.find(v => v === option.Id)}
                       onChange={e => onChange(e)}
                       type='checkbox'
                       id={option.Id}

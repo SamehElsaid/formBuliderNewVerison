@@ -21,6 +21,10 @@ export const axiosGet = async (url, locale, token, params = {}, close) => {
     }
     const fetchData = await axios.get(`${process.env.API_URL}/${url}`, header)
 
+    // if (!fetchData.data.isSuccess) {
+    //   throw new Error(fetchData.data.message)
+    // }
+
     return { ...fetchData.data, status: true }
   } catch (err) {
     if (url === 'auth/info') {
@@ -49,8 +53,11 @@ export const axiosPatch = async (url, locale, data, file, close) => {
         'Accept-Language': locale
       }
     })
-
-    return { ...fetchData.data, status: true }
+    if (fetchData.data.isSuccess) {
+      return { ...fetchData.data, status: true }
+    } else {
+      throw new Error(fetchData.data.message)
+    }
   } catch (err) {
     return { status: false }
   }
@@ -75,6 +82,12 @@ export const axiosPost = async (url, locale, data, file, close) => {
       }
     })
 
+
+
+    if (!fetchData.data.isSuccess) {
+      throw new Error(fetchData.data.message)
+    }
+
     return { ...fetchData.data, status: true }
   } catch (err) {
     return { status: false, code: err?.response?.status }
@@ -91,6 +104,9 @@ export const axiosDelete = async (url, locale) => {
         'Accept-Language': locale
       }
     })
+    if (!fetchData.data.isSuccess) {
+      throw new Error(fetchData.data.message)
+    }
 
     return { ...fetchData.data, status: true }
   } catch (err) {
@@ -124,14 +140,16 @@ export const uploadImage = async (file, onProgress, locale, mult, index) => {
         headers: {
           'Content-Type': fileNew.type
         },
-        onUploadProgress: mult ? onProgress : progressEvent => {
-          const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total)
-          if (onProgress) {
-            onProgress(percentCompleted)
-          }
+        onUploadProgress: mult
+          ? onProgress
+          : progressEvent => {
+              const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total)
+              if (onProgress) {
+                onProgress(percentCompleted)
+              }
 
-          return percentCompleted
-        }
+              return percentCompleted
+            }
       })
 
       return {
@@ -176,7 +194,6 @@ export const validateImageFile = (file, locale) => {
 }
 
 export const validateImageFilePng = (file, locale) => {
-
   if (!file) {
     return { isValid: false, error: locale === 'ar' ? 'لا يوجد ملف' : 'No file provided' }
   }
@@ -185,15 +202,11 @@ export const validateImageFilePng = (file, locale) => {
   if (!allowedTypes.includes(file.type)) {
     return {
       isValid: false,
-      error:
-        locale === 'ar'
-          ? 'يجب أن يكون الصورة في الصيغة PNG'
-          : 'Only PNG images are allowed'
+      error: locale === 'ar' ? 'يجب أن يكون الصورة في الصيغة PNG' : 'Only PNG images are allowed'
     }
   }
 
   return { isValid: true }
-
 }
 
 export const validateMediaFile = (file, locale) => {
@@ -239,14 +252,20 @@ export const downloadImagesAsZip = async images => {
   saveAs(zipBlob, 'images.zip')
 }
 
-
-
-
 export const typeOfFile = file => {
-
-  if (file.type.includes('/png') || file.type.includes('/jpg') || file.type.includes('/jpeg') || file.type.includes('/webp')) {
+  if (
+    file.type.includes('/png') ||
+    file.type.includes('/jpg') ||
+    file.type.includes('/jpeg') ||
+    file.type.includes('/webp')
+  ) {
     return 'image'
-  } else if (file.type.includes('/mp4') || file.type.includes('/mov') || file.type.includes('/avi') || file.type.includes('/webm')) {
+  } else if (
+    file.type.includes('/mp4') ||
+    file.type.includes('/mov') ||
+    file.type.includes('/avi') ||
+    file.type.includes('/webm')
+  ) {
     return 'video'
   } else if (
     file.type.includes('/mp3') ||
@@ -260,7 +279,6 @@ export const typeOfFile = file => {
 }
 
 export const typeOfFileUrl = file => {
-
   if (file.includes('.png') || file.includes('.jpg') || file.includes('.jpeg') || file.includes('.webp')) {
     return 'image'
   } else if (file.includes('.mp4') || file.includes('.mov') || file.includes('.avi') || file.includes('.webm')) {
@@ -275,7 +293,6 @@ export const typeOfFileUrl = file => {
     return 'audio'
   }
 }
-
 
 export const UrlTranAr = async string => {
   const res = await fetch(`https://api.datpmt.com/api/v1/dictionary/translate?string=${string}&from_lang=ar&to_lang=en`)

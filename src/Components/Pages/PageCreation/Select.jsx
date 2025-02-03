@@ -45,14 +45,15 @@ function Select({ onChange, data, type }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [locale, data.data_source_id])
 
-
   useEffect(() => {
     if (!data.data_source_id) return
     setLoadingCollection(true)
     axiosGet(`collections/get/?dataSourceId=${data.data_source_id}`, locale)
       .then(res => {
         if (res.status) {
-          setOptionsCollection(res.data)
+          setOptionsCollection(res.data ?? [])
+        } else {
+          setOptionsCollection([])
         }
       })
       .finally(() => {
@@ -92,7 +93,7 @@ function Select({ onChange, data, type }) {
     try {
       const res = await axiosGet(`collections/get/?dataSourceId=${data.data_source_id}`, locale)
       if (res.status) {
-        setOptionsCollection(res.data)
+        setOptionsCollection(res.data ?? [])
       } else {
         setCollection('')
       }
@@ -109,41 +110,6 @@ function Select({ onChange, data, type }) {
     const selected = checked ? [...selectedOptions, value] : selectedOptions.filter(item => item !== value)
     onChange({ ...data, selected, type_of_sumbit: data.type_of_sumbit === 'collection' ? '' : data.type_of_sumbit })
   }
-
-  const [viewTable, setViewTable] = useState([])
-
-  // useEffect(() => {
-  //   if (type) {
-  //     console.log(selectedOptions, 'selected')
-
-  //     const getSelected = getFields.filter(
-  //       item => selectedOptions.includes(item.key) && (item.type === 'ManyToMany' || item.type === 'OneToOne')
-  //     )
-  //     if (getSelected.length === 0) {
-  //       setViewTable([])
-
-  //       return
-  //     }
-
-  //     const dataTable = []
-
-  //     const loadingToast = toast.loading(locale === 'ar' ? 'يتم التحميل' : 'Loading')
-  //     console.log(getSelected, 'getSelected')
-  //     Promise.all(
-  //       getSelected.map(item => {
-  //         axiosGet(`collection-fields/get?CollectionId=${item.collectionId}`, locale).then(res => {
-  //           if (res.status) {
-  //             dataTable.push({ data: res.data, collectionName: item.key })
-  //           }
-  //         })
-  //       })
-  //     ).finally(() => {
-  //       toast.dismiss(loadingToast)
-  //     })
-  //     setViewTable(dataTable)
-  //   }
-  // }, [type, selectedOptions.length, locale])
-
 
   return (
     <div>
@@ -236,70 +202,86 @@ function Select({ onChange, data, type }) {
               </div>
             </FormControl>
           </div>
-          {viewTable.map(item => {
-            return (
-              <div className='mt-4' key={item.key}>
-                <FormControl component='fieldset' fullWidth>
-                  <FormLabel component='legend'>
-                    {messages.View_Value} {item.collectionName}{' '}
-                  </FormLabel>
-                  <div className='!flex !flex-row !flex-wrap gap-2'>
-                    {item.data?.map(value => (
-                      <FormControlLabel
-                        key={value.key}
-                        className='!w-fit capitalize'
-                        control={
-                          <Checkbox
-                            value={value.key}
-                            checked={selectedOptions.includes(value.key)}
-                            onChange={handleChange}
-                          />
-                        }
-                        label={value.key}
-                      />
-                    ))}
-                  </div>
-                </FormControl>
-              </div>
-            )
-          })}
+
           <div className='mt-4'></div>
-          {!type&&
-          <>
-          <TextField
-            select
-            fullWidth
-            value={data.type_of_sumbit || ''}
-            onChange={e => {
-              if (e.target.value === 'collection') {
-                if (selectedOptions.length !== getFields.length) {
-                  toast.error(locale === 'ar' ? 'يجب اختيار كل الحقول' : 'You must select the All fields')
+          {!type ? (
+            <>
 
-                  return
+              <TextField
+                select
+                fullWidth
+                value={data.type_of_sumbit || ''}
+                onChange={e => {
+                  if (e.target.value === 'collection') {
+                    if (selectedOptions.length !== getFields.length) {
+                      toast.error(locale === 'ar' ? 'يجب اختيار كل الحقول' : 'You must select the All fields')
+
+                      return
+                    }
+                  }
+
+                  onChange({ ...data, type_of_sumbit: e.target.value })
+                }}
+                label={locale === 'ar' ? 'نوع الارسال' : 'Type Of Submit'}
+                variant='filled'
+              >
+                <MenuItem value={'collection'}>{locale === 'ar' ? 'هذه التجميعة' : 'This Collection'}</MenuItem>
+                <MenuItem value={'api'}>{locale === 'ar' ? 'الي Api اخر' : 'Other API'}</MenuItem>
+              </TextField>
+  <TextField
+                fullWidth
+                value={data.redirect || ''}
+                onChange={e => onChange({ ...data, redirect: e.target.value })}
+                label={locale === 'ar' ? 'الذهاب الي' : 'Redirect to'}
+                variant='filled'
+              />
+              <Collapse
+                transition={`height 300ms cubic-bezier(.4, 0, .2, 1)`}
+                isOpen={Boolean(data.type_of_sumbit === 'api')}
+              >
+                <TextField
+                  fullWidth
+                  value={data.submitApi || ''}
+                  onChange={e => onChange({ ...data, submitApi: e.target.value })}
+                  label={locale === 'ar' ? 'ارسال البيانات الي الAPI' : 'Submit To API'}
+                  variant='filled'
+                />
+              </Collapse>
+            </>
+          ) : (
+            <>
+              <h2 className='text-lg font-bold'>{locale === 'ar' ? 'الاجراءات' : 'Actions'}</h2>
+              <FormControlLabel
+                key={data.edit}
+                className='!w-fit capitalize'
+                control={
+                  <Checkbox
+                    value={data.edit}
+                    checked={data.edit}
+                    onChange={() => {
+                      onChange({ ...data, edit: data.edit ? false : true })
+                    }}
+                  />
                 }
-              }
+                label={locale === 'ar' ? 'تعديل البيانات' : 'Edit Data'}
+              />
+              <FormControlLabel
+                key={data.delete}
+                className='!w-fit capitalize'
+                control={
+                  <Checkbox
+                    value={data.delete}
+                    checked={data.delete}
+                    onChange={() => {
+                      onChange({ ...data, delete: data.delete ? false : true })
+                    }}
+                  />
+                }
+                label={locale === 'ar' ? 'حذف البيانات' : 'Delete Data'}
+              />
 
-              onChange({ ...data, type_of_sumbit: e.target.value })
-            }}
-            label={locale === 'ar' ? 'نوع الارسال' : 'Type Of Submit'}
-            variant='filled'
-          >
-            <MenuItem value={'collection'}>{locale === 'ar' ? 'هذه التجميعة' : 'This Collection'}</MenuItem>
-            <MenuItem value={'api'}>{locale === 'ar' ? 'الي Api اخر' : 'Other API'}</MenuItem>
-          </TextField>
-          <Collapse
-            transition={`height 300ms cubic-bezier(.4, 0, .2, 1)`}
-            isOpen={Boolean(data.type_of_sumbit === 'api')}
-          >
-            <TextField
-              fullWidth
-              value={data.submitApi || ''}
-              onChange={e => onChange({ ...data, submitApi: e.target.value })}
-              label={locale === 'ar' ? 'ارسال البيانات الي الAPI' : 'Submit To API'}
-              variant='filled'
-            />
-          </Collapse></>
-          }
+            </>
+          )}
         </Collapse>
       </form>
     </div>

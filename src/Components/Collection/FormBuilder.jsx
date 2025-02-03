@@ -23,15 +23,13 @@ import {
   Autocomplete,
   Box
 } from '@mui/material'
-import { Add, Delete } from '@mui/icons-material'
 import { useIntl } from 'react-intl'
 import { toast } from 'react-toastify'
 import { LoadingButton } from '@mui/lab'
-import PhoneInput from 'react-phone-number-input'
 import { Icon } from '@iconify/react'
 import { axiosGet, axiosPost, UrlTranAr, UrlTranEn } from '../axiosCall'
 import Collapse from '@kunukn/react-collapse'
-import { getType } from '../_Shared'
+import { DefaultStyle, getType } from '../_Shared'
 import { useRouter } from 'next/router'
 
 const FormBuilder = ({ open, setOpen }) => {
@@ -40,21 +38,19 @@ const FormBuilder = ({ open, setOpen }) => {
   const [fieldLabel, setFieldLabel] = useState('')
   const [fieldLabelEn, setFieldLabelEn] = useState('')
   const [key, setKey] = useState('')
-  const [defaultCountry, setDefaultCountry] = useState('EG')
   const [optionType, setOptionType] = useState('option')
 
   const [validations, setValidations] = useState({
     required: false,
-    includeCamelCase: false,
-    includeLowerCase: false,
-    onlyText: false,
-    onlyNumbers: false,
+    unique: false,
     minLength: '',
-    maxLength: ''
+    maxLength: '',
+    regex: '',
+    regexMessageAr: '',
+    regexMessageEn: '',
+    format: 'MM/dd/yyyy',
+    showTime: 'false'
   })
-  const [options, setOptions] = useState([])
-  const [newOption, setNewOption] = useState('')
-  const [newOptionEn, setNewOptionEn] = useState('')
   const [fileExtensions, setFileExtensions] = useState([])
 
   const steps = ['Select_Field_Type', 'Enter_Label', 'Validation', 'Setup']
@@ -189,7 +185,6 @@ const FormBuilder = ({ open, setOpen }) => {
   }
   const [loading, setLoading] = useState(false)
 
-
   const handleToggleFileExtension = extension => {
     if (fileExtensions.includes(extension)) {
       setFileExtensions(fileExtensions.filter(ext => ext !== extension))
@@ -245,22 +240,19 @@ const FormBuilder = ({ open, setOpen }) => {
     setFieldType('')
     setFieldLabel('')
     setFieldLabelEn('')
-    setDefaultCountry('EG')
     setKey('')
     setValidations({
       required: false,
-      includeCamelCase: false,
-      includeLowerCase: false,
-      onlyText: false,
-      onlyNumbers: false,
+      unique: false,
       minLength: '',
-      maxLength: ''
+      maxLength: '',
+      regex: '',
+      regexMessageAr: '',
+      regexMessageEn: '',
+      format: 'MM/dd/yyyy',
+      showTime: 'false'
     })
-    setOptions([])
-    setNewOption('')
-    setNewOptionEn('')
     setFileExtensions([])
-    setDefaultCountry('EG')
     setGetFields([])
     setValueCollection('')
     setSelectedOptions([])
@@ -288,23 +280,21 @@ const FormBuilder = ({ open, setOpen }) => {
       validationData.push({ RuleType: 'Required', Parameters: {} })
     }
 
-    // if (validations.includeCamelCase) {
-    //   validationData.push({ RuleType: 'IncludeCamelCase', Parameters: {} })
-    // }
-    // if (validations.includeLowerCase) {
-    //   validationData.push({ RuleType: 'IncludeLowerCase', Parameters: {} })
-    // }
-    // if (validations.onlyNumbers) {
-    //   validationData.push({ "RuleType": "onlyNumbers", "Parameters": {} })
-    // }
-    // if (validations.onlyText) {
-    //   validationData.push({ "RuleType": "onlyText", "Parameters": {} })
-    // }
     if (validations.maxLength) {
       validationData.push({ RuleType: 'MaxLength', Parameters: { maxLength: validations.maxLength } })
     }
     if (validations.minLength) {
       validationData.push({ RuleType: 'MinLength', Parameters: { minLength: validations.minLength } })
+    }
+
+    if (validations.unique) {
+      validationData.push({
+        RuleType: 'Unique',
+        Parameters: {
+          tableName: open.key,
+          columnNames: [key]
+        }
+      })
     }
 
     if (fieldType === 'url') {
@@ -317,7 +307,7 @@ const FormBuilder = ({ open, setOpen }) => {
       validationData.push({ RuleType: 'ColumnDataType', Parameters: { expectedType: 'System.DateTime' } })
     }
     if (fieldType === 'number') {
-      validationData.push({ RuleType: 'ColumnDataType', Parameters: { expectedType: 'System.number' } })
+      validationData.push({ RuleType: 'ColumnDataType', Parameters: { expectedType: 'System.Int64' } })
     }
 
     const sendData = {
@@ -331,30 +321,48 @@ const FormBuilder = ({ open, setOpen }) => {
       FieldCategory: FindFieldCategory(fieldType),
 
       options: {
-        defaultValue: fieldType === 'tel' ? defaultCountry : '',
         uiSchema: {
-          fileType: isFileStep ? fileExtensions : []
+          xComponentProps: {
+            cssClass: DefaultStyle(fieldType),
+            fileTypes: isFileStep ? fileExtensions : [],
+            errorMessage: JSON.stringify({
+              ar: validations.regexMessageAr,
+              en: validations.regexMessageEn,
+              regex: validations.regex
+            })
+          }
         }
       },
       validationData
     }
+    if (fieldType === 'date') {
+      sendData.descriptionEn = JSON.stringify({
+        format: validations.format || 'MM/dd/yyyy',
+        showTime: validations.showTime || 'false'
+      })
+    }
+
+    console.log(fieldType, DefaultStyle(fieldType))
 
     if (fieldType === 'select' || fieldType === 'radio' || fieldType === 'checkbox') {
-      sendData.options.source = collection.key
-      sendData.options.target = open.key
       sendData.descriptionEn = JSON.stringify(selectedOptions)
       sendData.descriptionAr = fieldType
-      if(fieldType !== 'checkbox'){
-        sendData.options.foreignKey = key
+      if (fieldType !== 'checkbox') {
+        sendData.options.foreignKey = key+"Id"
         sendData.options.sourceKey = 'id'
-        sendData.options.targetKey = open.key
+        sendData.options.targetKey = open.key+"Id"
       }
+      sendData.options.source = collection.key
+      sendData.options.target = open.key
       if (selectedOptions.length === 0) {
         return toast.error(locale === 'ar' ? 'يجب أن تختار حقل من المجموعة' : 'You must select a field from the group')
       }
     }
-    if(fieldType === 'checkbox'){
+    if (fieldType === 'checkbox') {
+      sendData.options.target = collection.key
+      sendData.options.source = open.key
       sendData.options.junctionTable = `${open.key}${collection.key}`
+      sendData.key = `${open.key}${collection.key}`
     }
     setLoading(true)
 
@@ -462,6 +470,37 @@ const FormBuilder = ({ open, setOpen }) => {
 
             {activeStep === 2 && (
               <div>
+                {fieldType === 'date' && (
+                  <>
+                    <TextField
+                      label={locale === 'ar' ? 'التنسيق' : 'Format'}
+                      type='text'
+                      fullWidth
+                      margin='normal'
+                      value={validations.format}
+                      onChange={e =>
+                        setValidations({
+                          ...validations,
+                          format: e.target.value
+                        })
+                      }
+                    />
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={validations.showTime === 'true'}
+                          onChange={e =>
+                            setValidations({
+                              ...validations,
+                              showTime: e.target.checked ? 'true' : 'false'
+                            })
+                          }
+                        />
+                      }
+                      label={locale === 'ar' ? 'اظهار الوقت' : 'Show Time'}
+                    />
+                  </>
+                )}
                 <FormControlLabel
                   control={
                     <Checkbox
@@ -480,101 +519,16 @@ const FormBuilder = ({ open, setOpen }) => {
                 <FormControlLabel
                   control={
                     <Checkbox
-                      disabled={
-                        fieldType === 'checkbox' ||
-                        fieldType === 'radio' ||
-                        fieldType === 'select' ||
-                        fieldType === 'date' ||
-                        fieldType === 'number' ||
-                        fieldType === 'file' ||
-                        fieldType === 'email' ||
-                        fieldType === 'url' ||
-                        fieldType === 'tel'
-                      }
-                      checked={validations.includeCamelCase}
+                      checked={validations.unique}
                       onChange={e =>
                         setValidations({
                           ...validations,
-                          includeCamelCase: e.target.checked
+                          unique: e.target.checked
                         })
                       }
                     />
                   }
-                  label={messages.Include_Camel_Case}
-                />
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      checked={validations.includeLowerCase}
-                      disabled={
-                        fieldType === 'checkbox' ||
-                        fieldType === 'radio' ||
-                        fieldType === 'select' ||
-                        fieldType === 'date' ||
-                        fieldType === 'number' ||
-                        fieldType === 'file' ||
-                        fieldType === 'email' ||
-                        fieldType === 'url' ||
-                        fieldType === 'tel'
-                      }
-                      onChange={e =>
-                        setValidations({
-                          ...validations,
-                          includeLowerCase: e.target.checked
-                        })
-                      }
-                    />
-                  }
-                  label={messages.Include_Lower_Case}
-                />
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      disabled={
-                        fieldType === 'checkbox' ||
-                        fieldType === 'radio' ||
-                        fieldType === 'select' ||
-                        fieldType === 'date' ||
-                        fieldType === 'number' ||
-                        fieldType === 'file' ||
-                        fieldType === 'email' ||
-                        fieldType === 'url' ||
-                        fieldType === 'tel'
-                      }
-                      checked={validations.onlyText}
-                      onChange={e =>
-                        setValidations({
-                          ...validations,
-                          onlyText: e.target.checked
-                        })
-                      }
-                    />
-                  }
-                  label={messages.Only_Text}
-                />
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      disabled={
-                        fieldType === 'checkbox' ||
-                        fieldType === 'radio' ||
-                        fieldType === 'select' ||
-                        fieldType === 'date' ||
-                        fieldType === 'file' ||
-                        fieldType === 'email' ||
-                        fieldType === 'url' ||
-                        fieldType === 'tel'
-                      }
-                      checked={validations.onlyNumbers || fieldType === 'number'}
-                      onChange={e =>
-                        setValidations({
-                          ...validations,
-                          onlyNumbers: e.target.checked
-                        })
-                      }
-                    />
-                  }
-                  label={messages.Only_Numbers}
+                  label={locale === 'ar' ? 'مميز' : 'Unique'}
                 />
                 <TextField
                   label={messages.Min_Length}
@@ -616,6 +570,47 @@ const FormBuilder = ({ open, setOpen }) => {
                     setValidations({
                       ...validations,
                       maxLength: e.target.value
+                    })
+                  }
+                />
+                <TextField
+                  label={locale === 'ar' ? 'التعبير الرياضي' : 'Regex'}
+                  type='text'
+                  fullWidth
+                  margin='normal'
+                  value={validations.regex}
+                  onChange={e =>
+                    setValidations({
+                      ...validations,
+                      regex: e.target.value
+                    })
+                  }
+                />{' '}
+                <TextField
+                  label={locale === 'ar' ? 'رسالة الخطأ بالعربية' : 'Error Message Arabic'}
+                  type='text'
+                  fullWidth
+                  disabled={!validations.regex}
+                  margin='normal'
+                  value={validations.regexMessageAr}
+                  onChange={e =>
+                    setValidations({
+                      ...validations,
+                      regexMessageAr: e.target.value
+                    })
+                  }
+                />
+                <TextField
+                  disabled={!validations.regex}
+                  label={locale === 'ar' ? 'رسالة الخطأ بالانجليزية' : 'Error Message English'}
+                  type='text'
+                  fullWidth
+                  margin='normal'
+                  value={validations.regexMessageEn}
+                  onChange={e =>
+                    setValidations({
+                      ...validations,
+                      regexMessageEn: e.target.value
                     })
                   }
                 />
@@ -729,20 +724,8 @@ const FormBuilder = ({ open, setOpen }) => {
                 </Grid>
               </div>
             )}
-            {activeStep === 3 && fieldType === 'tel' && (
-              <div className='min-h-[100px] flex items-center justify-center text-main-color'>
-                <h4>{messages.Select_Default_Country}</h4>
-                <PhoneInput
-                  defaultCountry={defaultCountry ?? 'EG'}
-                  className={`phoneNumber`}
-                  placeholder='123-456-7890'
-                  value={''}
-                  onCountryChange={e => setDefaultCountry(e)}
-                  onChange={e => {}}
-                />
-              </div>
-            )}
-            {activeStep === 3 && !isOptionsStep && !isFileStep && fieldType !== 'tel' && (
+
+            {activeStep === 3 && !isOptionsStep && !isFileStep && (
               <div className='min-h-[100px] flex items-center justify-center text-main-color'>
                 <h4>{messages.setup_Done}</h4>
               </div>

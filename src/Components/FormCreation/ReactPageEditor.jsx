@@ -111,7 +111,7 @@ const ReactPageEditor = () => {
                     if (dataMain.type === 'email') {
                       validationData.push({ RuleType: 'Email', Parameters: {} })
                     }
-                    if (cell.plugin.id === 'date') {
+                    if (cell?.plugin?.id === 'date') {
                       validationData.push({
                         RuleType: 'ColumnDataType',
                         Parameters: { expectedType: 'System.DateTime' }
@@ -121,17 +121,17 @@ const ReactPageEditor = () => {
                       validationData.push({ RuleType: 'ColumnDataType', Parameters: { expectedType: 'System.Int64' } })
                     }
                     if (
-                      cell.plugin.id === 'input' ||
-                      cell.plugin.id === 'textarea' ||
-                      cell.plugin.id === 'file' ||
-                      cell.plugin.id === 'date'
+                      cell?.plugin?.id === 'input' ||
+                      cell?.plugin?.id === 'textarea' ||
+                      cell?.plugin?.id === 'file' ||
+                      cell?.plugin?.id === 'date'
                     ) {
                       data.type = getType(
-                        cell.plugin.id === 'textarea'
+                        cell?.plugin?.id === 'textarea'
                           ? 'textarea'
-                          : cell.plugin.id === 'file'
+                          : cell?.plugin?.id === 'file'
                           ? 'file'
-                          : cell.plugin.id === 'date'
+                          : cell?.plugin?.id === 'date'
                           ? 'date'
                           : dataMain.type || 'text'
                       )
@@ -139,11 +139,11 @@ const ReactPageEditor = () => {
                       data.key = dataMain.key
                       data.descriptionAr = dataMain.labelAr || ''
                       data.descriptionEn =
-                        cell.plugin.id === 'textarea'
+                        cell?.plugin?.id === 'textarea'
                           ? data.rows || '5'
-                          : cell.plugin.id === 'file'
+                          : cell?.plugin?.id === 'file'
                           ? `${dataMain.multiple ? 'true' : 'false'}` || ''
-                          : cell.plugin.id === 'date'
+                          : cell?.plugin?.id === 'date'
                           ? JSON.stringify({
                               format: dataMain.format || 'MM/dd/yyyy',
                               showTime: dataMain.showTime || 'false'
@@ -164,7 +164,7 @@ const ReactPageEditor = () => {
                       const regexMessageEn = dataMain.regexMessageEn || ''
                       data.options.uiSchema.xComponentProps.errorMessage =
                         JSON.stringify({ ar: regexMessageAr, en: regexMessageEn }) || ''
-                      data.options.uiSchema.xComponentProps.cssClass = dataMain.css || DefaultStyle(cell.plugin.id)
+                      data.options.uiSchema.xComponentProps.cssClass = dataMain.css || DefaultStyle(cell?.plugin?.id)
                       data.validationData = validationData
                       if (!data.key) {
                         toast.error(
@@ -195,24 +195,24 @@ const ReactPageEditor = () => {
                       }
                       addData.push(data)
                     }
-                    if (cell.plugin.id === 'checkbox' || cell.plugin.id === 'radio' || cell.plugin.id === 'select') {
+                    if (cell?.plugin?.id === 'checkbox' || cell?.plugin?.id === 'radio' || cell?.plugin?.id === 'select') {
                       data.type = getType(
-                        cell.plugin.id === 'checkbox' ? 'checkbox' : cell.plugin.id === 'radio' ? 'radio' : 'select'
+                        cell?.plugin?.id === 'checkbox' ? 'checkbox' : cell?.plugin?.id === 'radio' ? 'radio' : 'select'
                       )
                       data.collectionId = addFiles
                       data.key = dataMain.key
                       data.descriptionAr =
-                        cell.plugin.id === 'checkbox' ? 'checkbox' : cell.plugin.id === 'radio' ? 'radio' : 'select'
+                        cell?.plugin?.id === 'checkbox' ? 'checkbox' : cell?.plugin?.id === 'radio' ? 'radio' : 'select'
                       data.descriptionEn = JSON.stringify(dataMain.selected) || ''
                       data.nameAr = dataMain.labelAr || ''
                       data.nameEn = dataMain.labelEn || ''
                       data.FieldCategory = 'Associations'
-                      data.options.uiSchema.xComponentProps.cssClass = dataMain.css || DefaultStyle(cell.plugin.id)
+                      data.options.uiSchema.xComponentProps.cssClass = dataMain.css || DefaultStyle(cell?.plugin?.id)
                       data.validationData = validationData
                       data.options.source = dataMain.collectionName
                       data.options.target = fields.key
                       data.key = `${dataMain.collectionName}${fields.key}`
-                      if (cell.plugin.id === 'checkbox') {
+                      if (cell?.plugin?.id === 'checkbox') {
                         data.options.junctionTable = `${dataMain.collectionName}${fields.key}`
                       } else {
                         data.options.foreignKey = `${dataMain.collectionName}${fields.key}`

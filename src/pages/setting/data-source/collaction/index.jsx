@@ -102,13 +102,14 @@ export default function Index() {
             size='small'
             color='success'
             onClick={() => {
-              // setOpenFormBuilder(params.row)
-              push(`/${locale}/setting/data-source/collaction/${params.row.id}?dataSourceId=${dataSourceId}`)
+              setOpenFormBuilder(params.row)
+
+              // push(`/${locale}/setting/data-source/collaction/${params.row.id}?dataSourceId=${dataSourceId}`)
             }}
           >
             {locale === 'ar' ? 'إضافة حقل' : 'Add Field'}
           </Button>
-          <Button
+          {/* <Button
             variant='text'
             className='!text-nowrap'
             size='small'
@@ -118,7 +119,7 @@ export default function Index() {
             }}
           >
             {locale === 'ar' ? 'إضافة حقل' : 'Add Field'}
-          </Button>
+          </Button> */}
           <Tooltip title={messages.edit}>
             <IconButton
               size='small'

@@ -23,7 +23,7 @@ const Index = ({ pageName, initialData, initialDataApi }) => {
     }
   )
 
-  console.log('her2e')
+  console.log('her2e',initialData)
 
 
 
@@ -61,6 +61,9 @@ export async function getServerSideProps(context) {
     const data = JSON.parse(response?.data?.jsonData) ?? null
     const initialData = data?.editorValue ?? null
     const initialDataApi = data?.apiData ?? null
+
+    console.log(response)
+
 
     return {
       props: {

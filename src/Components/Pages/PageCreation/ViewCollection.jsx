@@ -6,6 +6,7 @@ import DisplayField from './DisplayField'
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
 import { LoadingButton } from '@mui/lab'
 import { toast } from 'react-toastify'
+import { useRouter } from 'next/router'
 
 export default function ViewCollection({ data, locale, onChange, readOnly, disabled }) {
   const [getFields, setGetFields] = useState([])
@@ -15,6 +16,7 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
   const [errors, setErrors] = useState(false)
   const refError = useRef({})
   const dataRef = useRef({})
+  const { push } = useRouter()
 
   useEffect(() => {
     if (data.collectionId) {
@@ -37,6 +39,8 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
   }, [locale, data.collectionId])
 
   const handleSubmit = e => {
+    console.log(dataRef.current)
+
     e.preventDefault()
     if (data.type_of_sumbit === '' || (data.type_of_sumbit === 'api' && !data.submitApi)) {
       return
@@ -55,27 +59,19 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
 
     setLoadingSubmit(true)
     const sendData = { ...dataRef.current }
-    let sendDataForm = {}
-    Object.keys(sendData).forEach(key => {
-      if (typeof sendData[key] === 'string') {
-        if (sendData[key]) {
-          sendDataForm[key] = sendData[key]
-        }
-      } else {
-        sendDataForm[key] = sendData[key]
-      }
-
-    })
 
     axiosPost(
       data.type_of_sumbit === 'collection' ? `generic-entities/${data.collectionName}` : data.submitApi,
       locale,
-      sendDataForm
+      sendData
     )
       .then(res => {
         if (res.status) {
           setReload(prev => prev + 1)
           toast.success(locale === 'ar' ? 'تم إرسال البيانات بنجاح' : 'Data sent successfully')
+          if (data.redirect) {
+            push(`/${locale}/setting/pages/${data.redirect}`)
+          }
         }
       })
       .finally(() => {
