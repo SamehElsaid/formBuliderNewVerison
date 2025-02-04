@@ -32,7 +32,7 @@ import Collapse from '@kunukn/react-collapse'
 import { DefaultStyle, getType } from '../_Shared'
 import { useRouter } from 'next/router'
 
-const FormBuilder = ({ open, setOpen }) => {
+const FormBuilder = ({ open, setOpen, setRefresh }) => {
   const [activeStep, setActiveStep] = useState(0)
   const [fieldType, setFieldType] = useState('')
   const [fieldLabel, setFieldLabel] = useState('')
@@ -211,10 +211,12 @@ const FormBuilder = ({ open, setOpen }) => {
       .then(res => {
         if (res.status) {
           setOptionsCollection(res.data)
+
         }
       })
       .finally(() => {
         setLoadingCollection(false)
+
       })
   }, [locale, dataSourceId])
 
@@ -371,6 +373,7 @@ const FormBuilder = ({ open, setOpen }) => {
         if (res.status) {
           toast.success(locale === 'ar' ? 'تم إضافة الحقل بنجاح' : 'Field added successfully')
           resetForm()
+          setRefresh(prev => prev + 1)
         }
       })
       .finally(_ => {

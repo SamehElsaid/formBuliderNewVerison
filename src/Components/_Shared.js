@@ -40,16 +40,52 @@ export const getType = type => {
   if (type === 'textarea') {
     return 'LongText'
   }
-
-  // if (type === 'radio' || type === 'select' || type === 'checkbox') {
-  //   return 'OneToOne'
-  // }
   if (type === 'radio' || type === 'select') {
     return 'OneToOne'
   }
-
   if (type === 'checkbox') {
     return 'ManyToMany'
+  }
+
+  return type.charAt(0).toUpperCase() + type.slice(1)
+}
+
+export const getTypeFromCollection = (type, description) => {
+  if (type === 'SingleText') {
+    return 'text'
+  }
+  if (type === 'URL') {
+    return 'url'
+  }
+  if (type === 'Phone') {
+    return 'tel'
+  }
+  if (type === 'Email') {
+    return 'email'
+  }
+  if (type === 'Number') {
+    return 'number'
+  }
+  if (type === 'Date') {
+    return 'date'
+  }
+  if (type === 'Password') {
+    return 'password'
+  }
+  if (type === 'File') {
+    return 'file'
+  }
+  if (type === 'LongText') {
+    return 'textarea'
+  }
+  if (type === 'OneToOne' && description === 'select') {
+    return 'select'
+  }
+  if (type === 'OneToOne' && description !== 'select') {
+    return 'radio'
+  }
+  if (type === 'ManyToMany') {
+    return 'checkbox'
   }
 
   return type.charAt(0).toUpperCase() + type.slice(1)

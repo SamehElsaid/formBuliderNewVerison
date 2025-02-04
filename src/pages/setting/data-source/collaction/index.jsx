@@ -1,6 +1,6 @@
-import { Avatar, Button, Card, CardContent, Drawer, IconButton, Tooltip, Typography } from '@mui/material'
+import { Avatar, Button, Card, CardContent, IconButton, Tooltip, Typography } from '@mui/material'
 import { Box } from '@mui/system'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import CustomTextField from 'src/@core/components/mui/text-field'
 import { useIntl } from 'react-intl'
 import { axiosGet } from 'src/Components/axiosCall'
@@ -14,14 +14,18 @@ import { useRouter } from 'next/router'
 export default function Index() {
   const { locale, messages } = useIntl()
   const [open, setOpen] = useState(false)
-  const [search, setSearch] = useState('')
   const [startSearch, setStartSearch] = useState('')
   const [paginationModel, setPaginationModel] = useState({ page: 0, pageSize: 10 })
   const [loading, setLoading] = useState(false)
-  const inputRef = useRef(null)
   const [refresh, setRefresh] = useState(0)
   const [data, setData] = useState([])
   const [openFormBuilder, setOpenFormBuilder] = useState(false)
+
+  const dataFilter = data?.filter(
+    ele =>
+      ele.nameEn.toLowerCase().includes(startSearch.toLowerCase()) ||
+      ele.nameAr.toLowerCase().includes(startSearch.toLowerCase())
+  )
 
   const {
     query: { dataSourceId }
@@ -41,13 +45,13 @@ export default function Index() {
         setLoading(false)
         toast.dismiss(loadingToast)
       })
-  }, [locale, paginationModel.page, paginationModel.pageSize, startSearch, refresh, dataSourceId])
+  }, [locale, paginationModel.page, paginationModel.pageSize, refresh, dataSourceId])
 
   const handleClose = () => {
     setOpen(false)
   }
 
-  const {push} = useRouter()
+  const { push } = useRouter()
 
   const columns = [
     {
@@ -67,18 +71,6 @@ export default function Index() {
     {
       flex: 0.5,
       minWidth: 200,
-      field: 'name_ar',
-      disableColumnMenu: true,
-      headerName: messages.collectionNameAR,
-      renderCell: ({ row }) => (
-        <Typography variant='subtitle2' className='capitalize' sx={{ fontWeight: 500, color: 'text.secondary' }}>
-          {row.nameAr}
-        </Typography>
-      )
-    },
-    {
-      flex: 0.5,
-      minWidth: 200,
       field: 'name_en',
       disableColumnMenu: true,
       headerName: messages.collectionNameEN,
@@ -89,45 +81,34 @@ export default function Index() {
       )
     },
     {
-      flex: 0.2,
+      flex: 0.5,
       minWidth: 200,
+      field: 'name_ar',
+      disableColumnMenu: true,
+      headerName: messages.collectionNameAR,
+      renderCell: ({ row }) => (
+        <Typography variant='subtitle2' className='capitalize' sx={{ fontWeight: 500, color: 'text.secondary' }}>
+          {row.nameAr}
+        </Typography>
+      )
+    },
+    {
+      flex: 0.1,
+      minWidth: 100,
       field: 'action',
       sortable: false,
       headerName: messages.actions,
       renderCell: params => (
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <Button
-            variant='text'
-            className='!text-nowrap'
-            size='small'
-            color='success'
-            onClick={() => {
-              setOpenFormBuilder(params.row)
 
-              // push(`/${locale}/setting/data-source/collaction/${params.row.id}?dataSourceId=${dataSourceId}`)
-            }}
-          >
-            {locale === 'ar' ? 'إضافة حقل' : 'Add Field'}
-          </Button>
-          {/* <Button
-            variant='text'
-            className='!text-nowrap'
-            size='small'
-            color='error'
-            onClick={() => {
-              setOpenFormBuilder(params.row)
-            }}
-          >
-            {locale === 'ar' ? 'إضافة حقل' : 'Add Field'}
-          </Button> */}
-          <Tooltip title={messages.edit}>
+          <Tooltip title={locale === 'ar' ? 'عرض جميع الحقول' : 'View All Fields'}>
             <IconButton
               size='small'
               onClick={e => {
-                setOpen(params.row)
+                push(`/${locale}/setting/data-source/collaction/${params.row.id}?dataSourceId=${dataSourceId}`)
               }}
             >
-              <IconifyIcon icon='tabler:edit' />
+              <IconifyIcon icon='tabler:eye' />
             </IconButton>
           </Tooltip>
           <Tooltip title={messages.delete}>
@@ -148,7 +129,6 @@ export default function Index() {
   return (
     <div>
       <AddCollection open={open} toggle={handleClose} setRefresh={setRefresh} />
-      <FormBuilder open={openFormBuilder} setOpen={setOpenFormBuilder} />
       <Card className='w-[100%]  mb-5 py-4 '>
         <CardContent
           className='h-full'
@@ -162,14 +142,14 @@ export default function Index() {
         >
           <div className='flex gap-2 justify-center items-center'>
             <Typography variant='h5' sx={{ color: 'primary.main', fontWeight: 'bold' }}>
-              {locale === 'ar' ? 'التجميعات' : 'Collection'}
+              {locale === 'ar' ? 'نموذج البيانات' : 'Data Model '}
             </Typography>
             <Avatar skin='light' sx={{ width: 30, height: 30 }}>
               {data?.length}
             </Avatar>
           </div>
           <Button variant='contained' color='primary' onClick={() => setOpen(true)}>
-            {locale === 'ar' ? 'إضافة تجميعة' : 'Add Collection'}
+            {locale === 'ar' ? 'إضافة نموذج البيانات' : 'Add Data Model'}
           </Button>
         </CardContent>
       </Card>
@@ -178,26 +158,36 @@ export default function Index() {
           <div className='w-full'>
             <form
               onSubmit={e => {
-                e.preventDefault()
-                setStartSearch(e.target.elements.input.value)
-                setPaginationModel({ page: 0, pageSize: 10 })
+                // e.preventDefault()
+                // setStartSearch(e.target.elements.input.value)
+                // setPaginationModel({ page: 0, pageSize: 10 })
               }}
               className='px-5 ~~ mb-5 || flex ~~ flex-col  items-center md:items-end w-full || md:flex-row || gap-2'
             >
               <CustomTextField
                 id='input'
                 label={locale === 'ar' ? 'البحث' : 'Search'}
-                defaultValue={search}
-                ref={inputRef}
-                onBlur={e => {
-                  setSearch(e.target.value)
+                value={startSearch}
+                onChange={e => {
+                  setStartSearch(e.target.value)
                 }}
               />
+              {startSearch && (
+                <Button
+                  variant='contained'
+                  color='error'
+                  onClick={() => {
+                    setStartSearch('')
+                  }}
+                >
+                  {locale === 'ar' ? 'اعادة التعيين' : 'Reset'}
+                </Button>
+              )}
             </form>
 
             <TableEdit
               InvitationsColumns={columns}
-              data={data?.map((ele, i) => {
+              data={dataFilter?.map((ele, i) => {
                 const fData = { ...ele }
                 fData.index = i + paginationModel.page * paginationModel.pageSize
 
