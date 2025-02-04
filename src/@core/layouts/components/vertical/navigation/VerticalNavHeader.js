@@ -84,7 +84,7 @@ const VerticalNavHeader = props => {
             sx={{ ...menuCollapsedStyles, ...(navCollapsed && !navHover ? {} : { ms: 2.5, width: '100%' }) }}
           >
             <div className='flex'>
-              <img src={locale === 'en' ? controlEn.src : control.src} alt='logo' style={{ height: '50px' }} />
+              <img className='logoControl' src={locale === 'en' ? controlEn.src : control.src} alt='logo' style={{ height: '50px' }} />
             </div>
           </HeaderTitle>
         </LinkStyled>
