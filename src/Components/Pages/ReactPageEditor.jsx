@@ -21,7 +21,7 @@ import useCellPlugins from './PageCreation/HooksDragDropComponents/useCellPlugin
 
 const ReactPageEditor = ({ pageName, initialData, initialDataApi }) => {
   const [editorValue, setEditorValue] = useState(initialData ?? null)
-  const [readOnly, setReadOnly] = useState(false)
+  const [readOnly, setReadOnly] = useState(true)
   const [advancedEdit, setAdvancedEdit] = useState(false)
   const { locale } = useIntl()
   const [openApiData, setOpenApiData] = useState(false)

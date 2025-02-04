@@ -98,11 +98,15 @@ function TableView({ data, locale, onChange, readOnly, disabled }) {
             <Typography variant='subtitle2' sx={{ fontWeight: 500, color: 'text.secondary' }}>
               {console.log(ele)}
               {ele?.fieldCategory === 'Associations' ? (
-                <ViewValueInTable data={ele} value={row[ele.key]} />
-              ) : ele.type === 'Date' ? (
-                <><GetTimeinTable data={row[ele.key]}/></>
+                <ViewValueInTable data={ele} value={row?.[ele?.key] ?? ''} />
+              ) : ele?.type === 'Date' ? (
+                <>
+                  <GetTimeinTable data={row[ele.key]} />
+                </>
               ) : (
-                row[ele.key]
+                <>
+                  {Object.keys(row?.[ele?.key]).length !== 0 ? row?.[ele?.key] : '-'}
+                </>
               )}
             </Typography>
           )
