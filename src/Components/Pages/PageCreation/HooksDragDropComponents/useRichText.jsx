@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react'
 import UpdateRichText from '../UpdateRichText'
 import { TbTextCaption } from 'react-icons/tb'
+import { getData } from 'src/Components/_Shared'
 
 export default function useRichText({ locale }) {
   const RichText = useMemo(() => {

@@ -94,6 +94,14 @@ export const getTypeFromCollection = (type, description) => {
 export const DefaultStyle = type => {
   if (type === 'textarea') {
     return `
+    #parent-input{
+  width:100%;
+  height:auto;
+  margin-top:0px;
+  margin-bottom:0px;
+  margin-inline-start:0px;
+  margin-inline-end:0px;
+}
      label{
 margin-bottom:5px;
 display:block;
@@ -111,7 +119,7 @@ textarea {
   padding:10px 20px;
   border-radius:5px;
   border:1px solid #e5e5ea;
-  height:0Auto;
+  height:auto;
   margin-top:0px;
   margin-bottom:0px;
   margin-inline-start:0px;
@@ -120,7 +128,7 @@ textarea {
   color:#575757;
 }
 textarea::placeholder {
-  height:0Auto;
+  height:auto;
   color: #dfdfdf;
 }
       `
@@ -393,7 +401,7 @@ input {
   padding:10px 20px;
   border-radius:5px;
   border:1px solid #e5e5ea;
-  height:0Auto;
+  height:auto;
   margin-top:0px;
   margin-bottom:0px;
   margin-inline-start:0px;
@@ -402,7 +410,7 @@ input {
   color:#575757;
 }
   input::placeholder {
-  height:0Auto;
+  height:auto;
   color: #dfdfdf;
 }
   #calendar-icon{
@@ -413,6 +421,14 @@ input {
   }
 
   return `
+#parent-input{
+  width:100%;
+  height:auto;
+  margin-top:0px;
+  margin-bottom:0px;
+  margin-inline-start:0px;
+  margin-inline-end:0px;
+}
 label{
 margin-bottom:5px;
 display:block;
@@ -430,7 +446,7 @@ input {
   padding:10px 20px;
   border-radius:5px;
   border:1px solid #e5e5ea;
-  height:0Auto;
+  height:auto;
   margin-top:0px;
   margin-bottom:0px;
   margin-inline-start:0px;
@@ -439,7 +455,7 @@ input {
   color:#575757;
 }
   input::placeholder {
-  height:0Auto;
+  height:auto;
   color: #dfdfdf;
 }
 
@@ -464,22 +480,17 @@ export const cssToObject = cssString => {
 
       const [property, value] = style.split(':').map(s => s.trim())
       if (property && value) {
-        // تقسيم القيمة إلى value و unit
-        const numericValue = parseFloat(value)
-        const unit = value.replace(numericValue, '').trim()
-
-        styleObject[property] = {
-          value: numericValue,
-          unit: unit || 'px'
-        }
+        styleObject[property] = value // حفظ القيمة كما هي
       }
     })
 
     result[cleanedSelector] = styleObject
   })
+  console.log(result)
 
   return result
 }
+
 
 export const objectToCss = cssObject => {
   let cssString = ''
@@ -509,3 +520,29 @@ export const objectToCss = cssObject => {
 
   return cssString.trim() // إزالة المسافات الزائدة في النهاية
 }
+
+
+export const getDataInObject = (object = {}, key) => {
+  const keys = key.split('.')
+
+  let result = object
+  for (const k of keys) {
+    if (result && typeof result === 'object' && k in result) {
+      result = result[k]
+    } else {
+      return ''
+    }
+  }
+
+  return result
+}
+
+export const extractValueAndUnit = (cssValue) => {
+  const match = cssValue.match(/^(-?\d*\.?\d+)([a-zA-Z%]*)$/);
+
+  if (match) {
+    return { value: parseFloat(match[1]), unit: match[2] || '' };
+  }
+
+  return { value: '', unit: cssValue };
+};

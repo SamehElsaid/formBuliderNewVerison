@@ -1,20 +1,34 @@
 import CodeMirror from '@uiw/react-codemirror'
-import { css } from '@codemirror/lang-css' // لتمكين تمييز صيغة CSS
-import { DefaultStyle } from 'src/Components/_Shared'
+import { css } from '@codemirror/lang-css'
+import cssbeautify from 'cssbeautify' 
 
-const CssEditor = ({ data, onChange, type }) => {
+const CssEditor = ({ data, onChange, Css ,open}) => {
   const handleChange = value => {
-    onChange({ ...data, css: value })
+    const additional_fields = data.additional_fields ?? []
+    const findMyInput = additional_fields.find(inp => inp.key === open.id)
+
+
+    if (findMyInput) {
+      findMyInput.design = value
+    } else {
+      const myEdit = { key: open.id, design: value, roles: {}, event: {} }
+      additional_fields.push(myEdit)
+    }
+    onChange({ ...data, additional_fields: additional_fields })
   }
+  const formattedCss = cssbeautify(Css, {
+    indent: '  ',
+    openbrace: 'end-of-line',
+    autosemicolon: true 
+  })
 
   return (
-    <div className='' style={{ display: 'flex' ,width:'100%'}}>
+    <div className=''>
       <CodeMirror
-        value={data?.css || DefaultStyle(type)}
-        height='500px'
+        value={formattedCss}
         width='100%'
-        className='flex-1'
-        extensions={[css()]} // تمكين تمييز صيغة CSS
+        className='100%'
+        extensions={[css()]} 
         onChange={handleChange}
       />
     </div>

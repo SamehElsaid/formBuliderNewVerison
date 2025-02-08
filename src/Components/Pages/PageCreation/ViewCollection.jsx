@@ -1,12 +1,13 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { Button, CircularProgress } from '@mui/material'
-import { useEffect, useRef, useState } from 'react'
+import { CircularProgress } from '@mui/material'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { axiosGet, axiosPost } from 'src/Components/axiosCall'
 import DisplayField from './DisplayField'
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
 import { LoadingButton } from '@mui/lab'
 import { toast } from 'react-toastify'
 import { useRouter } from 'next/router'
+import InputControlDesign from './InputControlDesign'
 
 export default function ViewCollection({ data, locale, onChange, readOnly, disabled }) {
   const [getFields, setGetFields] = useState([])
@@ -97,9 +98,27 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
     setGetFields(newFields)
     onChange({ ...data, sortWithId: newFields.map(ele => ele.id) })
   }
+  const [open, setOpen] = useState(false)
+
+
+
+  const handleClose = () => {
+    setOpen(false)
+  }
+
+  const design = data?.additional_fields?.find(ele => ele.key === open?.id)?.design ?? open?.options?.uiSchema?.xComponentProps?.cssClass ?? ``
+
+
+  // const design =  open?.options?.uiSchema?.xComponentProps?.cssClass ?? ``
+  const getDesign = useCallback((key,field) => {
+    const design = data?.additional_fields?.find(ele => ele.key === key)?.design ?? field?.options?.uiSchema?.xComponentProps?.cssClass ?? ``
+
+    return design
+  }, [data?.additional_fields])
 
   return (
     <div className={`${disabled ? 'text-main' : ''}`}>
+      <InputControlDesign open={open} handleClose={handleClose} design={design} locale={locale} data={data} onChange={onChange}/>
       {loading ? (
         <div className='h-[300px]  flex justify-center items-center'>
           <CircularProgress size={50} />
@@ -117,6 +136,9 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
                         <Draggable key={filed.id} draggableId={filed.id} index={index}>
                           {provided => (
                             <div
+                              onClick={() => {
+                                setOpen(filed)
+                              }}
                               ref={provided.innerRef}
                               {...provided.draggableProps}
                               {...provided.dragHandleProps}
@@ -124,6 +146,7 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
                             >
                               <div className='absolute inset-0 z-20'></div>
                               <DisplayField
+                                design={getDesign(filed.id,filed)}
                                 input={filed}
                                 readOnly={disabled}
                                 refError={refError}
@@ -148,6 +171,7 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
                 <div key={filed.id}>
                   <DisplayField
                     input={filed}
+                    design={getDesign(filed.id,filed)}
                     readOnly={disabled}
                     refError={refError}
                     dataRef={dataRef}

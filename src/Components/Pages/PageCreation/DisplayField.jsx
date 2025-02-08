@@ -12,7 +12,18 @@ import { BsPaperclip, BsTrash } from 'react-icons/bs'
 import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'
 import { FaCalendarAlt } from 'react-icons/fa'
 
-export default function DisplayField({ input, dirtyProps, reload, refError, dataRef, errorView, findError, readOnly, findValue }) {
+export default function DisplayField({
+  input,
+  dirtyProps,
+  reload,
+  refError,
+  dataRef,
+  errorView,
+  findError,
+  readOnly,
+  findValue,
+  design
+}) {
   const [value, setValue] = useState('')
   const [error, setError] = useState(false)
   const [dirty, setDirty] = useState(dirtyProps)
@@ -23,28 +34,25 @@ export default function DisplayField({ input, dirtyProps, reload, refError, data
   const xComponentProps = useMemo(() => input?.options?.uiSchema?.xComponentProps ?? {}, [input])
   const [fileName, setFile] = useState('')
 
+
   const formatDate = (value, format) => {
+    const date = new Date(value)
 
-    const date = new Date(value);
+    const year = date.getFullYear()
 
-    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0')
 
-    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0')
 
-    const day = String(date.getDate()).padStart(2, '0');
-
-    let time = '';
+    let time = ''
     if (format.includes('HH:mm')) {
-      const hours = String(date.getHours()).padStart(2, '0');
-      const minutes = String(date.getMinutes()).padStart(2, '0');
-      time = `T${hours}:${minutes}`;
+      const hours = String(date.getHours()).padStart(2, '0')
+      const minutes = String(date.getMinutes()).padStart(2, '0')
+      time = `T${hours}:${minutes}`
     }
 
-    return `${year}-${month}-${day}${time}`;
-
-  };
-
-
+    return `${year}-${month}-${day}${time}`
+  }
 
   useEffect(() => {
     if (!input) {
@@ -54,7 +62,6 @@ export default function DisplayField({ input, dirtyProps, reload, refError, data
       setDirty(false)
       setShowPassword(false)
       setValidations({})
-
     } else {
       const dataValidations = {}
       input.validationData.forEach(item => {
@@ -65,12 +72,12 @@ export default function DisplayField({ input, dirtyProps, reload, refError, data
   }, [input])
 
   useEffect(() => {
-    if(findValue){
+    if (findValue) {
       setValue(findValue)
       if (input?.type === 'date') {
         setValue(new Date(findValue))
       }
-    }else{
+    } else {
       if (input?.type === 'ManyToMany') {
         setValue([])
       }
@@ -78,7 +85,7 @@ export default function DisplayField({ input, dirtyProps, reload, refError, data
         setValue(new Date())
       }
     }
-  }, [input,findValue])
+  }, [input, findValue])
 
   useEffect(() => {
     if (reload !== 0) {
@@ -91,8 +98,7 @@ export default function DisplayField({ input, dirtyProps, reload, refError, data
       setDirty(false)
       setShowPassword(false)
     }
-  }, [reload,input])
-
+  }, [reload, input])
 
   const onChange = e => {
     setDirty(true)
@@ -174,8 +180,8 @@ export default function DisplayField({ input, dirtyProps, reload, refError, data
       input.type === 'URL' &&
       !/^(https?:\/\/)?(www\.)?[a-zA-Z0-9@:%._\+~#?&//=]{2,256}\.[a-z]{2,4}\b([-a-zA-Z0-9@:%._\+~#?&//=]*)$/i.test(
         value
-      )
-      && value !== ''
+      ) &&
+      value !== ''
     ) {
       errorWithoutDirty.push(true)
       errorMessages.push('Invalid_URL')
@@ -200,7 +206,7 @@ export default function DisplayField({ input, dirtyProps, reload, refError, data
             showTime: 'false'
           }
 
-          dataRef.current[input.key] = value??formatDate(value,lable.format)
+          dataRef.current[input.key] = value ?? formatDate(value, lable.format)
         } catch (error) {
           dataRef.current[input.key] = ''
         }
@@ -286,29 +292,33 @@ export default function DisplayField({ input, dirtyProps, reload, refError, data
   }
 
   return (
-    <div className='reset' id={input.key.trim() + input.nameEn.trim().replaceAll(" ","")}>
-      <div>{input.type !== 'File' && label}</div>
-      <style>{`#${input.key.trim() + input.nameEn.trim().replaceAll(" ","")} {
-        ${xComponentProps?.cssClass}
+    <div className='reset' id={input.key.trim() + input.nameEn.trim().replaceAll(' ', '')}>
+      <style>{`#${input.key.trim() + input.nameEn.trim().replaceAll(' ', '')} {
+        ${design}
       }`}</style>
-      <div className='relative' style={{ display: 'flex' }}>
-        <ViewInput
-          input={input}
-          xComponentProps={xComponentProps}
-          readOnly={readOnly}
-          value={value}
-          onChange={onChange}
-          onChangeFile={onChangeFile}
-          fileName={fileName}
-          locale={locale}
-          findError={findError}
-          selectedOptions={selectedOptions}
-          errorView={errorView}
-          handleDelete={handleDelete}
-          error={error}
-          setShowPassword={setShowPassword}
-          showPassword={showPassword}
-        />
+      <div id='parent-input'>
+        <div className=''>
+          <div>{input.type !== 'File' && label}</div>
+        </div>
+        <div className='relative' style={{ display: 'flex' }}>
+          <ViewInput
+            input={input}
+            xComponentProps={xComponentProps}
+            readOnly={readOnly}
+            value={value}
+            onChange={onChange}
+            onChangeFile={onChangeFile}
+            fileName={fileName}
+            locale={locale}
+            findError={findError}
+            selectedOptions={selectedOptions}
+            errorView={errorView}
+            handleDelete={handleDelete}
+            error={error}
+            setShowPassword={setShowPassword}
+            showPassword={showPassword}
+          />
+        </div>
       </div>
       <Collapse transition={`height 300ms cubic-bezier(.4, 0, .2, 1)`} isOpen={Boolean(errorView || error)}>
         <div class='!text-sm text-red-500 mt-1 px-2'>{errorView || error}</div>
@@ -316,8 +326,6 @@ export default function DisplayField({ input, dirtyProps, reload, refError, data
     </div>
   )
 }
-
-
 
 const ViewInput = ({
   input,
@@ -336,13 +344,11 @@ const ViewInput = ({
   setShowPassword,
   selectedOptions
 }) => {
-
   const ExampleCustomInput = forwardRef(({ value, onClick }, ref) => {
     const lable = JSON.parse(input?.descriptionEn) ?? {
       format: 'yyyy-MM-dd',
       showTime: 'false'
     }
-
 
     return (
       <div className='relative w-full'>
@@ -375,7 +381,6 @@ const ViewInput = ({
     input.type === 'Password' ||
     input.type === 'Phone'
   ) {
-
     return (
       <>
         <input
@@ -430,7 +435,6 @@ const ViewInput = ({
         className={`${errorView || error ? 'error' : ''} `}
         style={{ transition: '0.3s' }}
       />
-
     )
   }
 
@@ -500,7 +504,6 @@ const ViewInput = ({
       showTime: 'false'
     }
 
-
     return !readOnly ? (
       <DatePickerWrapper className='w-full'>
         <DatePicker
@@ -561,13 +564,13 @@ const ViewInput = ({
   }
   if (input.type === 'OneToOne' && input.descriptionAr === 'select') {
     const lable = JSON.parse(input?.descriptionEn)
-    console.log(input)
 
     return (
       <div id='custom-select'>
         <select value={value} onChange={e => onChange(e)}>
-          {console.log(lable,input?.descriptionEn)}
-          <option disabled selected value={''}>{locale === 'ar' ? 'اختر ' : 'Select'}</option>
+          <option disabled selected value={''}>
+            {locale === 'ar' ? 'اختر ' : 'Select'}
+          </option>
           {selectedOptions.map((option, index) => (
             <option key={option.Id} value={option.Id}>
               {lable.map(ele => option[ele]).join('-')}
