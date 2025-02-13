@@ -5,8 +5,6 @@ import 'monaco-editor/esm/vs/base/browser/ui/actionbar/actionbar.css';
 import 'react-phone-number-input/style.css'
 import 'react-datepicker/dist/react-datepicker.css'
 import 'keen-slider/keen-slider.min.css'
-import 'react-country-state-city/dist/react-country-state-city.css'
-import 'react-h5-audio-player/lib/styles.css';
 import { CacheProvider } from '@emotion/react'
 import themeConfig from 'src/configs/themeConfig'
 import UserLayout from 'src/layouts/UserLayout'

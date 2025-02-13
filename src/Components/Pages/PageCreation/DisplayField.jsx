@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, forwardRef } from 'react'
+import { useState, useEffect, useMemo, forwardRef, useRef } from 'react'
 import { FormLabel, IconButton, InputAdornment } from '@mui/material'
 import { useIntl } from 'react-intl'
 import { isPossiblePhoneNumber } from 'react-phone-number-input'
@@ -11,6 +11,7 @@ import Collapse from '@kunukn/react-collapse'
 import { BsPaperclip, BsTrash } from 'react-icons/bs'
 import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'
 import { FaCalendarAlt } from 'react-icons/fa'
+import { data } from 'autoprefixer'
 
 export default function DisplayField({
   input,
@@ -19,21 +20,29 @@ export default function DisplayField({
   refError,
   dataRef,
   errorView,
+  onChangeData,
+  setLayout,
+  setTriggerData,
   findError,
+  data,
   readOnly,
   findValue,
-  design
+  roles,
+  layout,
+  design,
+  triggerData
 }) {
   const [value, setValue] = useState('')
   const [error, setError] = useState(false)
   const [dirty, setDirty] = useState(dirtyProps)
+  const [loading, setLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
   const { locale } = useIntl()
   const [validations, setValidations] = useState({})
   const [selectedOptions, setSelectedOptions] = useState([])
+  const [oldSelectedOptions, setOldSelectedOptions] = useState([])
   const xComponentProps = useMemo(() => input?.options?.uiSchema?.xComponentProps ?? {}, [input])
   const [fileName, setFile] = useState('')
-
 
   const formatDate = (value, format) => {
     const date = new Date(value)
@@ -70,6 +79,59 @@ export default function DisplayField({
       setValidations(dataValidations)
     }
   }, [input])
+  const [isDisable, setIsDisable] = useState(null)
+  const [lastValue, setLastValue] = useState(null)
+  useEffect(() => {
+    if (roles?.trigger?.typeOfValidation === 'filter' && !loading) {
+      if (dataRef?.current?.[roles?.trigger?.selectedField] !== undefined) {
+        const FilterWithKey = roles?.trigger?.currentField === 'id' ? 'Id' : roles?.trigger?.currentField
+        if (input?.type === 'ManyToMany') {
+          setValue([])
+        }
+        setSelectedOptions(
+          oldSelectedOptions.filter(ele => {
+            if (roles?.trigger?.isEqual === 'equal') {
+              return ele?.[FilterWithKey] === dataRef.current?.[roles?.trigger?.selectedField]
+            } else {
+              return ele?.[FilterWithKey] !== dataRef.current?.[roles?.trigger?.selectedField]
+            }
+          })
+        )
+      }
+    }
+
+    if (roles?.trigger?.typeOfValidation === 'disable' && !loading) {
+      if (dataRef?.current?.[roles?.trigger?.selectedField]?.length !== 0) {
+        setIsDisable('disabled')
+      } else {
+        setIsDisable(null)
+      }
+    }
+    if (roles?.trigger?.typeOfValidation === 'enable' && !loading) {
+      if (dataRef?.current?.[roles?.trigger?.selectedField]?.length !== 0) {
+        setIsDisable('enable')
+      } else {
+        setIsDisable(null)
+      }
+    }
+    if (roles?.trigger?.typeOfValidation === 'empty' && !loading) {
+      console.log(dataRef?.current?.[roles?.trigger?.selectedField])
+      setLastValue(dataRef?.current?.[roles?.trigger?.selectedField])
+      if (dataRef?.current?.[roles?.trigger?.selectedField] !== lastValue) {
+        setValue('')
+      }
+    }
+  }, [roles, loading, triggerData])
+
+  useEffect(() => {
+    if (typeof value === 'object') {
+      setValue([])
+    } else {
+      setValue('')
+    }
+  }, [isDisable])
+
+  
 
   useEffect(() => {
     if (findValue) {
@@ -213,6 +275,8 @@ export default function DisplayField({
       } else {
         dataRef.current[input.key] = value
       }
+
+      setTriggerData(prev => prev + 1)
     }
     if (refError) {
       refError.current = {
@@ -220,24 +284,57 @@ export default function DisplayField({
         [input.key]: errorWithoutDirty.includes(true) ? errorMessages : false
       }
     }
-  }, [refError, input, value, dataRef, validations])
+  }, [refError, input, value, dataRef, validations, setTriggerData])
 
   useEffect(() => {
     if (input.type === 'OneToOne') {
-      axiosGet(`generic-entities/${input?.options?.source}`).then(res => {
-        if (res.status) {
-          setSelectedOptions(res.entities)
-        }
-      })
-    }
-    if (input.type === 'ManyToMany') {
-      axiosGet(`generic-entities/${input?.options?.target}`).then(res => {
-        if (res.status) {
-          setSelectedOptions(res.entities)
-        }
-      })
+      setLoading(true)
+      axiosGet(`generic-entities/${input?.options?.source}`)
+        .then(res => {
+          if (res.status) {
+            setSelectedOptions(res.entities)
+            setOldSelectedOptions(res.entities)
+          }
+        })
+        .finally(() => {
+          setLoading(false)
+        })
+    } else if (input.type === 'ManyToMany') {
+      setLoading(true)
+      axiosGet(`generic-entities/${input?.options?.target}`)
+        .then(res => {
+          if (res.status) {
+            setSelectedOptions(res.entities)
+            setOldSelectedOptions(res.entities)
+          }
+        })
+        .finally(() => {
+          setLoading(false)
+        })
     }
   }, [input])
+
+  const errorRefHeight = useRef(null)
+  useEffect(() => {
+    if (layout) {
+      if (errorView || error) {
+        if (errorRefHeight.current) {
+          setLayout(prev =>
+            prev.map(ele =>
+              ele.i === input.id
+                ? { ...ele, h: (mainRef.current.scrollHeight + errorRefHeight.current.scrollHeight) / 71 }
+                : ele
+            )
+          )
+        }
+      } else {
+        setLayout(prev =>
+          prev.map(ele => (ele.i === input.id ? { ...ele, h: mainRef.current.scrollHeight / 71 } : ele))
+        )
+      }
+    }
+  }, [errorView, error])
+  const mainRef = useRef()
 
   const onChangeFile = async e => {
     const file = e.target.files[0]
@@ -296,7 +393,7 @@ export default function DisplayField({
       <style>{`#${input.key.trim() + input.nameEn.trim().replaceAll(' ', '')} {
         ${design}
       }`}</style>
-      <div id='parent-input'>
+      <div ref={mainRef} id='parent-input'>
         <div className=''>
           <div>{input.type !== 'File' && label}</div>
         </div>
@@ -312,6 +409,7 @@ export default function DisplayField({
             locale={locale}
             findError={findError}
             selectedOptions={selectedOptions}
+            isDisable={isDisable}
             errorView={errorView}
             handleDelete={handleDelete}
             error={error}
@@ -321,7 +419,9 @@ export default function DisplayField({
         </div>
       </div>
       <Collapse transition={`height 300ms cubic-bezier(.4, 0, .2, 1)`} isOpen={Boolean(errorView || error)}>
-        <div class='!text-sm text-red-500 mt-1 px-2'>{errorView || error}</div>
+        <div ref={errorRefHeight} class='!text-sm text-red-500 mt-1 px-2'>
+          {errorView || error}
+        </div>
       </Collapse>
     </div>
   )
@@ -342,7 +442,8 @@ const ViewInput = ({
   xComponentProps,
   showPassword,
   setShowPassword,
-  selectedOptions
+  selectedOptions,
+  isDisable
 }) => {
   const ExampleCustomInput = forwardRef(({ value, onClick }, ref) => {
     const lable = JSON.parse(input?.descriptionEn) ?? {
@@ -401,6 +502,7 @@ const ViewInput = ({
           onChange={e => {
             onChange(e)
           }}
+          disabled={isDisable === 'disabled'}
           onKeyDown={handleKeyDown}
           onWheel={handleWheel}
           className={`${errorView || error ? 'error' : ''} `}
@@ -540,8 +642,8 @@ const ViewInput = ({
       <div className=''>
         <div className=''>
           <div className=''>
-            <div className='flex flex-col gap-1'>
-              <div className=''>
+            <div>
+              <div className='flex gap-1 flex-wrap'>
                 {selectedOptions.map((option, index) => (
                   <div key={option.Id} className=''>
                     <input
@@ -587,8 +689,8 @@ const ViewInput = ({
       <div className=''>
         <div className=''>
           <div className=''>
-            <div className='flex flex-col gap-1'>
-              <div className=''>
+            <div className=''>
+              <div className='flex flex-wrap gap-1'>
                 {selectedOptions.map((option, index) => (
                   <div key={option.Id} className=''>
                     <input

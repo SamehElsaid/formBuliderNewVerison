@@ -64,7 +64,6 @@ export default function OpenEditDialog({ open, onClose, collectionName, sortWith
         if (res.status) {
           toast.success(locale === 'ar' ? 'تم تعديل البيانات بنجاح' : 'Data updated successfully')
           onClose()
-          console.log(res.data,open)
           data(prev => prev.map(ele => {
             if(ele.Id === open.Id){
               return {...ele,...res.data}

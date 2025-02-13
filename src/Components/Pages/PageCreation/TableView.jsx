@@ -20,7 +20,6 @@ function TableView({ data, locale, onChange, readOnly, disabled }) {
   const [deleteOpen, setDeleteOpen] = useState(false)
   const [editOpen, setEditOpen] = useState(false)
   const { messages } = useIntl()
-  console.log(deleteOpen)
 
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
@@ -96,7 +95,6 @@ function TableView({ data, locale, onChange, readOnly, disabled }) {
           headerName: locale === 'ar' ? ele.nameAr.toUpperCase() : ele.nameEn.toUpperCase(),
           renderCell: ({ row }) => (
             <Typography variant='subtitle2' sx={{ fontWeight: 500, color: 'text.secondary' }}>
-              {console.log(ele)}
               {ele?.fieldCategory === 'Associations' ? (
                 <ViewValueInTable data={ele} value={row?.[ele?.key] ?? ''} />
               ) : ele?.type === 'Date' ? (

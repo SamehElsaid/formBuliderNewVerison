@@ -31,7 +31,6 @@ export default function useCellPlugins({ advancedEdit, locale, readOnly }) {
   const { cartCell } = useCart({ locale, readOnly });
   const { IconView } = useIconView({ locale });
 
-  console.log('cartCell');
 
   const cellPlugins = useMemo(
     () => [

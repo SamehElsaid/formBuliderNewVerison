@@ -2,7 +2,6 @@ import axios from 'axios'
 import Cookies from 'js-cookie'
 import { decryptData } from './encryption'
 import { toast } from 'react-toastify'
-import JSZip from 'jszip'
 import { saveAs } from 'file-saver'
 
 export const axiosGet = async (url, locale, token, params = {}, close) => {
@@ -235,22 +234,6 @@ export const validateMediaFile = (file, locale) => {
   return { isValid: true }
 }
 
-export const downloadImagesAsZip = async images => {
-  const zip = new JSZip()
-
-  // Fetch and add each image to the ZIP file
-  const imagePromises = images.map(async (image, index) => {
-    const response = await fetch(image)
-    const blob = await response.blob()
-    zip.file(`image${index + 1}.jpg`, blob) // Customize file name if needed
-  })
-
-  await Promise.all(imagePromises) // Wait for all images to be added
-
-  // Generate the ZIP file and trigger download
-  const zipBlob = await zip.generateAsync({ type: 'blob' })
-  saveAs(zipBlob, 'images.zip')
-}
 
 export const typeOfFile = file => {
   if (

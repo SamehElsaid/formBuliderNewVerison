@@ -344,7 +344,6 @@ const FormBuilder = ({ open, setOpen, setRefresh }) => {
       })
     }
 
-    console.log(fieldType, DefaultStyle(fieldType))
 
     if (fieldType === 'select' || fieldType === 'radio' || fieldType === 'checkbox') {
       sendData.descriptionEn = JSON.stringify(selectedOptions)

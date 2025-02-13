@@ -425,7 +425,6 @@ export default function CheckboxControl({ data, onChange, type }) {
                 <FormControl component='fieldset' fullWidth>
                   <FormLabel component='legend'>{messages.View_Value}</FormLabel>
                   <div className='!flex !flex-row !flex-wrap gap-2'>
-                    {console.log(getFields)}
                     {getFields?.map(
                       value =>
                         value.type !== 'ManyToMany' &&
@@ -454,7 +453,6 @@ export default function CheckboxControl({ data, onChange, type }) {
       {type === 'select' ? (
         <Collapse transition={`height 300ms cubic-bezier(.4, 0, .2, 1)`} isOpen={Boolean(selected === 'style')}>
           <div className='mt-1'></div>
-          {console.log(Css)}
           <TextField
             fullWidth
             type='number'
@@ -536,7 +534,6 @@ export default function CheckboxControl({ data, onChange, type }) {
         </Collapse>
       ) : type === 'file' ? (
         <Collapse transition={`height 300ms cubic-bezier(.4, 0, .2, 1)`} isOpen={Boolean(selected === 'style')}>
-          {console.log(Css)}
 
           <div className='bg-[#f0f0f0] p-2 mt-1 rounded-md cursor-pointer'>
             <TextField
@@ -711,7 +708,6 @@ export default function CheckboxControl({ data, onChange, type }) {
             }}
           />
           <div className='mt-1'></div>
-          {console.log(Css)}
           <TextField
             fullWidth
             type='number'

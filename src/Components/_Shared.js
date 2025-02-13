@@ -133,7 +133,20 @@ textarea::placeholder {
 }
       `
   } else if (type === 'checkbox') {
+
     return `
+     #parent-input{
+  width:100%;
+  height:auto;
+  margin-top:0px;
+  margin-bottom:0px;
+  margin-inline-start:0px;
+  margin-inline-end:0px;
+}
+  #shape{
+  display:flex;
+  fle
+  }
 #first-label{
 margin-top:0px;
 margin-bottom:5px;
@@ -151,6 +164,7 @@ color:#555;
     color: #555;
     cursor: pointer;
     padding: 0.2em;
+      text-transform: capitalize
 }
 
 input[type=checkbox] {
@@ -192,11 +206,7 @@ input[type=checkbox]:checked:disabled + label:before {
   background-color: #3498ffab;
   border-color: #3498ffab;
 }
-#view-input-in-form-engine{
-  display:flex;
-  flex-direction:column;
-  flex-wrap:wrap;
-}
+
       `
   } else if (type === 'radio') {
     return `
@@ -217,6 +227,7 @@ color:#555;
     color: #555;
     cursor: pointer;
     padding: 0.2em;
+      text-transform: capitalize
 }
 
 input[type=radio] {
@@ -282,9 +293,8 @@ color:#555;
       width: 100%;
       padding: 10px;
       border: 2px solid ;
-      border-color: #3498ff;
+      border-color: #e5e5ea;
       border-radius: 8px;
-      background-color: #f9f9f9;
       color: #333;
       font-size: 16px;
       appearance: none;
@@ -306,6 +316,9 @@ color:#555;
 
     #custom-select select:focus {
       outline: none;
+      border-color: #3498ff;
+  outline: 3px solid #3498ff40 ;
+
     }
 
       `
@@ -486,7 +499,6 @@ export const cssToObject = cssString => {
 
     result[cleanedSelector] = styleObject
   })
-  console.log(result)
 
   return result
 }

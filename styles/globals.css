@@ -1240,3 +1240,10 @@ sortable-list {
 .MuiDrawer-root.MuiDrawer-modal.MuiModal-root{
   z-index: 11111;
 }
+.react-grid-item > .react-resizable-handle.react-resizable-handle-se{
+  z-index: 10002 !important;
+
+}
+.ReactCollapse--collapse {
+  transition: height 0.2s;
+}

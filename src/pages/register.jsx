@@ -156,7 +156,6 @@ const LoginPage = () => {
             toast.success(locale === 'ar' ? 'تم التسجيل بنجاح' : 'Registration successful')
             push(`${locale}/login`)
           }else{
-            console.log(res)
           }
         })
         .finally(_ => {

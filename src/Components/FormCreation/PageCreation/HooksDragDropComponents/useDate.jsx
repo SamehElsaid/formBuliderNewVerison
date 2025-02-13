@@ -4,7 +4,6 @@ import ViewInputInFormEngine from '../ViewInputInFormEngine'
 import { FaCalendarAlt } from 'react-icons/fa'
 
 export default function useDate({ locale, advancedEdit,readOnly }) {
-  console.log(readOnly)
 
   const Date = useMemo(() => {
     return {

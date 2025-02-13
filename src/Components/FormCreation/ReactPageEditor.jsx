@@ -250,7 +250,6 @@ const ReactPageEditor = () => {
 
                       addData.push(data)
                     }
-                    console.log(dataMain)
                     if (dataMain.unique) {
                       validationData.push({
                         RuleType: 'Unique',
@@ -332,7 +331,7 @@ const ReactPageEditor = () => {
           onClick={() => {
             setReadOnly(!readOnly)
             setAdvancedEdit(false)
-            localStorage.setItem('editorValue', JSON.stringify(editorValue))
+            // localStorage.setItem('editorValue', JSON.stringify(editorValue))
           }}
         >
           <FaEye className='text-xl' />

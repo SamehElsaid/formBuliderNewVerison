@@ -127,7 +127,7 @@ const ReactPageEditor = ({ pageName, initialData, initialDataApi }) => {
           onClick={() => {
             setReadOnly(!readOnly)
             setAdvancedEdit(false)
-            localStorage.setItem('editorValue', JSON.stringify(editorValue))
+            // localStorage.setItem('editorValue', JSON.stringify(editorValue))
           }}
         >
           <FaEye className='text-xl' />
