@@ -35,7 +35,6 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
           getFields
             .filter(filed => data?.selected?.includes(filed?.key))
             .map((item, index) => {
-
               return {
                 i: item.id,
                 x: 0,
@@ -122,7 +121,8 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
       typeOfValidation: null,
       isEqual: 'equal',
       currentField: 'id'
-    }
+    },
+    event: {}
   }
 
   // const design =  open?.options?.uiSchema?.xComponentProps?.cssClass ?? ``
@@ -138,7 +138,7 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
     [data?.additional_fields]
   )
 
-const refTest =useRef()
+  const refTest = useRef()
 
   return (
     <div className={`${disabled ? 'text-main' : ''}`}>
@@ -211,6 +211,11 @@ const refTest =useRef()
                           typeOfValidation: null,
                           isEqual: 'equal',
                           currentField: 'id'
+                        },
+                        event: {
+                          onChange: '',
+                          onBlur: '',
+                          onUnmount: ''
                         }
                       }
                     }

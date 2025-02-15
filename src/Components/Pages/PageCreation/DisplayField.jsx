@@ -81,6 +81,7 @@ export default function DisplayField({
   }, [input])
   const [isDisable, setIsDisable] = useState(null)
   const [lastValue, setLastValue] = useState(null)
+
   useEffect(() => {
     if (roles?.trigger?.typeOfValidation === 'filter' && !loading) {
       if (dataRef?.current?.[roles?.trigger?.selectedField] !== undefined) {
@@ -111,17 +112,27 @@ export default function DisplayField({
       if (dataRef?.current?.[roles?.trigger?.selectedField]?.length !== 0) {
         setIsDisable('enable')
       } else {
-        setIsDisable(null)
+        setIsDisable(prev => {
+          if (roles?.onMount?.type === 'disable') {
+            return 'disabled'
+          }
+          return null
+        })
       }
     }
     if (roles?.trigger?.typeOfValidation === 'empty' && !loading) {
-      console.log(dataRef?.current?.[roles?.trigger?.selectedField])
       setLastValue(dataRef?.current?.[roles?.trigger?.selectedField])
       if (dataRef?.current?.[roles?.trigger?.selectedField] !== lastValue) {
-        setValue('')
+        if (typeof value === 'object') {
+          setValue([])
+        } else {
+          setValue('')
+        }
       }
     }
   }, [roles, loading, triggerData])
+
+ 
 
   useEffect(() => {
     if (typeof value === 'object') {
@@ -131,7 +142,29 @@ export default function DisplayField({
     }
   }, [isDisable])
 
-  
+  useEffect(() => {
+    if (!roles?.event?.onUnmount) {
+      return
+    }
+
+    if (roles?.event?.onUnmount === 'async function Action(e, args) {\n  // write your code here\n}') {
+      return
+    }
+
+
+    const handleBeforeUnload = e => {
+      e.preventDefault()
+      
+      const evaluatedFn = eval('(' + roles?.event?.onUnmount + ')')
+      evaluatedFn(e)
+    }
+
+    window.addEventListener('beforeunload', handleBeforeUnload)
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload)
+    }
+  }, [roles])
 
   useEffect(() => {
     if (findValue) {
@@ -162,7 +195,29 @@ export default function DisplayField({
     }
   }, [reload, input])
 
+  useEffect(() => {
+    if (!loading) {
+      setTimeout(() => {
+        if (roles?.onMount?.type === 'disable') {
+          setIsDisable('disabled')
+        }
+        if (roles?.onMount?.type === 'enable') {
+          setIsDisable('enable')
+        }
+        if (roles?.onMount?.type === 'write Data') {
+          setValue(roles?.onMount?.value)
+        }
+      }, 0)
+    }
+  }, [roles, loading])
+
   const onChange = e => {
+    if (roles.event.onChange) {
+      const evaluatedFn = eval('(' + roles.event.onChange + ')')
+
+      evaluatedFn(e)
+    }
+
     setDirty(true)
     let isTypeNew = true
     if (input?.type === 'ManyToMany') {
@@ -334,11 +389,14 @@ export default function DisplayField({
       }
     }
   }, [errorView, error])
+
   const mainRef = useRef()
 
   const onChangeFile = async e => {
     const file = e.target.files[0]
+    const evaluatedFn = eval('(' + roles.event.onChange + ')')
 
+    evaluatedFn(e)
     if (!file) {
       toast.error(locale === 'ar' ? 'لم يتم اختيار الملف' : 'No file selected')
 
@@ -403,6 +461,7 @@ export default function DisplayField({
             xComponentProps={xComponentProps}
             readOnly={readOnly}
             value={value}
+            onBlur={roles?.event?.onBlur}
             onChange={onChange}
             onChangeFile={onChangeFile}
             fileName={fileName}
@@ -435,15 +494,14 @@ const ViewInput = ({
   onChange,
   locale,
   handleDelete,
-  findError,
   errorView,
   fileName,
   error,
-  xComponentProps,
   showPassword,
   setShowPassword,
   selectedOptions,
-  isDisable
+  isDisable,
+  onBlur
 }) => {
   const ExampleCustomInput = forwardRef(({ value, onClick }, ref) => {
     const lable = JSON.parse(input?.descriptionEn) ?? {
@@ -502,6 +560,13 @@ const ViewInput = ({
           onChange={e => {
             onChange(e)
           }}
+          onBlur={e => {
+            if (onBlur) {
+              const evaluatedFn = eval('(' + onBlur + ')')
+
+              evaluatedFn(e)
+            }
+          }}
           disabled={isDisable === 'disabled'}
           onKeyDown={handleKeyDown}
           onWheel={handleWheel}
@@ -534,8 +599,16 @@ const ViewInput = ({
           onChange(e)
         }}
         rows={4}
+        disabled={isDisable === 'disabled'}
         className={`${errorView || error ? 'error' : ''} `}
         style={{ transition: '0.3s' }}
+        onBlur={e => {
+          if (onBlur) {
+            const evaluatedFn = eval('(' + onBlur + ')')
+
+            evaluatedFn(e)
+          }
+        }}
       />
     )
   }
@@ -591,8 +664,16 @@ const ViewInput = ({
             </div>
             <input
               type='file'
+              disabled={isDisable === 'disabled'}
               id={input.key}
               onChange={onChangeFile}
+              onBlur={e => {
+                if (onBlur) {
+                  const evaluatedFn = eval('(' + onBlur + ')')
+
+                  evaluatedFn(e)
+                }
+              }}
               accept={input?.options?.uiSchema?.xComponentProps?.fileTypes?.join(',')}
             />
           </label>
@@ -616,8 +697,16 @@ const ViewInput = ({
           showMonthDropdown
           locale={locale === 'ar' ? ar : en}
           showYearDropdown
+          onBlur={e => {
+            if (onBlur) {
+              const evaluatedFn = eval('(' + onBlur + ')')
+
+              evaluatedFn(e)
+            }
+          }}
           showTimeInput={lable.showTime === 'true'}
           customInput={<ExampleCustomInput className='example-custom-input' />}
+          disabled={isDisable === 'disabled'}
         />
       </DatePickerWrapper>
     ) : (
@@ -628,9 +717,17 @@ const ViewInput = ({
         timeInputLabel='Time:'
         dateFormat={`${lable.format ? lable.format : 'MM/dd/yyyy'}`}
         showMonthDropdown
+        onBlur={e => {
+          if (onBlur) {
+            const evaluatedFn = eval('(' + onBlur + ')')
+
+            evaluatedFn(e)
+          }
+        }}
         showYearDropdown
         showTimeInput={lable.showTime === 'true'}
         customInput={<ExampleCustomInput className='example-custom-input' />}
+        disabled={isDisable === 'disabled'}
       />
     )
   }
@@ -653,6 +750,14 @@ const ViewInput = ({
                       onChange={e => onChange(e)}
                       type='radio'
                       id={option.Id}
+                      disabled={isDisable === 'disabled'}
+                      onBlur={e => {
+                        if (onBlur) {
+                          const evaluatedFn = eval('(' + onBlur + ')')
+
+                          evaluatedFn(e)
+                        }
+                      }}
                     />
                     <label htmlFor={option.Id}>{lable.map(ele => option[ele]).join('-')}</label>
                   </div>
@@ -669,7 +774,18 @@ const ViewInput = ({
 
     return (
       <div id='custom-select'>
-        <select value={value} onChange={e => onChange(e)}>
+        <select
+          value={value}
+          onChange={e => onChange(e)}
+          disabled={isDisable === 'disabled'}
+          onBlur={e => {
+            if (onBlur) {
+              const evaluatedFn = eval('(' + onBlur + ')')
+
+              evaluatedFn(e)
+            }
+          }}
+        >
           <option disabled selected value={''}>
             {locale === 'ar' ? 'اختر ' : 'Select'}
           </option>
@@ -700,6 +816,14 @@ const ViewInput = ({
                       onChange={e => onChange(e)}
                       type='checkbox'
                       id={option.Id}
+                      disabled={isDisable === 'disabled'}
+                      onBlur={e => {
+                        if (onBlur) {
+                          const evaluatedFn = eval('(' + onBlur + ')')
+
+                          evaluatedFn(e)
+                        }
+                      }}
                     />
                     <label htmlFor={option.Id}>{lable.map(ele => option[ele]).join('-')}</label>
                   </div>

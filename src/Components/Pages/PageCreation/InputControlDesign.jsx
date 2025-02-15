@@ -29,6 +29,7 @@ import { useIntl } from 'react-intl'
 import { axiosGet } from 'src/Components/axiosCall'
 import { LoadingButton } from '@mui/lab'
 import IconifyIcon from 'src/Components/icon'
+import JsEditor from 'src/Components/FormCreation/PageCreation/jsEditor'
 
 const Header = styled(Box)(() => ({
   display: 'flex',
@@ -52,6 +53,7 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
   useEffect(() => {
     setWriteValue(roles?.onMount?.value ?? '')
   }, [roles])
+  console.log(roles)
 
   const UpdateData = (key, value) => {
     const additional_fields = data.additional_fields ?? []
@@ -157,6 +159,7 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
 
   const [showEvent, setShowEvent] = useState(false)
   const [showTrigger, setShowTrigger] = useState(false)
+
   return (
     <>
       <Dialog open={openTrigger} onClose={resetForm} fullWidth>
@@ -894,8 +897,10 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                                 onChange({ ...data, additional_fields: additional_fields })
                               }}
                             >
+                              <MenuItem selected disabled value={'empty Data'}>
+                                {locale === 'ar' ? 'فارغ' : 'Empty Data'}
+                              </MenuItem>
                               <MenuItem value={'disable'}>{locale === 'ar' ? 'معطل' : 'Disable'}</MenuItem>
-                              <MenuItem value={'empty Data'}>{locale === 'ar' ? 'فارغ' : 'Empty Data'}</MenuItem>
                               {open.type !== 'OneToOne' && open.type !== 'ManyToMany' && (
                                 <MenuItem value={'write Data'}>
                                   {locale === 'ar' ? 'اضافة قيمة' : 'Write Value'}
@@ -903,6 +908,7 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                               )}
                             </Select>
                             <UnmountClosed isOpened={Boolean(roles.onMount.type === 'write Data')}>
+                              {console.log(currentField)}
                               <TextField
                                 fullWidth
                                 type='text'
@@ -926,131 +932,39 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                             <h2 className='text-lg font-bold text-main-color mt-2'>
                               {locale === 'ar' ? 'في التغيير' : 'OnChange'}
                             </h2>
-                            <FormControl fullWidth margin='normal'>
-                              <InputLabel>{locale === 'ar' ? 'الحالة' : 'State'}</InputLabel>
-                              <Select
-                                variant='filled'
-                                value={roles.onMount.type}
-                                onChange={e => {
-                                  const additional_fields = data.additional_fields ?? []
-                                  const findMyInput = additional_fields.find(inp => inp.key === open.id)
-                                  if (findMyInput) {
-                                    findMyInput.roles.onMount.type = e.target.value
-                                  } else {
-                                    const myEdit = {
-                                      key: open.id,
-                                      design: objectToCss(Css).replaceAll('NaN', ''),
-                                      roles: {
-                                        onMount: { type: e.target.value, value: '' },
-                                        trigger: {
-                                          selectedField: null,
-                                          triggerKey: null,
-                                          typeOfValidation: null,
-                                          isEqual: 'equal',
-                                          currentField: 'id',
-                                          currentFieldTrigger: null
-                                        }
-                                      },
-                                      event: {}
-                                    }
-                                    additional_fields.push(myEdit)
-                                  }
-                                  onChange({ ...data, additional_fields: additional_fields })
-                                }}
-                              >
-                                <MenuItem value={'disable'}>{locale === 'ar' ? 'معطل' : 'Disable'}</MenuItem>
-                                <MenuItem value={'empty Data'}>{locale === 'ar' ? 'فارغ' : 'Empty Data'}</MenuItem>
-                                {open.type !== 'OneToOne' && open.type !== 'ManyToMany' && (
-                                  <MenuItem value={'write Data'}>
-                                    {locale === 'ar' ? 'اضافة قيمة' : 'Write Value'}
-                                  </MenuItem>
-                                )}
-                              </Select>
-                              <UnmountClosed isOpened={Boolean(roles.onMount.type === 'write Data')}>
-                                <TextField
-                                  fullWidth
-                                  type='text'
-                                  value={writeValue}
-                                  variant='filled'
-                                  label={locale === 'ar' ? 'القيمة' : 'Value'}
-                                  onChange={e => {
-                                    setWriteValue(e.target.value)
-                                  }}
-                                  onBlur={e => {
-                                    const additional_fields = data.additional_fields ?? []
-                                    const findMyInput = additional_fields.find(inp => inp.key === open.id)
-                                    if (findMyInput) {
-                                      findMyInput.roles.onMount.value = e.target.value
-                                    }
-                                  }}
-                                />
-                              </UnmountClosed>
-                            </FormControl>
+                            <JsEditor
+                              jsCode={roles?.event?.onChange ?? ''}
+                              onChange={onChange}
+                              data={data}
+                              open={open}
+                              Css={Css}
+                            />
                           </div>{' '}
                           <div className='border-t-2 border-dashed border-main-color pt-2'>
                             <h2 className='text-lg font-bold text-main-color mt-2'>
                               {locale === 'ar' ? 'في الخروج' : 'OnBlur'}
                             </h2>
-                            <FormControl fullWidth margin='normal'>
-                              <InputLabel>{locale === 'ar' ? 'الحالة' : 'State'}</InputLabel>
-                              <Select
-                                variant='filled'
-                                value={roles.onMount.type}
-                                onChange={e => {
-                                  const additional_fields = data.additional_fields ?? []
-                                  const findMyInput = additional_fields.find(inp => inp.key === open.id)
-                                  if (findMyInput) {
-                                    findMyInput.roles.onMount.type = e.target.value
-                                  } else {
-                                    const myEdit = {
-                                      key: open.id,
-                                      design: objectToCss(Css).replaceAll('NaN', ''),
-                                      roles: {
-                                        onMount: { type: e.target.value, value: '' },
-                                        trigger: {
-                                          selectedField: null,
-                                          triggerKey: null,
-                                          typeOfValidation: null,
-                                          isEqual: 'equal',
-                                          currentField: 'id',
-                                          currentFieldTrigger: null
-                                        }
-                                      },
-                                      event: {}
-                                    }
-                                    additional_fields.push(myEdit)
-                                  }
-                                  onChange({ ...data, additional_fields: additional_fields })
-                                }}
-                              >
-                                <MenuItem value={'disable'}>{locale === 'ar' ? 'معطل' : 'Disable'}</MenuItem>
-                                <MenuItem value={'empty Data'}>{locale === 'ar' ? 'فارغ' : 'Empty Data'}</MenuItem>
-                                {open.type !== 'OneToOne' && open.type !== 'ManyToMany' && (
-                                  <MenuItem value={'write Data'}>
-                                    {locale === 'ar' ? 'اضافة قيمة' : 'Write Value'}
-                                  </MenuItem>
-                                )}
-                              </Select>
-                              <UnmountClosed isOpened={Boolean(roles.onMount.type === 'write Data')}>
-                                <TextField
-                                  fullWidth
-                                  type='text'
-                                  value={writeValue}
-                                  variant='filled'
-                                  label={locale === 'ar' ? 'القيمة' : 'Value'}
-                                  onChange={e => {
-                                    setWriteValue(e.target.value)
-                                  }}
-                                  onBlur={e => {
-                                    const additional_fields = data.additional_fields ?? []
-                                    const findMyInput = additional_fields.find(inp => inp.key === open.id)
-                                    if (findMyInput) {
-                                      findMyInput.roles.onMount.value = e.target.value
-                                    }
-                                  }}
-                                />
-                              </UnmountClosed>
-                            </FormControl>
+                            <JsEditor
+                              type='onBlur'
+                              jsCode={roles?.event?.onBlur ?? ''}
+                              onChange={onChange}
+                              data={data}
+                              open={open}
+                              Css={Css}
+                            />
+                          </div>
+                          <div className='border-t-2 border-dashed border-main-color pt-2'>
+                            <h2 className='text-lg font-bold text-main-color mt-2'>
+                              {locale === 'ar' ? 'في الخروج من الصفحة' : 'OnUnmount'}
+                            </h2>
+                            <JsEditor
+                              type='onUnmount'
+                              jsCode={roles?.event?.onUnmount ?? ''}
+                              onChange={onChange}
+                              data={data}
+                              open={open}
+                              Css={Css}
+                            />
                           </div>
                         </div>
                       </UnmountClosed>

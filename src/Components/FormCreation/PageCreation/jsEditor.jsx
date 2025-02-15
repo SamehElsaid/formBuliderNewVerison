@@ -1,88 +1,93 @@
-import dynamic from 'next/dynamic';
-import { useIntl } from 'react-intl';
-import { Button } from '@mui/material';
-import { useState, useEffect } from 'react';
-import { js as jsBeautify } from 'js-beautify';
+import dynamic from 'next/dynamic'
+import { useIntl } from 'react-intl'
+import { useState, useEffect } from 'react'
+import { objectToCss } from 'src/Components/_Shared'
+import { Button } from '@mui/material'
 
 // تحميل Monaco Editor بدون SSR
-const MonacoEditor = dynamic(() => import('@monaco-editor/react'), { ssr: false });
+const MonacoEditor = dynamic(() => import('@monaco-editor/react'), { ssr: false })
 
-const JsEditor = ({ data, onChange, jsCode, open }) => {
-  const { locale } = useIntl();
-  
-  // تعريف الدالة الثابتة
-  const functionTemplate = `async function Action(e, args) {\n  // write your code here\n}`;
+const JsEditor = ({ data, onChange, jsCode, open, Css, type }) => {
+  const { locale } = useIntl()
 
-  // حالة لحفظ الكود
-  const [code, setCode] = useState(jsCode || functionTemplate);
-  const [output, setOutput] = useState('');
+  const functionTemplate = `async function Action(e, args) {\n  // write your code here\n}`
+
+  const [code, setCode] = useState(jsCode || functionTemplate)
 
   useEffect(() => {
-    setCode(jsCode || functionTemplate);
-  }, [jsCode]);
+    setCode(jsCode || functionTemplate)
+  }, [jsCode])
 
-  const handleEditorChange = (value) => {
-    const match = value.match(/async function Action\(e, args\) \{([\s\S]*)\}/);
-
-    if (match) {
-      const newContent = match[1]; 
-      const updatedCode = `async function Action(e, args) {${newContent}}`;
-      setCode(updatedCode);
-      onChange(updatedCode);
-    } else {
-      setCode(functionTemplate);
-    }
-  };
-
-  const handleFormat = () => {
-    const match = code.match(/async function Action\(e, args\) \{([\s\S]*)\}/);
-    if (match) {
-      const formattedContent = jsBeautify(match[1], {
-        indent_size: 2,
-        space_in_empty_paren: true,
-      });
-
-      const formattedCode = `async function Action(e, args) {${formattedContent}}`;
-      setCode(formattedCode);
-      onChange(formattedCode);
-    }
-  };
-
-  const handleRun = async () => {
+  const handleEditorChange = value => {
+    const match = value.match(/async function Action\(e, args\) \{([\s\S]*)\}/)
     try {
-      const functionWrapper = `(async () => { ${code} return await Action({}, {}); })();`;
-      const result = await eval(functionWrapper);
-      setOutput(result !== undefined ? String(result) : 'No Output');
+      if (match) {
+        console.log(value)
+        const newContent = match[1]
+        const updatedCode = `async function Action(e, args) {${newContent}}`
+        setCode(updatedCode)
+        const additional_fields = data.additional_fields ?? []
+        const findMyInput = additional_fields.find(inp => inp.key === open.id)
+        console.log(findMyInput)
+        if (findMyInput) {
+          findMyInput.roles.event = {
+            ...findMyInput.roles.event,
+            [type ?? 'onChange']: updatedCode
+          }
+        } else {
+          const myEdit = {
+            key: open.id,
+            design: objectToCss(Css).replaceAll('NaN', ''),
+            roles: {
+              onMount: { type: '', value: '' },
+              trigger: {
+                selectedField: null,
+                triggerKey: null,
+                typeOfValidation: null,
+                isEqual: 'equal',
+                currentField: 'id',
+                currentFieldTrigger: null
+              }
+            },
+            event: {
+              [type ?? 'onChange']: updatedCode
+            }
+          }
+          additional_fields.push(myEdit)
+        }
+        console.log(additional_fields)
+        onChange({ ...data, additional_fields: additional_fields })
+        // onChange(updatedCode)
+      } else {
+        console.log('error')
+        toast.error(locale === 'ar' ? 'خطأ في الكود' : 'Invalid code')
+        setCode(functionTemplate)
+      }
     } catch (error) {
-      setOutput(error.message);
+      console.log(error)
     }
-  };
+  }
 
   return (
     <div>
-      <div style={{ display: 'flex', gap: '10px', marginBottom: '10px' }}>
-        <Button variant="contained" onClick={handleFormat}>
-          {locale === "ar" ? "تنسيق" : "Format"}
-        </Button>
-        <Button variant="contained" onClick={handleRun}>
-          {locale === "ar" ? "تشغيل" : "Run Code"}
-        </Button>
-      </div>
+      <Button variant='contained' color='error' onClick={() => handleEditorChange(functionTemplate)}>
+        {locale === 'ar' ? 'اعادة الكود' : 'Reset Code'}
+      </Button>
       <MonacoEditor
-        height="600px"
-        width="100%"
-        language="javascript"
-        theme="vs-dark"
+        height='300px'
+        width='100%'
+        language='javascript'
+        theme='vs-dark'
         value={code}
         onChange={handleEditorChange}
         options={{
           selectOnLineNumbers: true,
           minimap: { enabled: false },
-          readOnly: false,
+          readOnly: false
         }}
       />
     </div>
-  );
-};
+  )
+}
 
-export default JsEditor;
+export default JsEditor
