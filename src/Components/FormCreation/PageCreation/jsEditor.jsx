@@ -70,9 +70,11 @@ const JsEditor = ({ data, onChange, jsCode, open, Css, type }) => {
 
   return (
     <div>
-      <Button variant='contained' color='error' onClick={() => handleEditorChange(functionTemplate)}>
-        {locale === 'ar' ? 'اعادة الكود' : 'Reset Code'}
-      </Button>
+      <div className='flex justify-end mb-2'>
+        <Button variant='contained' color='error' onClick={() => handleEditorChange(functionTemplate)}>
+          {locale === 'ar' ? 'اعادة الكود' : 'Reset Code'}
+        </Button>
+      </div>
       <MonacoEditor
         height='300px'
         width='100%'

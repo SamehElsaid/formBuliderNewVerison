@@ -368,7 +368,7 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
               </ButtonGroup>
             </div>
             {open && (
-              <>
+              <div className='flex flex-col gap-2 py-5'>
                 <UnmountClosed isOpened={Boolean(selected === 'style')}>
                   <>
                     {(open.type === 'SingleText' ||
@@ -1006,7 +1006,7 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                     </div>
                   </div>
                 </UnmountClosed>
-              </>
+              </div>
             )}
           </div>
         </Box>
