@@ -132,8 +132,6 @@ export default function DisplayField({
     }
   }, [roles, loading, triggerData])
 
- 
-
   useEffect(() => {
     if (typeof value === 'object') {
       setValue([])
@@ -151,10 +149,9 @@ export default function DisplayField({
       return
     }
 
-
     const handleBeforeUnload = e => {
       e.preventDefault()
-      
+
       const evaluatedFn = eval('(' + roles?.event?.onUnmount + ')')
       evaluatedFn(e)
     }
@@ -212,11 +209,13 @@ export default function DisplayField({
   }, [roles, loading])
 
   const onChange = e => {
-    if (roles.event.onChange) {
-      const evaluatedFn = eval('(' + roles.event.onChange + ')')
+    try {
+      if (roles?.event?.onChange) {
+        const evaluatedFn = eval('(' + roles.event.onChange + ')')
 
-      evaluatedFn(e)
-    }
+        evaluatedFn(e)
+      }
+    } catch {}
 
     setDirty(true)
     let isTypeNew = true
@@ -444,6 +443,9 @@ export default function DisplayField({
       reader.onload = () => resolve(reader.result)
       reader.onerror = error => reject(error)
     })
+  }
+  if (input.nameEn === 'previous job') {
+    console.log(roles)
   }
 
   return (

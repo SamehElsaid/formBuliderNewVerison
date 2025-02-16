@@ -38,7 +38,16 @@ const Header = styled(Box)(() => ({
   justifyContent: 'space-between'
 }))
 
-export default function InputControlDesign({ open, handleClose, design, locale, data, onChange, roles, fields }) {
+export default function InputControlDesign({
+  open,
+  handleClose,
+  design,
+  locale,
+  data,
+  onChange,
+  roles,
+  fields,
+}) {
   const Css = cssToObject(design)
   const [activeStep, setActiveStep] = useState(0)
   const [steps, setSteps] = useState([
@@ -53,7 +62,6 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
   useEffect(() => {
     setWriteValue(roles?.onMount?.value ?? '')
   }, [roles])
-  console.log(roles)
 
   const UpdateData = (key, value) => {
     const additional_fields = data.additional_fields ?? []
@@ -100,7 +108,6 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
   }
 
   const handleFinish = () => {
-    console.log({ selectedField, triggerKey, typeOfValidation, isEqual, currentField, currentFieldTrigger })
     const sendData = {
       selectedField,
       triggerKey,
@@ -116,7 +123,7 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
       const myEdit = {
         key: open.id,
         design: objectToCss(Css).replaceAll('NaN', ''),
-        roles: { trigger: data, onMount: { type: '', value: '' } }
+        roles: { trigger: sendData, onMount: { type: '', value: '' } }
       }
       additional_fields.push(myEdit)
     }
@@ -908,7 +915,6 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                               )}
                             </Select>
                             <UnmountClosed isOpened={Boolean(roles.onMount.type === 'write Data')}>
-                              {console.log(currentField)}
                               <TextField
                                 fullWidth
                                 type='text'
