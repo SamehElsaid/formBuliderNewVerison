@@ -329,8 +329,9 @@ export default function DisplayField({
       } else {
         dataRef.current[input.key] = value
       }
-
-      setTriggerData(prev => prev + 1)
+      if(setTriggerData){
+        setTriggerData(prev => prev + 1)
+      }
     }
     if (refError) {
       refError.current = {

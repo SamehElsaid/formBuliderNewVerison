@@ -38,16 +38,7 @@ const Header = styled(Box)(() => ({
   justifyContent: 'space-between'
 }))
 
-export default function InputControlDesign({
-  open,
-  handleClose,
-  design,
-  locale,
-  data,
-  onChange,
-  roles,
-  fields,
-}) {
+export default function InputControlDesign({ open, handleClose, design, locale, data, onChange, roles, fields }) {
   const Css = cssToObject(design)
   const [activeStep, setActiveStep] = useState(0)
   const [steps, setSteps] = useState([
@@ -81,11 +72,17 @@ export default function InputControlDesign({
     }
 
     current[keys[keys.length - 1]] = value
+    console.log('sds')
 
     if (findMyInput) {
       findMyInput.design = objectToCss(Css).replaceAll('NaN', '')
+      console.log('2')
     } else {
-      const myEdit = { key: open.id, design: objectToCss(Css).replaceAll('NaN', ''), roles: {}, event: {} }
+      const myEdit = {
+        key: open.id,
+        design: objectToCss(Css).replaceAll('NaN', ''),
+        roles: { trigger: '', onMount: { type: '', value: '' } }
+      }
       additional_fields.push(myEdit)
     }
     onChange({ ...data, additional_fields: additional_fields })
@@ -876,7 +873,7 @@ export default function InputControlDesign({
                             <InputLabel>{locale === 'ar' ? 'الحالة' : 'State'}</InputLabel>
                             <Select
                               variant='filled'
-                              value={roles.onMount.type}
+                              value={roles?.onMount?.type}
                               onChange={e => {
                                 const additional_fields = data.additional_fields ?? []
                                 const findMyInput = additional_fields.find(inp => inp.key === open.id)

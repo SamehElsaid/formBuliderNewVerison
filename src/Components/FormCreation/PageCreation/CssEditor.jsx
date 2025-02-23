@@ -1,46 +1,46 @@
 import CodeMirror from '@uiw/react-codemirror'
 import { css } from '@codemirror/lang-css'
-import cssbeautify from 'cssbeautify' 
+import cssbeautify from 'cssbeautify'
 import { Button } from '@mui/material'
 import { useIntl } from 'react-intl'
 
-
-const CssEditor = ({ data, onChange, Css ,open}) => {
-  const {locale} = useIntl()
+const CssEditor = ({ data, onChange, Css, open }) => {
+  const { locale } = useIntl()
 
   const handleChange = value => {
     const additional_fields = data.additional_fields ?? []
     const findMyInput = additional_fields.find(inp => inp.key === open.id)
-
+    console.log('sds')
 
     if (findMyInput) {
+      console.log('sds2')
       findMyInput.design = value
     } else {
-      const myEdit = { key: open.id, design: value, roles: {}, event: {} }
+      const myEdit = { key: open.id, design: value, roles: { trigger: '', onMount: { type: '', value: '' } } }
       additional_fields.push(myEdit)
     }
+    console.log('data')
+
     onChange({ ...data, additional_fields: additional_fields })
   }
-  
 
   return (
     <div className=''>
-      <Button variant='contained' onClick={()=>{
-       handleChange(cssbeautify(Css, {
-          indent: '  ',
-          openbrace: 'end-of-line',
-          autosemicolon: true 
-        }))
-      }}>
-        {locale==="ar" ? "تنسيق":"Format"}
+      <Button
+        variant='contained'
+        onClick={() => {
+          handleChange(
+            cssbeautify(Css, {
+              indent: '  ',
+              openbrace: 'end-of-line',
+              autosemicolon: true
+            })
+          )
+        }}
+      >
+        {locale === 'ar' ? 'تنسيق' : 'Format'}
       </Button>
-      <CodeMirror
-        value={Css}
-        width='100%'
-        className='100%'
-        extensions={[css()]} 
-        onChange={handleChange}
-      />
+      <CodeMirror value={Css} width='100%' className='100%' extensions={[css()]} onChange={handleChange} />
     </div>
   )
 }
