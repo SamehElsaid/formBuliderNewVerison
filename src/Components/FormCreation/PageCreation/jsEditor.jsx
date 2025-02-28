@@ -7,7 +7,7 @@ import { Button } from '@mui/material'
 // تحميل Monaco Editor بدون SSR
 const MonacoEditor = dynamic(() => import('@monaco-editor/react'), { ssr: false })
 
-const JsEditor = ({ data, onChange, jsCode, open, Css, type }) => {
+const JsEditor = ({ data, onChange, jsCode, open, Css, type, roles }) => {
   const { locale } = useIntl()
 
   const functionTemplate = `async function Action(e, args) {\n  // write your code here\n}`
@@ -39,18 +39,10 @@ const JsEditor = ({ data, onChange, jsCode, open, Css, type }) => {
             key: open.id,
             design: objectToCss(Css).replaceAll('NaN', ''),
             roles: {
-              onMount: { type: '', value: '' },
-              trigger: {
-                selectedField: null,
-                triggerKey: null,
-                typeOfValidation: null,
-                isEqual: 'equal',
-                currentField: 'id',
-                currentFieldTrigger: null
+              ...roles,
+              event: {
+                [type ?? 'onChange']: updatedCode
               }
-            },
-            event: {
-              [type ?? 'onChange']: updatedCode
             }
           }
           additional_fields.push(myEdit)

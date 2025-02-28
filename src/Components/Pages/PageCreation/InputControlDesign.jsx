@@ -22,14 +22,19 @@ import {
 } from '@mui/material'
 import { useEffect, useState } from 'react'
 import { styled } from '@mui/material/styles'
-import { cssToObject, extractValueAndUnit, getDataInObject, objectToCss } from 'src/Components/_Shared'
+import { cssToObject, extractValueAndUnit, getData, getDataInObject, objectToCss } from 'src/Components/_Shared'
 import CssEditor from 'src/Components/FormCreation/PageCreation/CssEditor'
 import { UnmountClosed } from 'react-collapse'
 import { useIntl } from 'react-intl'
-import { axiosGet } from 'src/Components/axiosCall'
+import { axiosGet, axiosPost } from 'src/Components/axiosCall'
 import { LoadingButton } from '@mui/lab'
 import IconifyIcon from 'src/Components/icon'
 import JsEditor from 'src/Components/FormCreation/PageCreation/jsEditor'
+import { useSelector } from 'react-redux'
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
+import { docco } from 'react-syntax-highlighter/dist/esm/styles/prism'
+import Collapse from '@kunukn/react-collapse'
+import { toast } from 'react-toastify'
 
 const Header = styled(Box)(() => ({
   display: 'flex',
@@ -40,6 +45,8 @@ const Header = styled(Box)(() => ({
 
 export default function InputControlDesign({ open, handleClose, design, locale, data, onChange, roles, fields }) {
   const Css = cssToObject(design)
+  const getApiData = useSelector(rx => rx.api.data)
+
   const [activeStep, setActiveStep] = useState(0)
   const [steps, setSteps] = useState([
     locale === 'ar' ? 'حقل الإدخال' : 'Input Field',
@@ -72,16 +79,14 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
     }
 
     current[keys[keys.length - 1]] = value
-    console.log('sds')
 
     if (findMyInput) {
       findMyInput.design = objectToCss(Css).replaceAll('NaN', '')
-      console.log('2')
     } else {
       const myEdit = {
         key: open.id,
         design: objectToCss(Css).replaceAll('NaN', ''),
-        roles: { trigger: '', onMount: { type: '', value: '' } }
+        roles: { ...roles }
       }
       additional_fields.push(myEdit)
     }
@@ -92,10 +97,12 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
   const [triggerKey, setTriggerKey] = useState(null)
   const [typeOfValidation, setTypeOfValidation] = useState(null)
   const [isEqual, setIsEqual] = useState('equal')
-  const [currentField, setCurrentField] = useState('id')
-  const [currentFieldTrigger, setCurrentFieldTrigger] = useState('id')
+  const [currentField, setCurrentField] = useState('Id')
+  const [currentFieldTrigger, setCurrentFieldTrigger] = useState('Id')
   const [currentFields, setCurrentFields] = useState([])
-
+  const [mainValue, setMainValue] = useState('')
+  const [parentKey, setParentKey] = useState(null)
+  const [parentFields, setParentFields] = useState([])
   const handleBack = () => {
     setActiveStep(prev => prev - 1)
   }
@@ -103,15 +110,31 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
   const handleNext = () => {
     setActiveStep(prev => prev + 1)
   }
+  const [obj, setObj] = useState(false)
+
+  useEffect(() => {
+    if (roles.api_url) {
+      const items = getApiData.find(item => item.link === roles.api_url)?.data
+      if (items) {
+        setObj(items)
+      }
+    } else {
+      setObj(false)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [roles.api_url])
 
   const handleFinish = () => {
     const sendData = {
       selectedField,
-      triggerKey,
+      triggerKey: currentFieldTrigger,
       typeOfValidation,
       isEqual,
-      currentField
+      currentField,
+      mainValue,
+      parentKey
     }
+
     const additional_fields = data.additional_fields ?? []
     const findMyInput = additional_fields.find(inp => inp.key === open.id)
     if (findMyInput) {
@@ -120,7 +143,10 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
       const myEdit = {
         key: open.id,
         design: objectToCss(Css).replaceAll('NaN', ''),
-        roles: { trigger: sendData, onMount: { type: '', value: '' } }
+        roles: {
+          ...roles,
+          trigger: sendData
+        }
       }
       additional_fields.push(myEdit)
     }
@@ -135,9 +161,10 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
     setSelectedField(null)
     setTriggerKey(null)
     setTypeOfValidation(null)
-    setCurrentField('id')
-    setCurrentFieldTrigger('id')
+    setCurrentField('Id')
+    setCurrentFieldTrigger('Id')
     setIsEqual('equal')
+    setMainValue('')
   }
 
   useEffect(() => {
@@ -161,11 +188,36 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
     }
   }, [open])
 
+  useEffect(() => {
+    if (parentKey) {
+      axiosGet(`collections/get-by-key?key=${parentKey}`).then(res => {
+        if (res.status) {
+          axiosGet(`collection-fields/get?CollectionId=${res.data.id}`, locale).then(res => {
+            if (res.status) {
+              setParentFields(res.data)
+            }
+          })
+        }
+      })
+    }
+  }, [parentKey])
+
   const [showEvent, setShowEvent] = useState(false)
   const [showTrigger, setShowTrigger] = useState(false)
 
+  // useEffect(() => {
+  //   if (selectedField) {
+  //     setShowTrigger(true)
+  //   }
+  // }, [open])
+
+  const addMoreElement = data.addMoreElement ?? []
+
+  const findMyInput = addMoreElement.find(inp => inp.id === open?.id)
+
   return (
     <>
+      {/* {console.log(findMyInput,addMoreElement,open)} */}
       <Dialog open={openTrigger} onClose={resetForm} fullWidth>
         <DialogTitle>{messages.createInput}</DialogTitle>
         <DialogContent>
@@ -193,6 +245,8 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                         } else {
                           setTriggerKey(field.options.target)
                         }
+
+                        setParentKey(field.type === 'OneToOne' ? field.options.source : field.options.target)
                       }
                       setSelectedField(e.target.value)
                     }}
@@ -222,9 +276,11 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                     {open.fieldCategory !== 'Basic' && (
                       <MenuItem value={'filter'}>{locale === 'ar' ? 'تصفية' : 'Filter'}</MenuItem>
                     )}
-                    <MenuItem value={'disable'}>{locale === 'ar' ? 'إيقاف' : 'Disable'}</MenuItem>
+                    {/* <MenuItem value={'disable'}>{locale === 'ar' ? 'إيقاف' : 'Disable'}</MenuItem> */}
                     <MenuItem value={'enable'}>{locale === 'ar' ? 'تفعيل' : 'Enable'}</MenuItem>
                     <MenuItem value={'empty'}>{locale === 'ar' ? 'فارغ' : 'Empty'}</MenuItem>
+                    <MenuItem value={'hidden'}>{locale === 'ar' ? 'مخفي' : 'Hidden'}</MenuItem>
+                    <MenuItem value={'visible'}>{locale === 'ar' ? 'مرئي' : 'Visible'}</MenuItem>
                   </Select>
                   <UnmountClosed isOpened={Boolean(typeOfValidation === 'filter')}>
                     <div className='flex border-main-color border mt-2 rounded-md '>
@@ -244,7 +300,7 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                                 setCurrentFieldTrigger(e.target.value)
                               }}
                             >
-                              <MenuItem value={'id'}>{locale === 'ar' ? 'ID' : 'ID'}</MenuItem>
+                              <MenuItem value={'Id'}>{locale === 'ar' ? 'ID' : 'ID'}</MenuItem>
                             </Select>
                           </div>
                         ) : (
@@ -281,7 +337,7 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                               setCurrentField(e.target.value)
                             }}
                           >
-                            <MenuItem value={'id'}>{locale === 'ar' ? 'ID' : 'ID'}</MenuItem>
+                            <MenuItem value={'Id'}>{locale === 'ar' ? 'ID' : 'ID'}</MenuItem>
                             {currentFields.map(field => (
                               <MenuItem className='capitalize' value={field.key}>
                                 {locale === 'ar' ? field.nameAr : field.nameEn}
@@ -298,6 +354,92 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                         value={writeValue}
                       />
                     )} */}
+                  </UnmountClosed>
+                  <UnmountClosed isOpened={Boolean(typeOfValidation && typeOfValidation !== 'filter')}>
+                    <div className='flex border-main-color border mt-2 rounded-md '>
+                      <div className='w-full flex flex-col items-center justify-center capitalize text-sm px-2'>
+                        {triggerKey ? (
+                          <div className='w-full'>
+                            {' '}
+                            <h2 className='text-sm  capitalize'>
+                              {triggerKey} {locale === 'ar' ? 'حقول ' : 'Fields '}
+                            </h2>
+                            <Select
+                              fullWidth
+                              variant='filled'
+                              value={currentFieldTrigger}
+                              className='capitalize'
+                              onChange={e => {
+                                setCurrentFieldTrigger(e.target.value)
+                              }}
+                            >
+                              <MenuItem value={'Id'}>{locale === 'ar' ? 'ID' : 'ID'}</MenuItem>
+                              {parentFields.map(field => (
+                                <MenuItem className='capitalize' value={field.key}>
+                                  {locale === 'ar' ? field.nameAr : field.nameEn}
+                                </MenuItem>
+                              ))}
+                            </Select>
+                          </div>
+                        ) : (
+                          selectedField
+                        )}
+                      </div>
+                      <div className='w-full py-2 px-1 border-x border-main-color'>
+                        <h2 className='text-sm  capitalize'>
+                          {locale === 'ar' ? open.nameAr : open.nameEn} {locale === 'ar' ? 'الحالة' : 'Status '}
+                        </h2>
+                        <Select
+                          fullWidth
+                          variant='filled'
+                          value={isEqual}
+                          onChange={e => {
+                            setIsEqual(e.target.value)
+                          }}
+                        >
+                          <MenuItem value={'equal'}>{locale === 'ar' ? 'مساوي' : 'Equal'}</MenuItem>
+                          <MenuItem value={'notEqual'}>{locale === 'ar' ? 'غير مساوي' : 'Not Equal'}</MenuItem>
+                        </Select>
+                      </div>
+
+                      {/* {open?.fieldCategory !== 'Basic' && (
+                        <div className='w-full flex flex-col items-center justify-center px-2'>
+                          <div className='w-full'>
+                            <h2 className='text-sm  capitalize'>
+                              {locale === 'ar' ? open.nameAr : open.nameEn} {locale === 'ar' ? 'حقول ' : 'Fields '}
+                            </h2>
+                            <Select
+                              className='capitalize'
+                              fullWidth
+                              variant='filled'
+                              value={currentField}
+                              onChange={e => {
+                                setCurrentField(e.target.value)
+                              }}
+                            >
+                              <MenuItem value={'id'}>{locale === 'ar' ? 'ID' : 'ID'}</MenuItem>
+                              {currentFields.map(field => (
+                                <MenuItem className='capitalize' value={field.key}>
+                                  {locale === 'ar' ? field.nameAr : field.nameEn}
+                                </MenuItem>
+                              ))}
+                            </Select>
+                          </div>
+                        </div>
+                      )} */}
+
+                      <div className='w-full flex flex-col items-center justify-center px-2'>
+                        <div className='w-full'>
+                          <h2 className='text-sm  capitalize'>{locale === 'ar' ? 'القيمة' : 'Value '}</h2>
+                          <TextField
+                            fullWidth
+                            variant='filled'
+                            value={mainValue}
+                            onChange={e => setMainValue(e.target.value)}
+                          />
+                        </div>
+                      </div>
+                    </div>
                   </UnmountClosed>
                 </FormControl>
               </>
@@ -375,6 +517,34 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
               <div className='flex flex-col gap-2 py-5'>
                 <UnmountClosed isOpened={Boolean(selected === 'style')}>
                   <>
+                    {open.type === 'new_element' && (
+                      <div className='flex flex-col gap-2'>
+                        <TextField
+                          fullWidth
+                          type='text'
+                          defaultValue={findMyInput?.name_en || ''}
+                          onBlur={e => {
+                            const newData = { ...findMyInput, name_en: e.target.value }
+                            const newAddMoreElement = addMoreElement.map(inp => (inp.id === open.id ? newData : inp))
+                            onChange({ ...data, addMoreElement: newAddMoreElement })
+                          }}
+                          variant='filled'
+                          label={locale === 'ar' ? 'الاسم باللغة الانجليزية' : 'Name in English'}
+                        />{' '}
+                        <TextField
+                          fullWidth
+                          type='text'
+                          defaultValue={findMyInput?.name_ar || ''}
+                          onBlur={e => {
+                            const newData = { ...findMyInput, name_ar: e.target.value }
+                            const newAddMoreElement = addMoreElement.map(inp => (inp.id === open.id ? newData : inp))
+                            onChange({ ...data, addMoreElement: newAddMoreElement })
+                          }}
+                          variant='filled'
+                          label={locale === 'ar' ? 'الاسم باللغة العربية' : 'Name in Arabic'}
+                        />
+                      </div>
+                    )}
                     {(open.type === 'SingleText' ||
                       open.type === 'Number' ||
                       open.type === 'Phone' ||
@@ -383,6 +553,62 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                       open.type === 'Password' ||
                       open.type === 'LongText') && (
                       <>
+                        <TextField
+                          fullWidth
+                          type='text'
+                          defaultValue={roles?.placeholder?.placeholder_en || ''}
+                          onBlur={e => {
+                            const additional_fields = data.additional_fields ?? []
+                            const findMyInput = additional_fields.find(inp => inp.key === open.id)
+                            if (findMyInput) {
+                              findMyInput.roles.placeholder.placeholder_en = e.target.value
+                            } else {
+                              const myEdit = {
+                                key: open.id,
+                                design: objectToCss(Css).replaceAll('NaN', ''),
+                                roles: {
+                                  ...roles,
+                                  placeholder: {
+                                    placeholder_ar: roles.placeholder.placeholder_ar,
+                                    placeholder_en: e.target.value
+                                  }
+                                }
+                              }
+                              additional_fields.push(myEdit)
+                            }
+                            onChange({ ...data, additional_fields: additional_fields })
+                          }}
+                          variant='filled'
+                          label={locale === 'ar' ? 'Placeholder باللغة الانجليزية' : 'Placeholder in English'}
+                        />{' '}
+                        <TextField
+                          fullWidth
+                          type='text'
+                          defaultValue={roles?.placeholder?.placeholder_ar || ''}
+                          onBlur={e => {
+                            const additional_fields = data.additional_fields ?? []
+                            const findMyInput = additional_fields.find(inp => inp.key === open.id)
+                            if (findMyInput) {
+                              findMyInput.roles.placeholder.placeholder_ar = e.target.value
+                            } else {
+                              const myEdit = {
+                                key: open.id,
+                                design: objectToCss(Css).replaceAll('NaN', ''),
+                                roles: {
+                                  ...roles,
+                                  placeholder: {
+                                    placeholder_ar: e.target.value,
+                                    placeholder_en: roles.placeholder.placeholder_en
+                                  }
+                                }
+                              }
+                              additional_fields.push(myEdit)
+                            }
+                            onChange({ ...data, additional_fields: additional_fields })
+                          }}
+                          variant='filled'
+                          label={locale === 'ar' ? 'Placeholder باللغة العربية' : 'Placeholder in Arabic'}
+                        />
                         <TextField
                           fullWidth
                           type='number'
@@ -782,7 +1008,6 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                             )
                           }}
                         />
-
                         <TextField
                           fullWidth
                           type='color'
@@ -839,7 +1064,7 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                       <h2 className='mt-5 text-[#555] mb-3 font-bold'>
                         {locale === 'ar' ? 'محرر CSS للحقل' : 'CSS Editor For Input'}
                       </h2>
-                      <CssEditor data={data} onChange={onChange} Css={design} open={open} />
+                      <CssEditor data={data} onChange={onChange} Css={design} open={open} roles={roles} />
                     </div>
                   </>
                 </UnmountClosed>
@@ -864,73 +1089,241 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                           />
                         </IconButton>
                       </h2>
+
                       <UnmountClosed isOpened={Boolean(showEvent)}>
                         <div className='px-2 pb-2'>
-                          <h2 className='text-lg font-bold text-main-color mt-2'>
-                            {locale === 'ar' ? 'في البداية' : 'OnMount'}
-                          </h2>
-                          <FormControl fullWidth margin='normal'>
-                            <InputLabel>{locale === 'ar' ? 'الحالة' : 'State'}</InputLabel>
-                            <Select
-                              variant='filled'
-                              value={roles?.onMount?.type}
-                              onChange={e => {
-                                const additional_fields = data.additional_fields ?? []
-                                const findMyInput = additional_fields.find(inp => inp.key === open.id)
-                                if (findMyInput) {
-                                  findMyInput.roles.onMount.type = e.target.value
-                                } else {
-                                  const myEdit = {
-                                    key: open.id,
-                                    design: objectToCss(Css).replaceAll('NaN', ''),
-                                    roles: {
-                                      onMount: { type: e.target.value, value: '' },
-                                      trigger: {
-                                        selectedField: null,
-                                        triggerKey: null,
-                                        typeOfValidation: null,
-                                        isEqual: 'equal',
-                                        currentField: 'id',
-                                        currentFieldTrigger: null
+                          {open.type !== 'new_element' && (
+                            <>
+                              <h2 className='text-lg font-bold text-main-color mt-2'>
+                                {locale === 'ar' ? 'في البداية' : 'OnMount'}
+                              </h2>
+                              <FormControl fullWidth margin='normal'>
+                                <InputLabel>{locale === 'ar' ? 'الحالة' : 'State'}</InputLabel>
+                                <Select
+                                  variant='filled'
+                                  value={roles?.onMount?.type}
+                                  onChange={e => {
+                                    const additional_fields = data.additional_fields ?? []
+                                    const findMyInput = additional_fields.find(inp => inp.key === open.id)
+                                    if (findMyInput) {
+                                      findMyInput.roles.onMount.type = e.target.value
+                                    } else {
+                                      const myEdit = {
+                                        key: open.id,
+                                        design: objectToCss(Css).replaceAll('NaN', ''),
+                                        roles: {
+                                          ...roles,
+                                          onMount: { type: e.target.value, value: roles.onMount.value }
+                                        }
                                       }
-                                    },
-                                    event: {}
-                                  }
-                                  additional_fields.push(myEdit)
-                                }
-                                onChange({ ...data, additional_fields: additional_fields })
-                              }}
-                            >
-                              <MenuItem selected disabled value={'empty Data'}>
-                                {locale === 'ar' ? 'فارغ' : 'Empty Data'}
-                              </MenuItem>
-                              <MenuItem value={'disable'}>{locale === 'ar' ? 'معطل' : 'Disable'}</MenuItem>
-                              {open.type !== 'OneToOne' && open.type !== 'ManyToMany' && (
-                                <MenuItem value={'write Data'}>
-                                  {locale === 'ar' ? 'اضافة قيمة' : 'Write Value'}
-                                </MenuItem>
-                              )}
-                            </Select>
-                            <UnmountClosed isOpened={Boolean(roles.onMount.type === 'write Data')}>
+                                      additional_fields.push(myEdit)
+                                    }
+                                    onChange({ ...data, additional_fields: additional_fields })
+                                  }}
+                                >
+                                  <MenuItem selected disabled value={'empty Data'}>
+                                    {locale === 'ar' ? 'فارغ' : 'Empty Data'}
+                                  </MenuItem>
+                                  <MenuItem value={'disable'}>{locale === 'ar' ? 'معطل' : 'Disable'}</MenuItem>
+                                  <MenuItem value={'hide'}>{locale === 'ar' ? 'مخفي' : 'Hide'}</MenuItem>
+                                </Select>
+                                <TextField
+                                  select
+                                  fullWidth
+                                  className='!mb-4'
+                                  value={roles.api_url || ''}
+                                  onChange={e => {
+                                    const additional_fields = data.additional_fields ?? []
+                                    const findMyInput = additional_fields.find(inp => inp.key === open.id)
+                                    if (findMyInput) {
+                                      findMyInput.roles.api_url = e.target.value
+                                    } else {
+                                      const myEdit = {
+                                        key: open.id,
+                                        design: objectToCss(Css).replaceAll('NaN', ''),
+                                        roles: {
+                                          ...roles,
+                                          api_url: e.target.value
+                                        }
+                                      }
+                                      additional_fields.push(myEdit)
+                                    }
+                                    onChange({ ...data, additional_fields: additional_fields })
+                                  }}
+                                  label={locale === 'ar' ? 'جلب البيانات من الAPI' : 'Get From API'}
+                                  variant='filled'
+                                >
+                                  {getApiData.map(
+                                    ({ link, data }, index) =>
+                                      !Array.isArray(data) && (
+                                        <MenuItem key={link + index} value={link}>
+                                          {link}
+                                        </MenuItem>
+                                      )
+                                  )}
+                                </TextField>
+                                {roles.api_url && (
+                                  <div className='flex justify-center'>
+                                    <Button
+                                      className='!my-4'
+                                      variant='contained'
+                                      color='error'
+                                      onClick={() => {
+                                        setObj(false)
+                                        const additional_fields = data.additional_fields ?? []
+                                        const findMyInput = additional_fields.find(inp => inp.key === open.id)
+                                        if (findMyInput) {
+                                          findMyInput.roles.api_url = ''
+                                        }
+                                        onChange({ ...data, additional_fields: additional_fields })
+                                      }}
+                                    >
+                                      {locale === 'ar' ? 'تفريغ البيانات' : 'Clear Data'}
+                                    </Button>
+                                  </div>
+                                )}
+                                <Collapse transition={`height 300ms cubic-bezier(.4, 0, .2, 1)`} isOpen={Boolean(obj)}>
+                                  <div className='p-2 my-4 rounded border border-dashed border-main-color'>
+                                    <h2 className='mb-4 text-2xl text-main-color'>
+                                      {locale === 'ar' ? 'عرض البيانات' : 'View Object'}
+                                    </h2>
+                                    <SyntaxHighlighter language='json' style={docco}>
+                                      {JSON.stringify(obj, null, 2)}
+                                    </SyntaxHighlighter>
+                                  </div>
+                                </Collapse>
+                                <TextField
+                                  fullWidth
+                                  type='text'
+                                  value={writeValue}
+                                  variant='filled'
+                                  label={locale === 'ar' ? 'القيمة' : 'Value'}
+                                  onChange={e => {
+                                    setWriteValue(e.target.value)
+                                  }}
+                                  onBlur={e => {
+                                    const additional_fields = data.additional_fields ?? []
+                                    const findMyInput = additional_fields.find(inp => inp.key === open.id)
+                                    if (findMyInput) {
+                                      findMyInput.roles.onMount.value = e.target.value
+                                      if (obj) {
+                                        findMyInput.roles.apiKeyData = getData(obj, e.target.value, '')
+                                      }
+                                    } else {
+                                      const myEdit = {
+                                        key: open.id,
+                                        design: objectToCss(Css).replaceAll('NaN', ''),
+                                        roles: {
+                                          ...roles,
+                                          onMount: { type: roles.onMount.type, value: e.target.value },
+                                          apiKeyData: obj ? getData(obj, e.target.value, '') : ''
+                                        }
+                                      }
+                                      additional_fields.push(myEdit)
+                                    }
+                                    onChange({ ...data, additional_fields: additional_fields })
+                                  }}
+                                />
+                              </FormControl>
+                            </>
+                          )}
+                          {open.type !== 'new_element' && (
+                            <div className='border-t-2 border-dashed border-main-color pt-2'>
+                              <h2 className='text-lg font-bold text-main-color mt-2'>
+                                {locale === 'ar' ? 'التحقق' : 'Regex'}
+                              </h2>
                               <TextField
                                 fullWidth
                                 type='text'
-                                value={writeValue}
-                                variant='filled'
-                                label={locale === 'ar' ? 'القيمة' : 'Value'}
-                                onChange={e => {
-                                  setWriteValue(e.target.value)
-                                }}
+                                defaultValue={roles?.regex?.regex || ''}
                                 onBlur={e => {
                                   const additional_fields = data.additional_fields ?? []
                                   const findMyInput = additional_fields.find(inp => inp.key === open.id)
                                   if (findMyInput) {
-                                    findMyInput.roles.onMount.value = e.target.value
+                                    findMyInput.roles.regex.regex = e.target.value
+                                  } else {
+                                    const myEdit = {
+                                      key: open.id,
+                                      design: objectToCss(Css).replaceAll('NaN', ''),
+                                      roles: {
+                                        ...roles,
+                                        regex: {
+                                          regex: e.target.value,
+                                          message_ar: roles.regex.message_ar,
+                                          message_en: roles.regex.message_en
+                                        }
+                                      }
+                                    }
+                                    additional_fields.push(myEdit)
                                   }
+                                  onChange({ ...data, additional_fields: additional_fields })
                                 }}
+                                variant='filled'
+                                label={locale === 'ar' ? 'التحقق' : 'Regex'}
                               />
-                            </UnmountClosed>
-                          </FormControl>
+                              <TextField
+                                fullWidth
+                                disabled={!roles?.regex?.regex}
+                                type='text'
+                                defaultValue={roles?.regex?.message_ar || ''}
+                                onBlur={e => {
+                                  const additional_fields = data.additional_fields ?? []
+                                  const findMyInput = additional_fields.find(inp => inp.key === open.id)
+                                  if (findMyInput) {
+                                    findMyInput.roles.regex.message_ar = e.target.value
+                                  } else {
+                                    const myEdit = {
+                                      key: open.id,
+                                      design: objectToCss(Css).replaceAll('NaN', ''),
+                                      roles: {
+                                        ...roles,
+                                        regex: {
+                                          regex: roles.regex.regex,
+                                          message_ar: e.target.value,
+                                          message_en: roles.regex.message_en
+                                        }
+                                      }
+                                    }
+                                    additional_fields.push(myEdit)
+                                  }
+                                  onChange({ ...data, additional_fields: additional_fields })
+                                }}
+                                variant='filled'
+                                label={locale === 'ar' ? 'نص الخطأ العربي' : 'Regex Message Ar'}
+                              />
+                              <TextField
+                                fullWidth
+                                type='text'
+                                disabled={!roles?.regex?.regex}
+                                defaultValue={roles?.regex?.message_en || ''}
+                                onBlur={e => {
+                                  const additional_fields = data.additional_fields ?? []
+                                  const findMyInput = additional_fields.find(inp => inp.key === open.id)
+                                  if (findMyInput) {
+                                    findMyInput.roles.regex.message_en = e.target.value
+                                  } else {
+                                    const myEdit = {
+                                      key: open.id,
+                                      design: objectToCss(Css).replaceAll('NaN', ''),
+                                      roles: {
+                                        ...roles,
+                                        regex: {
+                                          regex: roles.regex.regex,
+                                          message_ar: roles.regex.message_ar,
+                                          message_en: e.target.value
+                                        }
+                                      }
+                                    }
+                                    additional_fields.push(myEdit)
+                                  }
+                                  onChange({ ...data, additional_fields: additional_fields })
+                                }}
+                                variant='filled'
+                                label={locale === 'ar' ? 'نص الخطأ الانجليزي' : 'Regex Message En'}
+                              />
+                              <div className='mb-2'></div>
+                            </div>
+                          )}
                           <div className='border-t-2 border-dashed border-main-color pt-2'>
                             <h2 className='text-lg font-bold text-main-color mt-2'>
                               {locale === 'ar' ? 'في التغيير' : 'OnChange'}
@@ -941,6 +1334,7 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                               data={data}
                               open={open}
                               Css={Css}
+                              roles={roles}
                             />
                           </div>{' '}
                           <div className='border-t-2 border-dashed border-main-color pt-2'>
@@ -954,59 +1348,208 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                               data={data}
                               open={open}
                               Css={Css}
+                              roles={roles}
                             />
                           </div>
-                          <div className='border-t-2 border-dashed border-main-color pt-2'>
-                            <h2 className='text-lg font-bold text-main-color mt-2'>
-                              {locale === 'ar' ? 'في الخروج من الصفحة' : 'OnUnmount'}
-                            </h2>
-                            <JsEditor
-                              type='onUnmount'
-                              jsCode={roles?.event?.onUnmount ?? ''}
-                              onChange={onChange}
-                              data={data}
-                              open={open}
-                              Css={Css}
-                            />
-                          </div>
+                          {open.type !== 'new_element' && (
+                            <div className='border-t-2 border-dashed border-main-color pt-2'>
+                              <h2 className='text-lg font-bold text-main-color mt-2'>
+                                {locale === 'ar' ? 'في الخروج من الصفحة' : 'OnUnmount'}
+                              </h2>
+                              <JsEditor
+                                type='onUnmount'
+                                jsCode={roles?.event?.onUnmount ?? ''}
+                                onChange={onChange}
+                                data={data}
+                                open={open}
+                                Css={Css}
+                                roles={roles}
+                              />
+                            </div>
+                          )}
                         </div>
                       </UnmountClosed>
                     </div>
-                    <div className='border-2 mt-2 border-main-color  rounded-md '>
-                      <h2
-                        onClick={() => setShowTrigger(!showTrigger)}
-                        className='text-lg font-bold bg-main-color cursor-pointer select-none text-white py-1 text-center px-2 flex items-center justify-between'
-                      >
-                        <IconButton>
-                          <IconifyIcon
-                            className='text-white opacity-0'
-                            icon={showTrigger ? 'mdi:chevron-up' : 'mdi:chevron-down'}
-                          />
-                        </IconButton>
-                        {locale === 'ar' ? 'متابعات' : 'Triggers'}
-                        <IconButton>
-                          <IconifyIcon
-                            className='text-white'
-                            icon={showTrigger ? 'mdi:chevron-up' : 'mdi:chevron-down'}
-                          />
-                        </IconButton>
-                      </h2>
-                      <UnmountClosed isOpened={Boolean(showTrigger)}>
-                        <div className=''>
-                          <div className='flex flex-col gap-2 justify-center items-center py-2 '>
-                            <Button
-                              onClick={() => {
-                                setOpenTrigger(true)
-                              }}
-                              variant='contained'
-                              color='primary'
-                            >
-                              {locale === 'ar' ? 'اضافة متابعة' : 'Add Trigger'}
-                            </Button>
+                    {open.type !== 'new_element' && (
+                      <div className='border-2 mt-2 border-main-color  rounded-md '>
+                        <h2
+                          onClick={() => setShowTrigger(!showTrigger)}
+                          className='text-lg font-bold bg-main-color cursor-pointer select-none text-white py-1 text-center px-2 flex items-center justify-between'
+                        >
+                          <IconButton>
+                            <IconifyIcon
+                              className='text-white opacity-0'
+                              icon={showTrigger ? 'mdi:chevron-up' : 'mdi:chevron-down'}
+                            />
+                          </IconButton>
+                          {locale === 'ar' ? 'متابعات' : 'Triggers'}
+                          <IconButton>
+                            <IconifyIcon
+                              className='text-white'
+                              icon={showTrigger ? 'mdi:chevron-up' : 'mdi:chevron-down'}
+                            />
+                          </IconButton>
+                        </h2>
+                        <UnmountClosed isOpened={Boolean(showTrigger)}>
+                          <div className=''>
+                            <div className='flex flex-col gap-2 justify-center items-center py-2 '>
+                              <Button
+                                onClick={() => {
+                                  setOpenTrigger(true)
+                                }}
+                                variant='contained'
+                                color='primary'
+                              >
+                                {locale === 'ar' ? 'اضافة متابعة' : 'Add Trigger'}
+                              </Button>
+                            </div>
                           </div>
-                        </div>
-                      </UnmountClosed>
-                    </div>
+                        </UnmountClosed>
+                      </div>
+                    )}
+                    {open.type === 'new_element' && (
+                      <div className='border-2 mt-2 border-main-color  rounded-md '>
+                        <h2
+                          onClick={() => setShowTrigger(!showTrigger)}
+                          className='text-lg font-bold bg-main-color cursor-pointer select-none text-white py-1 text-center px-2 flex items-center justify-between'
+                        >
+                          <IconButton>
+                            <IconifyIcon
+                              className='text-white opacity-0'
+                              icon={showTrigger ? 'mdi:chevron-up' : 'mdi:chevron-down'}
+                            />
+                          </IconButton>
+                          {locale === 'ar' ? 'التحكم' : 'Controls'}
+                          <IconButton>
+                            <IconifyIcon
+                              className='text-white'
+                              icon={showTrigger ? 'mdi:chevron-up' : 'mdi:chevron-down'}
+                            />
+                          </IconButton>
+                        </h2>
+                        <UnmountClosed isOpened={Boolean(showTrigger)}>
+                          <div className='px-4'>
+                            <FormControl fullWidth margin='normal'>
+                              <InputLabel>{locale === 'ar' ? 'اخباري' : 'Required'}</InputLabel>
+                              <Select
+                                variant='filled'
+                                value={roles?.onMount?.isRequired ? 'required' : 'optional'}
+                                onChange={e => {
+                                  const additional_fields = data.additional_fields ?? []
+                                  const findMyInput = additional_fields.find(inp => inp.key === open.id)
+                                  if (findMyInput) {
+                                    findMyInput.roles.onMount.isRequired = e.target.value === 'required' ? true : false
+                                  } else {
+                                    const myEdit = {
+                                      key: open.id,
+                                      design: objectToCss(Css).replaceAll('NaN', ''),
+                                      roles: {
+                                        ...roles,
+                                        onMount: {
+                                          ...roles.onMount,
+                                          isRequired: e.target.value === 'required' ? true : false
+                                        }
+                                      }
+                                    }
+                                    additional_fields.push(myEdit)
+                                  }
+                                  onChange({ ...data, additional_fields: additional_fields })
+                                }}
+                              >
+                                <MenuItem value={'required'}>{locale === 'ar' ? 'مطلوب' : 'Required'}</MenuItem>
+                                <MenuItem value={'optional'} selected>
+                                  {locale === 'ar' ? 'اختياري' : 'Optional'}
+                                </MenuItem>
+                              </Select>
+                            </FormControl>
+                            {roles?.onMount?.file ? (
+                              <div className='p-2 my-4 rounded border border-dashed border-main-color'>
+                                <div className='flex items-center justify-between'>
+                                  <div className='flex items-center gap-2'>
+                                    <div className='text-sm'>{roles?.onMount?.file?.replaceAll('/Uploads/', '')}</div>
+                                  </div>
+                                  <Button
+                                    variant='outlined'
+                                    color='error'
+                                    onClick={() => {
+                                      const additional_fields = data.additional_fields ?? []
+                                      const findMyInput = additional_fields.find(inp => inp.key === open.id)
+                                      if (findMyInput) {
+                                        findMyInput.roles.onMount.file = ''
+                                      }
+                                      onChange({ ...data, additional_fields: additional_fields })
+                                    }}
+                                  >
+                                    {locale === 'ar' ? 'حذف' : 'Delete'}
+                                  </Button>
+                                </div>
+                              </div>
+                            ) : (
+                              <>
+                                {' '}
+                                <Button
+                                  variant='outlined'
+                                  className='!mb-4'
+                                  component='label'
+                                  fullWidth
+                                  startIcon={<Icon icon='ph:upload-fill' fontSize='2.25rem' className='!text-2xl ' />}
+                                >
+                                  <input
+                                    type='file'
+                                    hidden
+                                    name='json'
+                                    onChange={event => {
+                                      const file = event.target.files[0]
+                                      console.log(file)
+                                      const loading = toast.loading(locale === 'ar' ? 'جاري الرفع' : 'Uploading...')
+                                      if (file) {
+                                        axiosPost(
+                                          'file/upload',
+                                          'en',
+                                          {
+                                            file: file
+                                          },
+                                          true
+                                        )
+                                          .then(res => {
+                                            console.log(res)
+                                            if (res.status) {
+                                              const additional_fields = data.additional_fields ?? []
+                                              const findMyInput = additional_fields.find(inp => inp.key === open.id)
+                                              if (findMyInput) {
+                                                findMyInput.roles.onMount.file = res.filePath.data
+                                              } else {
+                                                const myEdit = {
+                                                  key: open.id,
+                                                  design: objectToCss(Css).replaceAll('NaN', ''),
+                                                  roles: {
+                                                    ...roles,
+                                                    onMount: {
+                                                      ...roles.onMount,
+                                                      file: res.filePath.data
+                                                    }
+                                                  }
+                                                }
+                                                additional_fields.push(myEdit)
+                                              }
+                                              onChange({ ...data, additional_fields: additional_fields })
+                                            }
+                                          })
+                                          .finally(() => {
+                                            toast.dismiss(loading)
+                                          })
+                                        event.target.value = ''
+                                      }
+                                    }}
+                                  />
+                                  {locale === 'ar' ? 'رفع ملف' : 'upload File'}
+                                </Button>
+                              </>
+                            )}
+                          </div>
+                        </UnmountClosed>
+                      </div>
+                    )}
                   </div>
                 </UnmountClosed>
               </div>

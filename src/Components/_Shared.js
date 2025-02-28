@@ -132,7 +132,7 @@ textarea::placeholder {
   color: #dfdfdf;
 }
       `
-  } else if (type === 'checkbox') {
+  } else if (type === 'checkbox' || type === 'check_box') {
 
     return `
      #parent-input{

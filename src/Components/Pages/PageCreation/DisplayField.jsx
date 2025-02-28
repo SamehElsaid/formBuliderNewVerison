@@ -11,7 +11,7 @@ import Collapse from '@kunukn/react-collapse'
 import { BsPaperclip, BsTrash } from 'react-icons/bs'
 import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'
 import { FaCalendarAlt } from 'react-icons/fa'
-import { data } from 'autoprefixer'
+import NewElement from '../NewElement'
 
 export default function DisplayField({
   input,
@@ -43,6 +43,8 @@ export default function DisplayField({
   const [oldSelectedOptions, setOldSelectedOptions] = useState([])
   const xComponentProps = useMemo(() => input?.options?.uiSchema?.xComponentProps ?? {}, [input])
   const [fileName, setFile] = useState('')
+  const [regex, setRegex] = useState(roles?.regex?.regex)
+  // console.log(errorView, input.id)
 
   const formatDate = (value, format) => {
     const date = new Date(value)
@@ -72,11 +74,13 @@ export default function DisplayField({
       setShowPassword(false)
       setValidations({})
     } else {
-      const dataValidations = {}
-      input.validationData.forEach(item => {
-        dataValidations[item.ruleType] = item.parameters
-      })
-      setValidations(dataValidations)
+      if (input.type !== 'new_element') {
+        const dataValidations = {}
+        input.validationData.forEach(item => {
+          dataValidations[item.ruleType] = item.parameters
+        })
+        setValidations(dataValidations)
+      }
     }
   }, [input])
   const [isDisable, setIsDisable] = useState(null)
@@ -101,14 +105,150 @@ export default function DisplayField({
       }
     }
 
-    if (roles?.trigger?.typeOfValidation === 'disable' && !loading) {
+    // ! Start disable Control
+
+    if (roles?.trigger?.typeOfValidation === 'disable' && !roles?.trigger?.mainValue && !loading) {
       if (dataRef?.current?.[roles?.trigger?.selectedField]?.length !== 0) {
         setIsDisable('disabled')
       } else {
-        setIsDisable(null)
+        setIsDisable(prev => {
+          if (roles?.onMount?.type === 'hide') {
+            return 'hidden'
+          }
+          return null
+        })
       }
     }
-    if (roles?.trigger?.typeOfValidation === 'enable' && !loading) {
+
+    // End disable Control
+
+    // ! Start enable Control
+    if (roles?.trigger?.typeOfValidation === 'enable' && roles?.trigger?.mainValue && !loading) {
+      if (input.fieldCategory === 'Basic') {
+        if (roles?.trigger?.parentKey) {
+          if (dataRef?.current?.[roles?.trigger?.selectedField]) {
+            axiosGet(
+              `generic-entities/${roles?.trigger?.parentKey}/${dataRef?.current?.[roles?.trigger?.selectedField]}`
+            ).then(res => {
+              if (res.status) {
+                const data = res.entities?.[0] ?? false
+                if (data) {
+                  if (roles?.trigger.isEqual === 'equal') {
+                    if (data?.[roles?.trigger?.triggerKey] !== roles?.trigger?.mainValue) {
+                      setIsDisable(prev => {
+                        if (roles?.onMount?.type === 'disable') {
+                          return 'disabled'
+                        }
+                        return null
+                      })
+                    } else {
+                      setIsDisable('enable')
+                    }
+                  } else {
+                    if (data?.[roles?.trigger?.triggerKey] === roles?.trigger?.mainValue) {
+                      setIsDisable(prev => {
+                        if (roles?.onMount?.type === 'disable') {
+                          return 'disabled'
+                        }
+                        return null
+                      })
+                    } else {
+                      setIsDisable('enable')
+                    }
+                  }
+                }
+              }
+            })
+          }
+        } else {
+          if (roles?.trigger.isEqual === 'equal') {
+            if (dataRef?.current?.[roles?.trigger?.selectedField] !== roles?.trigger?.mainValue) {
+              setIsDisable(prev => {
+                if (roles?.onMount?.type === 'disable') {
+                  return 'disabled'
+                }
+                return null
+              })
+            } else {
+              setIsDisable('enable')
+            }
+          } else {
+            if (dataRef?.current?.[roles?.trigger?.selectedField] === roles?.trigger?.mainValue) {
+              setIsDisable(prev => {
+                if (roles?.onMount?.type === 'disable') {
+                  return 'disabled'
+                }
+                return null
+              })
+            } else {
+              setIsDisable('enable')
+            }
+          }
+        }
+      } else {
+        if (roles?.trigger?.parentKey) {
+          if (dataRef?.current?.[roles?.trigger?.selectedField]) {
+            axiosGet(
+              `generic-entities/${roles?.trigger?.parentKey}/${dataRef?.current?.[roles?.trigger?.selectedField]}`
+            ).then(res => {
+              if (res.status) {
+                const data = res.entities?.[0] ?? false
+                if (data) {
+                  if (roles?.trigger.isEqual === 'equal') {
+                    if (data?.[roles?.trigger?.triggerKey] !== roles?.trigger?.mainValue) {
+                      setIsDisable(prev => {
+                        if (roles?.onMount?.type === 'disable') {
+                          return 'disabled'
+                        }
+                        return null
+                      })
+                    } else {
+                      setIsDisable('enable')
+                    }
+                  } else {
+                    if (data?.[roles?.trigger?.triggerKey] === roles?.trigger?.mainValue) {
+                      setIsDisable(prev => {
+                        if (roles?.onMount?.type === 'disable') {
+                          return 'disabled'
+                        }
+                        return null
+                      })
+                    } else {
+                      setIsDisable('enable')
+                    }
+                  }
+                }
+              }
+            })
+          }
+        } else {
+          if (roles?.trigger.isEqual === 'equal') {
+            if (dataRef?.current?.[roles?.trigger?.selectedField] !== roles?.trigger?.mainValue) {
+              setIsDisable(prev => {
+                if (roles?.onMount?.type === 'disable') {
+                  return 'disabled'
+                }
+                return null
+              })
+            } else {
+              setIsDisable('enable')
+            }
+          } else {
+            if (dataRef?.current?.[roles?.trigger?.selectedField] === roles?.trigger?.mainValue) {
+              setIsDisable(prev => {
+                if (roles?.onMount?.type === 'disable') {
+                  return 'disabled'
+                }
+                return null
+              })
+            } else {
+              setIsDisable('enable')
+            }
+          }
+        }
+      }
+    }
+    if (roles?.trigger?.typeOfValidation === 'enable' && !roles?.trigger?.mainValue && !loading) {
       if (dataRef?.current?.[roles?.trigger?.selectedField]?.length !== 0) {
         setIsDisable('enable')
       } else {
@@ -120,7 +260,165 @@ export default function DisplayField({
         })
       }
     }
-    if (roles?.trigger?.typeOfValidation === 'empty' && !loading) {
+
+    //  End enable Control
+
+    // ! Start Empty Control
+    if (roles?.trigger?.typeOfValidation === 'empty' && roles?.trigger?.mainValue && !loading) {
+      if (input.fieldCategory === 'Basic') {
+        if (roles?.trigger?.parentKey) {
+          if (dataRef?.current?.[roles?.trigger?.selectedField]) {
+            axiosGet(
+              `generic-entities/${roles?.trigger?.parentKey}/${dataRef?.current?.[roles?.trigger?.selectedField]}`
+            ).then(res => {
+              if (res.status) {
+                const data = res.entities?.[0] ?? false
+                if (data) {
+                  if (roles?.trigger.isEqual === 'equal') {
+                    if (data?.[roles?.trigger?.triggerKey] === roles?.trigger?.mainValue) {
+                      setLastValue(true)
+                      if (!lastValue) {
+                        if (typeof value === 'object') {
+                          setValue([])
+                        } else {
+                          setValue('')
+                        }
+                      }
+                    } else {
+                      setLastValue(false)
+                    }
+                  } else {
+                    if (data?.[roles?.trigger?.triggerKey] !== roles?.trigger?.mainValue) {
+                      if (typeof value === 'object') {
+                        setValue([])
+                      } else {
+                        setValue('')
+                      }
+                    }
+                  }
+                }
+              } else {
+                if (roles?.trigger.isEqual !== 'equal') {
+                  if (typeof value === 'object') {
+                    setValue([])
+                  } else {
+                    setValue('')
+                  }
+                }
+              }
+            })
+          } else {
+            if (roles?.trigger.isEqual !== 'equal') {
+              if (typeof value === 'object') {
+                setValue([])
+              } else {
+                setValue('')
+              }
+            }
+          }
+        } else {
+          if (roles?.trigger.isEqual === 'equal') {
+            if (dataRef?.current?.[roles?.trigger?.selectedField] === roles?.trigger?.mainValue) {
+              setLastValue(true)
+              if (!lastValue) {
+                if (typeof value === 'object') {
+                  setValue([])
+                } else {
+                  setValue('')
+                }
+              }
+            } else {
+              setLastValue(false)
+            }
+          } else {
+            if (dataRef?.current?.[roles?.trigger?.selectedField] !== roles?.trigger?.mainValue) {
+              if (typeof value === 'object') {
+                setValue([])
+              } else {
+                setValue('')
+              }
+            }
+          }
+        }
+      } else {
+        if (roles?.trigger?.parentKey) {
+          if (dataRef?.current?.[roles?.trigger?.selectedField]) {
+            axiosGet(
+              `generic-entities/${roles?.trigger?.parentKey}/${dataRef?.current?.[roles?.trigger?.selectedField]}`
+            ).then(res => {
+              if (res.status) {
+                const data = res.entities?.[0] ?? false
+                if (data) {
+                  if (roles?.trigger.isEqual === 'equal') {
+                    if (data?.[roles?.trigger?.triggerKey] === roles?.trigger?.mainValue) {
+                      setLastValue(true)
+                      if (!lastValue) {
+                        if (typeof value === 'object') {
+                          setValue([])
+                        } else {
+                          setValue('')
+                        }
+                      }
+                    } else {
+                      setLastValue(false)
+                    }
+                  } else {
+                    if (data?.[roles?.trigger?.triggerKey] !== roles?.trigger?.mainValue) {
+                      if (typeof value === 'object') {
+                        setValue([])
+                      } else {
+                        setValue('')
+                      }
+                    }
+                  }
+                }
+              } else {
+                if (roles?.trigger.isEqual !== 'equal') {
+                  if (typeof value === 'object') {
+                    setValue([])
+                  } else {
+                    setValue('')
+                  }
+                }
+              }
+            })
+          } else {
+            if (roles?.trigger.isEqual !== 'equal') {
+              if (typeof value === 'object') {
+                setValue([])
+              } else {
+                setValue('')
+              }
+            }
+          }
+        } else {
+          if (roles?.trigger.isEqual === 'equal') {
+            if (dataRef?.current?.[roles?.trigger?.selectedField] === roles?.trigger?.mainValue) {
+              setLastValue(true)
+              if (!lastValue) {
+                if (typeof value === 'object') {
+                  setValue([])
+                } else {
+                  setValue('')
+                }
+              }
+            } else {
+              setLastValue(false)
+            }
+          } else {
+            if (dataRef?.current?.[roles?.trigger?.selectedField] !== roles?.trigger?.mainValue) {
+              if (typeof value === 'object') {
+                setValue([])
+              } else {
+                setValue('')
+              }
+            }
+          }
+        }
+      }
+    }
+
+    if (roles?.trigger?.typeOfValidation === 'empty' && !roles?.trigger?.mainValue && !loading) {
       setLastValue(dataRef?.current?.[roles?.trigger?.selectedField])
       if (dataRef?.current?.[roles?.trigger?.selectedField] !== lastValue) {
         if (typeof value === 'object') {
@@ -130,15 +428,212 @@ export default function DisplayField({
         }
       }
     }
-  }, [roles, loading, triggerData])
+    //  End Empty Control
 
-  useEffect(() => {
-    if (typeof value === 'object') {
-      setValue([])
-    } else {
-      setValue('')
+    // ! Start hidden Control
+    if (roles?.trigger?.typeOfValidation === 'hidden' && roles?.trigger?.mainValue && !loading) {
+      if (input.fieldCategory === 'Basic') {
+        if (roles?.trigger?.parentKey) {
+          if (dataRef?.current?.[roles?.trigger?.selectedField]) {
+            axiosGet(
+              `generic-entities/${roles?.trigger?.parentKey}/${dataRef?.current?.[roles?.trigger?.selectedField]}`
+            ).then(res => {
+              if (res.status) {
+                const data = res.entities?.[0] ?? false
+                if (data) {
+                  if (roles?.trigger.isEqual === 'equal') {
+                    if (data?.[roles?.trigger?.triggerKey] !== roles?.trigger?.mainValue) {
+                      setIsDisable(null)
+                    } else {
+                      setIsDisable('hidden')
+                    }
+                  } else {
+                    if (data?.[roles?.trigger?.triggerKey] === roles?.trigger?.mainValue) {
+                      setIsDisable(null)
+                    } else {
+                      setIsDisable('hidden')
+                    }
+                  }
+                }
+              }
+            })
+          } else {
+            if (roles?.trigger?.isEqual !== 'equal') {
+              setIsDisable('hidden')
+            }
+          }
+        } else {
+          if (roles?.trigger.isEqual === 'equal') {
+            if (dataRef?.current?.[roles?.trigger?.selectedField] !== roles?.trigger?.mainValue) {
+              setIsDisable(null)
+            } else {
+              setIsDisable('hidden')
+            }
+          } else {
+            if (dataRef?.current?.[roles?.trigger?.selectedField] === roles?.trigger?.mainValue) {
+              setIsDisable(null)
+            } else {
+              setIsDisable('hidden')
+            }
+          }
+        }
+      } else {
+        if (roles?.trigger?.parentKey) {
+          if (dataRef?.current?.[roles?.trigger?.selectedField]) {
+            axiosGet(
+              `generic-entities/${roles?.trigger?.parentKey}/${dataRef?.current?.[roles?.trigger?.selectedField]}`
+            ).then(res => {
+              if (res.status) {
+                const data = res.entities?.[0] ?? false
+                if (data) {
+                  if (roles?.trigger.isEqual === 'equal') {
+                    if (data?.[roles?.trigger?.triggerKey] !== roles?.trigger?.mainValue) {
+                      setIsDisable(null)
+                    } else {
+                      setIsDisable('hidden')
+                    }
+                  } else {
+                    if (data?.[roles?.trigger?.triggerKey] === roles?.trigger?.mainValue) {
+                      setIsDisable(null)
+                    } else {
+                      setIsDisable('hidden')
+                    }
+                  }
+                }
+              }
+            })
+          }
+        } else {
+          if (roles?.trigger.isEqual === 'equal') {
+            if (dataRef?.current?.[roles?.trigger?.selectedField] !== roles?.trigger?.mainValue) {
+              setIsDisable(null)
+            } else {
+              setIsDisable('hidden')
+            }
+          } else {
+            if (dataRef?.current?.[roles?.trigger?.selectedField] === roles?.trigger?.mainValue) {
+              setIsDisable(null)
+            } else {
+              setIsDisable('hidden')
+            }
+          }
+        }
+      }
     }
-  }, [isDisable])
+    if (roles?.trigger?.typeOfValidation === 'hidden' && !roles?.trigger?.mainValue && !loading) {
+      if (dataRef?.current?.[roles?.trigger?.selectedField]?.length !== 0) {
+        setIsDisable('hidden')
+      } else {
+        setIsDisable(prev => {
+          if (roles?.onMount?.type === 'hide') {
+            return 'hidden'
+          }
+          return null
+        })
+      }
+    }
+    //  End hidden Control
+
+    // ! Start Visible Control
+    if (roles?.trigger?.typeOfValidation === 'visible' && roles?.trigger?.mainValue && !loading) {
+      if (input.fieldCategory === 'Basic') {
+        if (roles?.trigger?.parentKey) {
+          if (dataRef?.current?.[roles?.trigger?.selectedField]) {
+            axiosGet(
+              `generic-entities/${roles?.trigger?.parentKey}/${dataRef?.current?.[roles?.trigger?.selectedField]}`
+            ).then(res => {
+              if (res.status) {
+                const data = res.entities?.[0] ?? false
+                if (data) {
+                  if (roles?.trigger.isEqual === 'equal') {
+                    if (data?.[roles?.trigger?.triggerKey] === roles?.trigger?.mainValue) {
+                      setIsDisable(null)
+                    } else {
+                      setIsDisable('hidden')
+                    }
+                  } else {
+                    if (data?.[roles?.trigger?.triggerKey] !== roles?.trigger?.mainValue) {
+                      setIsDisable(null)
+                    } else {
+                      setIsDisable('hidden')
+                    }
+                  }
+                }
+              }
+            })
+          }
+        } else {
+          if (roles?.trigger.isEqual === 'equal') {
+            if (dataRef?.current?.[roles?.trigger?.selectedField] === roles?.trigger?.mainValue) {
+              setIsDisable(null)
+            } else {
+              setIsDisable('hidden')
+            }
+          } else {
+            if (dataRef?.current?.[roles?.trigger?.selectedField] !== roles?.trigger?.mainValue) {
+              setIsDisable(null)
+            } else {
+              setIsDisable('hidden')
+            }
+          }
+        }
+      } else {
+        if (roles?.trigger?.parentKey) {
+          if (dataRef?.current?.[roles?.trigger?.selectedField]) {
+            axiosGet(
+              `generic-entities/${roles?.trigger?.parentKey}/${dataRef?.current?.[roles?.trigger?.selectedField]}`
+            ).then(res => {
+              if (res.status) {
+                const data = res.entities?.[0] ?? false
+                if (data) {
+                  if (roles?.trigger.isEqual === 'equal') {
+                    if (data?.[roles?.trigger?.triggerKey] === roles?.trigger?.mainValue) {
+                      setIsDisable(null)
+                    } else {
+                      setIsDisable('hidden')
+                    }
+                  } else {
+                    if (data?.[roles?.trigger?.triggerKey] !== roles?.trigger?.mainValue) {
+                      setIsDisable(null)
+                    } else {
+                      setIsDisable('hidden')
+                    }
+                  }
+                }
+              }
+            })
+          }
+        } else {
+          if (roles?.trigger.isEqual === 'equal') {
+            if (dataRef?.current?.[roles?.trigger?.selectedField] === roles?.trigger?.mainValue) {
+              setIsDisable(null)
+            } else {
+              setIsDisable('hidden')
+            }
+          } else {
+            if (dataRef?.current?.[roles?.trigger?.selectedField] !== roles?.trigger?.mainValue) {
+              setIsDisable(null)
+            } else {
+              setIsDisable('hidden')
+            }
+          }
+        }
+      }
+    }
+    if (roles?.trigger?.typeOfValidation === 'visible' && !roles?.trigger?.mainValue && !loading) {
+      if (dataRef?.current?.[roles?.trigger?.selectedField]?.length !== 0) {
+        setIsDisable('visible')
+      } else {
+        setIsDisable(prev => {
+          if (roles?.onMount?.type === 'hide') {
+            return 'hidden'
+          }
+          return null
+        })
+      }
+    }
+    // End Visible Control
+  }, [roles, loading, triggerData])
 
   useEffect(() => {
     if (!roles?.event?.onUnmount) {
@@ -185,6 +680,7 @@ export default function DisplayField({
       if (input?.type === 'ManyToMany') {
         setValue([])
       }
+      setRegex('')
       setFile('')
       setError(false)
       setDirty(false)
@@ -201,8 +697,16 @@ export default function DisplayField({
         if (roles?.onMount?.type === 'enable') {
           setIsDisable('enable')
         }
-        if (roles?.onMount?.type === 'write Data') {
-          setValue(roles?.onMount?.value)
+        if (roles?.onMount?.type === 'hide') {
+          setIsDisable('hidden')
+        }
+
+        if (roles?.onMount?.value) {
+          if (roles?.api_url) {
+            setValue(roles?.apiKeyData)
+          } else {
+            setValue(roles?.onMount?.value)
+          }
         }
       }, 0)
     }
@@ -242,6 +746,21 @@ export default function DisplayField({
       if (validations.Required && e?.target?.value?.length === 0 && isTypeNew) {
         return setError('Required')
       }
+      if (regex) {
+        // Remove surrounding quotes if present
+        const cleanedRegex = regex.replace(/^"(.*)"$/, '$1')
+        // Extract pattern and flags from the regex string
+        const regexMatch = cleanedRegex.match(/^\/(.*)\/([gimuy]*)$/)
+        if (!regexMatch) {
+          console.error('Invalid regex format:', cleanedRegex)
+          return
+        }
+        const [, pattern, flags] = regexMatch
+        const regExp = new RegExp(pattern, flags)
+        if (!regExp.test(e?.target?.value)) {
+          return setError(locale === 'ar' ? roles?.regex?.message_ar : roles?.regex?.message_en)
+        }
+      }
 
       if (input.type === 'Phone' && validations.Required && e?.length === 0 && isTypeNew) {
         return setError('Required')
@@ -268,17 +787,16 @@ export default function DisplayField({
       }
 
       if (validations.MinLength && e?.target?.value?.length < +validations?.MinLength?.minLength) {
-        return setError('Min Length')
+        return setError('Min_Length')
       }
 
       if (validations.MaxLength && e?.target?.value?.length > +validations?.MaxLength?.maxLength) {
-        return setError('Max Length')
+        return setError('Max_Length')
       }
 
       setError(false)
     }
   }
-
   useEffect(() => {
     if (!input) return
     let errorWithoutDirty = []
@@ -292,6 +810,24 @@ export default function DisplayField({
       errorWithoutDirty.push(true)
       errorMessages.push('Invalid_Email')
     }
+
+    if (regex) {
+      // Remove surrounding quotes if present
+      const cleanedRegex = regex.replace(/^"(.*)"$/, '$1')
+      // Extract pattern and flags from the regex string
+      const regexMatch = cleanedRegex.match(/^\/(.*)\/([gimuy]*)$/)
+      if (!regexMatch) {
+        console.error('Invalid regex format:', cleanedRegex)
+        return
+      }
+      const [, pattern, flags] = regexMatch
+      const regExp = new RegExp(pattern, flags)
+      if (!regExp.test(value)) {
+        errorWithoutDirty.push(true)
+        errorMessages.push(locale === 'ar' ? roles?.regex?.message_ar : roles?.regex?.message_en)
+      }
+    }
+
     if (
       input.type === 'URL' &&
       !/^(https?:\/\/)?(www\.)?[a-zA-Z0-9@:%._\+~#?&//=]{2,256}\.[a-z]{2,4}\b([-a-zA-Z0-9@:%._\+~#?&//=]*)$/i.test(
@@ -322,21 +858,22 @@ export default function DisplayField({
             showTime: 'false'
           }
 
-          dataRef.current[input.key] = value ?? formatDate(value, lable.format)
+          dataRef.current[input.type === 'new_element' ? input.id : input.key] =
+            value ?? formatDate(value, lable.format)
         } catch (error) {
-          dataRef.current[input.key] = ''
+          dataRef.current[input.type === 'new_element' ? input.id : input.key] = ''
         }
       } else {
-        dataRef.current[input.key] = value
+        dataRef.current[input.type === 'new_element' ? input.id : input.key] = value
       }
-      if(setTriggerData){
+      if (setTriggerData) {
         setTriggerData(prev => prev + 1)
       }
     }
     if (refError) {
       refError.current = {
         ...refError.current,
-        [input.key]: errorWithoutDirty.includes(true) ? errorMessages : false
+        [input.type === 'new_element' ? input.id : input.key]: errorWithoutDirty.includes(true) ? errorMessages : false
       }
     }
   }, [refError, input, value, dataRef, validations, setTriggerData])
@@ -370,25 +907,38 @@ export default function DisplayField({
   }, [input])
 
   const errorRefHeight = useRef(null)
+
   useEffect(() => {
+    console.log('hre', layout)
+
     if (layout) {
       if (errorView || error) {
         if (errorRefHeight.current) {
           setLayout(prev =>
             prev.map(ele =>
-              ele.i === input.id
-                ? { ...ele, h: (mainRef.current.scrollHeight + errorRefHeight.current.scrollHeight) / 71 }
+              `${ele.i}` === `${input.id}`
+                ? {
+                    ...ele,
+                    h:
+                      ((isDisable === 'hidden' && !readOnly ? 0 : mainRef.current.scrollHeight) +
+                        errorRefHeight.current.scrollHeight) /
+                      71
+                  }
                 : ele
             )
           )
         }
       } else {
-        setLayout(prev =>
-          prev.map(ele => (ele.i === input.id ? { ...ele, h: mainRef.current.scrollHeight / 71 } : ele))
-        )
+        setLayout(prev => {
+          return prev.map(ele =>
+            `${ele.i}` === `${input.id}`
+              ? { ...ele, h: isDisable === 'hidden' && !readOnly ? 0 : mainRef.current.scrollHeight / 71 }
+              : ele
+          )
+        })
       }
     }
-  }, [errorView, error])
+  }, [errorView, error, isDisable, readOnly, layout?.length])
 
   const mainRef = useRef()
 
@@ -445,13 +995,15 @@ export default function DisplayField({
       reader.onerror = error => reject(error)
     })
   }
-  if (input.nameEn === 'previous job') {
-    console.log(roles)
-  }
 
   return (
-    <div className='reset' id={input.key.trim() + input.nameEn.trim().replaceAll(' ', '')}>
-      <style>{`#${input.key.trim() + input.nameEn.trim().replaceAll(' ', '')} {
+    <div
+      className={`reset ${isDisable === 'hidden' && !readOnly ? 'hidden' : ''} relative`}
+      id={input.type === 'new_element' ? `s${input.id}` : input.key.trim() + input.nameEn.trim().replaceAll(' ', '')}
+    >
+      <style>{`#${
+        input.type === 'new_element' ? `s${input.id}` : input.key.trim() + input.nameEn.trim().replaceAll(' ', '')
+      } {
         ${design}
       }`}</style>
       <div ref={mainRef} id='parent-input'>
@@ -459,25 +1011,35 @@ export default function DisplayField({
           <div>{input.type !== 'File' && label}</div>
         </div>
         <div className='relative' style={{ display: 'flex' }}>
-          <ViewInput
-            input={input}
-            xComponentProps={xComponentProps}
-            readOnly={readOnly}
-            value={value}
-            onBlur={roles?.event?.onBlur}
-            onChange={onChange}
-            onChangeFile={onChangeFile}
-            fileName={fileName}
-            locale={locale}
-            findError={findError}
-            selectedOptions={selectedOptions}
-            isDisable={isDisable}
-            errorView={errorView}
-            handleDelete={handleDelete}
-            error={error}
-            setShowPassword={setShowPassword}
-            showPassword={showPassword}
-          />
+          {isDisable === 'hidden' && readOnly && (
+            <div className='absolute inset-0 bg-white/50 z-10 rounded-md text-sm text-gray-500 flex items-center justify-center'>
+              {locale === 'ar' ? 'حقل مخفي' : 'Hidden Input'}
+            </div>
+          )}
+          {input.type === 'new_element' ? (
+            <NewElement input={input} roles={roles} onChangeEvent={roles?.event?.onChange} onBlur={roles?.event?.onBlur} value={value} setValue={setValue} />
+          ) : (
+            <ViewInput
+              input={input}
+              xComponentProps={xComponentProps}
+              readOnly={readOnly}
+              value={value}
+              onBlur={roles?.event?.onBlur}
+              onChange={onChange}
+              onChangeFile={onChangeFile}
+              fileName={fileName}
+              locale={locale}
+              findError={findError}
+              selectedOptions={selectedOptions}
+              isDisable={isDisable}
+              placeholder={locale === 'ar' ? roles?.placeholder?.placeholder_ar : roles?.placeholder?.placeholder_en}
+              errorView={errorView}
+              handleDelete={handleDelete}
+              error={error}
+              setShowPassword={setShowPassword}
+              showPassword={showPassword}
+            />
+          )}
         </div>
       </div>
       <Collapse transition={`height 300ms cubic-bezier(.4, 0, .2, 1)`} isOpen={Boolean(errorView || error)}>
@@ -504,6 +1066,7 @@ const ViewInput = ({
   setShowPassword,
   selectedOptions,
   isDisable,
+  placeholder,
   onBlur
 }) => {
   const ExampleCustomInput = forwardRef(({ value, onClick }, ref) => {
@@ -570,6 +1133,7 @@ const ViewInput = ({
               evaluatedFn(e)
             }
           }}
+          placeholder={placeholder}
           disabled={isDisable === 'disabled'}
           onKeyDown={handleKeyDown}
           onWheel={handleWheel}
@@ -602,6 +1166,7 @@ const ViewInput = ({
           onChange(e)
         }}
         rows={4}
+        placeholder={placeholder}
         disabled={isDisable === 'disabled'}
         className={`${errorView || error ? 'error' : ''} `}
         style={{ transition: '0.3s' }}

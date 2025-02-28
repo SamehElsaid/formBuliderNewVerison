@@ -10,6 +10,7 @@ import InputControlDesign from './InputControlDesign'
 import GridLayout, { WidthProvider } from 'react-grid-layout'
 import 'react-grid-layout/css/styles.css'
 import 'react-resizable/css/styles.css'
+import { DefaultStyle } from 'src/Components/_Shared'
 
 const ResponsiveGridLayout = WidthProvider(GridLayout)
 
@@ -25,16 +26,25 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
   const { push } = useRouter()
 
   const [layout, setLayout] = useState()
+  const addMoreElement = data.addMoreElement ?? []
+  const dataLength = getFields.length + addMoreElement.length
+  console.log(data?.layout)
 
   useEffect(() => {
     if (!loading) {
-      if (data?.layout?.length === getFields.length) {
-        setLayout(data.layout)
+      if (
+        data?.layout?.length ===
+        [...getFields.filter(filed => data?.selected?.includes(filed?.key)), ...addMoreElement].length
+      ) {
+        console.log('سامح')
+        console.log(data?.layout)
+        setLayout([...data.layout])
       } else {
-        setLayout(
-          getFields
-            .filter(filed => data?.selected?.includes(filed?.key))
-            .map((item, index) => {
+        console.log('السيد')
+
+        console.log({
+          here: [...getFields.filter(filed => data?.selected?.includes(filed?.key)), ...addMoreElement].map(
+            (item, index) => {
               return {
                 i: item.id,
                 x: 0,
@@ -42,11 +52,24 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
                 w: 12,
                 h: item.type === 'LongText' ? 1.8 : 1
               }
-            })
+            }
+          )
+        })
+
+        setLayout(
+          [...getFields.filter(filed => data?.selected?.includes(filed?.key)), ...addMoreElement].map((item, index) => {
+            return {
+              i: item.id,
+              x: 0,
+              y: index,
+              w: 12,
+              h: item.type === 'LongText' ? 1.8 : 1
+            }
+          })
         )
       }
     }
-  }, [getFields.length, loading, data?.selected])
+  }, [loading, data?.selected, dataLength])
 
   useEffect(() => {
     if (data.collectionId) {
@@ -65,9 +88,12 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
 
   const handleSubmit = e => {
     e.preventDefault()
+    const sendData = { ...dataRef.current }
+
     if (data.type_of_sumbit === '' || (data.type_of_sumbit === 'api' && !data.submitApi)) {
       return
     }
+
     const errors = []
     if (refError.current) {
       for (const key in refError.current) {
@@ -76,12 +102,30 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
         }
       }
     }
+    console.log(refError.current)
+
+    addMoreElement.forEach(ele => {
+      console.log(ele)
+      const additionalFields = data.additional_fields ?? []
+      const additionalFieldFind = additionalFields.find(e => e.key === ele.id)
+      console.log(additionalFieldFind, additionalFields)
+
+      if (additionalFieldFind?.roles?.onMount?.isRequired && ele.key === 'check_box') {
+        if (!dataRef?.current?.[ele.id]) {
+          refError.current[ele.id] = ['Required']
+          errors.push(refError.current[ele.id])
+        }
+      }
+
+      delete sendData[`${ele.id}`]
+    })
+
     if (errors.find(ele => typeof ele === 'object')) {
       return setErrors(refError.current)
     }
 
+    return
     setLoadingSubmit(true)
-    const sendData = { ...dataRef.current }
 
     axiosPost(
       data.type_of_sumbit === 'collection' ? `generic-entities/${data.collectionName}` : data.submitApi,
@@ -107,11 +151,18 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
   const handleClose = () => {
     setOpen(false)
   }
-
-  const design =
-    data?.additional_fields?.find(ele => ele.key === open?.id)?.design ??
-    open?.options?.uiSchema?.xComponentProps?.cssClass ??
-    ``
+  const defaultDesign =
+    open?.type === 'new_element' ? DefaultStyle(open?.key) : open?.options?.uiSchema?.xComponentProps?.cssClass
+  let additionalField = null
+  const additionalFieldDesign = data?.additional_fields?.find(ele => ele.key === open?.id)?.design
+  if (additionalFieldDesign) {
+    if (additionalFieldDesign.length === 0) {
+      additionalField = null
+    } else {
+      additionalField = additionalFieldDesign
+    }
+  }
+  const design = additionalField ?? defaultDesign ?? ``
 
   const roles = data?.additional_fields?.find(ele => ele.key === open?.id)?.roles ?? {
     onMount: { type: '', value: '' },
@@ -122,16 +173,36 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
       isEqual: 'equal',
       currentField: 'id'
     },
-    event: {}
+    placeholder: {
+      placeholder_ar: '',
+      placeholder_en: ''
+    },
+    event: {},
+    regex: {
+      regex: '',
+      message_ar: '',
+      message_en: ''
+    },
+    api_url: '',
+    apiKeyData: ''
   }
 
-  // const design =  open?.options?.uiSchema?.xComponentProps?.cssClass ?? ``
   const getDesign = useCallback(
     (key, field) => {
-      const design =
-        data?.additional_fields?.find(ele => ele.key === key)?.design ??
-        field?.options?.uiSchema?.xComponentProps?.cssClass ??
-        ``
+      const defaultDesign =
+        field?.type === 'new_element' ? DefaultStyle(field?.key) : field?.options?.uiSchema?.xComponentProps?.cssClass
+
+      let additionalField = null
+      const additionalFieldDesign = data?.additional_fields?.find(ele => ele.key === key)?.design
+      if (additionalFieldDesign) {
+        if (additionalFieldDesign.length === 0) {
+          additionalField = null
+        } else {
+          additionalField = additionalFieldDesign
+        }
+      }
+
+      const design = additionalField ?? defaultDesign ?? ``
 
       return design
     },
@@ -139,6 +210,8 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
   )
 
   const refTest = useRef()
+
+  // console.log(layout);
 
   return (
     <div className={`${disabled ? 'text-main' : ''}`}>
@@ -159,7 +232,7 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
       ) : (
         <form
           className={readOnly ? 'w-[calc(100%)]' : 'w-[calc(100%-107px)]'}
-          onFocus={() => setErrors(false)}
+          onClick={() => setErrors(false)}
           onSubmit={handleSubmit}
         >
           <ResponsiveGridLayout
@@ -169,6 +242,8 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
             cols={12}
             rowHeight={71}
             onLayoutChange={newLayout => {
+              console.log(newLayout)
+
               setLayout(newLayout)
               onChange({ ...data, layout: newLayout })
             }}
@@ -177,54 +252,66 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
             isDraggable={!readOnly}
             margin={[10, 10]} // هامش بين العناصر
           >
-            {getFields
-              .filter(filed => data?.selected?.includes(filed?.key))
-              .map(filed => (
-                <div key={filed.id} className='relative w-full drag-handle'>
-                  {!readOnly && (
-                    <div
-                      onContextMenu={e => {
-                        e.preventDefault()
-                        setOpen(filed)
-                      }}
-                      className='absolute inset-0 z-20'
-                    ></div>
-                  )}
-                  <DisplayField
-                    input={filed}
-                    design={getDesign(filed.id, filed)}
-                    readOnly={disabled}
-                    refError={refError}
-                    setLayout={setLayout}
-                    triggerData={triggerData}
-                    data={data}
-                    layout={layout}
-                    onChangeData={onChange}
-                    dataRef={dataRef}
-                    setTriggerData={setTriggerData}
-                    roles={
-                      data?.additional_fields?.find(ele => ele.key === filed.id)?.roles ?? {
-                        onMount: { type: '', value: '' },
-                        trigger: {
-                          selectedField: null,
-                          triggerKey: null,
-                          typeOfValidation: null,
-                          isEqual: 'equal',
-                          currentField: 'id'
-                        },
-                        event: {
-                          onChange: '',
-                          onBlur: '',
-                          onUnmount: ''
-                        }
+            {[...getFields.filter(filed => data?.selected?.includes(filed?.key)), ...addMoreElement].map(filed => (
+              <div key={filed.id} className='relative w-full drag-handle'>
+                {!readOnly && (
+                  <div
+                    onContextMenu={e => {
+                      e.preventDefault()
+                      setOpen(filed)
+                    }}
+                    className='absolute inset-0 z-20'
+                  ></div>
+                )}
+                <DisplayField
+                  input={filed}
+                  design={getDesign(filed.id, filed)}
+                  readOnly={disabled}
+                  // settingReadOnly={readOnly}
+                  refError={refError}
+                  setLayout={setLayout}
+                  triggerData={triggerData}
+                  data={data}
+                  layout={layout}
+                  onChangeData={onChange}
+                  dataRef={dataRef}
+                  setTriggerData={setTriggerData}
+                  roles={
+                    data?.additional_fields?.find(ele => ele.key === filed.id)?.roles ?? {
+                      onMount: { type: '', value: '' },
+                      placeholder: {
+                        placeholder_ar: '',
+                        placeholder_en: ''
+                      },
+                      trigger: {
+                        selectedField: null,
+                        triggerKey: null,
+                        typeOfValidation: null,
+                        isEqual: 'equal',
+                        currentField: 'Id',
+                        mainValue: '',
+                        parentKey: ''
+                      },
+                      event: {
+                        onChange: '',
+                        onBlur: '',
+                        onUnmount: ''
+                      },
+                      regex: {
+                        regex: '',
+                        message_ar: '',
+                        message_en: ''
                       }
                     }
-                    reload={reload}
-                    errorView={errors?.[filed.key]?.[0]}
-                    findError={errors && typeof errors?.[filed.key] === 'object'}
-                  />
-                </div>
-              ))}
+                  }
+                  reload={reload}
+                  errorView={errors?.[filed.type === 'new_element' ? filed.id : filed.key]?.[0]}
+                  findError={
+                    errors && typeof errors?.[filed.type === 'new_element' ? filed.id : filed.key] === 'object'
+                  }
+                />
+              </div>
+            ))}
           </ResponsiveGridLayout>
           {/* {!readOnly ? (
           ) : (

@@ -81,9 +81,7 @@ export const axiosPost = async (url, locale, data, file, close) => {
       }
     })
 
-
-
-    if (!fetchData.data.isSuccess) {
+    if (!fetchData.data.isSuccess && !file) {
       throw new Error(fetchData.data.message)
     }
 
@@ -233,7 +231,6 @@ export const validateMediaFile = (file, locale) => {
   // If all conditions are met
   return { isValid: true }
 }
-
 
 export const typeOfFile = file => {
   if (

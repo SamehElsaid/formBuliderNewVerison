@@ -4,7 +4,7 @@ import cssbeautify from 'cssbeautify'
 import { Button } from '@mui/material'
 import { useIntl } from 'react-intl'
 
-const CssEditor = ({ data, onChange, Css, open }) => {
+const CssEditor = ({ data, onChange, Css, open, roles }) => {
   const { locale } = useIntl()
 
   const handleChange = value => {
@@ -16,10 +16,13 @@ const CssEditor = ({ data, onChange, Css, open }) => {
       console.log('sds2')
       findMyInput.design = value
     } else {
-      const myEdit = { key: open.id, design: value, roles: { trigger: '', onMount: { type: '', value: '' } } }
+      const myEdit = {
+        key: open.id,
+        design: value,
+        roles: { ...roles }
+      }
       additional_fields.push(myEdit)
     }
-    console.log('data')
 
     onChange({ ...data, additional_fields: additional_fields })
   }

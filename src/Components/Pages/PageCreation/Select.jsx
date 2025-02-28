@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import {
   Autocomplete,
+  Button,
   Checkbox,
   CircularProgress,
   FormControl,
@@ -16,6 +17,7 @@ import { useIntl } from 'react-intl'
 import Collapse from '@kunukn/react-collapse'
 import { axiosGet } from 'src/Components/axiosCall'
 import { toast } from 'react-toastify'
+import CustomTextField from 'src/@core/components/mui/text-field'
 
 function Select({ onChange, data, type }) {
   const { locale } = useIntl()
@@ -110,6 +112,10 @@ function Select({ onChange, data, type }) {
     const selected = checked ? [...selectedOptions, value] : selectedOptions.filter(item => item !== value)
     onChange({ ...data, selected, type_of_sumbit: data.type_of_sumbit === 'collection' ? '' : data.type_of_sumbit })
   }
+
+  const [addMoreElement] = useState([{ name_ar: 'مربع الاختيار', name_en: 'CheckBox', key: 'check_box' }])
+
+  const [moreElement, setMoreElement] = useState('')
 
   return (
     <div>
@@ -206,7 +212,6 @@ function Select({ onChange, data, type }) {
           <div className='mt-4'></div>
           {!type ? (
             <>
-
               <TextField
                 select
                 fullWidth
@@ -228,13 +233,14 @@ function Select({ onChange, data, type }) {
                 <MenuItem value={'collection'}>{locale === 'ar' ? 'هذه التجميعة' : 'This Collection'}</MenuItem>
                 <MenuItem value={'api'}>{locale === 'ar' ? 'الي Api اخر' : 'Other API'}</MenuItem>
               </TextField>
-  <TextField
+              <TextField
                 fullWidth
                 value={data.redirect || ''}
                 onChange={e => onChange({ ...data, redirect: e.target.value })}
                 label={locale === 'ar' ? 'الذهاب الي' : 'Redirect to'}
                 variant='filled'
               />
+
               <Collapse
                 transition={`height 300ms cubic-bezier(.4, 0, .2, 1)`}
                 isOpen={Boolean(data.type_of_sumbit === 'api')}
@@ -247,6 +253,81 @@ function Select({ onChange, data, type }) {
                   variant='filled'
                 />
               </Collapse>
+
+              <div className='p-2 border-2 border-gray-300 rounded-md mt-4 '>
+                <div className='text-lg font-bold'>{locale === 'ar' ? 'اضافة عناصر' : 'Add More Element'}</div>
+
+                <TextField
+                  select
+                  fullWidth
+                  value={moreElement}
+                  label={locale === 'ar' ? 'اضافة عناصر' : 'Add More Element'}
+                  id='select-helper'
+                  variant='filled'
+                  onChange={e => {
+                    setMoreElement(e.target.value)
+                  }}
+                >
+                  {addMoreElement.map(item => (
+                    <MenuItem value={item.key}>{locale === 'ar' ? item.name_ar : item.name_en}</MenuItem>
+                  ))}
+                </TextField>
+                <Collapse transition={`height 300ms cubic-bezier(.4, 0, .2, 1)`} isOpen={Boolean(moreElement)}>
+                  <div className='flex justify-center my-3'>
+                    <Button
+                      onClick={() => {
+                        if (moreElement) {
+                          if (moreElement === 'check_box') {
+                            const oldAddMoreElement = data.addMoreElement ?? []
+                            onChange({
+                              ...data,
+                              addMoreElement: [
+                                ...oldAddMoreElement,
+                                {
+                                  name_ar: 'مربع الاختيار',
+                                  name_en: 'CheckBox',
+                                  key: 'check_box',
+                                  type: 'new_element',
+                                  id: 's' + new Date().getTime()
+                                }
+                              ]
+                            })
+                            toast.success(locale === 'ar' ? 'تم اضافة العنصر' : 'Element Added')
+                          }
+                          setMoreElement('')
+                        }
+                      }}
+                      variant='contained'
+                      color='primary'
+                    >
+                      {locale === 'ar' ? 'اضافة' : 'Add'}
+                    </Button>
+                  </div>
+                </Collapse>
+                <Collapse
+                  transition={`height 300ms cubic-bezier(.4, 0, .2, 1)`}
+                  isOpen={Boolean(data.addMoreElement.length > 0)}
+                >
+                  <div className='flex flex-col gap-2 my-3'>
+                    {data.addMoreElement.map(item => (
+                      <div key={item.id}>
+                        <div className='flex items-center justify-between '>
+                          <div className='text-sm'>{item.name_ar}</div>
+                          <Button variant='outlined' color='error' onClick={() => {
+                            const oldAddMoreElement = data.addMoreElement ?? []
+                            onChange({
+                              ...data,
+                              addMoreElement: oldAddMoreElement.filter(e => e.id !== item.id)
+                            })
+                          }}>
+                            {locale === 'ar' ? 'حذف' : 'Delete'}
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </Collapse>
+              </div>
             </>
           ) : (
             <>
@@ -279,7 +360,6 @@ function Select({ onChange, data, type }) {
                 }
                 label={locale === 'ar' ? 'حذف البيانات' : 'Delete Data'}
               />
-
             </>
           )}
         </Collapse>
