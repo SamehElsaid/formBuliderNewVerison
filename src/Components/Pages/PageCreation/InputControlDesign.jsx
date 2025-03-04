@@ -544,15 +544,17 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                           label={locale === 'ar' ? 'الاسم باللغة العربية' : 'Name in Arabic'}
                         />
                       </div>
-                    )}
+                    )}{' '}
                     {(open.type === 'SingleText' ||
                       open.type === 'Number' ||
                       open.type === 'Phone' ||
                       open.type === 'URL' ||
                       open.type === 'Email' ||
                       open.type === 'Password' ||
+                      open.descriptionAr === 'multiple_select' ||
                       open.type === 'LongText') && (
                       <>
+                        {' '}
                         <TextField
                           fullWidth
                           type='text'
@@ -580,7 +582,7 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                           }}
                           variant='filled'
                           label={locale === 'ar' ? 'Placeholder باللغة الانجليزية' : 'Placeholder in English'}
-                        />{' '}
+                        />
                         <TextField
                           fullWidth
                           type='text'
@@ -609,6 +611,16 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                           variant='filled'
                           label={locale === 'ar' ? 'Placeholder باللغة العربية' : 'Placeholder in Arabic'}
                         />
+                      </>
+                    )}
+                    {(open.type === 'SingleText' ||
+                      open.type === 'Number' ||
+                      open.type === 'Phone' ||
+                      open.type === 'URL' ||
+                      open.type === 'Email' ||
+                      open.type === 'Password' ||
+                      open.type === 'LongText') && (
+                      <>
                         <TextField
                           fullWidth
                           type='number'
@@ -1326,7 +1338,13 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                           )}
                           <div className='border-t-2 border-dashed border-main-color pt-2'>
                             <h2 className='text-lg font-bold text-main-color mt-2'>
-                              {locale === 'ar' ? 'في التغيير' : 'OnChange'}
+                              {open.key === 'button'
+                                ? locale === 'ar'
+                                  ? 'في الضغط'
+                                  : 'OnClick'
+                                : locale === 'ar'
+                                ? 'في التغيير'
+                                : 'OnChange'}
                             </h2>
                             <JsEditor
                               jsCode={roles?.event?.onChange ?? ''}
@@ -1336,21 +1354,23 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                               Css={Css}
                               roles={roles}
                             />
-                          </div>{' '}
-                          <div className='border-t-2 border-dashed border-main-color pt-2'>
-                            <h2 className='text-lg font-bold text-main-color mt-2'>
-                              {locale === 'ar' ? 'في الخروج' : 'OnBlur'}
-                            </h2>
-                            <JsEditor
-                              type='onBlur'
-                              jsCode={roles?.event?.onBlur ?? ''}
-                              onChange={onChange}
-                              data={data}
-                              open={open}
-                              Css={Css}
-                              roles={roles}
-                            />
                           </div>
+                          {open.key !== 'button' && (
+                            <div className='border-t-2 border-dashed border-main-color pt-2'>
+                              <h2 className='text-lg font-bold text-main-color mt-2'>
+                                {locale === 'ar' ? 'في الخروج' : 'OnBlur'}
+                              </h2>
+                              <JsEditor
+                                type='onBlur'
+                                jsCode={roles?.event?.onBlur ?? ''}
+                                onChange={onChange}
+                                data={data}
+                                open={open}
+                                Css={Css}
+                                roles={roles}
+                              />
+                            </div>
+                          )}
                           {open.type !== 'new_element' && (
                             <div className='border-t-2 border-dashed border-main-color pt-2'>
                               <h2 className='text-lg font-bold text-main-color mt-2'>
@@ -1428,17 +1448,17 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                           </IconButton>
                         </h2>
                         <UnmountClosed isOpened={Boolean(showTrigger)}>
-                          <div className='px-4'>
-                            <FormControl fullWidth margin='normal'>
-                              <InputLabel>{locale === 'ar' ? 'اخباري' : 'Required'}</InputLabel>
-                              <Select
-                                variant='filled'
-                                value={roles?.onMount?.isRequired ? 'required' : 'optional'}
-                                onChange={e => {
+                          {open.key === 'button' ? (
+                            <>
+                              <TextField
+                                fullWidth
+                                type='text'
+                                defaultValue={roles?.onMount?.href || ''}
+                                onBlur={e => {
                                   const additional_fields = data.additional_fields ?? []
                                   const findMyInput = additional_fields.find(inp => inp.key === open.id)
                                   if (findMyInput) {
-                                    findMyInput.roles.onMount.isRequired = e.target.value === 'required' ? true : false
+                                    findMyInput.roles.onMount.href = e.target.value
                                   } else {
                                     const myEdit = {
                                       key: open.id,
@@ -1447,7 +1467,7 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                                         ...roles,
                                         onMount: {
                                           ...roles.onMount,
-                                          isRequired: e.target.value === 'required' ? true : false
+                                          href: e.target.value
                                         }
                                       }
                                     }
@@ -1455,98 +1475,132 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                                   }
                                   onChange({ ...data, additional_fields: additional_fields })
                                 }}
-                              >
-                                <MenuItem value={'required'}>{locale === 'ar' ? 'مطلوب' : 'Required'}</MenuItem>
-                                <MenuItem value={'optional'} selected>
-                                  {locale === 'ar' ? 'اختياري' : 'Optional'}
-                                </MenuItem>
-                              </Select>
-                            </FormControl>
-                            {roles?.onMount?.file ? (
-                              <div className='p-2 my-4 rounded border border-dashed border-main-color'>
-                                <div className='flex items-center justify-between'>
-                                  <div className='flex items-center gap-2'>
-                                    <div className='text-sm'>{roles?.onMount?.file?.replaceAll('/Uploads/', '')}</div>
+                                label={locale === 'ar' ? 'الرابط' : 'Href'}
+                                variant='filled'
+                              />
+                            </>
+                          ) : (
+                            <div className='px-4'>
+                              <FormControl fullWidth margin='normal'>
+                                <InputLabel>{locale === 'ar' ? 'اخباري' : 'Required'}</InputLabel>
+                                <Select
+                                  variant='filled'
+                                  value={roles?.onMount?.isRequired ? 'required' : 'optional'}
+                                  onChange={e => {
+                                    const additional_fields = data.additional_fields ?? []
+                                    const findMyInput = additional_fields.find(inp => inp.key === open.id)
+                                    if (findMyInput) {
+                                      findMyInput.roles.onMount.isRequired =
+                                        e.target.value === 'required' ? true : false
+                                    } else {
+                                      const myEdit = {
+                                        key: open.id,
+                                        design: objectToCss(Css).replaceAll('NaN', ''),
+                                        roles: {
+                                          ...roles,
+                                          onMount: {
+                                            ...roles.onMount,
+                                            isRequired: e.target.value === 'required' ? true : false
+                                          }
+                                        }
+                                      }
+                                      additional_fields.push(myEdit)
+                                    }
+                                    onChange({ ...data, additional_fields: additional_fields })
+                                  }}
+                                >
+                                  <MenuItem value={'required'}>{locale === 'ar' ? 'مطلوب' : 'Required'}</MenuItem>
+                                  <MenuItem value={'optional'} selected>
+                                    {locale === 'ar' ? 'اختياري' : 'Optional'}
+                                  </MenuItem>
+                                </Select>
+                              </FormControl>
+                              {roles?.onMount?.file ? (
+                                <div className='p-2 my-4 rounded border border-dashed border-main-color'>
+                                  <div className='flex items-center justify-between'>
+                                    <div className='flex items-center gap-2'>
+                                      <div className='text-sm'>{roles?.onMount?.file?.replaceAll('/Uploads/', '')}</div>
+                                    </div>
+                                    <Button
+                                      variant='outlined'
+                                      color='error'
+                                      onClick={() => {
+                                        const additional_fields = data.additional_fields ?? []
+                                        const findMyInput = additional_fields.find(inp => inp.key === open.id)
+                                        if (findMyInput) {
+                                          findMyInput.roles.onMount.file = ''
+                                        }
+                                        onChange({ ...data, additional_fields: additional_fields })
+                                      }}
+                                    >
+                                      {locale === 'ar' ? 'حذف' : 'Delete'}
+                                    </Button>
                                   </div>
+                                </div>
+                              ) : (
+                                <>
+                                  {' '}
                                   <Button
                                     variant='outlined'
-                                    color='error'
-                                    onClick={() => {
-                                      const additional_fields = data.additional_fields ?? []
-                                      const findMyInput = additional_fields.find(inp => inp.key === open.id)
-                                      if (findMyInput) {
-                                        findMyInput.roles.onMount.file = ''
-                                      }
-                                      onChange({ ...data, additional_fields: additional_fields })
-                                    }}
+                                    className='!mb-4'
+                                    component='label'
+                                    fullWidth
+                                    startIcon={<Icon icon='ph:upload-fill' fontSize='2.25rem' className='!text-2xl ' />}
                                   >
-                                    {locale === 'ar' ? 'حذف' : 'Delete'}
-                                  </Button>
-                                </div>
-                              </div>
-                            ) : (
-                              <>
-                                {' '}
-                                <Button
-                                  variant='outlined'
-                                  className='!mb-4'
-                                  component='label'
-                                  fullWidth
-                                  startIcon={<Icon icon='ph:upload-fill' fontSize='2.25rem' className='!text-2xl ' />}
-                                >
-                                  <input
-                                    type='file'
-                                    hidden
-                                    name='json'
-                                    onChange={event => {
-                                      const file = event.target.files[0]
-                                      console.log(file)
-                                      const loading = toast.loading(locale === 'ar' ? 'جاري الرفع' : 'Uploading...')
-                                      if (file) {
-                                        axiosPost(
-                                          'file/upload',
-                                          'en',
-                                          {
-                                            file: file
-                                          },
-                                          true
-                                        )
-                                          .then(res => {
-                                            console.log(res)
-                                            if (res.status) {
-                                              const additional_fields = data.additional_fields ?? []
-                                              const findMyInput = additional_fields.find(inp => inp.key === open.id)
-                                              if (findMyInput) {
-                                                findMyInput.roles.onMount.file = res.filePath.data
-                                              } else {
-                                                const myEdit = {
-                                                  key: open.id,
-                                                  design: objectToCss(Css).replaceAll('NaN', ''),
-                                                  roles: {
-                                                    ...roles,
-                                                    onMount: {
-                                                      ...roles.onMount,
-                                                      file: res.filePath.data
+                                    <input
+                                      type='file'
+                                      hidden
+                                      name='json'
+                                      onChange={event => {
+                                        const file = event.target.files[0]
+                                        console.log(file)
+                                        const loading = toast.loading(locale === 'ar' ? 'جاري الرفع' : 'Uploading...')
+                                        if (file) {
+                                          axiosPost(
+                                            'file/upload',
+                                            'en',
+                                            {
+                                              file: file
+                                            },
+                                            true
+                                          )
+                                            .then(res => {
+                                              console.log(res)
+                                              if (res.status) {
+                                                const additional_fields = data.additional_fields ?? []
+                                                const findMyInput = additional_fields.find(inp => inp.key === open.id)
+                                                if (findMyInput) {
+                                                  findMyInput.roles.onMount.file = res.filePath.data
+                                                } else {
+                                                  const myEdit = {
+                                                    key: open.id,
+                                                    design: objectToCss(Css).replaceAll('NaN', ''),
+                                                    roles: {
+                                                      ...roles,
+                                                      onMount: {
+                                                        ...roles.onMount,
+                                                        file: res.filePath.data
+                                                      }
                                                     }
                                                   }
+                                                  additional_fields.push(myEdit)
                                                 }
-                                                additional_fields.push(myEdit)
+                                                onChange({ ...data, additional_fields: additional_fields })
                                               }
-                                              onChange({ ...data, additional_fields: additional_fields })
-                                            }
-                                          })
-                                          .finally(() => {
-                                            toast.dismiss(loading)
-                                          })
-                                        event.target.value = ''
-                                      }
-                                    }}
-                                  />
-                                  {locale === 'ar' ? 'رفع ملف' : 'upload File'}
-                                </Button>
-                              </>
-                            )}
-                          </div>
+                                            })
+                                            .finally(() => {
+                                              toast.dismiss(loading)
+                                            })
+                                          event.target.value = ''
+                                        }
+                                      }}
+                                    />
+                                    {locale === 'ar' ? 'رفع ملف' : 'upload File'}
+                                  </Button>
+                                </>
+                              )}
+                            </div>
+                          )}
                         </UnmountClosed>
                       </div>
                     )}

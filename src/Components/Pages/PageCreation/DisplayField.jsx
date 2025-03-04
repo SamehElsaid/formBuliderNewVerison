@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo, forwardRef, useRef } from 'react'
-import { FormLabel, IconButton, InputAdornment } from '@mui/material'
+import { Autocomplete, FormLabel, IconButton, InputAdornment, TextField } from '@mui/material'
 import { useIntl } from 'react-intl'
 import { isPossiblePhoneNumber } from 'react-phone-number-input'
 import DatePicker from 'react-datepicker'
@@ -20,11 +20,11 @@ export default function DisplayField({
   refError,
   dataRef,
   errorView,
-  onChangeData,
+  disabledBtn,
   setLayout,
   setTriggerData,
   findError,
-  data,
+
   readOnly,
   findValue,
   roles,
@@ -35,7 +35,7 @@ export default function DisplayField({
   const [value, setValue] = useState('')
   const [error, setError] = useState(false)
   const [dirty, setDirty] = useState(dirtyProps)
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(true)
   const [showPassword, setShowPassword] = useState(false)
   const { locale } = useIntl()
   const [validations, setValidations] = useState({})
@@ -712,7 +712,7 @@ export default function DisplayField({
     }
   }, [roles, loading])
 
-  const onChange = e => {
+  const onChange = (e, newValue) => {
     try {
       if (roles?.event?.onChange) {
         const evaluatedFn = eval('(' + roles.event.onChange + ')')
@@ -732,8 +732,13 @@ export default function DisplayField({
 
     let newData = value
     if (input?.type === 'ManyToMany') {
-      setValue(e.target.checked ? [...value, e.target.value] : value.filter(v => v !== e.target.value))
-      newData = e.target.checked ? [...value, e.target.value] : value.filter(v => v !== e.target.value)
+      if (input.descriptionAr === 'multiple_select') {
+        setValue(newValue)
+        newData = newValue
+      } else {
+        setValue(e.target.checked ? [...value, e.target.value] : value.filter(v => v !== e.target.value))
+        newData = e.target.checked ? [...value, e.target.value] : value.filter(v => v !== e.target.value)
+      }
     } else {
       if (input?.type === 'Date') {
         setValue(new Date(e))
@@ -880,7 +885,6 @@ export default function DisplayField({
 
   useEffect(() => {
     if (input.type === 'OneToOne') {
-      setLoading(true)
       axiosGet(`generic-entities/${input?.options?.source}`)
         .then(res => {
           if (res.status) {
@@ -892,7 +896,6 @@ export default function DisplayField({
           setLoading(false)
         })
     } else if (input.type === 'ManyToMany') {
-      setLoading(true)
       axiosGet(`generic-entities/${input?.options?.target}`)
         .then(res => {
           if (res.status) {
@@ -903,42 +906,48 @@ export default function DisplayField({
         .finally(() => {
           setLoading(false)
         })
+    } else {
+      setLoading(false)
     }
   }, [input])
 
   const errorRefHeight = useRef(null)
 
   useEffect(() => {
-    console.log('hre', layout)
-
-    if (layout) {
-      if (errorView || error) {
-        if (errorRefHeight.current) {
-          setLayout(prev =>
-            prev.map(ele =>
+    setTimeout(() => {
+      if (layout && !loading) {
+        if (errorView || error) {
+          if (errorRefHeight.current) {
+            setLayout(prev =>
+              prev.map(ele =>
+                `${ele.i}` === `${input.id}`
+                  ? {
+                      ...ele,
+                      h:
+                        ((isDisable === 'hidden' && !readOnly ? 0 : mainRef.current.scrollHeight) +
+                          errorRefHeight.current.scrollHeight) /
+                        71
+                    }
+                  : ele
+              )
+            )
+          }
+        } else {
+          if (input.type === 'ManyToMany') {
+            console.log(mainRef.current)
+            console.log(mainRef.current.scrollHeight, mainRef.current.clientHeight, input)
+          }
+          setLayout(prev => {
+            return prev.map(ele =>
               `${ele.i}` === `${input.id}`
-                ? {
-                    ...ele,
-                    h:
-                      ((isDisable === 'hidden' && !readOnly ? 0 : mainRef.current.scrollHeight) +
-                        errorRefHeight.current.scrollHeight) /
-                      71
-                  }
+                ? { ...ele, h: isDisable === 'hidden' && !readOnly ? 0 : mainRef.current.scrollHeight / 71 }
                 : ele
             )
-          )
+          })
         }
-      } else {
-        setLayout(prev => {
-          return prev.map(ele =>
-            `${ele.i}` === `${input.id}`
-              ? { ...ele, h: isDisable === 'hidden' && !readOnly ? 0 : mainRef.current.scrollHeight / 71 }
-              : ele
-          )
-        })
       }
-    }
-  }, [errorView, error, isDisable, readOnly, layout?.length])
+    }, 100)
+  }, [errorView, error, isDisable, readOnly, layout?.length, loading])
 
   const mainRef = useRef()
 
@@ -1017,7 +1026,15 @@ export default function DisplayField({
             </div>
           )}
           {input.type === 'new_element' ? (
-            <NewElement input={input} roles={roles} onChangeEvent={roles?.event?.onChange} onBlur={roles?.event?.onBlur} value={value} setValue={setValue} />
+            <NewElement
+              disabledBtn={disabledBtn}
+              input={input}
+              roles={roles}
+              onChangeEvent={roles?.event?.onChange}
+              onBlur={roles?.event?.onBlur}
+              value={value}
+              setValue={setValue}
+            />
           ) : (
             <ViewInput
               input={input}
@@ -1366,41 +1383,54 @@ const ViewInput = ({
       </div>
     )
   }
-  if (input.type === 'ManyToMany') {
+  if (input.type === 'ManyToMany' && input.descriptionAr !== 'multiple_select') {
     const lable = JSON.parse(input?.descriptionEn)
 
     return (
-      <div className=''>
-        <div className=''>
-          <div className=''>
-            <div className=''>
-              <div className='flex flex-wrap gap-1'>
-                {selectedOptions.map((option, index) => (
-                  <div key={option.Id} className=''>
-                    <input
-                      value={option.Id}
-                      name={input.nameEn}
-                      checked={value?.find(v => v === option.Id)}
-                      onChange={e => onChange(e)}
-                      type='checkbox'
-                      id={option.Id}
-                      disabled={isDisable === 'disabled'}
-                      onBlur={e => {
-                        if (onBlur) {
-                          const evaluatedFn = eval('(' + onBlur + ')')
+      <div className='w-full'>
+        <div className='flex flex-wrap gap-1'>
+          {selectedOptions.map((option, index) => (
+            <div key={option.Id} className='flex items-center gap-1'>
+              <input
+                value={option.Id}
+                name={input.nameEn}
+                checked={value?.find(v => v === option.Id)}
+                onChange={e => onChange(e)}
+                type='checkbox'
+                id={option.Id}
+                disabled={isDisable === 'disabled'}
+                onBlur={e => {
+                  if (onBlur) {
+                    const evaluatedFn = eval('(' + onBlur + ')')
 
-                          evaluatedFn(e)
-                        }
-                      }}
-                    />
-                    <label htmlFor={option.Id}>{lable.map(ele => option[ele]).join('-')}</label>
-                  </div>
-                ))}
-              </div>
+                    evaluatedFn(e)
+                  }
+                }}
+              />
+              <label htmlFor={option.Id}>{lable.map(ele => option[ele]).join('-')}</label>
             </div>
-          </div>
+          ))}
         </div>
       </div>
+    )
+  }
+
+  if (input.type === 'ManyToMany' && input.descriptionAr === 'multiple_select') {
+    const lable = JSON.parse(input?.descriptionEn)
+    console.log(lable)
+
+    return (
+      <Autocomplete
+        multiple
+        value={value}
+        onChange={(event, newValue) => onChange(event, newValue)}
+        sx={{ width: 325 }}
+        options={selectedOptions}
+        filterSelectedOptions
+        id='autocomplete-multiple-outlined'
+        getOptionLabel={option => option[lable[0]] || ''}
+        renderInput={params => <TextField {...params} style={{ width: '100%' }} placeholder={placeholder} />}
+      />
     )
   }
 }

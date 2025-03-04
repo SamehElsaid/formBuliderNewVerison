@@ -62,6 +62,8 @@ function Select({ onChange, data, type }) {
         setLoadingCollection(false)
       })
   }, [locale, data.data_source_id])
+  const addMoreData = data?.addMoreElement ?? []
+ 
 
   useEffect(() => {
     if (data.collectionId) {
@@ -113,10 +115,30 @@ function Select({ onChange, data, type }) {
     onChange({ ...data, selected, type_of_sumbit: data.type_of_sumbit === 'collection' ? '' : data.type_of_sumbit })
   }
 
-  const [addMoreElement] = useState([{ name_ar: 'مربع الاختيار', name_en: 'CheckBox', key: 'check_box' }])
+  const [addMoreElement] = useState([
+    { name_ar: 'مربع الاختيار', name_en: 'CheckBox', key: 'check_box' },
+    { name_ar: 'Button', name_en: 'Button', key: 'button' }
+  ])
 
   const [moreElement, setMoreElement] = useState('')
-
+  useEffect(() => {
+    if (addMoreData.length === 0) {
+      onChange({
+        ...data,
+        addMoreElement: [
+          ...addMoreData,
+          {
+            name_ar: 'ارسال',
+            name_en: 'Submit',
+            key: 'button',
+            type: 'new_element',
+            kind: 'submit',
+            id: 's' + new Date().getTime()
+          }
+        ]
+      })
+    }
+  }, [addMoreData.length])
   return (
     <div>
       <Typography variant='h5'>{locale === 'ar' ? 'اختيار التجميعة' : 'Select Collection'}</Typography>
@@ -278,7 +300,7 @@ function Select({ onChange, data, type }) {
                       onClick={() => {
                         if (moreElement) {
                           if (moreElement === 'check_box') {
-                            const oldAddMoreElement = data.addMoreElement ?? []
+                            const oldAddMoreElement = data?.addMoreElement ?? []
                             onChange({
                               ...data,
                               addMoreElement: [
@@ -292,9 +314,25 @@ function Select({ onChange, data, type }) {
                                 }
                               ]
                             })
-                            toast.success(locale === 'ar' ? 'تم اضافة العنصر' : 'Element Added')
                           }
-                          setMoreElement('')
+                          if (moreElement === 'button') {
+                            const oldAddMoreElement = data?.addMoreElement ?? []
+                            onChange({
+                              ...data,
+                              addMoreElement: [
+                                ...oldAddMoreElement,
+                                {
+                                  name_ar: 'Button',
+                                  name_en: 'Button',
+                                  key: 'button',
+                                  type: 'new_element',
+                                  id: 's' + new Date().getTime()
+                                }
+                              ]
+                            })
+                            setMoreElement('')
+                          }
+                          toast.success(locale === 'ar' ? 'تم اضافة العنصر' : 'Element Added')
                         }
                       }}
                       variant='contained'
@@ -306,20 +344,24 @@ function Select({ onChange, data, type }) {
                 </Collapse>
                 <Collapse
                   transition={`height 300ms cubic-bezier(.4, 0, .2, 1)`}
-                  isOpen={Boolean(data.addMoreElement.length > 0)}
+                  isOpen={Boolean(data?.addMoreElement?.length > 0)}
                 >
                   <div className='flex flex-col gap-2 my-3'>
-                    {data.addMoreElement.map(item => (
+                    {data?.addMoreElement?.map(item => (
                       <div key={item.id}>
                         <div className='flex items-center justify-between '>
-                          <div className='text-sm'>{item.name_ar}</div>
-                          <Button variant='outlined' color='error' onClick={() => {
-                            const oldAddMoreElement = data.addMoreElement ?? []
-                            onChange({
-                              ...data,
-                              addMoreElement: oldAddMoreElement.filter(e => e.id !== item.id)
-                            })
-                          }}>
+                          <div className='text-sm'>{locale==="ar"?item.name_ar:item.name_en}</div>
+                          <Button
+                            variant='outlined'
+                            color='error'
+                            onClick={() => {
+                              const oldAddMoreElement = data?.addMoreElement ?? []
+                              onChange({
+                                ...data,
+                                addMoreElement: oldAddMoreElement.filter(e => e.id !== item.id)
+                              })
+                            }}
+                          >
                             {locale === 'ar' ? 'حذف' : 'Delete'}
                           </Button>
                         </div>

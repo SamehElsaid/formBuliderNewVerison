@@ -1196,7 +1196,7 @@ sortable-list {
   position: absolute;
   z-index: 1;
 }
-.react-datepicker-popper{
+.react-datepicker-popper {
   z-index: 111111111;
 }
 
@@ -1234,16 +1234,18 @@ sortable-list {
   height: 100%; /* Set a height */
 }
 
-.dark-mode .logoControl{
+.dark-mode .logoControl {
   filter: invert(1);
 }
-.MuiDrawer-root.MuiDrawer-modal.MuiModal-root{
+.MuiDrawer-root.MuiDrawer-modal.MuiModal-root {
   z-index: 11111;
 }
-.react-grid-item > .react-resizable-handle.react-resizable-handle-se{
+.react-grid-item > .react-resizable-handle.react-resizable-handle-se {
   z-index: 10002 !important;
-
 }
 .ReactCollapse--collapse {
   transition: height 0.2s;
+}
+.MuiAutocomplete-hasPopupIcon {
+  width: 100% !important;
 }

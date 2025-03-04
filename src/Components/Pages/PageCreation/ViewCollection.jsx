@@ -28,7 +28,6 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
   const [layout, setLayout] = useState()
   const addMoreElement = data.addMoreElement ?? []
   const dataLength = getFields.length + addMoreElement.length
-  console.log(data?.layout)
 
   useEffect(() => {
     if (!loading) {
@@ -36,25 +35,12 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
         data?.layout?.length ===
         [...getFields.filter(filed => data?.selected?.includes(filed?.key)), ...addMoreElement].length
       ) {
-        console.log('سامح')
-        console.log(data?.layout)
+
+        console.log('sa')
         setLayout([...data.layout])
       } else {
         console.log('السيد')
 
-        console.log({
-          here: [...getFields.filter(filed => data?.selected?.includes(filed?.key)), ...addMoreElement].map(
-            (item, index) => {
-              return {
-                i: item.id,
-                x: 0,
-                y: index,
-                w: 12,
-                h: item.type === 'LongText' ? 1.8 : 1
-              }
-            }
-          )
-        })
 
         setLayout(
           [...getFields.filter(filed => data?.selected?.includes(filed?.key)), ...addMoreElement].map((item, index) => {
@@ -151,6 +137,8 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
   const handleClose = () => {
     setOpen(false)
   }
+
+
   const defaultDesign =
     open?.type === 'new_element' ? DefaultStyle(open?.key) : open?.options?.uiSchema?.xComponentProps?.cssClass
   let additionalField = null
@@ -267,6 +255,7 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
                   input={filed}
                   design={getDesign(filed.id, filed)}
                   readOnly={disabled}
+                  disabledBtn={!data.type_of_sumbit || (data.type_of_sumbit === 'api' && !data.submitApi)}
                   // settingReadOnly={readOnly}
                   refError={refError}
                   setLayout={setLayout}
@@ -313,35 +302,6 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
               </div>
             ))}
           </ResponsiveGridLayout>
-          {/* {!readOnly ? (
-          ) : (
-            getFields
-              .filter(filed => data?.selected?.includes(filed?.key))
-              .map(filed => (
-                <div key={filed.id} className='relative'>
-                  <DisplayField
-                    input={filed}
-                    design={getDesign(filed.id, filed)}
-                    readOnly={disabled}
-                    refError={refError}
-                    dataRef={dataRef}
-                    reload={reload}
-                    errorView={errors?.[filed.key]?.[0]}
-                    findError={errors && typeof errors?.[filed.key] === 'object'}
-                  />
-                </div>
-              ))
-          )} */}
-          <div className='flex justify-center'>
-            <LoadingButton
-              loading={loadingSubmit}
-              variant='contained'
-              disabled={!data.type_of_sumbit || (data.type_of_sumbit === 'api' && !data.submitApi)}
-              type='submit'
-            >
-              {locale === 'ar' ? 'ارسال' : 'Submit'}
-            </LoadingButton>
-          </div>
         </form>
       )}
     </div>

@@ -43,7 +43,7 @@ export const getType = type => {
   if (type === 'radio' || type === 'select') {
     return 'OneToOne'
   }
-  if (type === 'checkbox') {
+  if (type === 'checkbox' || type === 'multiple_select') {
     return 'ManyToMany'
   }
 
@@ -92,6 +92,8 @@ export const getTypeFromCollection = (type, description) => {
 }
 
 export const DefaultStyle = type => {
+  console.log(type === 'button')
+
   if (type === 'textarea') {
     return `
     #parent-input{
@@ -133,7 +135,6 @@ textarea::placeholder {
 }
       `
   } else if (type === 'checkbox' || type === 'check_box') {
-
     return `
      #parent-input{
   width:100%;
@@ -433,6 +434,59 @@ input {
 `
   }
 
+  if (type === 'button') {
+    return `.btn{
+  background-color: #009fff;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 5px;
+  width:100%;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+.btn:hover{
+  background-color: #009dff87;
+}
+.btn:disabled{
+  background-color: #009fff87 !important;
+  cursor: not-allowed !important; 
+}  
+
+`
+  }
+  if (type === 'multiple_select') {
+    return ` 
+#parent-input{
+  width:100%;
+  height:auto;
+  margin-top:0px;
+  margin-bottom:0px;
+  margin-inline-start:0px;
+  margin-inline-end:0px;
+}
+label{
+margin-bottom:5px;
+display:block;
+color:#555;
+}
+
+.MuiOutlinedInput-notchedOutline {
+  border-color: rgba(47, 43, 61, 0.2);
+}
+.Mui-focused .MuiOutlinedInput-notchedOutline {
+  border-color: #3498ff;
+}
+.MuiChip-sizeMedium.MuiChip-colorDefault {
+  background-color: #3498ff;
+  color: white;
+}
+.MuiSvgIcon-fontSizeMedium.MuiChip-deleteIcon.MuiChip-deleteIconMedium {
+  color: white;
+}
+
+
+`
+  }
   return `
 #parent-input{
   width:100%;
@@ -503,7 +557,6 @@ export const cssToObject = cssString => {
   return result
 }
 
-
 export const objectToCss = cssObject => {
   let cssString = ''
 
@@ -533,7 +586,6 @@ export const objectToCss = cssObject => {
   return cssString.trim() // إزالة المسافات الزائدة في النهاية
 }
 
-
 export const getDataInObject = (object = {}, key) => {
   const keys = key.split('.')
 
@@ -549,12 +601,12 @@ export const getDataInObject = (object = {}, key) => {
   return result
 }
 
-export const extractValueAndUnit = (cssValue) => {
-  const match = cssValue.match(/^(-?\d*\.?\d+)([a-zA-Z%]*)$/);
+export const extractValueAndUnit = cssValue => {
+  const match = cssValue.match(/^(-?\d*\.?\d+)([a-zA-Z%]*)$/)
 
   if (match) {
-    return { value: parseFloat(match[1]), unit: match[2] || '' };
+    return { value: parseFloat(match[1]), unit: match[2] || '' }
   }
 
-  return { value: '', unit: cssValue };
-};
+  return { value: '', unit: cssValue }
+}

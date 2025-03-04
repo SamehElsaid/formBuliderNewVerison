@@ -60,6 +60,7 @@ const FormBuilder = ({ open, setOpen, setRefresh }) => {
     'password',
     'textarea',
     'checkbox',
+    'multiple_select',
     'radio',
     'select',
     'date',
@@ -166,7 +167,7 @@ const FormBuilder = ({ open, setOpen, setRefresh }) => {
     '.ico'
   ]
 
-  const isOptionsStep = ['checkbox', 'radio', 'select'].includes(fieldType)
+  const isOptionsStep = ['checkbox', 'radio', 'select', 'multiple_select'].includes(fieldType)
   const isFileStep = fieldType === 'file'
   const { messages, locale } = useIntl()
 
@@ -265,7 +266,7 @@ const FormBuilder = ({ open, setOpen, setRefresh }) => {
   }
 
   const FindFieldCategory = fieldType => {
-    if (fieldType === 'select' || fieldType === 'radio' || fieldType === 'checkbox') {
+    if (fieldType === 'select' || fieldType === 'radio' || fieldType === 'checkbox' || fieldType === 'multiple_select') {
       return 'Associations'
     }
 
@@ -345,7 +346,7 @@ const FormBuilder = ({ open, setOpen, setRefresh }) => {
     }
 
 
-    if (fieldType === 'select' || fieldType === 'radio' || fieldType === 'checkbox') {
+    if (fieldType === 'select' || fieldType === 'radio' || fieldType === 'checkbox' || fieldType === 'multiple_select') {
       sendData.descriptionEn = JSON.stringify(selectedOptions)
       sendData.descriptionAr = fieldType
       if (fieldType !== 'checkbox') {
@@ -364,6 +365,14 @@ const FormBuilder = ({ open, setOpen, setRefresh }) => {
       sendData.options.source = open.key
       sendData.options.junctionTable = `${open.key}${collection.key}`
       sendData.key = `${open.key}${collection.key}`
+      
+    }
+    if (fieldType === 'multiple_select') {
+      sendData.options.target = collection.key
+      sendData.options.source = open.key
+      sendData.options.junctionTable = `${open.key}${collection.key}`
+      sendData.key = `${open.key}${collection.key}`
+      sendData.descriptionAr = "multiple_select"
     }
     setLoading(true)
 

@@ -423,6 +423,7 @@
   "Select_Allowed_File_Types": "اختر الأنواع المسموح بها للملفات",
   "tel": "هاتف",
   "addFiled": "إضافة الحقل",
+  "multiple_select": "اختيار متعدد",
   "collectionNameAR": "نموذج البيانات بالعربية",
   "collectionNameEN": " نموذج البيانات بالانجليزية",
   "createInput": "إضافة الحقل",
