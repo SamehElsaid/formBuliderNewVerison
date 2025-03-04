@@ -76,13 +76,46 @@ function NewElement({ input, onBlur, value, setValue, roles, onChangeEvent, disa
       </div>
     )
   }
+  if (input.key === 'tabs') {
+    return (
+      <div className='flex flex-wrap parent-tabs'>
+        {input.data.map((item, index) =>
+          isValidURL(item.link) ? (
+            <a
+              key={index}
+              href={item.link}
+              target='_blank'
+              rel='noopener noreferrer'
+              className={`btn-tabs ${item.active ? 'active' : ''}`}
+            >
+              {locale === 'ar' ? item.name_ar : item.name_en}
+            </a>
+          ) : item.link ? (
+            <Link href={item.link} className={`btn-tabs ${item.active ? 'active' : ''}`}>
+              {locale === 'ar' ? item.name_ar : item.name_en}
+            </Link>
+          ) : (
+            <button key={index} className={`btn-tabs ${item.active ? 'active' : ''}`}>
+              {locale === 'ar' ? item.name_ar : item.name_en}
+            </button>
+          )
+        )}
+      </div>
+    )
+  }
   if (input.key === 'button') {
     console.log(isValidURL(roles?.onMount?.href))
-  
+
     if (isValidURL(roles?.onMount?.href)) {
       return (
         <div>
-          <a href={roles?.onMount?.href} className='btn' onClick={handleClick} target='_blank' rel='noopener noreferrer'>
+          <a
+            href={roles?.onMount?.href}
+            className='btn'
+            onClick={handleClick}
+            target='_blank'
+            rel='noopener noreferrer'
+          >
             {locale === 'ar' ? input?.name_ar : input?.name_en}
           </a>
         </div>
@@ -91,25 +124,24 @@ function NewElement({ input, onBlur, value, setValue, roles, onChangeEvent, disa
     if (roles?.onMount?.href) {
       return (
         <div>
-          <Link href={`/${locale}${roles?.onMount?.href}`} className='btn' onClick={handleClick} >
+          <Link href={`/${locale}${roles?.onMount?.href}`} className='btn' onClick={handleClick}>
             {locale === 'ar' ? input?.name_ar : input?.name_en}
           </Link>
         </div>
       )
     }
 
-
     if (input.kind === 'submit') {
       return (
-          <button onClick={handleClick} className='btn' disabled={disabledBtn}>
-            {locale === 'ar' ? input.name_ar : input.name_en}
-          </button>
+        <button onClick={handleClick} className='btn' disabled={disabledBtn}>
+          {locale === 'ar' ? input.name_ar : input.name_en}
+        </button>
       )
     }
     return (
-        <button onClick={handleClick} type='button' className='btn'>
-          {locale === 'ar' ? input.name_ar : input.name_en}
-        </button>
+      <button onClick={handleClick} type='button' className='btn'>
+        {locale === 'ar' ? input.name_ar : input.name_en}
+      </button>
     )
   }
 }

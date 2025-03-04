@@ -1,35 +1,25 @@
-import { Autocomplete, TextField } from '@mui/material'
 import React, { useState } from 'react'
 
 function Design() {
-  const [top100Films] = useState([
-    { title: 'The Shawshank Redemption', year: 1994 },
-    { title: 'The Godfather', year: 1972 },
-    { title: 'The Godfather: Part II', year: 1974 },
-    { title: 'The Dark Knight', year: 2008 },
-    { title: '12 Angry Men', year: 1957 }
+  const [data, setData] = useState([
+    { name_ar: 'التبويب الاول', name_en: 'Tab 1', key: 'tab1', active: true },
+    { name_ar: 'التبويب الثاني', name_en: 'Tab 2', key: 'tab2' },
+    { name_ar: 'التبويب الثالث', name_en: 'Tab 3', key: 'tab3' },
+    { name_ar: 'التبويب الرابع', name_en: 'Tab 4', key: 'tab4' },
+    { name_ar: 'التبويب الخامس', name_en: 'Tab 5', key: 'tab5' },
+    { name_ar: 'التبويب السادس', name_en: 'Tab 6', key: 'tab6' },
+    { name_ar: 'التبويب السابع', name_en: 'Tab 7', key: 'tab7' },
+    { name_ar: 'التبويب الثامن', name_en: 'Tab 8', key: 'tab8' },
+    { name_ar: 'التبويب التاسع', name_en: 'Tab 9', key: 'tab9' },
+    { name_ar: 'التبويب العاشر', name_en: 'Tab 10', key: 'tab10' }
   ])
-
-  // Set a default value. Here we initialize with the first film,
-  // but you can adjust this as needed.
-  const [value, setValue] = useState([top100Films[0]])
-  console.log(value)
-
-  
-
   return (
-    <div>
-      <Autocomplete
-        multiple
-        value={value}
-        onChange={(event, newValue) => setValue(newValue)}
-        sx={{ width: 325 }}
-        options={top100Films}
-        filterSelectedOptions
-        id="autocomplete-multiple-outlined"
-        getOptionLabel={option => option.title || ''}
-        renderInput={params => <TextField {...params} placeholder="Favorites" />}
-      />
+    <div className='flex flex-wrap parent-tabs'>
+      {data.map((item, index) => (
+        <button key={index} className={`btn-tabs ${item.active ? 'active' : ''}`}>
+          {item.name_ar}
+        </button>
+      ))}
     </div>
   )
 }

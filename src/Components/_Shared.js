@@ -487,6 +487,25 @@ color:#555;
 
 `
   }
+
+  if (type === 'tabs') {
+    return `
+   .btn-tabs {
+  background: transparent;
+  border: 1px solid #009fff;
+  padding: 10px;
+  color: #555;
+  font-size: 14px;
+  font-weight: 500;
+  
+}
+.btn-tabs.active {
+  background: #009fff;
+  color: #fff;
+}
+
+    `
+  }
   return `
 #parent-input{
   width:100%;

@@ -18,7 +18,9 @@ import {
   Step,
   Stepper,
   StepLabel,
-  InputLabel
+  InputLabel,
+  FormControlLabel,
+  Checkbox
 } from '@mui/material'
 import { useEffect, useState } from 'react'
 import { styled } from '@mui/material/styles'
@@ -214,10 +216,98 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
   const addMoreElement = data.addMoreElement ?? []
 
   const findMyInput = addMoreElement.find(inp => inp.id === open?.id)
+  const [openTab, setOpenTab] = useState(false)
+  const [tabData, setTabData] = useState({ name_ar: '', name_en: '', link: '', active: false })
 
+  const [editTab, setEditTab] = useState(false)
+  const handleCloseTab = () => {
+    setOpenTab(false)
+    setTabData({ name_ar: '', name_en: '', link: '', active: false })
+    setEditTab(false)
+  }
+
+  const addTab = () => {
+    if (tabData.name_ar && tabData.name_en && tabData.link) {
+      const newTab = {
+        name_ar: tabData.name_ar,
+        name_en: tabData.name_en,
+        link: tabData.link,
+        active: tabData.active
+      }
+      console.log({ editTab })
+      if (editTab) {
+        const findMyInput = addMoreElement.find(inp => inp.id === open?.id)
+        if (findMyInput) {
+          findMyInput.data[editTab - 1] = newTab
+          console.log(findMyInput)
+          onChange({ ...data, addMoreElement: addMoreElement })
+        }
+      } else {
+        const findMyInput = addMoreElement.find(inp => inp.id === open?.id)
+        if (findMyInput) {
+          findMyInput.data.push(newTab)
+          onChange({ ...data, addMoreElement: addMoreElement })
+        }
+      }
+      handleCloseTab()
+    } else {
+      toast.error(locale === 'ar' ? 'يجب عليك ادخال البيانات' : 'You must fill the data')
+    }
+  }
   return (
     <>
       {/* {console.log(findMyInput,addMoreElement,open)} */}
+
+      <Dialog open={openTab} onClose={handleCloseTab} fullWidth>
+        <DialogTitle>
+          {editTab ? (locale === 'ar' ? 'تعديل تبويب' : 'Edit Tab') : locale === 'ar' ? 'اضافة تبويب' : 'Add Tab'}
+        </DialogTitle>
+        <DialogContent>
+          <div className='p-4 mt-5 rounded-md border border-dashed border-main-color'>
+            <div className='p-4 mt-5 rounded-md border border-dashed border-main-color'>
+              <h2 className='text-lg font-bold text-main-color mt-2'>{locale === 'ar' ? 'التبويبات' : 'Tabs'}</h2>
+            </div>
+            <div className='flex flex-col gap-2'>
+              <div className='flex flex-col gap-2'>
+                <TextField
+                  label={locale === 'ar' ? 'الاسم بالعربية' : 'Name in Arabic'}
+                  value={tabData.name_ar}
+                  onChange={e => setTabData({ ...tabData, name_ar: e.target.value })}
+                />
+                <TextField
+                  label={locale === 'ar' ? 'الاسم بالانجليزية' : 'Name in English'}
+                  value={tabData.name_en}
+                  onChange={e => setTabData({ ...tabData, name_en: e.target.value })}
+                />
+                <TextField
+                  label={locale === 'ar' ? 'الرابط' : 'Link'}
+                  value={tabData.link}
+                  onChange={e => setTabData({ ...tabData, link: e.target.value })}
+                />
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={tabData.active}
+                      onChange={e => setTabData({ ...tabData, active: e.target.checked })}
+                    />
+                  }
+                  label={locale === 'ar' ? 'التفعيل' : 'Active'}
+                />
+              </div>
+            </div>
+          </div>
+        </DialogContent>
+
+        <DialogActions>
+          <Button onClick={handleCloseTab} variant='contained' color='warning'>
+            {messages.cancel}
+          </Button>
+          <Button onClick={addTab} variant='contained' color='primary'>
+            {editTab ? (locale === 'ar' ? 'تعديل' : 'Edit') : locale === 'ar' ? 'اضافة' : 'Add'}
+          </Button>
+        </DialogActions>
+      </Dialog>
+
       <Dialog open={openTrigger} onClose={resetForm} fullWidth>
         <DialogTitle>{messages.createInput}</DialogTitle>
         <DialogContent>
@@ -511,6 +601,16 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                 >
                   {locale === 'ar' ? 'الصلاحيات' : 'Roles'}
                 </Button>
+                {open.data && (
+                  <Button
+                    onClick={() => {
+                      setSelect('tabs')
+                    }}
+                    variant={selected === 'tabs' ? 'contained' : 'outlined'}
+                  >
+                    {locale === 'ar' ? 'التبويبات' : 'Tabs'}
+                  </Button>
+                )}
               </ButtonGroup>
             </div>
             {open && (
@@ -1604,6 +1704,56 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                         </UnmountClosed>
                       </div>
                     )}
+                  </div>
+                </UnmountClosed>
+                <UnmountClosed isOpened={Boolean(selected === 'tabs')}>
+                  <div className='border-t-2 border-dashed border-main-color pt-2'>
+                    <div className='flex items-center justify-between mb-3'>
+                      <h2 className='text-lg font-bold text-main-color mt-2'>
+                        {locale === 'ar' ? 'التبويبات' : 'Tabs'}
+                      </h2>
+                      <Button variant='contained' color='primary' onClick={() => setOpenTab(true)}>
+                        {locale === 'ar' ? 'اضافة تبويب' : 'Add Tab'}
+                      </Button>
+                    </div>
+                    <div className='flex flex-wrap parent-tabs gap-1'>
+                      {open?.data?.map((item, index) => (
+                        <div
+                          key={index}
+                          className='flex items-center justify-between w-full border-2 border-main-color rounded-md p-2'
+                        >
+                          <span>{locale === 'ar' ? item.name_ar : item.name_en}</span>
+                          <div className='flex items-center '>
+                            <IconButton
+                              onClick={() => {
+                                setEditTab(index + 1)
+                                setTabData({
+                                  name_ar: item.name_ar,
+                                  name_en: item.name_en,
+                                  link: item.link,
+                                  active: item.active
+                                })
+                                setOpenTab(true)
+                              }}
+                            >
+                              <IconifyIcon icon='mdi:edit' />
+                            </IconButton>
+                            <IconButton
+                              onClick={() => {
+                                const findMyInput = addMoreElement.find(inp => inp.id === open?.id)
+
+                                if (findMyInput) {
+                                  findMyInput.data.splice(index, 1)
+                                }
+                                onChange({ ...data, addMoreElement: addMoreElement })
+                              }}
+                            >
+                              <IconifyIcon icon='tabler:trash' />
+                            </IconButton>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 </UnmountClosed>
               </div>

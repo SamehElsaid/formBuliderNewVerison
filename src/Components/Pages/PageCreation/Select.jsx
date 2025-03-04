@@ -117,7 +117,8 @@ function Select({ onChange, data, type }) {
 
   const [addMoreElement] = useState([
     { name_ar: 'مربع الاختيار', name_en: 'CheckBox', key: 'check_box' },
-    { name_ar: 'Button', name_en: 'Button', key: 'button' }
+    { name_ar: 'Button', name_en: 'Button', key: 'button' },
+    { name_ar: 'التبويبات', name_en: 'Tabs', key: 'tabs' },
   ])
 
   const [moreElement, setMoreElement] = useState('')
@@ -326,6 +327,37 @@ function Select({ onChange, data, type }) {
                                   name_en: 'Button',
                                   key: 'button',
                                   type: 'new_element',
+                                  id: 's' + new Date().getTime()
+                                }
+                              ]
+                            })
+                            setMoreElement('')
+                          }
+                          if (moreElement === 'tabs') {
+                            const oldAddMoreElement = data?.addMoreElement ?? []
+                            onChange({
+                              ...data,
+                              addMoreElement: [
+                                ...oldAddMoreElement,
+                                {
+                                  name_ar: 'التبويبات',
+                                  name_en: 'Tabs',
+                                  key: 'tabs',
+                                  type: 'new_element',
+                                  data: [
+                                    {
+                                      name_ar: 'التبويب الاول',
+                                      name_en: 'Tab 1',
+                                      link: 'https://www.google.com',
+                                      active: true
+                                    },
+                                    {
+                                      name_ar: 'التبويب الثاني',
+                                      name_en: 'Tab 2',
+                                      link: 'https://www.google.com',
+                                      active: false
+                                    }
+                                  ],
                                   id: 's' + new Date().getTime()
                                 }
                               ]

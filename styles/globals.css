@@ -1249,3 +1249,19 @@ sortable-list {
 .MuiAutocomplete-hasPopupIcon {
   width: 100% !important;
 }
+
+
+
+.btn-tabs {
+  background: transparent;
+  border: 1px solid #009fff;
+  padding: 10px;
+  color: #555;
+  font-size: 14px;
+  font-weight: 500;
+  
+}
+.btn-tabs.active {
+  background: #009fff;
+  color: #fff;
+}
