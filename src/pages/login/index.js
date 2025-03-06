@@ -79,39 +79,40 @@ const LoginPage = () => {
   const [stopToMain, setStopToMain] = useState(false)
 
   const onSubmit = data => {
-    const sendData = { ...data }
-    sendData.email = sendData.login
-    delete sendData.login
-    if (!loading) {
-      setLoading(true)
+    // const sendData = { ...data }
+    // sendData.email = sendData.login
+    // delete sendData.login
+    // if (!loading) {
+    //   setLoading(true)
 
-      axiosPost('user/login/', locale, sendData, false, true)
-        .then(res => {
-          if (res.status) {
+    //   axiosPost('user/login/', locale, sendData, false, true)
+    //     .then(res => {
+    //       if (res.status) {
+      
+    
+    //         toast.success(`Welcome ${userData?.first_name}`)
+    //       }
+    //     })
+    //     .finally(_ => {
+    //       setLoading(false)
+    //     })
+    // }
             const expirationDate = new Date()
             expirationDate.setFullYear(expirationDate.getFullYear() + 1)
-
-            const userData = {
-              image_url: 'https://via.placeholder.com/150',
-              first_name: 'John',
-              last_name: 'Doe',
-              token: res.data.token
-            }
-            toast.success(`Welcome ${userData?.first_name}`)
-            dispatch(SET_ACTIVE_USER(userData))
-            setCookie('sub', encryptData(userData), {
-              expires: expirationDate,
-              path: '/'
-            })
-            setTimeout(() => {
-              push(`${locale}/setting/setting`)
-            }, 1000)
-          }
-        })
-        .finally(_ => {
-          setLoading(false)
-        })
+    const userData = {
+      image_url: 'https://via.placeholder.com/150',
+      first_name: 'John',
+      last_name: 'Doe',
+      // token: res.data.token
     }
+    dispatch(SET_ACTIVE_USER(userData))
+    setCookie('sub', encryptData(userData), {
+      expires: expirationDate,
+      path: '/'
+    })
+    setTimeout(() => {
+      push(`${locale}/setting/setting`)
+    }, 1000)
   }
 
   return (

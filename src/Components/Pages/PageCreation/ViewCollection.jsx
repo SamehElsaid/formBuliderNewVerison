@@ -110,7 +110,6 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
       return setErrors(refError.current)
     }
 
-    return
     setLoadingSubmit(true)
 
     axiosPost(

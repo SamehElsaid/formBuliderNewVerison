@@ -933,17 +933,15 @@ export default function DisplayField({
             )
           }
         } else {
-          if (input.type === 'ManyToMany') {
-            console.log(mainRef.current)
-            console.log(mainRef.current.scrollHeight, mainRef.current.clientHeight, input)
+          if (mainRef.current) {
+            setLayout(prev => {
+              return prev.map(ele =>
+                `${ele.i}` === `${input.id}`
+                  ? { ...ele, h: isDisable === 'hidden' && !readOnly ? 0 : mainRef.current.scrollHeight / 71 }
+                  : ele
+              )
+            })
           }
-          setLayout(prev => {
-            return prev.map(ele =>
-              `${ele.i}` === `${input.id}`
-                ? { ...ele, h: isDisable === 'hidden' && !readOnly ? 0 : mainRef.current.scrollHeight / 71 }
-                : ele
-            )
-          })
         }
       }
     }, 100)
@@ -953,9 +951,12 @@ export default function DisplayField({
 
   const onChangeFile = async e => {
     const file = e.target.files[0]
-    const evaluatedFn = eval('(' + roles.event.onChange + ')')
-
-    evaluatedFn(e)
+    if (roles?.event?.onChange) {
+      try {
+        const evaluatedFn = eval('(' + roles.event.onChange + ')')
+        evaluatedFn(e)
+      } catch {}
+    }
     if (!file) {
       toast.error(locale === 'ar' ? 'لم يتم اختيار الملف' : 'No file selected')
 
