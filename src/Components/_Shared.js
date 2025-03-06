@@ -449,13 +449,13 @@ input {
 }
 .btn:disabled{
   background-color: #009fff87 !important;
-  cursor: not-allowed !important; 
-}  
+  cursor: not-allowed !important;
+}
 
 `
   }
   if (type === 'multiple_select') {
-    return ` 
+    return `
 #parent-input{
   width:100%;
   height:auto;
@@ -497,7 +497,7 @@ color:#555;
   color: #555;
   font-size: 14px;
   font-weight: 500;
-  
+
 }
 .btn-tabs.active {
   background: #009fff;
@@ -506,6 +506,7 @@ color:#555;
 
     `
   }
+
   return `
 #parent-input{
   width:100%;

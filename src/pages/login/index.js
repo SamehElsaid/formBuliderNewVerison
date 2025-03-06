@@ -88,8 +88,7 @@ const LoginPage = () => {
     //   axiosPost('user/login/', locale, sendData, false, true)
     //     .then(res => {
     //       if (res.status) {
-      
-    
+
     //         toast.success(`Welcome ${userData?.first_name}`)
     //       }
     //     })
@@ -97,13 +96,13 @@ const LoginPage = () => {
     //       setLoading(false)
     //     })
     // }
-            const expirationDate = new Date()
-            expirationDate.setFullYear(expirationDate.getFullYear() + 1)
+    const expirationDate = new Date()
+    expirationDate.setFullYear(expirationDate.getFullYear() + 1)
+
     const userData = {
       image_url: 'https://via.placeholder.com/150',
       first_name: 'John',
-      last_name: 'Doe',
-      // token: res.data.token
+      last_name: 'Doe'
     }
     dispatch(SET_ACTIVE_USER(userData))
     setCookie('sub', encryptData(userData), {

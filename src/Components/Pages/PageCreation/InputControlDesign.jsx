@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { Icon } from '@iconify/react'
 import {
   Box,
@@ -50,6 +51,7 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
   const getApiData = useSelector(rx => rx.api.data)
 
   const [activeStep, setActiveStep] = useState(0)
+
   const [steps, setSteps] = useState([
     locale === 'ar' ? 'حقل الإدخال' : 'Input Field',
     locale === 'ar' ? 'نوع التحقق' : 'Type Of Validation'
@@ -105,6 +107,7 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
   const [mainValue, setMainValue] = useState('')
   const [parentKey, setParentKey] = useState(null)
   const [parentFields, setParentFields] = useState([])
+
   const handleBack = () => {
     setActiveStep(prev => prev - 1)
   }
@@ -220,6 +223,7 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
   const [tabData, setTabData] = useState({ name_ar: '', name_en: '', link: '', active: false })
 
   const [editTab, setEditTab] = useState(false)
+
   const handleCloseTab = () => {
     setOpenTab(false)
     setTabData({ name_ar: '', name_en: '', link: '', active: false })
@@ -254,6 +258,7 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
       toast.error(locale === 'ar' ? 'يجب عليك ادخال البيانات' : 'You must fill the data')
     }
   }
+
   return (
     <>
       {/* {console.log(findMyInput,addMoreElement,open)} */}
@@ -429,7 +434,7 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                           >
                             <MenuItem value={'Id'}>{locale === 'ar' ? 'ID' : 'ID'}</MenuItem>
                             {currentFields.map(field => (
-                              <MenuItem className='capitalize' value={field.key}>
+                              <MenuItem className='capitalize' key={field.key} value={field.key}>
                                 {locale === 'ar' ? field.nameAr : field.nameEn}
                               </MenuItem>
                             ))}
@@ -465,7 +470,7 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                             >
                               <MenuItem value={'Id'}>{locale === 'ar' ? 'ID' : 'ID'}</MenuItem>
                               {parentFields.map(field => (
-                                <MenuItem className='capitalize' value={field.key}>
+                                <MenuItem className='capitalize' value={field.key} key={field.key}>
                                   {locale === 'ar' ? field.nameAr : field.nameEn}
                                 </MenuItem>
                               ))}

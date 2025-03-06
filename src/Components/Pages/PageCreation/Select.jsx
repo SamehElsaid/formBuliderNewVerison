@@ -63,7 +63,6 @@ function Select({ onChange, data, type }) {
       })
   }, [locale, data.data_source_id])
   const addMoreData = data?.addMoreElement ?? []
- 
 
   useEffect(() => {
     if (data.collectionId) {
@@ -118,7 +117,7 @@ function Select({ onChange, data, type }) {
   const [addMoreElement] = useState([
     { name_ar: 'مربع الاختيار', name_en: 'CheckBox', key: 'check_box' },
     { name_ar: 'Button', name_en: 'Button', key: 'button' },
-    { name_ar: 'التبويبات', name_en: 'Tabs', key: 'tabs' },
+    { name_ar: 'التبويبات', name_en: 'Tabs', key: 'tabs' }
   ])
 
   const [moreElement, setMoreElement] = useState('')
@@ -140,6 +139,7 @@ function Select({ onChange, data, type }) {
       })
     }
   }, [addMoreData.length])
+
   return (
     <div>
       <Typography variant='h5'>{locale === 'ar' ? 'اختيار التجميعة' : 'Select Collection'}</Typography>
@@ -291,8 +291,10 @@ function Select({ onChange, data, type }) {
                     setMoreElement(e.target.value)
                   }}
                 >
-                  {addMoreElement.map(item => (
-                    <MenuItem value={item.key}>{locale === 'ar' ? item.name_ar : item.name_en}</MenuItem>
+                  {addMoreElement.map((item, i) => (
+                    <MenuItem value={item.key} key={i}>
+                      {locale === 'ar' ? item.name_ar : item.name_en}
+                    </MenuItem>
                   ))}
                 </TextField>
                 <Collapse transition={`height 300ms cubic-bezier(.4, 0, .2, 1)`} isOpen={Boolean(moreElement)}>
@@ -382,7 +384,7 @@ function Select({ onChange, data, type }) {
                     {data?.addMoreElement?.map(item => (
                       <div key={item.id}>
                         <div className='flex items-center justify-between '>
-                          <div className='text-sm'>{locale==="ar"?item.name_ar:item.name_en}</div>
+                          <div className='text-sm'>{locale === 'ar' ? item.name_ar : item.name_en}</div>
                           <Button
                             variant='outlined'
                             color='error'

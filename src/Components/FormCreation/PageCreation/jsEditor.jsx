@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import dynamic from 'next/dynamic'
 import { useIntl } from 'react-intl'
 import { useState, useEffect } from 'react'
@@ -49,7 +50,6 @@ const JsEditor = ({ data, onChange, jsCode, open, Css, type, roles }) => {
         }
         console.log(additional_fields)
         onChange({ ...data, additional_fields: additional_fields })
-        // onChange(updatedCode)
       } else {
         console.log('error')
         toast.error(locale === 'ar' ? 'خطأ في الكود' : 'Invalid code')

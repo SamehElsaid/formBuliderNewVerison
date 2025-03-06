@@ -13,6 +13,7 @@ function Design() {
     { name_ar: 'التبويب التاسع', name_en: 'Tab 9', key: 'tab9' },
     { name_ar: 'التبويب العاشر', name_en: 'Tab 10', key: 'tab10' }
   ])
+
   return (
     <div className='flex flex-wrap parent-tabs'>
       {data.map((item, index) => (

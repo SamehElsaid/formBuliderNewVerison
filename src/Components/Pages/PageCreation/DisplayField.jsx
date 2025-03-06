@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect, useMemo, forwardRef, useRef } from 'react'
 import { Autocomplete, FormLabel, IconButton, InputAdornment, TextField } from '@mui/material'
 import { useIntl } from 'react-intl'
@@ -44,7 +45,6 @@ export default function DisplayField({
   const xComponentProps = useMemo(() => input?.options?.uiSchema?.xComponentProps ?? {}, [input])
   const [fileName, setFile] = useState('')
   const [regex, setRegex] = useState(roles?.regex?.regex)
-  // console.log(errorView, input.id)
 
   const formatDate = (value, format) => {
     const date = new Date(value)
@@ -115,6 +115,7 @@ export default function DisplayField({
           if (roles?.onMount?.type === 'hide') {
             return 'hidden'
           }
+
           return null
         })
       }
@@ -139,6 +140,7 @@ export default function DisplayField({
                         if (roles?.onMount?.type === 'disable') {
                           return 'disabled'
                         }
+
                         return null
                       })
                     } else {
@@ -150,6 +152,7 @@ export default function DisplayField({
                         if (roles?.onMount?.type === 'disable') {
                           return 'disabled'
                         }
+
                         return null
                       })
                     } else {
@@ -167,6 +170,7 @@ export default function DisplayField({
                 if (roles?.onMount?.type === 'disable') {
                   return 'disabled'
                 }
+
                 return null
               })
             } else {
@@ -178,6 +182,7 @@ export default function DisplayField({
                 if (roles?.onMount?.type === 'disable') {
                   return 'disabled'
                 }
+
                 return null
               })
             } else {
@@ -200,6 +205,7 @@ export default function DisplayField({
                         if (roles?.onMount?.type === 'disable') {
                           return 'disabled'
                         }
+
                         return null
                       })
                     } else {
@@ -211,6 +217,7 @@ export default function DisplayField({
                         if (roles?.onMount?.type === 'disable') {
                           return 'disabled'
                         }
+
                         return null
                       })
                     } else {
@@ -228,6 +235,7 @@ export default function DisplayField({
                 if (roles?.onMount?.type === 'disable') {
                   return 'disabled'
                 }
+
                 return null
               })
             } else {
@@ -239,6 +247,7 @@ export default function DisplayField({
                 if (roles?.onMount?.type === 'disable') {
                   return 'disabled'
                 }
+
                 return null
               })
             } else {
@@ -256,6 +265,7 @@ export default function DisplayField({
           if (roles?.onMount?.type === 'disable') {
             return 'disabled'
           }
+
           return null
         })
       }
@@ -428,6 +438,7 @@ export default function DisplayField({
         }
       }
     }
+
     //  End Empty Control
 
     // ! Start hidden Control
@@ -528,10 +539,12 @@ export default function DisplayField({
           if (roles?.onMount?.type === 'hide') {
             return 'hidden'
           }
+
           return null
         })
       }
     }
+
     //  End hidden Control
 
     // ! Start Visible Control
@@ -628,10 +641,12 @@ export default function DisplayField({
           if (roles?.onMount?.type === 'hide') {
             return 'hidden'
           }
+
           return null
         })
       }
     }
+
     // End Visible Control
   }, [roles, loading, triggerData])
 
@@ -754,10 +769,10 @@ export default function DisplayField({
       if (regex) {
         // Remove surrounding quotes if present
         const cleanedRegex = regex.replace(/^"(.*)"$/, '$1')
-        // Extract pattern and flags from the regex string
         const regexMatch = cleanedRegex.match(/^\/(.*)\/([gimuy]*)$/)
         if (!regexMatch) {
           console.error('Invalid regex format:', cleanedRegex)
+
           return
         }
         const [, pattern, flags] = regexMatch
@@ -819,10 +834,10 @@ export default function DisplayField({
     if (regex) {
       // Remove surrounding quotes if present
       const cleanedRegex = regex.replace(/^"(.*)"$/, '$1')
-      // Extract pattern and flags from the regex string
       const regexMatch = cleanedRegex.match(/^\/(.*)\/([gimuy]*)$/)
       if (!regexMatch) {
         console.error('Invalid regex format:', cleanedRegex)
+
         return
       }
       const [, pattern, flags] = regexMatch

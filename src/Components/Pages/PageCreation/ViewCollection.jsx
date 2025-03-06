@@ -255,7 +255,6 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
                   design={getDesign(filed.id, filed)}
                   readOnly={disabled}
                   disabledBtn={!data.type_of_sumbit || (data.type_of_sumbit === 'api' && !data.submitApi)}
-                  // settingReadOnly={readOnly}
                   refError={refError}
                   setLayout={setLayout}
                   triggerData={triggerData}

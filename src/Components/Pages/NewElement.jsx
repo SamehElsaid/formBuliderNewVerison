@@ -4,6 +4,7 @@ import Link from 'next/link'
 
 function NewElement({ input, onBlur, value, setValue, roles, onChangeEvent, disabledBtn }) {
   const { locale } = useIntl()
+
   const handleCheckboxChange = e => {
     try {
       if (onChangeEvent) {
@@ -51,6 +52,7 @@ function NewElement({ input, onBlur, value, setValue, roles, onChangeEvent, disa
         '(\\#[-a-z\\d_]*)?$',
       'i'
     )
+
     return !!pattern.test(str)
   }
 
@@ -138,6 +140,7 @@ function NewElement({ input, onBlur, value, setValue, roles, onChangeEvent, disa
         </button>
       )
     }
+
     return (
       <button onClick={handleClick} type='button' className='btn'>
         {locale === 'ar' ? input.name_ar : input.name_en}
