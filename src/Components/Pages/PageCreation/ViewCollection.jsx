@@ -35,12 +35,10 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
         data?.layout?.length ===
         [...getFields.filter(filed => data?.selected?.includes(filed?.key)), ...addMoreElement].length
       ) {
-
         console.log('sa')
         setLayout([...data.layout])
       } else {
         console.log('السيد')
-
 
         setLayout(
           [...getFields.filter(filed => data?.selected?.includes(filed?.key)), ...addMoreElement].map((item, index) => {
@@ -88,7 +86,6 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
         }
       }
     }
-    console.log(refError.current)
 
     addMoreElement.forEach(ele => {
       console.log(ele)
@@ -137,7 +134,7 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
     setOpen(false)
   }
 
-
+ 
   const defaultDesign =
     open?.type === 'new_element' ? DefaultStyle(open?.key) : open?.options?.uiSchema?.xComponentProps?.cssClass
   let additionalField = null
@@ -163,6 +160,14 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
     placeholder: {
       placeholder_ar: '',
       placeholder_en: ''
+    },
+    hover: {
+      hover_ar: '',
+      hover_en: ''
+    },
+    hint: {
+      hint_ar: '',
+      hint_en: ''
     },
     event: {},
     regex: {
@@ -197,6 +202,14 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
   )
 
   const refTest = useRef()
+
+  useEffect(() => {
+    if (layout) {
+      document.querySelectorAll('.drag-handle').forEach((ele, index) => {
+        ele.style.zIndex = document.querySelectorAll('.drag-handle').length + 50 - index
+      })
+    }
+  }, [layout])
 
   // console.log(layout);
 
@@ -269,6 +282,14 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
                       placeholder: {
                         placeholder_ar: '',
                         placeholder_en: ''
+                      },
+                      hover: {
+                        hover_ar: '',
+                        hover_en: ''
+                      },
+                      hint: {
+                        hint_ar: '',
+                        hint_en: ''
                       },
                       trigger: {
                         selectedField: null,

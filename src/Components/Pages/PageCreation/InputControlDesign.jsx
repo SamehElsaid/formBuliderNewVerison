@@ -371,7 +371,7 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                     {open.fieldCategory !== 'Basic' && (
                       <MenuItem value={'filter'}>{locale === 'ar' ? 'تصفية' : 'Filter'}</MenuItem>
                     )}
-                    {/* <MenuItem value={'disable'}>{locale === 'ar' ? 'إيقاف' : 'Disable'}</MenuItem> */}
+
                     <MenuItem value={'enable'}>{locale === 'ar' ? 'تفعيل' : 'Enable'}</MenuItem>
                     <MenuItem value={'empty'}>{locale === 'ar' ? 'فارغ' : 'Empty'}</MenuItem>
                     <MenuItem value={'hidden'}>{locale === 'ar' ? 'مخفي' : 'Hidden'}</MenuItem>
@@ -649,7 +649,7 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                           label={locale === 'ar' ? 'الاسم باللغة العربية' : 'Name in Arabic'}
                         />
                       </div>
-                    )}{' '}
+                    )}
                     {(open.type === 'SingleText' ||
                       open.type === 'Number' ||
                       open.type === 'Phone' ||
@@ -659,7 +659,6 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                       open.descriptionAr === 'multiple_select' ||
                       open.type === 'LongText') && (
                       <>
-                        {' '}
                         <TextField
                           fullWidth
                           type='text'
@@ -718,6 +717,118 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                         />
                       </>
                     )}
+                    <TextField
+                      fullWidth
+                      type='text'
+                      defaultValue={roles?.hover?.hover_ar || ''}
+                      onBlur={e => {
+                        const additional_fields = data.additional_fields ?? []
+                        const findMyInput = additional_fields.find(inp => inp.key === open.id)
+                        if (findMyInput) {
+                          findMyInput.roles.hover.hover_ar = e.target.value
+                        } else {
+                          const myEdit = {
+                            key: open.id,
+                            design: objectToCss(Css).replaceAll('NaN', ''),
+                            roles: {
+                              ...roles,
+                              hover: {
+                                hover_ar: e.target.value,
+                                hover_en: roles.hover.hover_en
+                              }
+                            }
+                          }
+                          additional_fields.push(myEdit)
+                        }
+                        onChange({ ...data, additional_fields: additional_fields })
+                      }}
+                      variant='filled'
+                      label={locale === 'ar' ? 'التأشيرة عند التمرير باللغة العربية' : 'Hover Text in Arabic'}
+                    />
+                    <TextField
+                      fullWidth
+                      type='text'
+                      defaultValue={roles?.hover?.hover_en || ''}
+                      onBlur={e => {
+                        const additional_fields = data.additional_fields ?? []
+                        const findMyInput = additional_fields.find(inp => inp.key === open.id)
+                        if (findMyInput) {
+                          findMyInput.roles.hover.hover_en = e.target.value
+                        } else {
+                          const myEdit = {
+                            key: open.id,
+                            design: objectToCss(Css).replaceAll('NaN', ''),
+                            roles: {
+                              ...roles,
+                              hover: {
+                                hover_ar: roles.hover.hover_ar,
+                                hover_en: e.target.value
+                              }
+                            }
+                          }
+                          additional_fields.push(myEdit)
+                        }
+                        onChange({ ...data, additional_fields: additional_fields })
+                      }}
+                      variant='filled'
+                      label={locale === 'ar' ? 'التأشيرة عند التمرير باللغة الانجليزية' : 'Hover Text in English'}
+                    />
+                    <TextField
+                      fullWidth
+                      type='text'
+                      defaultValue={roles?.hint?.hint_ar || ''}
+                      onBlur={e => {
+                        const additional_fields = data.additional_fields ?? []
+                        const findMyInput = additional_fields.find(inp => inp.key === open.id)
+                        if (findMyInput) {
+                          findMyInput.roles.hint.hint_ar = e.target.value
+                        } else {
+                          const myEdit = {
+                            key: open.id,
+                            design: objectToCss(Css).replaceAll('NaN', ''),
+                            roles: {
+                              ...roles,
+                              hint: {
+                                hint_ar: e.target.value,
+                                hint_en: roles.hint.hint_en
+                              }
+                            }
+                          }
+                          additional_fields.push(myEdit)
+                        }
+                        onChange({ ...data, additional_fields: additional_fields })
+                      }}
+                      variant='filled'
+                      label={locale === 'ar' ? 'التوضيح باللغة العربية' : 'Hint in Arabic'}
+                    />
+                    <TextField
+                      fullWidth
+                      type='text'
+                      defaultValue={roles?.hint?.hint_en || ''}
+                      onBlur={e => {
+                        const additional_fields = data.additional_fields ?? []
+                        const findMyInput = additional_fields.find(inp => inp.key === open.id)
+                        if (findMyInput) {
+                          findMyInput.roles.hint.hint_en = e.target.value
+                        } else {
+                          const myEdit = {
+                            key: open.id,
+                            design: objectToCss(Css).replaceAll('NaN', ''),
+                            roles: {
+                              ...roles,
+                              hint: {
+                                hint_ar: roles.hint.hint_ar,
+                                hint_en: e.target.value
+                              }
+                            }
+                          }
+                          additional_fields.push(myEdit)
+                        }
+                        onChange({ ...data, additional_fields: additional_fields })
+                      }}
+                      variant='filled'
+                      label={locale === 'ar' ? 'التوضيح باللغة الانجليزية' : 'Hint in English'}
+                    />
                     {(open.type === 'SingleText' ||
                       open.type === 'Number' ||
                       open.type === 'Phone' ||
@@ -1177,6 +1288,7 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                         />
                       </>
                     )}
+
                     <div className='w-full'>
                       <h2 className='mt-5 text-[#555] mb-3 font-bold'>
                         {locale === 'ar' ? 'محرر CSS للحقل' : 'CSS Editor For Input'}

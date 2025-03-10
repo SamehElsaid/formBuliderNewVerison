@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 
 import { Box, Button, CircularProgress, Dialog, DialogContent, IconButton, Tooltip, Typography } from '@mui/material'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { axiosDelete, axiosGet } from 'src/Components/axiosCall'
 import PagnationTable from 'src/Components/TableEdit/PagnationTable'
 import { SortableContainer, SortableElement, arrayMove } from 'react-sortable-hoc'
@@ -11,6 +11,11 @@ import { useIntl } from 'react-intl'
 import { LoadingButton } from '@mui/lab'
 import OpenEditDialog from './OpenEditDialog'
 import GetTimeinTable from 'src/Components/GetTimeinTable'
+import { DefaultStyle } from 'src/Components/_Shared'
+import InputControlDesign from './InputControlDesign'
+import ViewInputInTable from '../ViewInputinTable'
+import { removeerrorInAllRowData } from 'src/store/apps/errorInAllRow/errorInAllRow'
+import { useDispatch } from 'react-redux'
 
 function TableView({ data, locale, onChange, readOnly, disabled }) {
   const [getFields, setGetFields] = useState([])
@@ -20,6 +25,13 @@ function TableView({ data, locale, onChange, readOnly, disabled }) {
   const [deleteOpen, setDeleteOpen] = useState(false)
   const [editOpen, setEditOpen] = useState(false)
   const { messages } = useIntl()
+  const errorAllRef = useRef([])
+
+  const [open, setOpen] = useState(false)
+
+  const handleClosePop = () => {
+    setOpen(false)
+  }
 
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
@@ -63,6 +75,29 @@ function TableView({ data, locale, onChange, readOnly, disabled }) {
 
   const [filterWithSelect, setFilterWithSelect] = useState([])
 
+  const getDesign = useCallback(
+    (key, field) => {
+      const defaultDesign =
+        field?.type === 'new_element' ? DefaultStyle(field?.key) : field?.options?.uiSchema?.xComponentProps?.cssClass
+
+      let additionalField = null
+      const additionalFieldDesign = data?.additional_fields?.find(ele => ele.key === key)?.design
+      if (additionalFieldDesign) {
+        if (additionalFieldDesign.length === 0) {
+          additionalField = null
+        } else {
+          additionalField = additionalFieldDesign
+        }
+      }
+
+      const design = additionalField ?? defaultDesign ?? ``
+
+      return design
+    },
+    [data?.additional_fields]
+  )
+  const [triggerData, setTriggerData] = useState(0)
+
   useEffect(() => {
     if (collectionFields.length === 0) return
     let filteredFields = collectionFields.filter(ele => data.selected.includes(ele.key))
@@ -93,21 +128,35 @@ function TableView({ data, locale, onChange, readOnly, disabled }) {
           disableColumnMenu: true,
           field: ele.key,
           headerName: locale === 'ar' ? ele.nameAr.toUpperCase() : ele.nameEn.toUpperCase(),
-          renderCell: ({ row }) => (
-            <Typography variant='subtitle2' sx={{ fontWeight: 500, color: 'text.secondary' }}>
-              {ele?.fieldCategory === 'Associations' ? (
-                <ViewValueInTable data={ele} value={row?.[ele?.key] ?? ''} />
-              ) : ele?.type === 'Date' ? (
-                <>
-                  <GetTimeinTable data={row[ele.key]} />
-                </>
-              ) : (
-                <>
-                  {Object.keys(row?.[ele?.key]).length !== 0 ? row?.[ele?.key] : '-'}
-                </>
-              )}
-            </Typography>
-          )
+          renderCell: ({ row }) =>
+            data.kind === 'form-table' ? (
+              <ViewInputInTable
+                ele={ele}
+                row={row}
+                readOnly={readOnly}
+                disabled={disabled}
+                data={data}
+                onChange={onChange}
+                setTriggerData={setTriggerData}
+                getDesign={getDesign}
+                triggerData={triggerData}
+                errorAllRef={errorAllRef}
+              />
+            ) : (
+              <>
+                <Typography variant='subtitle2' sx={{ fontWeight: 500, color: 'text.secondary' }}>
+                  {ele?.fieldCategory === 'Associations' ? (
+                    <ViewValueInTable data={ele} value={row?.[ele?.key] ?? ''} />
+                  ) : ele?.type === 'Date' ? (
+                    <>
+                      <GetTimeinTable data={row[ele.key]} />
+                    </>
+                  ) : (
+                    <>{Object.keys(row?.[ele?.key]).length !== 0 ? row?.[ele?.key] : '-'}</>
+                  )}
+                </Typography>
+              </>
+            )
         }
 
         return mainTable
@@ -188,8 +237,61 @@ function TableView({ data, locale, onChange, readOnly, disabled }) {
   }
   const [loadingButton, setLoadingButton] = useState(false)
 
+  const defaultDesign =
+    open?.type === 'new_element' ? DefaultStyle(open?.key) : open?.options?.uiSchema?.xComponentProps?.cssClass
+  let additionalField = null
+  const additionalFieldDesign = data?.additional_fields?.find(ele => ele.key === open?.id)?.design
+  if (additionalFieldDesign) {
+    if (additionalFieldDesign.length === 0) {
+      additionalField = null
+    } else {
+      additionalField = additionalFieldDesign
+    }
+  }
+  const design = additionalField ?? defaultDesign ?? ``
+  const roles = data?.additional_fields?.find(ele => ele.key === open?.id)?.roles ?? {
+    onMount: { type: '', value: '' },
+    trigger: {
+      selectedField: null,
+      triggerKey: null,
+      typeOfValidation: null,
+      isEqual: 'equal',
+      currentField: 'id'
+    },
+    placeholder: {
+      placeholder_ar: '',
+      placeholder_en: ''
+    },
+    hover: {
+      hover_ar: '',
+      hover_en: ''
+    },
+    hint: {
+      hint_ar: '',
+      hint_en: ''
+    },
+    event: {},
+    regex: {
+      regex: '',
+      message_ar: '',
+      message_en: ''
+    },
+    api_url: '',
+    apiKeyData: ''
+  }
+  const dispatch = useDispatch()
   return (
     <div>
+      <InputControlDesign
+        open={open}
+        handleClose={handleClosePop}
+        design={design}
+        locale={locale}
+        roles={roles}
+        data={data}
+        onChange={onChange}
+        fields={getFields.filter(filed => data?.selected?.includes(filed?.key))}
+      />
       <OpenEditDialog
         data={setGetFields}
         open={editOpen}
@@ -247,22 +349,56 @@ function TableView({ data, locale, onChange, readOnly, disabled }) {
       ) : (
         <>
           {!readOnly && <SortableList items={filterWithSelect} onSortEnd={onSortEnd} axis='xy' />}
-          <PagnationTable
-            Invitationscolumns={[...columns, ...actions]}
-            data={getFields?.map((ele, i) => {
-              const fData = { ...ele }
-              fData.index = i + paginationModel.page * paginationModel.pageSize
+          <div className='flex justify-end  mb-3 px-5'>
+            <Button
+              variant='contained'
+              color='success'
+              onClick={() => {
+                const newData = {}
+                filterWithSelect.forEach(ele => {
+                  newData[ele.key] =
+                    ele.fieldCategory === 'Associations'
+                      ? []
+                      : ele.type === 'Date'
+                      ? new Date()
+                      : ele.type === 'DateTime'
+                      ? new Date()
+                      : ''
+                })
+                setGetFields([newData, ...getFields])
+              }}
+            >
+              {messages.add}
+            </Button>
+          </div>
+          <div
+            id=''
+            onClick={() => {
+              dispatch(removeerrorInAllRowData())
+            }}
+          >
+            <PagnationTable
+              Invitationscolumns={[...columns, ...actions]}
+              data={getFields?.map((ele, i) => {
+                const fData = { ...ele }
+                fData.index = i + paginationModel.page * paginationModel.pageSize
 
-              return fData
-            })}
-            totalRows={totalCount}
-            getRowId={row => row.index}
-            loading={loading}
-            locale={locale}
-            noRow={locale === 'ar' ? 'لا يوجد' : 'Not Found'}
-            paginationModel={paginationModel}
-            setPaginationModel={setPaginationModel}
-          />
+                return fData
+              })}
+              totalRows={totalCount}
+              getRowId={row => row.index}
+              loading={loading}
+              locale={locale}
+              noRow={locale === 'ar' ? 'لا يوجد' : 'Not Found'}
+              paginationModel={paginationModel}
+              setPaginationModel={setPaginationModel}
+            />
+          </div>
+          <div id='btn-actions'>
+            <Button variant='contained' color='success'>
+              {messages.add}
+            </Button>
+          </div>
         </>
       )}
     </div>

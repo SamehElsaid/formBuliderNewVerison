@@ -407,6 +407,197 @@ function Select({ onChange, data, type }) {
             </>
           ) : (
             <>
+              <TextField
+                select
+                fullWidth
+                value={data.kind}
+                onChange={e => {
+                  onChange({
+                    ...data,
+                    kind: e.target.value
+                  })
+                }}
+                label={locale === 'ar' ? 'نوع الجدول' : 'Type Of table'}
+                variant='filled'
+              >
+                <MenuItem value={'view-data'}>{locale === 'ar' ? 'عرض البيانات' : 'View Data'}</MenuItem>
+                <MenuItem value={'form-table'}>{locale === 'ar' ? 'ارسال البيانات' : 'Submit Data '}</MenuItem>
+              </TextField>
+              <Collapse
+                transition={`height 300ms cubic-bezier(.4, 0, .2, 1)`}
+                isOpen={Boolean(data.kind === 'form-table')}
+              >
+                <TextField
+                  select
+                  fullWidth
+                  value={data.type_of_sumbit || ''}
+                  onChange={e => {
+                    if (e.target.value === 'collection') {
+                      if (selectedOptions.length !== getFields.length) {
+                        toast.error(locale === 'ar' ? 'يجب اختيار كل الحقول' : 'You must select the All fields')
+
+                        return
+                      }
+                    }
+
+                    onChange({ ...data, type_of_sumbit: e.target.value })
+                  }}
+                  label={locale === 'ar' ? 'نوع الارسال' : 'Type Of Submit'}
+                  variant='filled'
+                >
+                  <MenuItem value={'collection'}>{locale === 'ar' ? 'هذه التجميعة' : 'This Collection'}</MenuItem>
+                  <MenuItem value={'api'}>{locale === 'ar' ? 'الي Api اخر' : 'Other API'}</MenuItem>
+                </TextField>
+                <TextField
+                  fullWidth
+                  value={data.redirect || ''}
+                  onChange={e => onChange({ ...data, redirect: e.target.value })}
+                  label={locale === 'ar' ? 'الذهاب الي' : 'Redirect to'}
+                  variant='filled'
+                />
+
+                <Collapse
+                  transition={`height 300ms cubic-bezier(.4, 0, .2, 1)`}
+                  isOpen={Boolean(data.type_of_sumbit === 'api')}
+                >
+                  <TextField
+                    fullWidth
+                    value={data.submitApi || ''}
+                    onChange={e => onChange({ ...data, submitApi: e.target.value })}
+                    label={locale === 'ar' ? 'ارسال البيانات الي الAPI' : 'Submit To API'}
+                    variant='filled'
+                  />
+                </Collapse>
+
+                <div className='p-2 border-2 border-gray-300 rounded-md mt-4 '>
+                  <div className='text-lg font-bold'>{locale === 'ar' ? 'اضافة عناصر' : 'Add More Element'}</div>
+
+                  <TextField
+                    select
+                    fullWidth
+                    value={moreElement}
+                    label={locale === 'ar' ? 'اضافة عناصر' : 'Add More Element'}
+                    id='select-helper'
+                    variant='filled'
+                    onChange={e => {
+                      setMoreElement(e.target.value)
+                    }}
+                  >
+                    {addMoreElement.map((item, i) => (
+                      <MenuItem value={item.key} key={i}>
+                        {locale === 'ar' ? item.name_ar : item.name_en}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                  <Collapse transition={`height 300ms cubic-bezier(.4, 0, .2, 1)`} isOpen={Boolean(moreElement)}>
+                    <div className='flex justify-center my-3'>
+                      <Button
+                        onClick={() => {
+                          if (moreElement) {
+                            if (moreElement === 'check_box') {
+                              const oldAddMoreElement = data?.addMoreElement ?? []
+                              onChange({
+                                ...data,
+                                addMoreElement: [
+                                  ...oldAddMoreElement,
+                                  {
+                                    name_ar: 'مربع الاختيار',
+                                    name_en: 'CheckBox',
+                                    key: 'check_box',
+                                    type: 'new_element',
+                                    id: 's' + new Date().getTime()
+                                  }
+                                ]
+                              })
+                            }
+                            if (moreElement === 'button') {
+                              const oldAddMoreElement = data?.addMoreElement ?? []
+                              onChange({
+                                ...data,
+                                addMoreElement: [
+                                  ...oldAddMoreElement,
+                                  {
+                                    name_ar: 'Button',
+                                    name_en: 'Button',
+                                    key: 'button',
+                                    type: 'new_element',
+                                    id: 's' + new Date().getTime()
+                                  }
+                                ]
+                              })
+                              setMoreElement('')
+                            }
+                            if (moreElement === 'tabs') {
+                              const oldAddMoreElement = data?.addMoreElement ?? []
+                              onChange({
+                                ...data,
+                                addMoreElement: [
+                                  ...oldAddMoreElement,
+                                  {
+                                    name_ar: 'التبويبات',
+                                    name_en: 'Tabs',
+                                    key: 'tabs',
+                                    type: 'new_element',
+                                    data: [
+                                      {
+                                        name_ar: 'التبويب الاول',
+                                        name_en: 'Tab 1',
+                                        link: 'https://www.google.com',
+                                        active: true
+                                      },
+                                      {
+                                        name_ar: 'التبويب الثاني',
+                                        name_en: 'Tab 2',
+                                        link: 'https://www.google.com',
+                                        active: false
+                                      }
+                                    ],
+                                    id: 's' + new Date().getTime()
+                                  }
+                                ]
+                              })
+                              setMoreElement('')
+                            }
+                            toast.success(locale === 'ar' ? 'تم اضافة العنصر' : 'Element Added')
+                          }
+                        }}
+                        variant='contained'
+                        color='primary'
+                      >
+                        {locale === 'ar' ? 'اضافة' : 'Add'}
+                      </Button>
+                    </div>
+                  </Collapse>
+                  <Collapse
+                    transition={`height 300ms cubic-bezier(.4, 0, .2, 1)`}
+                    isOpen={Boolean(data?.addMoreElement?.length > 0)}
+                  >
+                    <div className='flex flex-col gap-2 my-3'>
+                      {data?.addMoreElement?.map(item => (
+                        <div key={item.id}>
+                          <div className='flex items-center justify-between '>
+                            <div className='text-sm'>{locale === 'ar' ? item.name_ar : item.name_en}</div>
+                            <Button
+                              variant='outlined'
+                              color='error'
+                              onClick={() => {
+                                const oldAddMoreElement = data?.addMoreElement ?? []
+                                onChange({
+                                  ...data,
+                                  addMoreElement: oldAddMoreElement.filter(e => e.id !== item.id)
+                                })
+                              }}
+                            >
+                              {locale === 'ar' ? 'حذف' : 'Delete'}
+                            </Button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </Collapse>
+                </div>
+              </Collapse>
+
               <h2 className='text-lg font-bold'>{locale === 'ar' ? 'الاجراءات' : 'Actions'}</h2>
               <FormControlLabel
                 key={data.edit}

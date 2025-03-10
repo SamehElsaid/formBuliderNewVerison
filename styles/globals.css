@@ -1250,8 +1250,6 @@ sortable-list {
   width: 100% !important;
 }
 
-
-
 .btn-tabs {
   background: transparent;
   border: 1px solid #009fff;
@@ -1259,9 +1257,25 @@ sortable-list {
   color: #555;
   font-size: 14px;
   font-weight: 500;
-  
 }
 .btn-tabs.active {
   background: #009fff;
   color: #fff;
+}
+
+.glass-effect {
+  padding: 10px;
+  background: #fff;
+  z-index: 5555 !important;
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.2), 0 1px 2px -1px rgb(0 0 0 / 0.2) !important;
+  @apply !rounded-b-lg;
+}
+.hint-btn:hover .hint-text {
+  @apply !visible !opacity-100;
+}
+.MuiDataGrid-columnHeaders {
+  @apply !border-t;
+}
+.MuiDataGrid-root {
+  @apply !border;
 }

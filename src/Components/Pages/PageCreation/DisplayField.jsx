@@ -25,7 +25,6 @@ export default function DisplayField({
   setLayout,
   setTriggerData,
   findError,
-
   readOnly,
   findValue,
   roles,
@@ -79,6 +78,7 @@ export default function DisplayField({
         input.validationData.forEach(item => {
           dataValidations[item.ruleType] = item.parameters
         })
+        
         setValidations(dataValidations)
       }
     }
@@ -674,7 +674,7 @@ export default function DisplayField({
   }, [roles])
 
   useEffect(() => {
-    if (findValue) {
+    if (findValue || findValue === '') {
       setValue(findValue)
       if (input?.type === 'date') {
         setValue(new Date(findValue))
@@ -821,7 +821,8 @@ export default function DisplayField({
     if (!input) return
     let errorWithoutDirty = []
     const errorMessages = []
-    if (validations.Required && value?.length === 0) {
+    if (validations.Required && (value?.length === 0 || value === '')) {
+
       errorWithoutDirty.push(true)
       errorMessages.push('Required')
     }
@@ -1020,10 +1021,11 @@ export default function DisplayField({
       reader.onerror = error => reject(error)
     })
   }
-
+  const hoverText = roles?.hover?.hover_ar || roles?.hover?.hover_en
+  const hintText = roles?.hint?.hint_ar || roles?.hint?.hint_en
   return (
     <div
-      className={`reset ${isDisable === 'hidden' && !readOnly ? 'hidden' : ''} relative`}
+      className={`reset ${isDisable === 'hidden' && !readOnly ? 'hidden' : ''} relative group w-full`}
       id={input.type === 'new_element' ? `s${input.id}` : input.key.trim() + input.nameEn.trim().replaceAll(' ', '')}
     >
       <style>{`#${
@@ -1031,9 +1033,25 @@ export default function DisplayField({
       } {
         ${design}
       }`}</style>
+      {hoverText && (
+        <div className='absolute glass-effect z-10 w-full top-[calc(100%+5px)] invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-all duration-300'>
+          {hoverText}
+        </div>
+      )}
       <div ref={mainRef} id='parent-input'>
-        <div className=''>
+        <div className='flex items-center gap-2 justify-between mb-2'>
           <div>{input.type !== 'File' && label}</div>
+          {hintText && (
+            <button
+              type='button'
+              className='text-lg relative bg-main-color hint-btn   rounded-full w-[35px] h-[35px] flex items-center justify-center cursor-pointer'
+            >
+              <Icon fontSize='1.25rem' icon='tabler:info-circle' className='text-white' />
+              <div className='absolute glass-effect z-10 w-fit end-[0] top-[calc(100%+5px)] invisible  hint-text transition-all duration-300'>
+                {hintText}
+              </div>
+            </button>
+          )}
         </div>
         <div className='relative' style={{ display: 'flex' }}>
           {isDisable === 'hidden' && readOnly && (
@@ -1433,7 +1451,6 @@ const ViewInput = ({
 
   if (input.type === 'ManyToMany' && input.descriptionAr === 'multiple_select') {
     const lable = JSON.parse(input?.descriptionEn)
-    console.log(lable)
 
     return (
       <Autocomplete
