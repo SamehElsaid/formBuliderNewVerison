@@ -1,20 +1,23 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect, useMemo, forwardRef, useRef } from 'react'
-import { Autocomplete, FormLabel, IconButton, InputAdornment, TextField } from '@mui/material'
+import { Autocomplete, Button, FormLabel, IconButton, InputAdornment, TextField } from '@mui/material'
 import { useIntl } from 'react-intl'
 import { isPossiblePhoneNumber } from 'react-phone-number-input'
 import DatePicker from 'react-datepicker'
 import ar from 'date-fns/locale/ar-EG'
 import en from 'date-fns/locale/en-US'
-import { axiosGet } from 'src/Components/axiosCall'
+import { axiosGet, axiosPost } from 'src/Components/axiosCall'
 import { Icon } from '@iconify/react'
 import Collapse from '@kunukn/react-collapse'
 import { BsPaperclip, BsTrash } from 'react-icons/bs'
 import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'
 import { FaCalendarAlt } from 'react-icons/fa'
 import NewElement from '../NewElement'
+import { toast } from 'react-toastify'
+import addDays from 'date-fns/addDays'
 
 export default function DisplayField({
+  from,
   input,
   dirtyProps,
   reload,
@@ -78,7 +81,7 @@ export default function DisplayField({
         input.validationData.forEach(item => {
           dataValidations[item.ruleType] = item.parameters
         })
-        
+
         setValidations(dataValidations)
       }
     }
@@ -822,7 +825,6 @@ export default function DisplayField({
     let errorWithoutDirty = []
     const errorMessages = []
     if (validations.Required && (value?.length === 0 || value === '')) {
-
       errorWithoutDirty.push(true)
       errorMessages.push('Required')
     }
@@ -967,6 +969,10 @@ export default function DisplayField({
 
   const onChangeFile = async e => {
     const file = e.target.files[0]
+    if (file.size > roles?.size * 1024) {
+      toast.error(locale === 'ar' ? `حجم الملف أكبر من ${roles?.size} كيلوبايت` : `File size exceeds ${roles?.size}KB`)
+      return
+    }
     if (roles?.event?.onChange) {
       try {
         const evaluatedFn = eval('(' + roles.event.onChange + ')')
@@ -984,9 +990,28 @@ export default function DisplayField({
     )
 
     if (isValid) {
-      setFile(file.name)
-      const base64File = await fileToBase64(file)
-      setValue(base64File)
+      const file = event.target.files[0]
+      const loading = toast.loading(locale === 'ar' ? 'جاري الرفع' : 'Uploading...')
+      if (file) {
+        axiosPost(
+          'file/upload',
+          'en',
+          {
+            file: file
+          },
+          true
+        )
+          .then(res => {
+            if (res.status) {
+              setFile(file.name)
+              setValue(res.filePath.data)
+            }
+          })
+          .finally(() => {
+            toast.dismiss(loading)
+          })
+        event.target.value = ''
+      }
     } else {
       setError('Invalid File Type')
       setValue('')
@@ -1013,14 +1038,6 @@ export default function DisplayField({
     </label>
   )
 
-  const fileToBase64 = file => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader()
-      reader.readAsDataURL(file)
-      reader.onload = () => resolve(reader.result)
-      reader.onerror = error => reject(error)
-    })
-  }
   const hoverText = roles?.hover?.hover_ar || roles?.hover?.hover_en
   const hintText = roles?.hint?.hint_ar || roles?.hint?.hint_en
   return (
@@ -1077,6 +1094,8 @@ export default function DisplayField({
               value={value}
               onBlur={roles?.event?.onBlur}
               onChange={onChange}
+              from={from}
+              roles={roles}
               onChangeFile={onChangeFile}
               fileName={fileName}
               locale={locale}
@@ -1106,7 +1125,9 @@ const ViewInput = ({
   input,
   value,
   onChangeFile,
+  from,
   readOnly,
+  roles,
   onChange,
   locale,
   handleDelete,
@@ -1233,7 +1254,7 @@ const ViewInput = ({
   }
 
   if (input.type === 'File') {
-    return (
+    return from !== 'table' ? (
       <div className='px-4 w-full'>
         <div id='file-upload-container'>
           <label htmlFor={input.key} id='file-upload-label'>
@@ -1298,6 +1319,48 @@ const ViewInput = ({
           </label>
         </div>
       </div>
+    ) : (
+      <div className='flex items-center gap-2'>
+        <a
+          href={process.env.API_URL + '/file/download/' + value.replaceAll('/Uploads/', '')}
+          target='_blank'
+          rel='noreferrer'
+        >
+          {value?.split('/Uploads/')?.[1]?.slice(0, 30) ? (
+            value.split('/Uploads/')[1].slice(0, 30) + '.' + value.split('/Uploads/')[1].split('.').pop()
+          ) : (
+            <></>
+          )}
+        </a>
+        <div className=''>
+          <Button
+            variant='outlined'
+            component='label'
+            className='!w-[30px] !h-[30px] !rounded-full  !max-w-[30px] !max-h-[30px]  !min-h-0 !p-0 !min-w-0 !flex !items-center !justify-center'
+          >
+            <Icon
+              icon={value?.split('/Uploads/')?.[1]?.slice(0, 30) ? 'tabler:edit' : 'tabler:upload'}
+              width={25}
+              height={25}
+            />
+            <input
+              type='file'
+              disabled={isDisable === 'disabled'}
+              id={input.key}
+              hidden
+              onChange={onChangeFile}
+              onBlur={e => {
+                if (onBlur) {
+                  const evaluatedFn = eval('(' + onBlur + ')')
+
+                  evaluatedFn(e)
+                }
+              }}
+              accept={input?.options?.uiSchema?.xComponentProps?.fileTypes?.join(',')}
+            />
+          </Button>
+        </div>
+      </div>
     )
   }
   if (input.type === 'Date') {
@@ -1305,6 +1368,30 @@ const ViewInput = ({
       format: 'yyyy-MM-dd',
       showTime: 'false'
     }
+    console.log(roles)
+    const today = new Date()
+    let minDate = null
+    let maxDate = null
+
+    // حساب minDate اعتماداً على beforeDateType
+    if (roles?.beforeDateType === 'days') {
+      // إذا كان النوع days، يتم حساب التاريخ بإضافة beforeDateValue (عدد الأيام) لتاريخ اليوم
+      minDate = addDays(today, roles?.beforeDateValue)
+    } else if (roles?.beforeDateType === 'date') {
+      // إذا كان النوع date، يتم استخدام التاريخ مباشرة
+      minDate = new Date(roles?.beforeDateValue)
+    }
+
+    // حساب maxDate اعتماداً على afterDateType
+    if (roles?.afterDateType === 'days') {
+      // إذا كان النوع days، يتم حساب التاريخ بإضافة afterDateValue (عدد الأيام) لتاريخ اليوم
+      maxDate = addDays(today, roles?.afterDateValue)
+    } else if (roles?.afterDateType === 'date') {
+      // إذا كان النوع date، يتم استخدام التاريخ مباشرة
+      maxDate = new Date(roles?.afterDateValue)
+    }
+
+    console.log(minDate, maxDate)
 
     return !readOnly ? (
       <DatePickerWrapper className='w-full'>
@@ -1326,6 +1413,8 @@ const ViewInput = ({
           showTimeInput={lable.showTime === 'true'}
           customInput={<ExampleCustomInput className='example-custom-input' />}
           disabled={isDisable === 'disabled'}
+          minDate={minDate}
+          maxDate={maxDate}
         />
       </DatePickerWrapper>
     ) : (
@@ -1347,6 +1436,7 @@ const ViewInput = ({
         showTimeInput={lable.showTime === 'true'}
         customInput={<ExampleCustomInput className='example-custom-input' />}
         disabled={isDisable === 'disabled'}
+       
       />
     )
   }

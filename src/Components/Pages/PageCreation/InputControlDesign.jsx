@@ -442,13 +442,6 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                         </div>
                       </div>
                     </div>
-                    {/* {selectedField && !triggerKey && (
-                      <TextField
-                        fullWidth
-                        type='text'
-                        value={writeValue}
-                      />
-                    )} */}
                   </UnmountClosed>
                   <UnmountClosed isOpened={Boolean(typeOfValidation && typeOfValidation !== 'filter')}>
                     <div className='flex border-main-color border mt-2 rounded-md '>
@@ -829,6 +822,209 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                       variant='filled'
                       label={locale === 'ar' ? 'التوضيح باللغة الانجليزية' : 'Hint in English'}
                     />
+
+                    {open.type === 'File' && (
+                      <TextField
+                        fullWidth
+                        type='number'
+                        defaultValue={roles?.size || ''}
+                        InputProps={{
+                          endAdornment: <InputAdornment position='end'>KB</InputAdornment>
+                        }}
+                        onBlur={e => {
+                          const additional_fields = data.additional_fields ?? []
+                          const findMyInput = additional_fields.find(inp => inp.key === open.id)
+                          if (findMyInput) {
+                            findMyInput.roles.size = e.target.value
+                          } else {
+                            const myEdit = {
+                              key: open.id,
+                              design: objectToCss(Css).replaceAll('NaN', ''),
+                              roles: {
+                                ...roles,
+                                size: e.target.value
+                              }
+                            }
+                            additional_fields.push(myEdit)
+                          }
+                          onChange({ ...data, additional_fields: additional_fields })
+                        }}
+                        variant='filled'
+                        label={locale === 'ar' ? 'الحد الأقصى لحجم الملف' : 'Max File Size'}
+                      />
+                    )}
+                    {open.type === 'Date' && (
+                      <>
+                        <FormControl fullWidth margin='normal'>
+                          <InputLabel>
+                            {' '}
+                            {locale === 'ar' ? 'نوع التحكم في التاريخ السابق' : 'Before Date Type'}
+                          </InputLabel>
+                          <Select
+                            variant='filled'
+                            value={roles?.beforeDateType}
+                            onChange={e => {
+                              const additional_fields = data.additional_fields ?? []
+                              const findMyInput = additional_fields.find(inp => inp.key === open.id)
+                              if (findMyInput) {
+                                findMyInput.roles.beforeDateType = e.target.value
+                              } else {
+                                const myEdit = {
+                                  key: open.id,
+                                  design: objectToCss(Css).replaceAll('NaN', ''),
+                                  roles: {
+                                    ...roles,
+                                    beforeDateType: e.target.value
+                                  }
+                                }
+                                additional_fields.push(myEdit)
+                              }
+                              onChange({ ...data, additional_fields: additional_fields })
+                            }}
+                          >
+                            <MenuItem value='date'>{locale === 'ar' ? 'ادراج تاريخ ' : 'Insert Date '}</MenuItem>
+                            <MenuItem value='days'>{locale === 'ar' ? 'ادراج ايام' : 'Insert Days'}</MenuItem>
+                          </Select>
+
+                          <Collapse
+                            transition={`height 300ms cubic-bezier(.4, 0, .2, 1)`}
+                            isOpen={Boolean(roles?.beforeDateType === 'date')}
+                          >
+                            <TextField
+                              fullWidth
+                              variant='filled'
+                              type='date'
+                              defaultValue={roles?.beforeDateValue || ''}
+                              onChange={e => {
+                                const additional_fields = data.additional_fields ?? []
+                                const findMyInput = additional_fields.find(inp => inp.key === open.id)
+                                if (findMyInput) {
+                                  findMyInput.roles.beforeDateValue = e.target.value
+                                } else {
+                                  const myEdit = {
+                                    key: open.id,
+                                    design: objectToCss(Css).replaceAll('NaN', ''),
+                                    roles: { ...roles, beforeDateValue: e.target.value }
+                                  }
+                                  additional_fields.push(myEdit)
+                                }
+                                onChange({ ...data, additional_fields: additional_fields })
+                              }}
+                            />
+                          </Collapse>
+                          <Collapse
+                            transition={`height 300ms cubic-bezier(.4, 0, .2, 1)`}
+                            isOpen={Boolean(roles?.beforeDateType === 'days')}
+                          >
+                            <TextField
+                              fullWidth
+                              variant='filled'
+                              type='number'
+                              defaultValue={roles?.beforeDateValue || ''}
+                              onChange={e => {
+                                const additional_fields = data.additional_fields ?? []
+                                const findMyInput = additional_fields.find(inp => inp.key === open.id)
+                                if (findMyInput) {
+                                  findMyInput.roles.beforeDateValue = e.target.value
+                                } else {
+                                  const myEdit = {
+                                    key: open.id,
+                                    design: objectToCss(Css).replaceAll('NaN', ''),
+                                    roles: { ...roles, beforeDateValue: e.target.value }
+                                  }
+                                  additional_fields.push(myEdit)
+                                }
+                                onChange({ ...data, additional_fields: additional_fields })
+                              }}
+                            />
+                          </Collapse>
+                        </FormControl>
+                        <FormControl fullWidth margin='normal'>
+                          <InputLabel>
+                            {' '}
+                            {locale === 'ar' ? 'نوع التحكم في التاريخ التالي' : 'After Date Type'}
+                          </InputLabel>
+                          <Select
+                            variant='filled'
+                            value={roles?.afterDateType}
+                            onChange={e => {
+                              const additional_fields = data.additional_fields ?? []
+                              const findMyInput = additional_fields.find(inp => inp.key === open.id)
+                              if (findMyInput) {
+                                findMyInput.roles.afterDateType = e.target.value
+                              } else {
+                                const myEdit = {
+                                  key: open.id,
+                                  design: objectToCss(Css).replaceAll('NaN', ''),
+                                  roles: {
+                                    ...roles,
+                                    afterDateType: e.target.value
+                                  }
+                                }
+                                additional_fields.push(myEdit)
+                              }
+                              onChange({ ...data, additional_fields: additional_fields })
+                            }}
+                          >
+                            <MenuItem value='date'>{locale === 'ar' ? 'ادراج تاريخ ' : 'Insert Date '}</MenuItem>
+                            <MenuItem value='days'>{locale === 'ar' ? 'ادراج ايام' : 'Insert Days'}</MenuItem>
+                          </Select>
+
+                          <Collapse
+                            transition={`height 300ms cubic-bezier(.4, 0, .2, 1)`}
+                            isOpen={Boolean(roles?.afterDateType === 'date')}
+                          >
+                            <TextField
+                              fullWidth
+                              variant='filled'
+                              type='date'
+                              defaultValue={roles?.afterDateValue || ''}
+                              onChange={e => {
+                                const additional_fields = data.additional_fields ?? []
+                                const findMyInput = additional_fields.find(inp => inp.key === open.id)
+                                if (findMyInput) {
+                                  findMyInput.roles.afterDateValue = e.target.value
+                                } else {
+                                  const myEdit = {
+                                    key: open.id,
+                                    design: objectToCss(Css).replaceAll('NaN', ''),
+                                    roles: { ...roles, afterDateValue: e.target.value }
+                                  }
+                                  additional_fields.push(myEdit)
+                                }
+                                onChange({ ...data, additional_fields: additional_fields })
+                              }}
+                            />
+                          </Collapse>
+                          <Collapse
+                            transition={`height 300ms cubic-bezier(.4, 0, .2, 1)`}
+                            isOpen={Boolean(roles?.afterDateType === 'days')}
+                          >
+                            <TextField
+                              fullWidth
+                              variant='filled'
+                              type='number'
+                              defaultValue={roles?.afterDateValue || ''}
+                              onChange={e => {
+                                const additional_fields = data.additional_fields ?? []
+                                const findMyInput = additional_fields.find(inp => inp.key === open.id)
+                                if (findMyInput) {
+                                  findMyInput.roles.afterDateValue = e.target.value
+                                } else {
+                                  const myEdit = {
+                                    key: open.id,
+                                    design: objectToCss(Css).replaceAll('NaN', ''),
+                                    roles: { ...roles, afterDateValue: e.target.value }
+                                  }
+                                  additional_fields.push(myEdit)
+                                }
+                                onChange({ ...data, additional_fields: additional_fields })
+                              }}
+                            />
+                          </Collapse>
+                        </FormControl>
+                      </>
+                    )}
                     {(open.type === 'SingleText' ||
                       open.type === 'Number' ||
                       open.type === 'Phone' ||
@@ -1770,7 +1966,6 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                                       name='json'
                                       onChange={event => {
                                         const file = event.target.files[0]
-                                        console.log(file)
                                         const loading = toast.loading(locale === 'ar' ? 'جاري الرفع' : 'Uploading...')
                                         if (file) {
                                           axiosPost(
@@ -1782,7 +1977,6 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                                             true
                                           )
                                             .then(res => {
-                                              console.log(res)
                                               if (res.status) {
                                                 const additional_fields = data.additional_fields ?? []
                                                 const findMyInput = additional_fields.find(inp => inp.key === open.id)

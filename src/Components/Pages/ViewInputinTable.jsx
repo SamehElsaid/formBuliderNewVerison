@@ -24,8 +24,8 @@ function ViewInputInTable({
   const findError = errorInAllRow.data.find(el => el.index === row.index)?.error
 
   useEffect(() => {
-    if (document.getElementById('btn-actions')) {
-      document.getElementById('btn-actions').addEventListener('click', () => {
+    if (document.getElementById(`btn-actions-${data.collectionId}`)) {
+      document.getElementById(`btn-actions-${data.collectionId}`).addEventListener('click', () => {
         const key = ele.type === 'new_element' ? ele.id : ele.key
         dispatch(seterrorInAllRowData({ row, key, error: refError.current[key] }))
       })
@@ -53,6 +53,7 @@ function ViewInputInTable({
         refError={refError}
         setLayout={false}
         triggerData={triggerData}
+        from="table"
         dirtyProps={true}
         data={data}
         layout={false}
@@ -74,6 +75,7 @@ function ViewInputInTable({
               hint_ar: '',
               hint_en: ''
             },
+            size: '',
             trigger: {
               selectedField: null,
               triggerKey: null,
@@ -88,6 +90,10 @@ function ViewInputInTable({
               onBlur: '',
               onUnmount: ''
             },
+            afterDateType: '',
+            afterDateValue: '',
+            beforeDateType: '',
+            beforeDateValue: '',
             regex: {
               regex: '',
               message_ar: '',

@@ -170,11 +170,16 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
       hint_en: ''
     },
     event: {},
+    afterDateType: '',
+    afterDateValue: '',
+    beforeDateType: '',
+    beforeDateValue: '',
     regex: {
       regex: '',
       message_ar: '',
       message_en: ''
     },
+    size: '',
     api_url: '',
     apiKeyData: ''
   }
@@ -305,11 +310,16 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
                         onBlur: '',
                         onUnmount: ''
                       },
+                      afterDateType: '',
+                      afterDateValue: '',
+                      beforeDateType: '',
+                      beforeDateValue: '',
                       regex: {
                         regex: '',
                         message_ar: '',
                         message_en: ''
-                      }
+                      },
+                      size: ''
                     }
                   }
                   reload={reload}

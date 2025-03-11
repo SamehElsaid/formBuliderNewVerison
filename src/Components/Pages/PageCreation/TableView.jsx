@@ -152,7 +152,25 @@ function TableView({ data, locale, onChange, readOnly, disabled }) {
                       <GetTimeinTable data={row[ele.key]} />
                     </>
                   ) : (
-                    <>{Object.keys(row?.[ele?.key]).length !== 0 ? row?.[ele?.key] : '-'}</>
+                    <>
+                      {Object.keys(row?.[ele?.key]).length !== 0 ? (
+                        row?.[ele?.key].includes('/Uploads/') ? (
+                          <a
+                            href={process.env.API_URL + '/file/download/' + row?.[ele?.key].replaceAll('/Uploads/', '')}
+                            target='_blank'
+                            rel='noreferrer'
+                          >
+                            {row?.[ele?.key].split('/Uploads/')[1].slice(0, 30) +
+                              '.' +
+                              row?.[ele?.key].split('/Uploads/')[1].split('.').pop()}
+                          </a>
+                        ) : (
+                          row?.[ele?.key]
+                        )
+                      ) : (
+                        '-'
+                      )}
+                    </>
                   )}
                 </Typography>
               </>
@@ -270,7 +288,12 @@ function TableView({ data, locale, onChange, readOnly, disabled }) {
       hint_ar: '',
       hint_en: ''
     },
+    size: '',
     event: {},
+    afterDateType: '',
+    afterDateValue: '',
+    beforeDateType: '',
+    beforeDateValue: '',
     regex: {
       regex: '',
       message_ar: '',
@@ -394,7 +417,7 @@ function TableView({ data, locale, onChange, readOnly, disabled }) {
               setPaginationModel={setPaginationModel}
             />
           </div>
-          <div id='btn-actions'>
+          <div id={`btn-actions-${data.collectionId}`}>
             <Button variant='contained' color='success'>
               {messages.add}
             </Button>
