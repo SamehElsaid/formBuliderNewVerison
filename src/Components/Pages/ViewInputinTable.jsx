@@ -14,7 +14,8 @@ function ViewInputInTable({
   setTriggerData,
   getDesign,
   triggerData,
-  setOpen
+  setOpen,
+  notFound
 }) {
   const refError = useRef({})
   const [reload, setReload] = useState(0)
@@ -46,14 +47,14 @@ function ViewInputInTable({
       <DisplayField
         input={ele}
         key={row.index}
-        findValue={row?.[ele?.key]}
+        findValue={ele.type === 'Date' ? (notFound ? row?.[ele?.key] : new Date()) : row?.[ele?.key]}
         design={getDesign(ele.id, ele)}
         readOnly={disabled}
         disabledBtn={!data.type_of_sumbit || (data.type_of_sumbit === 'api' && !data.submitApi)}
         refError={refError}
         setLayout={false}
         triggerData={triggerData}
-        from="table"
+        from='table'
         dirtyProps={true}
         data={data}
         layout={false}

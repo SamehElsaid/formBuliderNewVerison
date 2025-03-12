@@ -68,7 +68,11 @@ function AddField() {
       disableColumnMenu: true,
       headerName: locale === 'ar' ? 'الحقل بالانجليزية' : 'Field in English',
       renderCell: ({ row }) => (
-        <Typography variant='subtitle2' className='capitalize' sx={{ fontWeight: 500, color: 'text.secondary' }}>
+        <Typography
+          variant='subtitle2'
+          className='capitalize text-overflow'
+          sx={{ fontWeight: 500, color: 'text.secondary' }}
+        >
           {row.nameEn}
         </Typography>
       )
@@ -81,7 +85,11 @@ function AddField() {
       disableColumnMenu: true,
       headerName: locale === 'ar' ? 'الحقل بالعربية' : 'Field in Arabic',
       renderCell: ({ row }) => (
-        <Typography variant='subtitle2' className='capitalize' sx={{ fontWeight: 500, color: 'text.secondary' }}>
+        <Typography
+          variant='subtitle2'
+          className='capitalize text-overflow'
+          sx={{ fontWeight: 500, color: 'text.secondary' }}
+        >
           {row.nameAr}
         </Typography>
       )
@@ -93,7 +101,11 @@ function AddField() {
       disableColumnMenu: true,
       headerName: locale === 'ar' ? 'النوع' : 'Type',
       renderCell: ({ row }) => (
-        <Typography variant='subtitle2' className='capitalize' sx={{ fontWeight: 500, color: 'text.secondary' }}>
+        <Typography
+          variant='subtitle2'
+          className='capitalize text-overflow'
+          sx={{ fontWeight: 500, color: 'text.secondary' }}
+        >
           {messages[getTypeFromCollection(row.type, row.descriptionAr)]}
         </Typography>
       )
@@ -105,7 +117,11 @@ function AddField() {
       disableColumnMenu: true,
       headerName: locale === 'ar' ? 'العلاقة' : 'Relation',
       renderCell: ({ row }) => (
-        <Typography variant='subtitle2' className='capitalize' sx={{ fontWeight: 500, color: 'text.secondary' }}>
+        <Typography
+          variant='subtitle2'
+          className='capitalize text-overflow'
+          sx={{ fontWeight: 500, color: 'text.secondary' }}
+        >
           {true && (row.type === 'OneToOne' || row.type === 'ManyToMany') ? (
             row.type === 'OneToOne' ? (
               <GetCollectionName name={row.options.source} />
@@ -130,7 +146,6 @@ function AddField() {
             <IconButton size='small' onClick={e => {}}>
               <IconifyIcon icon='tabler:edit' />
             </IconButton>
-
           </Tooltip>
           <Tooltip title={messages.delete}>
             <IconButton
@@ -174,7 +189,7 @@ function AddField() {
 
       <Card className='w-[100%]  mb-5 py-4 '>
         <CardContent
-          className='h-full'
+          className='h-full flex-col  md:flex-row gap-2'
           sx={{
             display: 'flex',
             textAlign: 'center',
@@ -183,8 +198,12 @@ function AddField() {
             py: '0 !important'
           }}
         >
-          <div className='flex gap-2 justify-center items-center'>
-            <Typography variant='h5' sx={{ color: 'primary.main', fontWeight: 'bold' }} className='capitalize'>
+          <div className='flex gap-2 justify-center items-center  '>
+            <Typography
+              variant='h5'
+              sx={{ color: 'primary.main', fontWeight: 'bold' }}
+              className='capitalize text-overflow-2 max-w-[250px]'
+            >
               {locale === 'ar' ? data?.collection?.nameAr : data?.collection?.nameEn}
             </Typography>
             <Avatar skin='light' sx={{ width: 30, height: 30 }}>

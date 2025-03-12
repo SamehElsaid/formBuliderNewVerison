@@ -1,4 +1,4 @@
-import { Avatar, Button, Card, CardContent,  IconButton,  Tooltip, Typography } from '@mui/material'
+import { Avatar, Button, Card, CardContent, IconButton, Tooltip, Typography } from '@mui/material'
 import { Box } from '@mui/system'
 import React, { useEffect, useRef, useState } from 'react'
 import CustomTextField from 'src/@core/components/mui/text-field'
@@ -49,7 +49,7 @@ export default function Index() {
 
       headerName: '#',
       renderCell: ({ row }) => (
-        <Typography variant='subtitle2' sx={{ fontWeight: 500, color: 'text.secondary' }}>
+        <Typography variant='subtitle2' className='text-overflow' sx={{ fontWeight: 500, color: 'text.secondary' }}>
           {`${row.index + 1}`}
         </Typography>
       )
@@ -62,8 +62,14 @@ export default function Index() {
       disableColumnMenu: true,
       headerName: messages.name,
       renderCell: ({ row }) => (
-        <Typography  component={Link} href={`/${locale}/setting/data-source/collaction?dataSourceId=${row.id}`} variant='subtitle2' className='capitalize !text-main-color underline' sx={{ fontWeight: 500, color: 'text.secondary' }}>
-          {row.name}
+        <Typography
+          component={Link}
+          href={`/${locale}/setting/data-source/collaction?dataSourceId=${row.id}`}
+          variant='subtitle2'
+          className='capitalize !text-main-color underline text-overflow'
+          sx={{ fontWeight: 500, color: 'text.secondary' }}
+        >
+          {row.name} 
         </Typography>
       )
     },

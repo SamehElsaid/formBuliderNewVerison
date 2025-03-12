@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react'
-import { TextField, InputAdornment, MenuItem, Button } from '@mui/material'
+import { TextField, InputAdornment, MenuItem, Button, Select } from '@mui/material'
 import { useSelector } from 'react-redux'
 import Collapse from '@kunukn/react-collapse'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { docco } from 'react-syntax-highlighter/dist/esm/styles/prism'
 
-export default function UpdateRichText({ data, onChange, locale }) {
+export default function UpdateRichText({ data, onChange, locale, type }) {
   const [obj, setObj] = useState(false)
   const getApiData = useSelector(rx => rx.api.data)
 
@@ -98,7 +98,30 @@ export default function UpdateRichText({ data, onChange, locale }) {
       </Collapse>
 
       <div className='p-4 mt-4 rounded border border-dashed border-main-color'>
-        <h2 className='mb-4 text-2xl text-main-color'>{locale === 'ar' ? 'العنوان' : 'Title'}</h2>
+        <TextField
+          fullWidth
+          type='number'
+          value={data.backgroundWidth}
+          onChange={e => onChange({ ...data, backgroundWidth: e.target.value })}
+          variant='filled'
+          label={locale === 'ar' ? 'العرض' : 'Width'}
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position='end'>
+                <Select
+                  value={data.backgroundWidthUnit || 'px'} // الافتراضي px
+                  onChange={e => onChange({ ...data, backgroundWidthUnit: e.target.value })}
+                  displayEmpty
+                  variant='standard'
+                >
+                  <MenuItem value='px'>PX</MenuItem>
+                  <MenuItem value='vw'>VW</MenuItem>
+                  <MenuItem value='%'>%</MenuItem>
+                </Select>
+              </InputAdornment>
+            )
+          }}
+        />
         {renderTextField(
           obj
             ? locale === 'ar'
@@ -121,7 +144,23 @@ export default function UpdateRichText({ data, onChange, locale }) {
           'content_en',
           'text'
         )}
+        {type === 'progressBar' && (
+          <>
+            {renderTextField(
+              obj
+                ? locale === 'ar'
+                  ? 'مفتاح العرض بالنسبة المئوية'
+                  : 'progress Width percentage key'
+                : locale === 'ar'
+                ? 'العرض نسبة مئوية'
+                : 'progress Width percentage',
+              'progressWidth',
+              'number'
+            )}
+          </>
+        )}
         {renderTextField('Color', 'titleColor', 'color')}
+        {type === 'progressBar' && <>{renderTextField('Progress Color', 'backgroundColor', 'color')}</>}
         {renderTextField('Font Size', 'fontSize', 'number', {
           InputProps: {
             endAdornment: <InputAdornment position='end'>px</InputAdornment>

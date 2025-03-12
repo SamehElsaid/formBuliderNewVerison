@@ -969,7 +969,7 @@ export default function DisplayField({
 
   const onChangeFile = async e => {
     const file = e.target.files[0]
-    if (file.size > roles?.size * 1024) {
+    if (file?.size > roles?.size * 1024) {
       toast.error(locale === 'ar' ? `حجم الملف أكبر من ${roles?.size} كيلوبايت` : `File size exceeds ${roles?.size}KB`)
       return
     }
@@ -1396,6 +1396,7 @@ const ViewInput = ({
     return !readOnly ? (
       <DatePickerWrapper className='w-full'>
         <DatePicker
+        
           selected={value}
           onChange={date => onChange(date)}
           timeInputLabel='Time:'
@@ -1415,12 +1416,14 @@ const ViewInput = ({
           disabled={isDisable === 'disabled'}
           minDate={minDate}
           maxDate={maxDate}
+          
         />
       </DatePickerWrapper>
     ) : (
       <DatePicker
         selected={value}
         locale={locale === 'ar' ? ar : en}
+        popperPlacement='bottom-start'
         onChange={date => onChange(date)}
         timeInputLabel='Time:'
         dateFormat={`${lable.format ? lable.format : 'MM/dd/yyyy'}`}
@@ -1436,7 +1439,6 @@ const ViewInput = ({
         showTimeInput={lable.showTime === 'true'}
         customInput={<ExampleCustomInput className='example-custom-input' />}
         disabled={isDisable === 'disabled'}
-       
       />
     )
   }

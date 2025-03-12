@@ -134,7 +134,6 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
     setOpen(false)
   }
 
- 
   const defaultDesign =
     open?.type === 'new_element' ? DefaultStyle(open?.key) : open?.options?.uiSchema?.xComponentProps?.cssClass
   let additionalField = null
@@ -211,7 +210,12 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
   useEffect(() => {
     if (layout) {
       document.querySelectorAll('.drag-handle').forEach((ele, index) => {
-        ele.style.zIndex = document.querySelectorAll('.drag-handle').length + 50 - index
+        console.log(ele)
+        if (ele.querySelector('.react-datepicker-wrapper')) {
+          ele.style.zIndex = document.querySelectorAll('.drag-handle').length + 500 - index
+        } else {
+          ele.style.zIndex = document.querySelectorAll('.drag-handle').length + 50 - index
+        }
       })
     }
   }, [layout])

@@ -1279,3 +1279,15 @@ sortable-list {
 .MuiDataGrid-root {
   @apply !border;
 }
+.react-datepicker-popper {
+  z-index: 111111111 !important;
+}
+.text-overflow {
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+.text-overflow-2 {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}

@@ -66,7 +66,7 @@ export default function Index() {
           component={Link}
           href={`/${locale}/setting/pages/${row.name}`}
           variant='subtitle2'
-          className='underline capitalize !text-main-color'
+          className='underline capitalize !text-main-color text-overflow'
           sx={{ fontWeight: 500, color: 'text.secondary' }}
         >
           {row.name}
@@ -80,7 +80,7 @@ export default function Index() {
       disableColumnMenu: true,
       headerName: messages.description,
       renderCell: ({ row }) => (
-        <Typography variant='subtitle2' sx={{ fontWeight: 500, color: 'text.secondary' }}>
+        <Typography variant='subtitle2' className='text-overflow' sx={{ fontWeight: 500, color: 'text.secondary' }}>
           {row.description}
         </Typography>
       )
@@ -114,7 +114,7 @@ export default function Index() {
 
       <Card className='w-[100%]  mb-5 py-4 '>
         <CardContent
-          className='h-full'
+          className='h-full flex-col  md:flex-row gap-2'
           sx={{
             display: 'flex',
             textAlign: 'center',

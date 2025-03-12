@@ -141,6 +141,7 @@ function TableView({ data, locale, onChange, readOnly, disabled }) {
                 getDesign={getDesign}
                 triggerData={triggerData}
                 errorAllRef={errorAllRef}
+                notFound={Object.keys(row?.[ele?.key]).length !== 0}
               />
             ) : (
               <>
@@ -149,7 +150,11 @@ function TableView({ data, locale, onChange, readOnly, disabled }) {
                     <ViewValueInTable data={ele} value={row?.[ele?.key] ?? ''} />
                   ) : ele?.type === 'Date' ? (
                     <>
-                      <GetTimeinTable data={row[ele.key]} />
+                      {Object.keys(row?.[ele?.key]).length !== 0 ? (
+                        <GetTimeinTable data={row[ele.key]} />
+                      ) : (
+                        '-'
+                      )}
                     </>
                   ) : (
                     <>

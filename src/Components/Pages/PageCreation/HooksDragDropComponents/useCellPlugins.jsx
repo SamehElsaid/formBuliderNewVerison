@@ -15,6 +15,8 @@ import slate from '@react-page/plugins-slate';
 import spacer from '@react-page/plugins-spacer';
 import '@react-page/plugins-slate/lib/index.css';
 import '@react-page/plugins-spacer/lib/index.css';
+import useProgressBar from './useProgressBar';
+import useOtp from './useOtp';
 
 export default function useCellPlugins({ advancedEdit, locale, readOnly }) {
   // Hooks Drag Drop Components
@@ -26,6 +28,8 @@ export default function useCellPlugins({ advancedEdit, locale, readOnly }) {
   const { UploadImage } = useUploadImage({ locale });
   const { UploadVideo } = useUploadVideo({ locale });
   const { RichText } = useRichText({ locale });
+  const { ProgressBar } = useProgressBar({ locale });
+  const { Otp } = useOtp({ locale });
   const { FlexControlCell } = useFlexControl({ locale });
   const { ButtonCell } = useButton({ locale });
   const { cartCell } = useCart({ locale, readOnly });
@@ -44,6 +48,8 @@ export default function useCellPlugins({ advancedEdit, locale, readOnly }) {
       collection,
       table,
       RichText,
+      ProgressBar,
+      Otp,
       ButtonCell,
       FlexControlCell,
       cartCell,

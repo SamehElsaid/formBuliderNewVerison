@@ -19,7 +19,7 @@ export default function Index() {
   const [loading, setLoading] = useState(false)
   const [refresh, setRefresh] = useState(0)
   const [data, setData] = useState([])
-  const [openFormBuilder, setOpenFormBuilder] = useState(false)
+
 
   const dataFilter = data?.filter(
     ele =>
@@ -75,7 +75,7 @@ export default function Index() {
       disableColumnMenu: true,
       headerName: messages.collectionNameEN,
       renderCell: ({ row }) => (
-        <Typography variant='subtitle2' className='capitalize' sx={{ fontWeight: 500, color: 'text.secondary' }}>
+        <Typography variant='subtitle2' className='capitalize text-overflow' sx={{ fontWeight: 500, color: 'text.secondary' }}>
           {row.nameEn}
         </Typography>
       )
@@ -87,7 +87,7 @@ export default function Index() {
       disableColumnMenu: true,
       headerName: messages.collectionNameAR,
       renderCell: ({ row }) => (
-        <Typography variant='subtitle2' className='capitalize' sx={{ fontWeight: 500, color: 'text.secondary' }}>
+        <Typography variant='subtitle2' className='capitalize text-overflow' sx={{ fontWeight: 500, color: 'text.secondary' }}>
           {row.nameAr}
         </Typography>
       )
