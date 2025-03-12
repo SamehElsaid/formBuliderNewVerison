@@ -10,7 +10,6 @@ import axios from 'axios'
 
 export default function useOtp({ locale }) {
   const Otp = useMemo(() => {
-    console.log(locale)
     return {
       Renderer: ({ data, onChange }) => {
         const [otp, setOtp] = useState('')
@@ -30,6 +29,7 @@ export default function useOtp({ locale }) {
               setResendOtp(prev => (prev === 0 ? 0 : prev - 1))
             }, 1000)
           }
+
           return () => clearInterval(interval)
         }, [resendOtp])
 
