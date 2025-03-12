@@ -1,6 +1,4 @@
 import React, { useEffect, useMemo, useState } from 'react'
-import UpdateRichText from '../UpdateRichText'
-import { getData } from 'src/Components/_Shared'
 import { FaBarsProgress } from 'react-icons/fa6'
 import OTPInput from 'react-otp-input'
 import { IoMdClose } from 'react-icons/io'

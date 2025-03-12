@@ -1,9 +1,6 @@
 import React, { useEffect, useState } from 'react'
-import { TextField, InputAdornment, MenuItem, Button, Select } from '@mui/material'
+import { TextField, InputAdornment, MenuItem } from '@mui/material'
 import { useSelector } from 'react-redux'
-import Collapse from '@kunukn/react-collapse'
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
-import { docco } from 'react-syntax-highlighter/dist/esm/styles/prism'
 
 export default function OtpControl({ data, onChange, locale, type }) {
   const [obj, setObj] = useState(false)
