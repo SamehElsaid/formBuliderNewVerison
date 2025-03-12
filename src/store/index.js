@@ -6,6 +6,7 @@ import LoadingHome from './apps/LoadingMainSlice/LoadingMainSlice'
 import calendar from './apps/calendar/index'
 import api from './apps/apiSlice/apiSlice'
 import errorInAllRow from './apps/errorInAllRow/errorInAllRow'
+
 export const store = configureStore({
   reducer: {
     auth,

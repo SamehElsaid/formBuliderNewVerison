@@ -971,6 +971,7 @@ export default function DisplayField({
     const file = e.target.files[0]
     if (file?.size > roles?.size * 1024) {
       toast.error(locale === 'ar' ? `حجم الملف أكبر من ${roles?.size} كيلوبايت` : `File size exceeds ${roles?.size}KB`)
+
       return
     }
     if (roles?.event?.onChange) {
@@ -1040,6 +1041,7 @@ export default function DisplayField({
 
   const hoverText = roles?.hover?.hover_ar || roles?.hover?.hover_en
   const hintText = roles?.hint?.hint_ar || roles?.hint?.hint_en
+
   return (
     <div
       className={`reset ${isDisable === 'hidden' && !readOnly ? 'hidden' : ''} relative group w-full`}
@@ -1396,7 +1398,7 @@ const ViewInput = ({
     return !readOnly ? (
       <DatePickerWrapper className='w-full'>
         <DatePicker
-        
+
           selected={value}
           onChange={date => onChange(date)}
           timeInputLabel='Time:'
@@ -1416,7 +1418,7 @@ const ViewInput = ({
           disabled={isDisable === 'disabled'}
           minDate={minDate}
           maxDate={maxDate}
-          
+
         />
       </DatePickerWrapper>
     ) : (

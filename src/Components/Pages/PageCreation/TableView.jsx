@@ -272,6 +272,7 @@ function TableView({ data, locale, onChange, readOnly, disabled }) {
     }
   }
   const design = additionalField ?? defaultDesign ?? ``
+
   const roles = data?.additional_fields?.find(ele => ele.key === open?.id)?.roles ?? {
     onMount: { type: '', value: '' },
     trigger: {
@@ -307,7 +308,9 @@ function TableView({ data, locale, onChange, readOnly, disabled }) {
     api_url: '',
     apiKeyData: ''
   }
+
   const dispatch = useDispatch()
+
   return (
     <div>
       <InputControlDesign

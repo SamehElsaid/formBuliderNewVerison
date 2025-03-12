@@ -5,7 +5,6 @@ import { FaBarsProgress } from 'react-icons/fa6'
 
 export default function useProgressBar({ locale }) {
   const ProgressBar = useMemo(() => {
-    console.log(locale)
     return {
       Renderer: ({ data, onChange }) => {
         return (
