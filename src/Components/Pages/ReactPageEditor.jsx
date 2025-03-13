@@ -12,7 +12,7 @@ import { useTheme } from '@emotion/react'
 import { FaEye } from 'react-icons/fa'
 import { IoSettingsOutline } from 'react-icons/io5'
 import { TbApi } from 'react-icons/tb'
-import { axiosPost } from '../axiosCall'
+import { axiosPatch, axiosPost } from '../axiosCall'
 import { toast } from 'react-toastify'
 import { useRouter } from 'next/router'
 import { LoadingButton } from '@mui/lab'
@@ -76,7 +76,7 @@ const ReactPageEditor = ({ pageName, initialData, initialDataApi }) => {
               onClick={() => {
                 const apiUrls = apiData.map(item => item.link)
                 setLoadingSaveData(true)
-                axiosPost(`page/update/${pageName}`, locale, {
+                axiosPatch(`page/update/${pageName}`, locale, {
                   VersionReason: new Date().toISOString(),
                   description: '',
                   pageComponents: [],
