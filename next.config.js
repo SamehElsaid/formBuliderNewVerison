@@ -9,9 +9,9 @@ module.exports = withTM({
     defaultLocale: 'en',
     localeDetection: true,
   },
-  env: {
-    API_URL: 'https://localhost:7101/api',
-    // API_URL: 'https://lowcodetest-ayeuaucehyerfves.uaenorth-01.azurewebsites.net/api',
+  // env: {
+  //   API_URL: 'https://localhost:7101/api',
+    API_URL: 'https://lowcodetest-ayeuaucehyerfves.uaenorth-01.azurewebsites.net/api',
   },
   images: {
     domains: [],
