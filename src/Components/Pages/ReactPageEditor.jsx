@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { memo, useEffect, useState } from 'react'
+import { memo, useCallback, useEffect, useState } from 'react'
 import Editor from '@react-page/editor'
 import '@react-page/editor/lib/index.css'
 import { useIntl } from 'react-intl'
@@ -18,10 +18,13 @@ import { useRouter } from 'next/router'
 import { LoadingButton } from '@mui/lab'
 import { useSelector } from 'react-redux'
 import useCellPlugins from './PageCreation/HooksDragDropComponents/useCellPlugins'
+import { useDispatch } from 'react-redux'
+import { SET_ACTIVE_LOADING } from 'src/store/apps/LoadingPages/LoadingPages'
 
 const ReactPageEditor = ({ pageName, initialData, initialDataApi }) => {
+  const [newData, setNewData] = useState(initialData)
   const [editorValue, setEditorValue] = useState(initialData ?? null)
-  const [readOnly, setReadOnly] = useState(true)
+  const [readOnly, setReadOnly] = useState(false)
   const [advancedEdit, setAdvancedEdit] = useState(false)
   const { locale } = useIntl()
   const [openApiData, setOpenApiData] = useState(false)
@@ -33,13 +36,13 @@ const ReactPageEditor = ({ pageName, initialData, initialDataApi }) => {
   const apiData = useSelector(state => state.api.data)
 
   // CellPlugins Hook Calling
-  const { cellPlugins } = useCellPlugins({ advancedEdit,locale,readOnly })
-
+  const { cellPlugins } = useCellPlugins({ advancedEdit, locale, readOnly })
+  const dispatch = useDispatch()
   // Loading State To Stop Rendering Editor
-  const [loading, setLoading] = useState(false)
-
   useEffect(() => {
-    setLoading(true)
+    setTimeout(() => {
+      dispatch(SET_ACTIVE_LOADING())
+    }, 1000)
   }, [])
 
   return (
@@ -85,6 +88,7 @@ const ReactPageEditor = ({ pageName, initialData, initialDataApi }) => {
                   .then(res => {
                     if (res.status) {
                       toast.success(locale === 'ar' ? 'تم حفظ التغيرات' : 'Changes saved')
+                      setNewData(editorValue)
                       setSaveData(false)
                     }
                   })
@@ -112,28 +116,35 @@ const ReactPageEditor = ({ pageName, initialData, initialDataApi }) => {
           <MdOutlineSaveAs className='text-xl me-1' />
           {locale === 'ar' ? ' حفظ التغيرات' : 'Save Changes'}
         </Button>
-        <Button
-          variant='contained'
-          color={!advancedEdit ? 'warning' : 'primary'}
+        <button
+          className={`w-[50px] h-[50px] flex items-center justify-center rounded-full bg-[#dfdfdf] hover:bg-white duration-300 shadow-main ${
+            openApiData ? 'bg-[#9f29b4] text-white hover:text-[#9f29b4]' : ''
+          }`}
+          title={locale === 'ar' ? 'التحكم بالبيانات المتصلة' : 'Api Control'}
           onClick={() => {
             setOpenApiData(!openApiData)
           }}
         >
           <TbApi className='text-2xl' />
-        </Button>
-        <Button
-          variant='contained'
-          color={'primary'}
+        </button>
+        <button
+          className={`w-[50px] h-[50px] flex items-center justify-center rounded-full bg-[#dfdfdf] hover:bg-white duration-300 shadow-main ${
+            readOnly ? 'bg-[#9f29b4] text-white hover:text-[#9f29b4]' : ''
+          }`}
+          title={locale === 'ar' ? 'عرض الصفحة' : 'View Mode'}
+          // color={'primary'}
           onClick={() => {
             setReadOnly(!readOnly)
             setAdvancedEdit(false)
           }}
         >
           <FaEye className='text-xl' />
-        </Button>
-        <Button
-          variant='contained'
-          color={advancedEdit ? 'warning' : 'primary'}
+        </button>
+        <button
+          className={`w-[50px] h-[50px] flex items-center justify-center rounded-full bg-[#dfdfdf] hover:bg-white duration-300 shadow-main ${
+            advancedEdit ? 'bg-[#9f29b4] text-white hover:text-[#9f29b4]' : ''
+          }`}
+          title={locale === 'ar' ? 'وصع التعديلات' : 'Edit Mode'}
           onClick={() => {
             setAdvancedEdit(!advancedEdit)
             if (document.querySelector('[data-testid="DevicesIcon"]')) {
@@ -146,20 +157,27 @@ const ReactPageEditor = ({ pageName, initialData, initialDataApi }) => {
           }}
         >
           <IoSettingsOutline className='text-xl' />
-        </Button>
-        <Button
-          variant='contained'
-          color={'error'}
+        </button>
+        <button
+          className={`w-[50px] h-[50px] flex items-center justify-center rounded-full text-white bg-red-500 hover:bg-red-600 duration-300 shadow-main ${
+            openBack ? 'bg-red-700 text-white hover:text-red-700' : ''
+          }`}
           onClick={() => {
-            setOpenBack(true)
+            console.log(editorValue, initialData)
+            JSON.stringify(editorValue) === JSON.stringify(initialData)
+              ? push(`/${locale}/setting/pages`)
+              : setOpenBack(true)
           }}
         >
           <RiArrowGoBackFill className='text-xl' />
-        </Button>
+        </button>
       </div>
-      <div style={{
-        background:theme.palette.background.default
-      }} className={`duration-300 ${readOnly ? `overflow-auto fixed inset-0 pb-10` : '!bg-white'}`}>
+      <div
+        style={{
+          background: theme.palette.background.default
+        }}
+        className={`duration-300 ${readOnly ? `overflow-auto fixed inset-0 pb-10` : '!bg-white'}`}
+      >
         {readOnly && (
           <div className='fixed top-[10px] end-[10px] z-[11111111]'>
             <IconButton
@@ -171,7 +189,7 @@ const ReactPageEditor = ({ pageName, initialData, initialDataApi }) => {
             </IconButton>
           </div>
         )}
-        {loading &&
+
         <Editor
           cellPlugins={cellPlugins}
           theme={theme}
@@ -181,7 +199,6 @@ const ReactPageEditor = ({ pageName, initialData, initialDataApi }) => {
           }}
           readOnly={readOnly}
         />
-        }
       </div>
     </div>
   )

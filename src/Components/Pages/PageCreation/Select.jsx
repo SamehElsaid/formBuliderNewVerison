@@ -378,10 +378,10 @@ function Select({ onChange, data, type }) {
                 </Collapse>
                 <Collapse
                   transition={`height 300ms cubic-bezier(.4, 0, .2, 1)`}
-                  isOpen={Boolean(data?.addMoreElement?.length > 0)}
+                  isOpen={Boolean(data?.addMoreElement?.filter(ele=>ele.kind !== "submit")?.length > 0)}
                 >
                   <div className='flex flex-col gap-2 my-3'>
-                    {data?.addMoreElement?.map(item => (
+                    {data?.addMoreElement?.filter(ele=>ele.kind !== "submit")?.map(item => (
                       <div key={item.id}>
                         <div className='flex items-center justify-between '>
                           <div className='text-sm'>{locale === 'ar' ? item.name_ar : item.name_en}</div>

@@ -80,7 +80,7 @@ const AddCollection = props => {
     axiosPost('collections/add', locale, sendData)
       .then(res => {
         if (res.status) {
-          toast.success(locale === 'ar' ? 'تم إضافة التجميعة بنجاح' : 'Collection added successfully')
+          toast.success(locale === 'ar' ? 'تم إضافة نموذج البيانات بنجاح' : 'Data Model added successfully')
           handleClose()
           setRefresh(prev => prev + 1)
         }
@@ -125,8 +125,8 @@ const AddCollection = props => {
           <Typography variant='h5'>
             {typeof open === 'boolean'
               ? locale === 'ar'
-                ? 'إضافة التجميعة'
-                : 'Add Collection'
+                ? 'إضافة نموذج البيانات'
+                : 'Add Data Model'
               : locale === 'ar'
               ? open.name_ar
               : open.name_en}

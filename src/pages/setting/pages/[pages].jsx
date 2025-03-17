@@ -2,37 +2,55 @@
 import React, { useState } from 'react'
 import dynamic from 'next/dynamic'
 import BlankLayout from 'src/@core/layouts/BlankLayout'
-import { CircularProgress } from '@mui/material'
 import * as cookie from 'cookie'
 import { decryptData } from 'src/Components/encryption'
 import axios from 'axios'
 import https from 'https'
+import { useIntl } from 'react-intl'
+import { useSelector } from 'react-redux'
+
+let ReactPageEditor = dynamic(
+  () =>
+    import('src/Components/Pages/ReactPageEditor').then(e => {
+      return e
+    }),
+  {
+    ssr: false
+  }
+)
 
 const Index = ({ pageName, initialData, initialDataApi }) => {
-  const [loading, setLoading] = useState(true)
-
-  let ReactPageEditor = dynamic(
-    () =>
-      import('src/Components/Pages/ReactPageEditor').then(e => {
-        setLoading(false)
-
-        return e
-      }),
-      {
-        ssr: false
-      }
-    )
-
-    console.log(initialData,initialDataApi)
+  const loading = useSelector(rx => rx.LoadingPages.loading)
+  
 
 
+
+  const { locale } = useIntl()
 
   return (
     <div className=''>
       <div className='py-10 min-h-screen bg-white'>
         {loading && (
-          <div className='h-[calc(100vh-80px)] flex justify-center items-center'>
-            <CircularProgress size={50} />
+          <div className='h-[calc(100vh)] loading-animation flex flex-col justify-center items-center fixed top-0 left-0 right-0 bottom-0 bg-white z-[111111111]'>
+            <div className='modelViewPort'>
+              <div className='eva'>
+                <div className='head'>
+                  <div className='eyeChamber'>
+                    <div className='eye' />
+                    <div className='eye' />
+                  </div>
+                </div>
+                <div className='body'>
+                  <div className='hand' />
+                  <div className='hand' />
+                  <div className='scannerThing' />
+                  <div className='scannerOrigin' />
+                </div>
+              </div>
+            </div>
+            <div className='text-2xl font-bold animate-pulse mt-4'>
+              {locale === 'ar' ? 'جاري تحميل البيانات...' : 'Loading...'}
+            </div>
           </div>
         )}
         <ReactPageEditor pageName={pageName} initialData={initialData} initialDataApi={initialDataApi} />
@@ -62,8 +80,6 @@ export async function getServerSideProps(context) {
     const initialData = data?.editorValue ?? null
     const initialDataApi = data?.apiData ?? null
 
-
-
     return {
       props: {
         pageName,
@@ -72,7 +88,6 @@ export async function getServerSideProps(context) {
       }
     }
   } catch (error) {
-
     return {
       notFound: true
     }

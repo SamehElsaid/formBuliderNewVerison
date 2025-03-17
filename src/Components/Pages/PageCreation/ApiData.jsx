@@ -4,6 +4,7 @@ import axios from 'axios'
 import { useState, useEffect } from 'react'
 import { useIntl } from 'react-intl'
 import { useDispatch } from 'react-redux'
+import { toast } from 'react-toastify'
 import { setApiData } from 'src/store/apps/apiSlice/apiSlice'
 
 export default function ApiData({ open, setOpen,initialDataApi }) {
@@ -49,13 +50,13 @@ export default function ApiData({ open, setOpen,initialDataApi }) {
               <InputAdornment position='end'>
                 <Button
                   onClick={() => {
-                    // if (
-                    //   !/^(https?:\/\/)?(www\.)?[a-zA-Z0-9@:%._\+~#?&//=]{2,256}\.[a-z]{2,4}\b([-a-zA-Z0-9@:%._\+~#?&//=]*)$/i.test(
-                    //     link
-                    //   )
-                    // ) {
-                    //   return toast.error(locale === 'ar' ? 'الرابط غير صالح' : 'The Link is not valid')
-                    // }
+                    if (
+                      !/^(https?:\/\/)?(www\.)?[a-zA-Z0-9@:%._\+~#?&//=]{2,256}\.[a-z]{2,4}\b([-a-zA-Z0-9@:%._\+~#?&//=]*)$/i.test(
+                        link
+                      )
+                    ) {
+                      return toast.error(locale === 'ar' ? 'الرابط غير صالح' : 'The Link is not valid')
+                    }
                     setLinks(prev => [
                       ...prev,
                       {

@@ -235,8 +235,8 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
         fields={getFields.filter(filed => data?.selected?.includes(filed?.key))}
       />
       {loading ? (
-        <div className='h-[300px]  flex justify-center items-center'>
-          <CircularProgress size={50} />
+        <div className='h-[300px]  flex justify-center items-center text-2xl font-bold border-2 border-dashed border-main rounded-md'>
+          {locale === 'ar' ? 'يرجى تحديد نموذج البيانات' : 'Please Select Data Model'}
         </div>
       ) : (
         <form
