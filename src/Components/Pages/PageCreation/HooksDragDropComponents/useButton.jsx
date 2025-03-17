@@ -42,6 +42,7 @@ export default function useButton({ locale, buttonRef }) {
 
           return !!pattern.test(str)
         }
+
         return isValidURL(data.href) ? (
           <a href={data.href} target='_blank' rel='noopener noreferrer' {...options}>
             {data.buttonText}
@@ -66,6 +67,8 @@ export default function useButton({ locale, buttonRef }) {
         )
       }
     }
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [locale])
 
   return { ButtonCell }

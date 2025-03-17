@@ -38,6 +38,7 @@ export default function useBackground({ locale, buttonRef }) {
       },
       icon: <MdOutlineColorLens className='text-2xl' />
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [locale])
 
   return { backgroundPlugin }

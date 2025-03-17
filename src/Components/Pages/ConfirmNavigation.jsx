@@ -11,6 +11,7 @@ const ConfirmNavigation = ({ message, newData, editorValue }) => {
       if (isDirty) {
         e.preventDefault();
         e.returnValue = message; // لبعض المتصفحات مثل Chrome
+
         return message;
       }
     };
@@ -22,15 +23,16 @@ const ConfirmNavigation = ({ message, newData, editorValue }) => {
         // إذا رفض المستخدم التأكيد، نقوم بإعادة التوجيه إلى نفس الصفحة
         // لن يتم رمي أي استثناء هنا مما يمنع ظهور الخطأ في الكونسول
         router.replace(router.asPath, undefined, { shallow: true });
-        // نعلم Next.js بأن التنقل تم إلغاؤه عبر إصدار حدث خاص
         router.events.emit(
           'routeChangeError',
           new Error('تم إلغاء تغيير المسار'),
           url,
           false
         );
+
         return false;
       }
+
       return true;
     };
 
@@ -39,6 +41,7 @@ const ConfirmNavigation = ({ message, newData, editorValue }) => {
       if (isDirty && !window.confirm(message)) {
         return false; // منع التنقل
       }
+
       return true;
     });
 

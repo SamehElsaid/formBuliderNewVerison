@@ -23,6 +23,8 @@ export default function useCart({ locale, readOnly, buttonRef }) {
         Component: ({ data, onChange }) => <CartControl data={data} onChange={onChange} locale={locale} buttonRef={buttonRef} />
       }
     }
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [locale, readOnly])
 
   return { cartCell }

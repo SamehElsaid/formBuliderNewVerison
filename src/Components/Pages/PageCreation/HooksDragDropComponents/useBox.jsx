@@ -25,6 +25,7 @@ export default function useBox({ locale, buttonRef }) {
         Component: ({ data, onChange }) => <FlexBoxControl data={data} onChange={onChange} buttonRef={buttonRef} />
       }
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [locale])
 
   return { BoxControl }

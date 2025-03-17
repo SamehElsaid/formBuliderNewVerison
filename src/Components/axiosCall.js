@@ -90,6 +90,7 @@ export const axiosPost = async (url, locale, data, file, close) => {
     return { status: false, code: err?.response?.status }
   }
 }
+
 export const axiosPut = async (url, locale, data, file, close) => {
   const authToken = Cookies.get('sub')
   const HeaderImg = { 'Content-Type': 'multipart/form-data' }

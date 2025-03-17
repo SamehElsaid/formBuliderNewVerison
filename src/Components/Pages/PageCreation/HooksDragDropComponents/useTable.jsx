@@ -28,6 +28,7 @@ export default function useTable({ advancedEdit, locale, readOnly, buttonRef }) 
       },
       icon: <FaTableCells className='text-2xl' />
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [advancedEdit, locale, readOnly])
 
   return { table }

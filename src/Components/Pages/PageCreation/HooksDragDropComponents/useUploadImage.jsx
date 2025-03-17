@@ -32,6 +32,7 @@ export default function useUploadImage({ locale, buttonRef }) {
         }
       }
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [locale])
 
   return { UploadImage }

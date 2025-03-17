@@ -40,6 +40,7 @@ export default function useRichText({ locale, buttonRef }) {
         Component: ({ data, onChange }) => <UpdateRichText data={data} onChange={onChange} locale={locale} buttonRef={buttonRef} />
       }
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [locale])
 
   return { RichText }

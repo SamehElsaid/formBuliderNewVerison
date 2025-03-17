@@ -2,6 +2,7 @@ import { MenuItem, TextField } from '@mui/material'
 import { useIntl } from 'react-intl'
 import { SketchPicker } from 'react-color'
 import CloseNav from './CloseNav'
+
 export default function ButtonControl({ data, onChange, buttonRef }) {
   const { locale } = useIntl()
 

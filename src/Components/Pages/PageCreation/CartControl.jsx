@@ -15,6 +15,7 @@ import { docco } from 'react-syntax-highlighter/dist/esm/styles/prism'
 import FlexControl from './FlexControl'
 import { useSelector } from 'react-redux'
 import CloseNav from './CloseNav'
+
 function CartControl({ data, onChange, type, buttonRef }) {
   const { locale } = useIntl()
   const [items, setItems] = useState(data.newItems || [])

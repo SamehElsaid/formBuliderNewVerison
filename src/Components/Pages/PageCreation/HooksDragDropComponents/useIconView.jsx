@@ -157,6 +157,7 @@ export default function useIconView({ locale, buttonRef }) {
         )
       }
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [locale])
 
   return {IconView}

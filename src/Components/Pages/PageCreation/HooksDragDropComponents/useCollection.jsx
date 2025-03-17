@@ -27,6 +27,7 @@ export default function useCollection({ advancedEdit, locale, readOnly, buttonRe
       },
       icon: <FaWpforms className='text-2xl' />
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [locale, advancedEdit, readOnly])
 
   return { collection }

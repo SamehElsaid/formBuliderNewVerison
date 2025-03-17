@@ -33,6 +33,7 @@ export default function useUploadVideo({ locale, buttonRef }) {
         }
       }
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [locale])
 
   return { UploadVideo }

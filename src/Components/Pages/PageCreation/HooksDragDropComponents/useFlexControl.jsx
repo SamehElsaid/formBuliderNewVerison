@@ -49,6 +49,7 @@ export default function useFlexControl({locale ,buttonRef}) {
         Component: ({ data, onChange }) => <FlexControl data={data} onChange={onChange} locale={locale} buttonRef={buttonRef} />
       }
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [locale])
 
   return {FlexControlCell}
