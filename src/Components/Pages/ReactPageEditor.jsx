@@ -39,12 +39,14 @@ const ReactPageEditor = ({ pageName, initialData, initialDataApi }) => {
   const buttonRef = useRef(null)
   const { cellPlugins } = useCellPlugins({ advancedEdit, locale, readOnly, buttonRef })
   const dispatch = useDispatch()
+
   // Loading State To Stop Rendering Editor
   useEffect(() => {
     setTimeout(() => {
       dispatch(SET_ACTIVE_LOADING())
     }, 1000)
   }, [])
+
   return (
     <div className='relative'>
       <div className='absolute z-0 invisible'>
