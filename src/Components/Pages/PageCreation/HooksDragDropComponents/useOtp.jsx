@@ -6,7 +6,7 @@ import OtpControl from '../OtpControl'
 import { toast } from 'react-toastify'
 import axios from 'axios'
 
-export default function useOtp({ locale }) {
+export default function useOtp({ locale, buttonRef }) {
   const Otp = useMemo(() => {
     return {
       Renderer: ({ data, onChange }) => {
@@ -177,7 +177,7 @@ export default function useOtp({ locale }) {
       controls: {
         type: 'custom',
         Component: ({ data, onChange }) => (
-          <OtpControl data={data} onChange={onChange} locale={locale} type='progressBar' />
+          <OtpControl data={data} onChange={onChange} locale={locale} type='progressBar' buttonRef={buttonRef} />
         )
       }
     }

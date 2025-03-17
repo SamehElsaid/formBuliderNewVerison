@@ -3,7 +3,7 @@ import { CiGrid42 } from "react-icons/ci"
 import FlexControl from "../FlexControl"
 import { useEffect, useMemo, useRef } from "react"
 
-export default function useFlexControl({locale}) {
+export default function useFlexControl({locale ,buttonRef}) {
   const FlexControlCell = useMemo(() => {
     return {
       Renderer: ({ data, children }) => {
@@ -46,7 +46,7 @@ export default function useFlexControl({locale}) {
       icon: <CiGrid42 className='text-2xl' />,
       controls: {
         type: 'custom',
-        Component: ({ data, onChange }) => <FlexControl data={data} onChange={onChange} locale={locale} />
+        Component: ({ data, onChange }) => <FlexControl data={data} onChange={onChange} locale={locale} buttonRef={buttonRef} />
       }
     }
   }, [locale])

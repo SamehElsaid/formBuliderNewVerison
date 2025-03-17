@@ -1,6 +1,6 @@
 import { Icon } from '@iconify/react'
 import Collapse from '@kunukn/react-collapse'
-import { Button, FormControlLabel, InputAdornment, MenuItem, Radio, RadioGroup, Select, TextField } from '@mui/material'
+import { Button, FormControlLabel, IconButton, InputAdornment, MenuItem, Radio, RadioGroup, Select, TextField, Typography } from '@mui/material'
 import { useEffect, useState } from 'react'
 import { SketchPicker } from 'react-color'
 import { useIntl } from 'react-intl'
@@ -8,8 +8,11 @@ import { useSelector } from 'react-redux'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { docco } from 'react-syntax-highlighter/dist/esm/styles/prism'
 import { getData } from 'src/Components/_Shared'
+import CloseNav from './CloseNav'
 
-export default function Background({ data, onChange }) {
+
+
+export default function Background({ data, onChange, buttonRef }) {
   const [selectedOption, setSelectedOption] = useState(data?.backgroundImage ? 'image' : 'color')
   const { locale } = useIntl()
   const getApiData = useSelector(rx => rx.api.data)
@@ -40,6 +43,8 @@ export default function Background({ data, onChange }) {
 
   return (
     <div>
+      <CloseNav text={locale === 'ar' ? 'اختيار الخلفية' : 'Background'} buttonRef={buttonRef} />
+
       <TextField
         fullWidth
         type='number'
@@ -141,13 +146,13 @@ export default function Background({ data, onChange }) {
               variant='contained'
               color='error'
               onClick={() => {
-              setObj(false)
-              onChange({ ...data, items: [], api_url: '' })
-            }}
-          >
-            {locale === 'ar' ? 'تفريغ البيانات' : 'Clear Data'}
-          </Button>
-        </div>
+                setObj(false)
+                onChange({ ...data, items: [], api_url: '' })
+              }}
+            >
+              {locale === 'ar' ? 'تفريغ البيانات' : 'Clear Data'}
+            </Button>
+          </div>
         )}
         <Collapse transition={`height 300ms cubic-bezier(.4, 0, .2, 1)`} isOpen={Boolean(obj)}>
           <div className='p-2 my-4 rounded border border-dashed border-main-color'>

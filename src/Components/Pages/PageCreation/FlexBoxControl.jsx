@@ -1,12 +1,15 @@
 import { InputAdornment, MenuItem, Select, TextField } from '@mui/material'
 import React from 'react'
 import { useIntl } from 'react-intl'
+import CloseNav from './CloseNav'
 
-export default function FlexBoxControl({ data, onChange }) {
+export default function FlexBoxControl({ data, onChange, buttonRef }) {
   const { locale } = useIntl()
 
   return (
     <div style={{ padding: '10px' }}>
+      <CloseNav text={locale === 'ar' ? 'اختيار المحتوى' : 'Content'} buttonRef={buttonRef} />
+
       <TextField
         fullWidth
         type='number'

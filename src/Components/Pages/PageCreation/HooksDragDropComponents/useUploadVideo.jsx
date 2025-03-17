@@ -2,14 +2,14 @@ import React, { useMemo } from 'react'
 import UpdateImage from '../UpdateImage'
 import { CiVideoOn } from 'react-icons/ci'
 
-export default function useUploadVideo({ locale }) {
+export default function useUploadVideo({ locale, buttonRef }) {
   const UploadVideo = useMemo(() => {
     return {
       Renderer: ({ data, children }) => (
         <>
           {data.video && (
             <video
-              src={data.video}
+              src={data.video.replace('/Uploads/', process.env.API_URL + '/file/download/')}
               alt='video'
               controls
               style={{
@@ -29,7 +29,7 @@ export default function useUploadVideo({ locale }) {
       controls: {
         type: 'custom',
         Component: ({ data, onChange }) => {
-          return <UpdateImage data={data} onChange={onChange} locale={locale} type='video' />
+          return <UpdateImage data={data} onChange={onChange} locale={locale} type='video' buttonRef={buttonRef} />
         }
       }
     }

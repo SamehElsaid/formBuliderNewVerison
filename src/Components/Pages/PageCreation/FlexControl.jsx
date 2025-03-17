@@ -1,9 +1,10 @@
 import { InputAdornment, MenuItem, Select, TextField } from '@mui/material'
 import React from 'react'
-
-export default function FlexControl({ data, onChange, locale, from }) {
+import CloseNav from './CloseNav'
+export default function FlexControl({ data, onChange, locale, from, buttonRef }) {
   return (
     <div>
+      <CloseNav text={locale === 'ar' ? 'Flex Control' : 'Flex Control'} buttonRef={buttonRef} />
       {!from && (
         <TextField
           fullWidth

@@ -3,7 +3,7 @@ import { useMemo } from 'react'
 import Select from '../Select'
 import ViewCollection from '../ViewCollection'
 
-export default function useCollection({ advancedEdit, locale, readOnly }) {
+export default function useCollection({ advancedEdit, locale, readOnly, buttonRef }) {
   const collection = useMemo(() => {
     return {
       Renderer: ({ data, onChange }) => {
@@ -23,7 +23,7 @@ export default function useCollection({ advancedEdit, locale, readOnly }) {
       version: 1,
       controls: {
         type: 'custom',
-        Component: ({ data, onChange }) => <Select onChange={onChange} data={data} />
+        Component: ({ data, onChange }) => <Select onChange={onChange} data={data} buttonRef={buttonRef} />
       },
       icon: <FaWpforms className='text-2xl' />
     }

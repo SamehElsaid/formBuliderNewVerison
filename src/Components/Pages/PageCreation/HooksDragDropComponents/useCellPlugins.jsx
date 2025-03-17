@@ -18,22 +18,22 @@ import '@react-page/plugins-spacer/lib/index.css';
 import useProgressBar from './useProgressBar';
 import useOtp from './useOtp';
 
-export default function useCellPlugins({ advancedEdit, locale, readOnly }) {
+export default function useCellPlugins({ advancedEdit, locale, readOnly, buttonRef }) {
   // Hooks Drag Drop Components
-  const { collection } = useCollection({ advancedEdit, locale, readOnly });
-  const { backgroundPlugin } = useBackground({ locale });
-  const { table } = useTable({ advancedEdit, locale });
-  const { ContainerPlugin } = useContainer({ locale });
-  const { BoxControl } = useBox({ locale });
-  const { UploadImage } = useUploadImage({ locale });
-  const { UploadVideo } = useUploadVideo({ locale });
-  const { RichText } = useRichText({ locale });
-  const { ProgressBar } = useProgressBar({ locale });
-  const { Otp } = useOtp({ locale });
-  const { FlexControlCell } = useFlexControl({ locale });
-  const { ButtonCell } = useButton({ locale });
-  const { cartCell } = useCart({ locale, readOnly });
-  const { IconView } = useIconView({ locale });
+  const { collection } = useCollection({ advancedEdit, locale, readOnly, buttonRef });
+  const { backgroundPlugin } = useBackground({ locale, buttonRef });
+  const { table } = useTable({ advancedEdit, locale, buttonRef });
+  const { ContainerPlugin } = useContainer({ locale, buttonRef });
+  const { BoxControl } = useBox({ locale, buttonRef });
+  const { UploadImage } = useUploadImage({ locale, buttonRef });
+  const { UploadVideo } = useUploadVideo({ locale, buttonRef });
+  const { RichText } = useRichText({ locale, buttonRef });
+  const { ProgressBar } = useProgressBar({ locale, buttonRef });
+  const { Otp } = useOtp({ locale, buttonRef });
+  const { FlexControlCell } = useFlexControl({ locale, buttonRef });
+  const { ButtonCell } = useButton({ locale, buttonRef });
+  const { cartCell } = useCart({ locale, readOnly, buttonRef });
+  const { IconView } = useIconView({ locale, buttonRef });
 
 
   const cellPlugins = useMemo(

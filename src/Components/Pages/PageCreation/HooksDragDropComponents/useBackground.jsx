@@ -2,7 +2,7 @@ import { useMemo } from 'react'
 import { MdOutlineColorLens } from 'react-icons/md'
 import Background from '../Background'
 
-export default function useBackground({ locale }) {
+export default function useBackground({ locale, buttonRef }) {
   const backgroundPlugin = useMemo(() => {
     return {
       Renderer: ({ data, children }) => (
@@ -34,7 +34,7 @@ export default function useBackground({ locale }) {
       version: 1,
       controls: {
         type: 'custom',
-        Component: ({ data, onChange }) => <Background data={data} onChange={onChange} />
+        Component: ({ data, onChange }) => <Background data={data} onChange={onChange} buttonRef={buttonRef} />
       },
       icon: <MdOutlineColorLens className='text-2xl' />
     }

@@ -5,9 +5,10 @@ import { Box } from '@mui/system'
 import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
+import { toast } from 'react-toastify'
 import CustomTextField from 'src/@core/components/mui/text-field'
 import { getTypeFromCollection } from 'src/Components/_Shared'
-import { axiosGet } from 'src/Components/axiosCall'
+import { axiosDelete, axiosGet } from 'src/Components/axiosCall'
 import FormBuilder from 'src/Components/Collection/FormBuilder'
 import GetCollectionName from 'src/Components/GetCollectionName'
 import IconifyIcon from 'src/Components/icon'
@@ -45,6 +46,8 @@ function AddField() {
         })
     }
   }, [addFiles])
+
+  const [deletePage, setDeletePage] = useState(false)
 
   const columns = [
     {
@@ -151,7 +154,41 @@ function AddField() {
             <IconButton
               size='small'
               onClick={e => {
-                setDeleteOpen(params.row.id)
+                setDeletePage(params.row.id)
+                if (deletePage !== params.row.id) {
+                  toast.info(locale === 'ar' ? 'هل أنت متأكد ؟' : 'Are you sure you want to delete this item?', {
+                    position: 'bottom-right',
+                    autoClose: 4000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: 'colored',
+                    icon: <IconifyIcon icon='tabler:trash' />,
+                    iconColor: 'red',
+                    iconSize: 20,
+                    iconPosition: 'left',
+                    onClick: () => {
+                      const loadingToast = toast.loading(locale === 'ar' ? 'جاري حذف الحقل...' : 'Deleting field...')
+                      axiosDelete(`collection-fields/delete?collectionFieldId=${params.row.id}`, locale)
+                        .then(res => {
+                          if (res.status) {
+                            toast.success(locale === 'ar' ? 'تم حذف الحقل بنجاح' : 'Field deleted successfully')
+                            setData(prev => ({ ...prev, fields: prev.fields.filter(ele => ele.id !== params.row.id) }))
+                            setRefresh(prev => prev + 1)
+                          }
+                        })
+                        .finally(() => {
+                          toast.dismiss(loadingToast)
+                          setDeletePage(false)
+                        })
+                    },
+                    onClose: () => {
+                      setDeletePage(false)
+                    }
+                  })
+                }
               }}
             >
               <IconifyIcon icon='tabler:trash' />

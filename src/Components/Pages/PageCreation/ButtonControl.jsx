@@ -1,12 +1,13 @@
 import { MenuItem, TextField } from '@mui/material'
 import { useIntl } from 'react-intl'
 import { SketchPicker } from 'react-color'
-
-export default function ButtonControl({ data, onChange }) {
+import CloseNav from './CloseNav'
+export default function ButtonControl({ data, onChange, buttonRef }) {
   const { locale } = useIntl()
 
   return (
     <div>
+      <CloseNav text={locale === 'ar' ? 'اختيار الزر' : 'Button'} buttonRef={buttonRef} />
       <TextField
         fullWidth
         type='text'
@@ -27,6 +28,14 @@ export default function ButtonControl({ data, onChange }) {
         onChange={e => onChange({ ...data, buttonText: e.target.value })}
         variant='filled'
         label={locale === 'ar' ? 'النص' : 'Text'}
+      />
+      <TextField
+        fullWidth
+        type='text'
+        value={data.href}
+        onChange={e => onChange({ ...data, href: e.target.value })}
+        variant='filled'
+        label={locale === 'ar' ? 'الرابط' : 'Href'}
       />
 
       <TextField

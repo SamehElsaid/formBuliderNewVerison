@@ -29,7 +29,7 @@ const Index = ({ pageName, initialData, initialDataApi }) => {
 
   return (
     <div className=''>
-      <div className='py-10 min-h-screen bg-white'>
+      <div className='py-10 min-h-screen bg-white main-container'>
         {loading && (
           <div className='h-[calc(100vh)] loading-animation flex flex-col justify-center items-center fixed top-0 left-0 right-0 bottom-0 bg-white z-[111111111]'>
             <div className='modelViewPort'>

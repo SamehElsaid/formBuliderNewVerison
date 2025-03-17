@@ -2,14 +2,14 @@ import { useMemo } from 'react'
 import { CiImageOn } from 'react-icons/ci'
 import UpdateImage from '../UpdateImage'
 
-export default function useUploadImage({ locale }) {
+export default function useUploadImage({ locale, buttonRef }) {
   const UploadImage = useMemo(() => {
     return {
       Renderer: ({ data, children }) => (
         <>
           {data.image && (
             <img
-              src={data.image}
+              src={data.image.replace('/Uploads/', process.env.API_URL + '/file/download/')}
               alt='image'
               style={{
                 width: data.imageWidth ? `${data.imageWidth}${data.imageWidthUnit || 'px'}` : '100%',
@@ -28,7 +28,7 @@ export default function useUploadImage({ locale }) {
       controls: {
         type: 'custom',
         Component: ({ data, onChange }) => {
-          return <UpdateImage data={data} onChange={onChange} locale={locale} />
+          return <UpdateImage data={data} onChange={onChange} locale={locale} buttonRef={buttonRef} />
         }
       }
     }

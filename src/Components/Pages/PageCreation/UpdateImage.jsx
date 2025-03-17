@@ -4,22 +4,41 @@ import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { docco } from 'react-syntax-highlighter/dist/esm/styles/prism'
+import { toast } from 'react-toastify'
 import { getData } from 'src/Components/_Shared'
+import { axiosPost } from 'src/Components/axiosCall'
+import CloseNav from './CloseNav'
 
-export default function UpdateImage({ data, onChange, locale, type }) {
+export default function UpdateImage({ data, onChange, locale, type, buttonRef }) {
   const getApiData = useSelector(rx => rx.api.data)
 
   const handleFileUpload = event => {
     const file = event.target.files[0]
+    const loading = toast.loading(locale === 'ar' ? 'جاري الرفع' : 'Uploading...')
     if (file) {
-      const blob = new Blob([file], { type: file.type }) // إنشاء Blob من الملف
-      const blobUrl = URL.createObjectURL(blob) // إنشاء رابط من Blob
-      if (type === 'video') {
-        onChange({ ...data, video: blobUrl }) // تخزين Blob والرابط
-      } else {
-        onChange({ ...data, image: blobUrl }) // تخزين Blob والرابط
-      }
+      axiosPost(
+        'file/upload',
+        'en',
+        {
+          file: file
+        },
+        true
+      )
+        .then(res => {
+          if (res.status) {
+            if (type === 'video') {
+              onChange({ ...data, video: res.filePath.data }) 
+            } else {
+              onChange({ ...data, image: res.filePath.data }) 
+            }
+          }
+        })
+        .finally(() => {
+          toast.dismiss(loading)
+        })
+      event.target.value = ''
     }
+  
   }
 
   const [obj, setObj] = useState(false)
@@ -39,6 +58,8 @@ export default function UpdateImage({ data, onChange, locale, type }) {
 
   return (
     <div>
+      <CloseNav text={type === 'video' ? locale === 'ar' ? 'اختيار الفيديو' : 'Video' : locale === 'ar' ? 'اختيار الصورة' : 'Image'} buttonRef={buttonRef} />
+
       <TextField
         select
         fullWidth

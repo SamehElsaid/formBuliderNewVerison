@@ -90,6 +90,34 @@ export const axiosPost = async (url, locale, data, file, close) => {
     return { status: false, code: err?.response?.status }
   }
 }
+export const axiosPut = async (url, locale, data, file, close) => {
+  const authToken = Cookies.get('sub')
+  const HeaderImg = { 'Content-Type': 'multipart/form-data' }
+
+  const headerToken = file
+    ? { ...HeaderImg, Authorization: `Bearer ${decryptData(authToken).token}` }
+    : { Authorization: `Bearer ${decryptData(authToken).token}` }
+
+  if (close) {
+    delete headerToken.Authorization
+  }
+  try {
+    const fetchData = await axios.put(`${process.env.API_URL}/${url}`, data, {
+      headers: {
+        ...headerToken,
+        'Accept-Language': locale
+      }
+    })
+
+    if (!fetchData.data.isSuccess && !file) {
+      throw new Error(fetchData.data.message)
+    }
+
+    return { ...fetchData.data, status: true }
+  } catch (err) {
+    return { status: false, code: err?.response?.status }
+  }
+}
 
 export const axiosDelete = async (url, locale) => {
   const authToken = Cookies.get('sub')

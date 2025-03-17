@@ -2,7 +2,7 @@ import { useMemo } from 'react'
 import { IoMdResize } from 'react-icons/io'
 import FlexBoxControl from '../FlexBoxControl'
 
-export default function useBox({ locale }) {
+export default function useBox({ locale, buttonRef }) {
   const BoxControl = useMemo(() => {
     return {
       Renderer: ({ data, children }) => (
@@ -22,7 +22,7 @@ export default function useBox({ locale }) {
       icon: <IoMdResize className='text-2xl' />,
       controls: {
         type: 'custom',
-        Component: ({ data, onChange }) => <FlexBoxControl data={data} onChange={onChange} />
+        Component: ({ data, onChange }) => <FlexBoxControl data={data} onChange={onChange} buttonRef={buttonRef} />
       }
     }
   }, [locale])

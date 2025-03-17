@@ -3,7 +3,7 @@ import { Box } from '@mui/system'
 import React, { useEffect, useState } from 'react'
 import CustomTextField from 'src/@core/components/mui/text-field'
 import { useIntl } from 'react-intl'
-import { axiosGet } from 'src/Components/axiosCall'
+import { axiosDelete, axiosGet } from 'src/Components/axiosCall'
 import { toast } from 'react-toastify'
 import TableEdit from 'src/Components/TableEdit/TableEdit'
 import IconifyIcon from 'src/Components/icon'
@@ -19,7 +19,6 @@ export default function Index() {
   const [loading, setLoading] = useState(false)
   const [refresh, setRefresh] = useState(0)
   const [data, setData] = useState([])
-
 
   const dataFilter = data?.filter(
     ele =>
@@ -50,7 +49,7 @@ export default function Index() {
   const handleClose = () => {
     setOpen(false)
   }
-
+  const [deletePage, setDeletePage] = useState(false)
   const { push } = useRouter()
 
   const columns = [
@@ -75,7 +74,11 @@ export default function Index() {
       disableColumnMenu: true,
       headerName: messages.collectionNameEN,
       renderCell: ({ row }) => (
-        <Typography variant='subtitle2' className='capitalize text-overflow' sx={{ fontWeight: 500, color: 'text.secondary' }}>
+        <Typography
+          variant='subtitle2'
+          className='capitalize text-overflow'
+          sx={{ fontWeight: 500, color: 'text.secondary' }}
+        >
           {row.nameEn}
         </Typography>
       )
@@ -87,20 +90,23 @@ export default function Index() {
       disableColumnMenu: true,
       headerName: messages.collectionNameAR,
       renderCell: ({ row }) => (
-        <Typography variant='subtitle2' className='capitalize text-overflow' sx={{ fontWeight: 500, color: 'text.secondary' }}>
+        <Typography
+          variant='subtitle2'
+          className='capitalize text-overflow'
+          sx={{ fontWeight: 500, color: 'text.secondary' }}
+        >
           {row.nameAr}
         </Typography>
       )
     },
     {
       flex: 0.1,
-      minWidth: 100,
+      minWidth: 130,
       field: 'action',
       sortable: false,
       headerName: messages.actions,
       renderCell: params => (
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
-
           <Tooltip title={locale === 'ar' ? 'عرض جميع الحقول' : 'View All Fields'}>
             <IconButton
               size='small'
@@ -111,11 +117,55 @@ export default function Index() {
               <IconifyIcon icon='tabler:eye' />
             </IconButton>
           </Tooltip>
+          <Tooltip title={locale === 'ar' ? 'تعديل النموذج' : 'Edit Model'}>
+            <IconButton
+              size='small'
+              onClick={e => {
+                setOpen(params.row)
+              }}
+            >
+              <IconifyIcon icon='tabler:edit' />
+            </IconButton>
+          </Tooltip>
           <Tooltip title={messages.delete}>
             <IconButton
               size='small'
               onClick={e => {
-                setDeleteOpen(params.row.id)
+                setDeletePage(params.row.id)
+                if (deletePage !== params.row.id) {
+                  toast.info(locale === 'ar' ? 'هل أنت متأكد ؟' : 'Are you sure you want to delete this item?', {
+                    position: 'bottom-right',
+                    autoClose: 4000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: 'colored',
+                    icon: <IconifyIcon icon='tabler:trash' />,
+                    iconColor: 'red',
+                    iconSize: 20,
+                    iconPosition: 'left',
+                    onClick: () => {
+                      const loadingToast = toast.loading(locale === 'ar' ? 'جاري حذف النموذج...' : 'Deleting model...')
+                      axiosDelete(`collections/delete?collectionId=${params.row.id}`, locale)
+                        .then(res => {
+                          if (res.status) {
+                            toast.success(locale === 'ar' ? 'تم حذف النموذج بنجاح' : 'Model deleted successfully')
+                            setData(data.filter((item, i) => i !== params.row.index))
+                            setRefresh(prev => prev + 1)
+                          }
+                        })
+                        .finally(() => {
+                          toast.dismiss(loadingToast)
+                          setDeletePage(false)
+                        })
+                    },
+                    onClose: () => {
+                      setDeletePage(false)
+                    }
+                  })
+                }
               }}
             >
               <IconifyIcon icon='tabler:trash' />

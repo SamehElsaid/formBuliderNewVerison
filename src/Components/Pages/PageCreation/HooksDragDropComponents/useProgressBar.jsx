@@ -3,7 +3,7 @@ import UpdateRichText from '../UpdateRichText'
 import { getData } from 'src/Components/_Shared'
 import { FaBarsProgress } from 'react-icons/fa6'
 
-export default function useProgressBar({ locale }) {
+export default function useProgressBar({ locale, buttonRef }) {
   const ProgressBar = useMemo(() => {
     return {
       Renderer: ({ data, onChange }) => {
@@ -61,7 +61,7 @@ export default function useProgressBar({ locale }) {
       controls: {
         type: 'custom',
         Component: ({ data, onChange }) => (
-          <UpdateRichText data={data} onChange={onChange} locale={locale} type='progressBar' />
+          <UpdateRichText data={data} onChange={onChange} locale={locale} type='progressBar' buttonRef={buttonRef} />
         )
       }
     }

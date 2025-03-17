@@ -15,7 +15,7 @@ import { useEffect, useState } from 'react'
 import axios from 'axios'
 import { toast } from 'react-toastify'
 import { LoadingButton } from '@mui/lab'
-import { UrlTranEn, UrlTranAr, axiosPost } from '../axiosCall'
+import { UrlTranEn, UrlTranAr, axiosPost, axiosPut } from '../axiosCall'
 
 const Header = styled(Box)(({ theme }) => ({
   display: 'flex',
@@ -77,28 +77,67 @@ const AddCollection = props => {
       }
     }
 
-    axiosPost('collections/add', locale, sendData)
-      .then(res => {
-        if (res.status) {
-          toast.success(locale === 'ar' ? 'تم إضافة نموذج البيانات بنجاح' : 'Data Model added successfully')
-          handleClose()
-          setRefresh(prev => prev + 1)
-        }
-      })
-      .catch(err => {
-        toast.error(locale === 'ar' ? 'حدث خطأ' : 'An error occurred')
-      })
-      .finally(_ => {
-        setLoading(false)
-      })
+    if (typeof open !== 'boolean') {
+      if (
+        open.nameAr === sendData.nameAr &&
+        open.nameEn === sendData.nameEn &&
+        open.descriptionAr === sendData.descriptionAr &&
+        open.descriptionEn === sendData.descriptionEn
+      ) {
+        toast.info(locale === 'ar' ? 'لا يوجد تغييرات' : 'No changes')
+      }
+      if (open.nameAr === sendData.nameAr) {
+        delete sendData.nameAr
+      }
+      if (open.nameEn === sendData.nameEn) {
+        delete sendData.nameEn
+      }
+      if (open.descriptionAr === sendData.descriptionAr) {
+        delete sendData.descriptionAr
+      }
+      if (open.descriptionEn === sendData.descriptionEn) {
+        delete sendData.descriptionEn
+      }
+
+      axiosPut('collections/add', locale, sendData)
+        .then(res => {
+          if (res.status) {
+            toast.success(locale === 'ar' ? 'تم إضافة نموذج البيانات بنجاح' : 'Data Model added successfully')
+            handleClose()
+            setRefresh(prev => prev + 1)
+          }
+        })
+        .catch(err => {
+          toast.error(locale === 'ar' ? 'حدث خطأ' : 'An error occurred')
+        })
+        .finally(_ => {
+          setLoading(false)
+        })
+    } else {
+      axiosPost('collections/add', locale, sendData)
+        .then(res => {
+          if (res.status) {
+            toast.success(locale === 'ar' ? 'تم إضافة نموذج البيانات بنجاح' : 'Data Model added successfully')
+            handleClose()
+            setRefresh(prev => prev + 1)
+          }
+        })
+        .catch(err => {
+          toast.error(locale === 'ar' ? 'حدث خطأ' : 'An error occurred')
+        })
+        .finally(_ => {
+          setLoading(false)
+        })
+    }
   }
 
   useEffect(() => {
     if (typeof open !== 'boolean') {
       setValue('name_ar', open.nameAr)
       setValue('name_en', open.nameEn)
-      setValue('description_ar', open.descriptionAr)
-      setValue('description_en', open.descriptionEn)
+      setValue('description_ar', open.descriptionAr ?? '')
+      setValue('key', open.key)
+      setValue('description_en', open.descriptionEn ?? '')
       trigger('name_ar')
       trigger('name_en')
       trigger('description_ar')

@@ -3,7 +3,7 @@ import CartControl from '../CartControl'
 import ViewCart from '../ViewCart'
 import { useMemo } from 'react'
 
-export default function useCart({ locale, readOnly }) {
+export default function useCart({ locale, readOnly, buttonRef }) {
   const cartCell = useMemo(() => {
     return {
       Renderer: ({ data, onChange, children }) => {
@@ -20,7 +20,7 @@ export default function useCart({ locale, readOnly }) {
       icon: <TbViewportWide className='text-2xl' />,
       controls: {
         type: 'custom',
-        Component: ({ data, onChange }) => <CartControl data={data} onChange={onChange} locale={locale} />
+        Component: ({ data, onChange }) => <CartControl data={data} onChange={onChange} locale={locale} buttonRef={buttonRef} />
       }
     }
   }, [locale, readOnly])

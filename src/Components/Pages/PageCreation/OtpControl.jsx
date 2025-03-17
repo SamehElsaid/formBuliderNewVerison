@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import { TextField, InputAdornment, MenuItem } from '@mui/material'
 import { useSelector } from 'react-redux'
+import CloseNav from './CloseNav'
 
-export default function OtpControl({ data, onChange, locale, type }) {
+export default function OtpControl({ data, onChange, locale, type, buttonRef }) {
   const [obj, setObj] = useState(false)
   const getApiData = useSelector(rx => rx.api.data)
 
@@ -50,6 +51,7 @@ export default function OtpControl({ data, onChange, locale, type }) {
 
   return (
     <div>
+      <CloseNav text={locale === 'ar' ? 'اختيار العداد/رقم' : 'Counter/Number'} buttonRef={buttonRef} />
       <div className='p-4 mt-4 rounded border border-dashed border-main-color'>
         {renderTextField(
           obj

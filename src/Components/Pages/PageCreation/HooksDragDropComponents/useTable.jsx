@@ -3,7 +3,7 @@ import { FaTableCells } from 'react-icons/fa6'
 import TableView from '../TableView'
 import Select from '../Select'
 
-export default function useTable({ advancedEdit, locale, readOnly }) {
+export default function useTable({ advancedEdit, locale, readOnly, buttonRef }) {
   const table = useMemo(() => {
     return {
       Renderer: ({ data, onChange }) => {
@@ -24,7 +24,7 @@ export default function useTable({ advancedEdit, locale, readOnly }) {
       version: 1,
       controls: {
         type: 'custom',
-        Component: ({ data, onChange }) => <Select type='table' onChange={onChange} data={data} />
+        Component: ({ data, onChange }) => <Select type='table' onChange={onChange} data={data} buttonRef={buttonRef} />
       },
       icon: <FaTableCells className='text-2xl' />
     }

@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { memo, useCallback, useEffect, useState } from 'react'
+import { memo, useEffect, useRef, useState } from 'react'
 import Editor from '@react-page/editor'
 import '@react-page/editor/lib/index.css'
 import { useIntl } from 'react-intl'
@@ -36,7 +36,8 @@ const ReactPageEditor = ({ pageName, initialData, initialDataApi }) => {
   const apiData = useSelector(state => state.api.data)
 
   // CellPlugins Hook Calling
-  const { cellPlugins } = useCellPlugins({ advancedEdit, locale, readOnly })
+  const buttonRef = useRef(null)
+  const { cellPlugins } = useCellPlugins({ advancedEdit, locale, readOnly, buttonRef })
   const dispatch = useDispatch()
   // Loading State To Stop Rendering Editor
   useEffect(() => {
@@ -44,9 +45,23 @@ const ReactPageEditor = ({ pageName, initialData, initialDataApi }) => {
       dispatch(SET_ACTIVE_LOADING())
     }, 1000)
   }, [])
-
   return (
     <div className='relative'>
+      <div className='absolute z-0 invisible'>
+        <button
+          ref={buttonRef}
+          onClick={() => {
+            const escEvent = new KeyboardEvent('keydown', {
+              key: 'Escape',
+              code: 'Escape',
+              keyCode: 27,
+              which: 27,
+              bubbles: true
+            })
+            document.dispatchEvent(escEvent)
+          }}
+        ></button>
+      </div>
       <ApiData open={openApiData} setOpen={setOpenApiData} initialDataApi={initialDataApi} />
       <Dialog open={openBack} onClose={() => setOpenBack(false)} fullWidth>
         <DialogTitle>
@@ -117,8 +132,8 @@ const ReactPageEditor = ({ pageName, initialData, initialDataApi }) => {
           {locale === 'ar' ? ' حفظ التغيرات' : 'Save Changes'}
         </Button>
         <button
-          className={`w-[50px] h-[50px] flex items-center justify-center rounded-full bg-[#dfdfdf] hover:bg-white duration-300 shadow-main ${
-            openApiData ? 'bg-[#9f29b4] text-white hover:text-[#9f29b4]' : ''
+          className={`w-[50px] h-[50px] flex items-center justify-center rounded-full bg-[#dfdfdf] hover:!bg-white duration-300 shadow-main ${
+            openApiData ? '!bg-[#9f29b4] !text-white hover:!text-[#9f29b4]' : ''
           }`}
           title={locale === 'ar' ? 'التحكم بالبيانات المتصلة' : 'Api Control'}
           onClick={() => {
@@ -128,11 +143,10 @@ const ReactPageEditor = ({ pageName, initialData, initialDataApi }) => {
           <TbApi className='text-2xl' />
         </button>
         <button
-          className={`w-[50px] h-[50px] flex items-center justify-center rounded-full bg-[#dfdfdf] hover:bg-white duration-300 shadow-main ${
-            readOnly ? 'bg-[#9f29b4] text-white hover:text-[#9f29b4]' : ''
+          className={`w-[50px] h-[50px] flex items-center justify-center rounded-full bg-[#dfdfdf] hover:!bg-white duration-300 shadow-main ${
+            readOnly ? '!bg-[#9f29b4] !text-white hover:!text-[#9f29b4]' : ''
           }`}
           title={locale === 'ar' ? 'عرض الصفحة' : 'View Mode'}
-          // color={'primary'}
           onClick={() => {
             setReadOnly(!readOnly)
             setAdvancedEdit(false)
@@ -141,8 +155,8 @@ const ReactPageEditor = ({ pageName, initialData, initialDataApi }) => {
           <FaEye className='text-xl' />
         </button>
         <button
-          className={`w-[50px] h-[50px] flex items-center justify-center rounded-full bg-[#dfdfdf] hover:bg-white duration-300 shadow-main ${
-            advancedEdit ? 'bg-[#9f29b4] text-white hover:text-[#9f29b4]' : ''
+          className={`w-[50px] h-[50px] flex items-center justify-center rounded-full bg-[#dfdfdf] hover:!bg-white duration-300 shadow-main ${
+            advancedEdit ? '!bg-[#9f29b4] !text-white hover:!text-[#9f29b4]' : ''
           }`}
           title={locale === 'ar' ? 'وصع التعديلات' : 'Edit Mode'}
           onClick={() => {

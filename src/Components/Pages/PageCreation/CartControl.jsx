@@ -14,8 +14,8 @@ import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { docco } from 'react-syntax-highlighter/dist/esm/styles/prism'
 import FlexControl from './FlexControl'
 import { useSelector } from 'react-redux'
-
-function CartControl({ data, onChange, type }) {
+import CloseNav from './CloseNav'
+function CartControl({ data, onChange, type, buttonRef }) {
   const { locale } = useIntl()
   const [items, setItems] = useState(data.newItems || [])
   const getApiData = useSelector(rx => rx.api.data)
@@ -146,6 +146,7 @@ function CartControl({ data, onChange, type }) {
 
   return (
     <div>
+      <CloseNav text={locale === 'ar' ? 'عرض' : 'Card'} buttonRef={buttonRef} />
       {/* Href Section */}
       {loading ? (
         <div className='flex justify-center items-center h-full min-h-[400px]'>

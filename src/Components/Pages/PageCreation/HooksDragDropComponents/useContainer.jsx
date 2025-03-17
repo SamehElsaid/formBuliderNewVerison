@@ -1,9 +1,9 @@
 import { TextField } from '@mui/material'
 import { useMemo } from 'react'
 import { TbContainer } from 'react-icons/tb'
+import CloseNav from '../CloseNav'
 
-export default function useContainer({ locale }) {
-
+export default function useContainer({ locale, buttonRef }) {
   const ContainerPlugin = useMemo(() => {
     return {
       Renderer: ({ data, children }) => (
@@ -27,6 +27,7 @@ export default function useContainer({ locale }) {
         type: 'custom',
         Component: ({ data, onChange }) => (
           <>
+            <CloseNav text={locale === 'ar' ? 'اختيار الحاوية' : 'Container'} buttonRef={buttonRef} />
             <TextField
               fullWidth
               type='text'

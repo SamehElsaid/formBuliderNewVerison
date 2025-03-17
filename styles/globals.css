@@ -1103,11 +1103,11 @@ sortable-list {
   bottom: 0 !important;
   right: auto !important;
   width: fit-content !important;
-  height: calc(100% - 50px) !important;
+  height: calc(100%) !important;
   z-index: 11111 !important;
   @apply !bottom-0 !end-0;
 }
-.MuiPaper-root.MuiPaper-elevation.MuiPaper-elevation0.MuiDrawer-paper.MuiDrawer-paperAnchorBottom.MuiDrawer-paperAnchorDockedBottom::before {
+/* .MuiPaper-root.MuiPaper-elevation.MuiPaper-elevation0.MuiDrawer-paper.MuiDrawer-paperAnchorBottom.MuiDrawer-paperAnchorDockedBottom::before {
   content: 'Close';
   display: block;
   position: absolute;
@@ -1142,6 +1142,7 @@ sortable-list {
   .MuiPaper-root.MuiPaper-elevation.MuiPaper-elevation0.MuiDrawer-paper.MuiDrawer-paperAnchorBottom.MuiDrawer-paperAnchorDockedBottom::before {
   content: 'اغلاق';
 }
+*/
 .MuiPaper-root.MuiPaper-elevation.MuiPaper-elevation0.MuiDrawer-paper.MuiDrawer-paperAnchorBottom.MuiDrawer-paperAnchorDockedBottom
   > :first-child {
   @apply !mx-0 !max-w-[50vw] !h-full;
@@ -1150,8 +1151,8 @@ sortable-list {
 .MuiPaper-root.MuiPaper-elevation.MuiPaper-elevation0.MuiDrawer-paper.MuiDrawer-paperAnchorBottom.MuiDrawer-paperAnchorDockedBottom
   > :first-child
   > :first-child {
-  max-height: 84vh !important;
-  height: 74vh !important;
+  max-height: calc(100vh - 100px) !important;
+  height: calc(100vh - 100px) !important;
 }
 .MuiButton-containedError {
   @apply !bg-[#f44336] !text-white hover:!bg-[#e57373];
@@ -1507,4 +1508,40 @@ sortable-list {
   100% {
     opacity: 0;
   }
+}
+
+.Toastify__toast-container {
+  @apply !z-[111111111111111111];
+}
+.Toastify__toast-container.controlrtl .Toastify__toast {
+  direction: rtl !important;
+}
+.Toastify__toast-container {
+  @apply flex justify-center items-center flex-col;
+}
+.Toastify__toast {
+  width: fit-content;
+  margin-bottom: 10px !important;
+  padding: 5px !important;
+  border-radius: 20px !important;
+  min-height: 0px !important;
+}
+@media (max-width: 640px) {
+  .Toastify__toast {
+    margin: 0 20px 10px 15px;
+  }
+}
+
+.Toastify__toast-container {
+  top: 1em !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+}
+.Toastify__toast-container button {
+  display: none !important;
+}
+.Toastify__toast-body {
+  margin: 0 !important;
+  padding: 3px !important;
+  padding-bottom: 5px !important;
 }

@@ -2,8 +2,9 @@ import { Icon } from '@iconify/react'
 import { MenuItem, TextField } from '@mui/material'
 import { useMemo } from 'react'
 import { GiClick } from 'react-icons/gi'
+import CloseNav from '../CloseNav'
 
-export default function useIconView({ locale }) {
+export default function useIconView({ locale, buttonRef }) {
   const IconView = useMemo(() => {
     return {
       Renderer: ({ data }) => {
@@ -39,6 +40,7 @@ export default function useIconView({ locale }) {
         type: 'custom',
         Component: ({ data, onChange }) => (
           <div>
+            <CloseNav text={locale === 'ar' ? 'اختيار الايقونة' : 'Icon'} buttonRef={buttonRef} />
             <TextField
               fullWidth
               type='text'

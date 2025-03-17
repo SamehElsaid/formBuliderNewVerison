@@ -1,14 +1,15 @@
-import { Avatar, Button, Card, CardContent,  IconButton, Tooltip, Typography } from '@mui/material'
+import { Avatar, Button, Card, CardContent, IconButton, Tooltip, Typography } from '@mui/material'
 import { Box } from '@mui/system'
 import React, { useEffect, useRef, useState } from 'react'
 import CustomTextField from 'src/@core/components/mui/text-field'
 import { useIntl } from 'react-intl'
-import { axiosGet } from 'src/Components/axiosCall'
+import { axiosDelete, axiosGet } from 'src/Components/axiosCall'
 import { toast } from 'react-toastify'
 import TableEdit from 'src/Components/TableEdit/TableEdit'
 import IconifyIcon from 'src/Components/icon'
 import AddPage from 'src/Components/Pages/AddPage'
 import Link from 'next/link'
+import { Icon } from '@iconify/react'
 
 export default function Index() {
   const { locale, messages } = useIntl()
@@ -35,6 +36,8 @@ export default function Index() {
         toast.dismiss(loadingToast)
       })
   }, [locale, paginationModel.page, paginationModel.pageSize, startSearch, refresh])
+
+  const [deletePage, setDeletePage] = useState(false)
 
   const handleClose = () => {
     setOpen(false)
@@ -97,7 +100,43 @@ export default function Index() {
             <IconButton
               size='small'
               onClick={e => {
-                setDeleteOpen(params.row.id)
+                setDeletePage(params.row.name)
+                if (deletePage !== params.row.name) {
+                  toast.info(locale === 'ar' ? 'هل أنت متأكد ؟' : 'Are you sure you want to delete this item?', {
+                    position: 'bottom-right',
+                    autoClose: 4000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: 'colored',
+                    icon: <Icon icon='tabler:trash' />,
+                    iconColor: 'red',
+                    iconSize: 20,
+                    iconPosition: 'left',
+                    onClick: () => {
+                      const loadingToast = toast.loading(locale === 'ar' ? 'جاري حذف الصفحة...' : 'Deleting page...')
+                      axiosDelete(`page/${params.row.name}/`, locale)
+                        .then(res => {
+                          if (res.status) {
+                            toast.success(locale === 'ar' ? 'تم حذف الصفحة بنجاح' : 'Page deleted successfully')
+                            setData(data.filter((item, i) => i !== params.row.index))
+                            setRefresh(prev => prev + 1)
+                          }
+                        })
+                        .finally(() => {
+                          toast.dismiss(loadingToast)
+                          setDeletePage(false)
+                        })
+                    },
+                    onClose: () => {
+                      setDeletePage(false)
+                    }
+                  })
+                }
+
+                
               }}
             >
               <IconifyIcon icon='tabler:trash' />
@@ -150,9 +189,9 @@ export default function Index() {
               <CustomTextField
                 id='input'
                 label={locale === 'ar' ? 'البحث' : 'Search'}
-                defaultValue={search}
+                value={search}
                 ref={inputRef}
-                onBlur={e => {
+                onChange={e => {
                   setSearch(e.target.value)
                 }}
               />
@@ -160,7 +199,7 @@ export default function Index() {
 
             <TableEdit
               InvitationsColumns={columns}
-              data={data?.map((ele, i) => {
+              data={data?.filter(ele => ele.name.toLowerCase().includes(search.toLowerCase())).map((ele, i) => {
                 const fData = { ...ele }
                 fData.index = i + paginationModel.page * paginationModel.pageSize
 

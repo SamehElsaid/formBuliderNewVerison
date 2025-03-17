@@ -4,8 +4,9 @@ import { useSelector } from 'react-redux'
 import Collapse from '@kunukn/react-collapse'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { docco } from 'react-syntax-highlighter/dist/esm/styles/prism'
+import CloseNav from './CloseNav'
 
-export default function UpdateRichText({ data, onChange, locale, type }) {
+export default function UpdateRichText({ data, onChange, locale, type, buttonRef }) {
   const [obj, setObj] = useState(false)
   const getApiData = useSelector(rx => rx.api.data)
 
@@ -53,6 +54,8 @@ export default function UpdateRichText({ data, onChange, locale, type }) {
 
   return (
     <div>
+      <CloseNav text={type === 'progressBar' ? locale === 'ar' ? 'اختيار الشريط التقدم' : 'Progress Bar' : locale === 'ar' ? 'اختيار النص' : 'Text'} buttonRef={buttonRef} />
+
       <TextField
         select
         fullWidth

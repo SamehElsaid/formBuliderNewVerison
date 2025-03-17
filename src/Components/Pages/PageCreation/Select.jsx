@@ -8,8 +8,7 @@ import {
   FormControlLabel,
   FormLabel,
   MenuItem,
-  TextField,
-  Typography
+  TextField
 } from '@mui/material'
 import { Box } from '@mui/system'
 import React, { useEffect, useState } from 'react'
@@ -17,9 +16,11 @@ import { useIntl } from 'react-intl'
 import Collapse from '@kunukn/react-collapse'
 import { axiosGet } from 'src/Components/axiosCall'
 import { toast } from 'react-toastify'
-import CustomTextField from 'src/@core/components/mui/text-field'
 
-function Select({ onChange, data, type }) {
+import CloseNav from './CloseNav'
+
+
+function Select({ onChange, data, type, buttonRef }) {
   const { locale } = useIntl()
   const [collection, setCollection] = useState('')
   const [optionsCollection, setOptionsCollection] = useState([])
@@ -142,7 +143,9 @@ function Select({ onChange, data, type }) {
 
   return (
     <div>
-      <Typography variant='h5'>{locale === 'ar' ? 'اختيار التجميعة' : 'Select Collection'}</Typography>
+      <div className=''>
+        <CloseNav text={locale === 'ar' ? 'اختيار نموذج البيانات' : 'Select Data Model'} buttonRef={buttonRef} />
+      </div>
       <form
         className='flex flex-col p-4 h-full'
         onSubmit={e => {
@@ -163,7 +166,7 @@ function Select({ onChange, data, type }) {
               sortWithId: false
             })
           }}
-          label={locale === 'ar' ? 'نوع الارسال' : 'Type Of Submit'}
+          label={locale === 'ar' ? 'المصدر البياني' : 'Data Source'}
           variant='filled'
         >
           {dataSources.map(item => (
@@ -378,29 +381,31 @@ function Select({ onChange, data, type }) {
                 </Collapse>
                 <Collapse
                   transition={`height 300ms cubic-bezier(.4, 0, .2, 1)`}
-                  isOpen={Boolean(data?.addMoreElement?.filter(ele=>ele.kind !== "submit")?.length > 0)}
+                  isOpen={Boolean(data?.addMoreElement?.filter(ele => ele.kind !== 'submit')?.length > 0)}
                 >
                   <div className='flex flex-col gap-2 my-3'>
-                    {data?.addMoreElement?.filter(ele=>ele.kind !== "submit")?.map(item => (
-                      <div key={item.id}>
-                        <div className='flex items-center justify-between '>
-                          <div className='text-sm'>{locale === 'ar' ? item.name_ar : item.name_en}</div>
-                          <Button
-                            variant='outlined'
-                            color='error'
-                            onClick={() => {
-                              const oldAddMoreElement = data?.addMoreElement ?? []
-                              onChange({
-                                ...data,
-                                addMoreElement: oldAddMoreElement.filter(e => e.id !== item.id)
-                              })
-                            }}
-                          >
-                            {locale === 'ar' ? 'حذف' : 'Delete'}
-                          </Button>
+                    {data?.addMoreElement
+                      ?.filter(ele => ele.kind !== 'submit')
+                      ?.map(item => (
+                        <div key={item.id}>
+                          <div className='flex items-center justify-between '>
+                            <div className='text-sm'>{locale === 'ar' ? item.name_ar : item.name_en}</div>
+                            <Button
+                              variant='outlined'
+                              color='error'
+                              onClick={() => {
+                                const oldAddMoreElement = data?.addMoreElement ?? []
+                                onChange({
+                                  ...data,
+                                  addMoreElement: oldAddMoreElement.filter(e => e.id !== item.id)
+                                })
+                              }}
+                            >
+                              {locale === 'ar' ? 'حذف' : 'Delete'}
+                            </Button>
+                          </div>
                         </div>
-                      </div>
-                    ))}
+                      ))}
                   </div>
                 </Collapse>
               </div>

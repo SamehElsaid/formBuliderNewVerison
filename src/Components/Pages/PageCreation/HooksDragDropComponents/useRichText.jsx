@@ -3,7 +3,7 @@ import UpdateRichText from '../UpdateRichText'
 import { TbTextCaption } from 'react-icons/tb'
 import { getData } from 'src/Components/_Shared'
 
-export default function useRichText({ locale }) {
+export default function useRichText({ locale, buttonRef }) {
   const RichText = useMemo(() => {
     return {
       Renderer: ({ data, onChange }) => {
@@ -37,7 +37,7 @@ export default function useRichText({ locale }) {
       icon: <TbTextCaption className='text-2xl' />,
       controls: {
         type: 'custom',
-        Component: ({ data, onChange }) => <UpdateRichText data={data} onChange={onChange} locale={locale} />
+        Component: ({ data, onChange }) => <UpdateRichText data={data} onChange={onChange} locale={locale} buttonRef={buttonRef} />
       }
     }
   }, [locale])
