@@ -46,6 +46,24 @@ const ReactPageEditor = ({ pageName, initialData, initialDataApi }) => {
       dispatch(SET_ACTIVE_LOADING())
     }, 1000)
   }, [])
+  useEffect(() => {
+    if (advancedEdit) {
+      if (document.body) {
+        document.body.classList.add('edit-mode')
+      }
+    } else {
+      if (document.body) {
+        document.body.classList.remove('edit-mode')
+      }
+    }
+  }, [advancedEdit])
+  useEffect(() => {
+    document.body.classList.add('page-control')
+
+    return () => {
+      document.body.classList.remove('page-control')
+    }
+  }, [])
 
   return (
     <div className='relative'>
@@ -122,71 +140,96 @@ const ReactPageEditor = ({ pageName, initialData, initialDataApi }) => {
           </DialogActions>
         </DialogContent>
       </Dialog>
-      <div className={`container flex gap-2 justify-end mb-2`}>
-        <Button
-          variant='contained'
-          color={'success'}
-          onClick={() => {
-            setSaveData(true)
-          }}
+      <div className='h-[65px] '>
+        <div
+          className={` ${
+            advancedEdit ? 'bgGradient' : 'bg-white'
+          } fixed top-0 py-2  duration-300  z-[11111] left-0 right-0 shadow-xl`}
         >
-          <MdOutlineSaveAs className='text-xl me-1' />
-          {locale === 'ar' ? ' حفظ التغيرات' : 'Save Changes'}
-        </Button>
-        <button
-          className={`w-[50px] h-[50px] flex items-center justify-center rounded-full bg-[#dfdfdf] hover:!bg-white duration-300 shadow-main ${
-            openApiData ? '!bg-[#9f29b4] !text-white hover:!text-[#9f29b4]' : ''
-          }`}
-          title={locale === 'ar' ? 'التحكم بالبيانات المتصلة' : 'Api Control'}
-          onClick={() => {
-            setOpenApiData(!openApiData)
-          }}
-        >
-          <TbApi className='text-2xl' />
-        </button>
-        <button
-          className={`w-[50px] h-[50px] flex items-center justify-center rounded-full bg-[#dfdfdf] hover:!bg-white duration-300 shadow-main ${
-            readOnly ? '!bg-[#9f29b4] !text-white hover:!text-[#9f29b4]' : ''
-          }`}
-          title={locale === 'ar' ? 'عرض الصفحة' : 'View Mode'}
-          onClick={() => {
-            setReadOnly(!readOnly)
-            setAdvancedEdit(false)
-          }}
-        >
-          <FaEye className='text-xl' />
-        </button>
-        <button
-          className={`w-[50px] h-[50px] flex items-center justify-center rounded-full bg-[#dfdfdf] hover:!bg-white duration-300 shadow-main ${
-            advancedEdit ? '!bg-[#9f29b4] !text-white hover:!text-[#9f29b4]' : ''
-          }`}
-          title={locale === 'ar' ? 'وصع التعديلات' : 'Edit Mode'}
-          onClick={() => {
-            setAdvancedEdit(!advancedEdit)
-            if (document.querySelector('[data-testid="DevicesIcon"]')) {
-              if (!advancedEdit) {
-                document.querySelector('[data-testid="DevicesIcon"]').parentElement.click()
-              } else {
-                document.querySelector('[data-testid="CreateIcon"]').parentElement.click()
-              }
-            }
-          }}
-        >
-          <IoSettingsOutline className='text-xl' />
-        </button>
-        <button
-          className={`w-[50px] h-[50px] flex items-center justify-center rounded-full text-white bg-red-500 hover:bg-red-600 duration-300 shadow-main ${
-            openBack ? 'bg-red-700 text-white hover:text-red-700' : ''
-          }`}
-          onClick={() => {
-            console.log(editorValue, initialData)
-            JSON.stringify(editorValue) === JSON.stringify(initialData)
-              ? push(`/${locale}/setting/pages`)
-              : setOpenBack(true)
-          }}
-        >
-          <RiArrowGoBackFill className='text-xl' />
-        </button>
+          <div className='container flex gap-2 justify-between'>
+            {advancedEdit && (
+              <div className='editMode'>
+                <div className='wrapper'>
+                  <span className='letter letter1'>E</span>
+                  <span className='letter letter2'>d</span>
+                  <span className='letter letter3'>i</span>
+                  <span className='letter letter4'>t</span>
+                  <span className='letter letter5'> </span>
+                  <span className='letter letter6'>M</span>
+                  <span className='letter letter7'>o</span>
+                  <span className='letter letter8'>d</span>
+                  <span className='letter letter9'>e</span>
+                  <span className='letter letter10'>.</span>
+                </div>
+              </div>
+            )}
+            <div className='flex gap-2 ms-auto'>
+              <Button
+                variant='contained'
+                color={'success'}
+                onClick={() => {
+                  setSaveData(true)
+                }}
+              >
+                <MdOutlineSaveAs className='text-xl me-1' />
+                {locale === 'ar' ? ' حفظ التغيرات' : 'Save Changes'}
+              </Button>
+              <button
+                className={`w-[50px] h-[50px] flex items-center justify-center rounded-full bg-[#dfdfdf] hover:!bg-white duration-300 shadow-main ${
+                  openApiData ? '!bg-[#9f29b4] !text-white hover:!text-[#9f29b4]' : ''
+                }`}
+                title={locale === 'ar' ? 'التحكم بالبيانات المتصلة' : 'Api Control'}
+                onClick={() => {
+                  setOpenApiData(!openApiData)
+                }}
+              >
+                <TbApi className='text-2xl' />
+              </button>
+              <button
+                className={`w-[50px] h-[50px] flex items-center justify-center rounded-full bg-[#dfdfdf] hover:!bg-white duration-300 shadow-main ${
+                  readOnly ? '!bg-[#9f29b4] !text-white hover:!text-[#9f29b4]' : ''
+                }`}
+                title={locale === 'ar' ? 'عرض الصفحة' : 'View Mode'}
+                onClick={() => {
+                  setReadOnly(!readOnly)
+                  setAdvancedEdit(false)
+                }}
+              >
+                <FaEye className='text-xl' />
+              </button>
+              <button
+                className={`w-[50px] h-[50px] flex items-center justify-center rounded-full bg-[#dfdfdf] hover:!bg-white duration-300 shadow-main ${
+                  advancedEdit ? '!bg-[#9f29b4] !text-white hover:!text-[#9f29b4]' : ''
+                }`}
+                title={locale === 'ar' ? 'وصع التعديلات' : 'Edit Mode'}
+                onClick={() => {
+                  setAdvancedEdit(!advancedEdit)
+                  if (document.querySelector('[data-testid="DevicesIcon"]')) {
+                    if (!advancedEdit) {
+                      document.querySelector('[data-testid="DevicesIcon"]').parentElement.click()
+                    } else {
+                      document.querySelector('[data-testid="CreateIcon"]').parentElement.click()
+                    }
+                  }
+                }}
+              >
+                <IoSettingsOutline className='text-xl' />
+              </button>
+              <button
+                className={`w-[50px] h-[50px] flex items-center justify-center rounded-full text-white bg-red-500 hover:bg-red-600 duration-300 shadow-main ${
+                  openBack ? 'bg-red-700 text-white hover:text-red-700' : ''
+                }`}
+                onClick={() => {
+                  JSON.stringify(editorValue) === JSON.stringify(newData)
+                    ? push(`/${locale}/setting/pages`)
+                    : setOpenBack(true)
+                }}
+              >
+                <RiArrowGoBackFill className='text-xl' />
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
       <div
         style={{

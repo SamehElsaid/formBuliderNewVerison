@@ -1,7 +1,7 @@
 // ** Next Imports
 import Head from 'next/head'
 import { useRouter } from 'next/router'
-import 'monaco-editor/esm/vs/base/browser/ui/actionbar/actionbar.css';
+import 'monaco-editor/esm/vs/base/browser/ui/actionbar/actionbar.css'
 import 'react-phone-number-input/style.css'
 import 'react-datepicker/dist/react-datepicker.css'
 import 'keen-slider/keen-slider.min.css'
@@ -26,11 +26,9 @@ import en from '../../i18n/en.json'
 import { IntlProvider } from 'react-intl'
 import { store } from 'src/store'
 import HomeApp from 'src/Components/HomeApp'
-import { ToastContainer } from 'react-toastify'
+import { cssTransition, ToastContainer } from 'react-toastify'
 import { useCookies } from 'react-cookie'
 import 'animate.css/animate.min.css'
-
-
 
 const clientSideEmotionCache = createEmotionCache()
 
@@ -39,7 +37,10 @@ const message = {
   ar
 }
 
-
+const bounce = cssTransition({
+  enter: 'animate__animated animate__bounceIn',
+  exit: 'animate__animated animate__bounceOut'
+})
 
 const App = props => {
   const { Component, emotionCache = clientSideEmotionCache, pageProps } = props
@@ -79,7 +80,12 @@ const App = props => {
                 {({ settings }) => {
                   return (
                     <ThemeComponent settings={{ ...settings, direction: getDir(locale) }}>
-                      <ToastContainer theme={settings.mode} className='ToastContainer' />
+                      <ToastContainer
+                        theme={settings.mode}
+                        className='ToastContainer'
+                        position='top-center'
+                        transition={bounce}
+                      />
                       <HomeApp>{getLayout(<Component {...pageProps} />)}</HomeApp>
                     </ThemeComponent>
                   )

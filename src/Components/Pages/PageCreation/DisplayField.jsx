@@ -1370,7 +1370,6 @@ const ViewInput = ({
       format: 'yyyy-MM-dd',
       showTime: 'false'
     }
-    console.log(roles)
     const today = new Date()
     let minDate = null
     let maxDate = null
@@ -1393,7 +1392,6 @@ const ViewInput = ({
       maxDate = new Date(roles?.afterDateValue)
     }
 
-    console.log(minDate, maxDate)
 
     return !readOnly ? (
       <DatePickerWrapper className='w-full'>

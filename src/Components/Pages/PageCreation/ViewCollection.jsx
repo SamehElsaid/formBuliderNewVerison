@@ -10,7 +10,8 @@ import InputControlDesign from './InputControlDesign'
 import GridLayout, { WidthProvider } from 'react-grid-layout'
 import 'react-grid-layout/css/styles.css'
 import 'react-resizable/css/styles.css'
-import { DefaultStyle } from 'src/Components/_Shared'
+import { DefaultStyle, getTypeFromCollection } from 'src/Components/_Shared'
+import { IoMdSettings } from 'react-icons/io'
 
 const ResponsiveGridLayout = WidthProvider(GridLayout)
 
@@ -35,11 +36,8 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
         data?.layout?.length ===
         [...getFields.filter(filed => data?.selected?.includes(filed?.key)), ...addMoreElement].length
       ) {
-        console.log('sa')
         setLayout([...data.layout])
       } else {
-        console.log('السيد')
-
         setLayout(
           [...getFields.filter(filed => data?.selected?.includes(filed?.key)), ...addMoreElement].map((item, index) => {
             return {
@@ -88,10 +86,8 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
     }
 
     addMoreElement.forEach(ele => {
-      console.log(ele)
       const additionalFields = data.additional_fields ?? []
       const additionalFieldFind = additionalFields.find(e => e.key === ele.id)
-      console.log(additionalFieldFind, additionalFields)
 
       if (additionalFieldFind?.roles?.onMount?.isRequired && ele.key === 'check_box') {
         if (!dataRef?.current?.[ele.id]) {
@@ -135,7 +131,10 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
   }
 
   const defaultDesign =
-    open?.type === 'new_element' ? DefaultStyle(open?.key) : open?.options?.uiSchema?.xComponentProps?.cssClass
+    open?.type === 'new_element'
+      ? DefaultStyle(open?.key)
+      : open?.options?.uiSchema?.xComponentProps?.cssClass ??
+        DefaultStyle(getTypeFromCollection(open?.type ?? 'SingleText'))
   let additionalField = null
   const additionalFieldDesign = data?.additional_fields?.find(ele => ele.key === open?.id)?.design
   if (additionalFieldDesign) {
@@ -186,7 +185,9 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
   const getDesign = useCallback(
     (key, field) => {
       const defaultDesign =
-        field?.type === 'new_element' ? DefaultStyle(field?.key) : field?.options?.uiSchema?.xComponentProps?.cssClass
+        field?.type === 'new_element'
+          ? DefaultStyle(field?.key)
+          : field?.options?.uiSchema?.xComponentProps?.cssClass ?? DefaultStyle(getTypeFromCollection(field.type))
 
       let additionalField = null
       const additionalFieldDesign = data?.additional_fields?.find(ele => ele.key === key)?.design
@@ -210,7 +211,6 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
   useEffect(() => {
     if (layout) {
       document.querySelectorAll('.drag-handle').forEach((ele, index) => {
-        console.log(ele)
         if (ele.querySelector('.react-datepicker-wrapper')) {
           ele.style.zIndex = document.querySelectorAll('.drag-handle').length + 500 - index
         } else {
@@ -219,8 +219,6 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
       })
     }
   }, [layout])
-
-  // console.log(layout);
 
   return (
     <div className={`${disabled ? 'text-main' : ''}`}>
@@ -239,11 +237,7 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
           {locale === 'ar' ? 'يرجى تحديد نموذج البيانات' : 'Please Select Data Model'}
         </div>
       ) : (
-        <form
-          className={readOnly ? 'w-[calc(100%)]' : 'w-[calc(100%-107px)]'}
-          onClick={() => setErrors(false)}
-          onSubmit={handleSubmit}
-        >
+        <form className={'w-[calc(100%)]'} onClick={() => setErrors(false)} onSubmit={handleSubmit}>
           <ResponsiveGridLayout
             className='layout'
             layout={layout}
@@ -251,8 +245,6 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
             cols={12}
             rowHeight={71}
             onLayoutChange={newLayout => {
-              console.log(newLayout)
-
               setLayout(newLayout)
               onChange({ ...data, layout: newLayout })
             }}
@@ -262,15 +254,23 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
             margin={[10, 10]} // هامش بين العناصر
           >
             {[...getFields.filter(filed => data?.selected?.includes(filed?.key)), ...addMoreElement].map(filed => (
-              <div key={filed.id} className='relative w-full drag-handle'>
+              <div key={filed.id} className={`relative w-full drag-handle ${!readOnly ? 'px-2' : ''}`}>
                 {!readOnly && (
-                  <div
-                    onContextMenu={e => {
-                      e.preventDefault()
-                      setOpen(filed)
-                    }}
-                    className='absolute inset-0 z-20'
-                  ></div>
+                  <div className='absolute inset-0 z-20 flex || justify-end border-main-color border-dashed border rounded-md'>
+                    <button
+                      title={locale !== 'ar' ? 'Setting' : 'التحكم'}
+                      onMouseDown={e => {
+                        e.stopPropagation()
+                      }}
+                      onClick={e => {
+                        e.stopPropagation()
+                        setOpen(filed)
+                      }}
+                      className='w-[30px] || h-[30px] hover:bg-main-color hover:text-white duration-200 || rounded-lg || shadow-2xl text-xl flex || items-center justify-center bg-white border-main-color border'
+                    >
+                      <IoMdSettings />
+                    </button>
+                  </div>
                 )}
                 <DisplayField
                   input={filed}

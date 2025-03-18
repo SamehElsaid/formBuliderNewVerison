@@ -92,7 +92,6 @@ export const getTypeFromCollection = (type, description) => {
 }
 
 export const DefaultStyle = type => {
-  console.log(type === 'button')
 
   if (type === 'textarea') {
     return `

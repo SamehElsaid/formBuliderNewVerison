@@ -10,10 +10,8 @@ const CssEditor = ({ data, onChange, Css, open, roles }) => {
   const handleChange = value => {
     const additional_fields = data.additional_fields ?? []
     const findMyInput = additional_fields.find(inp => inp.key === open.id)
-    console.log('sds')
 
     if (findMyInput) {
-      console.log('sds2')
       findMyInput.design = value
     } else {
       const myEdit = {

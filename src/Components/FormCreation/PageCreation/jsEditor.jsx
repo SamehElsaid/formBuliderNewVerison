@@ -23,13 +23,11 @@ const JsEditor = ({ data, onChange, jsCode, open, Css, type, roles }) => {
     const match = value.match(/async function Action\(e, args\) \{([\s\S]*)\}/)
     try {
       if (match) {
-        console.log(value)
         const newContent = match[1]
         const updatedCode = `async function Action(e, args) {${newContent}}`
         setCode(updatedCode)
         const additional_fields = data.additional_fields ?? []
         const findMyInput = additional_fields.find(inp => inp.key === open.id)
-        console.log(findMyInput)
         if (findMyInput) {
           findMyInput.roles.event = {
             ...findMyInput.roles.event,
@@ -48,10 +46,8 @@ const JsEditor = ({ data, onChange, jsCode, open, Css, type, roles }) => {
           }
           additional_fields.push(myEdit)
         }
-        console.log(additional_fields)
         onChange({ ...data, additional_fields: additional_fields })
       } else {
-        console.log('error')
         toast.error(locale === 'ar' ? 'خطأ في الكود' : 'Invalid code')
         setCode(functionTemplate)
       }

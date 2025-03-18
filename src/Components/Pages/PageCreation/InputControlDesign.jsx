@@ -43,7 +43,12 @@ const Header = styled(Box)(() => ({
   display: 'flex',
   alignItems: 'center',
   padding: '20px 10px',
-  justifyContent: 'space-between'
+  justifyContent: 'space-between',
+  position: 'sticky',
+  background: '#fff',
+  borderBottom: '1px solid #00d0e7',
+  zIndex: 50,
+  top: 0
 }))
 
 export default function InputControlDesign({ open, handleClose, design, locale, data, onChange, roles, fields }) {
@@ -238,12 +243,10 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
         link: tabData.link,
         active: tabData.active
       }
-      console.log({ editTab })
       if (editTab) {
         const findMyInput = addMoreElement.find(inp => inp.id === open?.id)
         if (findMyInput) {
           findMyInput.data[editTab - 1] = newTab
-          console.log(findMyInput)
           onChange({ ...data, addMoreElement: addMoreElement })
         }
       } else {
@@ -261,8 +264,6 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
 
   return (
     <>
-      {/* {console.log(findMyInput,addMoreElement,open)} */}
-
       <Dialog open={openTab} onClose={handleCloseTab} fullWidth>
         <DialogTitle>
           {editTab ? (locale === 'ar' ? 'تعديل تبويب' : 'Edit Tab') : locale === 'ar' ? 'اضافة تبويب' : 'Add Tab'}
@@ -563,7 +564,7 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
       >
         <Header>
           <Typography className='capitalize text-[#555] !font-bold' variant='h4'>
-            {locale === 'ar' ? open?.nameAr : open?.nameEn}
+            {locale === 'ar' ? open?.nameAr ?? open?.name_ar : open?.nameEn ?? open?.name_en}
           </Typography>
           <IconButton
             size='small'
@@ -1891,6 +1892,89 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                                 label={locale === 'ar' ? 'الرابط' : 'Href'}
                                 variant='filled'
                               />
+                              <div className='mt-4'></div>
+                              {roles?.onMount?.file ? (
+                                <div className='p-2 my-4 rounded border border-dashed border-main-color'>
+                                  <div className='flex items-center justify-between'>
+                                    <div className='flex items-center gap-2'>
+                                      <div className='text-sm'>{roles?.onMount?.file?.replaceAll('/Uploads/', '')}</div>
+                                    </div>
+                                    <Button
+                                      variant='outlined'
+                                      color='error'
+                                      onClick={() => {
+                                        const additional_fields = data.additional_fields ?? []
+                                        const findMyInput = additional_fields.find(inp => inp.key === open.id)
+                                        if (findMyInput) {
+                                          findMyInput.roles.onMount.file = ''
+                                        }
+                                        onChange({ ...data, additional_fields: additional_fields })
+                                      }}
+                                    >
+                                      {locale === 'ar' ? 'حذف' : 'Delete'}
+                                    </Button>
+                                  </div>
+                                </div>
+                              ) : (
+                                <>
+                                  {' '}
+                                  <Button
+                                    variant='outlined'
+                                    className='!mb-4'
+                                    component='label'
+                                    fullWidth
+                                    startIcon={<Icon icon='ph:upload-fill' fontSize='2.25rem' className='!text-2xl ' />}
+                                  >
+                                    <input
+                                      type='file'
+                                      hidden
+                                      name='json'
+                                      onChange={event => {
+                                        const file = event.target.files[0]
+                                        const loading = toast.loading(locale === 'ar' ? 'جاري الرفع' : 'Uploading...')
+                                        if (file) {
+                                          axiosPost(
+                                            'file/upload',
+                                            'en',
+                                            {
+                                              file: file
+                                            },
+                                            true
+                                          )
+                                            .then(res => {
+                                              if (res.status) {
+                                                const additional_fields = data.additional_fields ?? []
+                                                const findMyInput = additional_fields.find(inp => inp.key === open.id)
+                                                if (findMyInput) {
+                                                  findMyInput.roles.onMount.file = res.filePath.data
+                                                } else {
+                                                  const myEdit = {
+                                                    key: open.id,
+                                                    design: objectToCss(Css).replaceAll('NaN', ''),
+                                                    roles: {
+                                                      ...roles,
+                                                      onMount: {
+                                                        ...roles.onMount,
+                                                        file: res.filePath.data
+                                                      }
+                                                    }
+                                                  }
+                                                  additional_fields.push(myEdit)
+                                                }
+                                                onChange({ ...data, additional_fields: additional_fields })
+                                              }
+                                            })
+                                            .finally(() => {
+                                              toast.dismiss(loading)
+                                            })
+                                          event.target.value = ''
+                                        }
+                                      }}
+                                    />
+                                    {locale === 'ar' ? 'رفع ملف' : 'upload File'}
+                                  </Button>
+                                </>
+                              )}
                             </>
                           ) : (
                             <div className='px-4'>

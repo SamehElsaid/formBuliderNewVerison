@@ -8,7 +8,12 @@ const Header = styled(Box)(() => ({
   display: 'flex',
   alignItems: 'center',
   padding: '20px 10px',
-  justifyContent: 'space-between'
+  justifyContent: 'space-between',
+  position: 'sticky',
+  background: '#fff',
+  borderBottom: '1px solid #00d0e7',
+  zIndex: 50,
+  top: 0
 }))
 
 function CloseNav({ text, buttonRef }) {

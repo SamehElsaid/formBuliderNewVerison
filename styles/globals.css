@@ -1107,6 +1107,9 @@ sortable-list {
   z-index: 11111 !important;
   @apply !bottom-0 !end-0;
 }
+.edit-mode .MuiPaper-root.MuiPaper-elevation.MuiPaper-elevation0.MuiDrawer-paper {
+  display: none !important;
+}
 /* .MuiPaper-root.MuiPaper-elevation.MuiPaper-elevation0.MuiDrawer-paper.MuiDrawer-paperAnchorBottom.MuiDrawer-paperAnchorDockedBottom::before {
   content: 'Close';
   display: block;
@@ -1153,6 +1156,22 @@ sortable-list {
   > :first-child {
   max-height: calc(100vh - 100px) !important;
   height: calc(100vh - 100px) !important;
+}
+@media (max-width: 1240px) {
+  .MuiPaper-root.MuiPaper-elevation.MuiPaper-elevation0.MuiDrawer-paper.MuiDrawer-paperAnchorBottom.MuiDrawer-paperAnchorDockedBottom
+    > :first-child
+    > :first-child {
+    max-height: calc(100vh - 150px) !important;
+    height: calc(100vh - 150px) !important;
+  }
+}
+@media (max-width: 876px) {
+  .MuiPaper-root.MuiPaper-elevation.MuiPaper-elevation0.MuiDrawer-paper.MuiDrawer-paperAnchorBottom.MuiDrawer-paperAnchorDockedBottom
+    > :first-child
+    > :first-child {
+    max-height: calc(100vh - 180px) !important;
+    height: calc(100vh - 180px) !important;
+  }
 }
 .MuiButton-containedError {
   @apply !bg-[#f44336] !text-white hover:!bg-[#e57373];
@@ -1333,11 +1352,19 @@ sortable-list {
   transition: transform 225ms cubic-bezier(0, 0, 0.2, 1) !important;
   visibility: visible !important;
 }
+
 .react-page-editable {
   width: calc(100% - 260px - 107px) !important;
   margin-right: 0 !important;
   margin-left: 0 !important;
   @apply !ms-auto !me-[105px];
+}
+.edit-mode .react-page-editable {
+  width: calc(100% - 40px) !important;
+  @apply !mx-auto;
+}
+.edit-mode .react-page-controls-mode-toggle-control-group {
+  display: none !important;
 }
 
 .MuiTooltip-popper {
@@ -1544,4 +1571,115 @@ sortable-list {
   margin: 0 !important;
   padding: 3px !important;
   padding-bottom: 5px !important;
+}
+
+.bgGradient {
+  background: #8a2387; /* fallback for old browsers */
+  background: -webkit-linear-gradient(to right, #f27121, #e94057, #8a2387); /* Chrome 10-25, Safari 5.1-6 */
+  background: linear-gradient(
+    to right,
+    #f27121,
+    #e94057,
+    #8a2387
+  ); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+}
+.page-control {
+  .MuiPaper-root.MuiPaper-elevation.MuiPaper-elevation0.MuiDrawer-paper {
+    background-color: rgb(27, 133, 219);
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px, rgba(27, 133, 219, 0.5) 5px 10px 15px;
+    @apply !z-[1111111];
+  }
+  .MuiListItemText-root,
+  .MuiListItemText-root p {
+    color: #fff;
+  }
+  .MuiAvatar-root.MuiAvatar-circular.MuiAvatar-colorDefault {
+    background-color: #fff;
+    color: rgb(27, 133, 219);
+  }
+  .react-page-plugin-drawer-item:hover {
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px, rgba(27, 133, 219, 0.5) 5px 10px 15px !important;
+  }
+  .MuiPaper-elevation.MuiPaper-elevation0.MuiDrawer-paper .MuiInputBase-root.MuiInput-root input {
+    /* color: #fff;/ */
+    background-color: #fff;
+    border-radius: 50px;
+    border: none !important;
+    padding: 2px 10px;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px, rgba(27, 133, 219, 0.5) 5px 10px 15px !important;
+  }
+  .MuiInputBase-root.MuiInput-root::before {
+    display: none !important;
+  }
+
+  .MuiListSubheader-root.MuiListSubheader-gutters {
+    /* padding: 0 !important; */
+    background-color: rgb(27, 133, 219);
+    color: #fff;
+    font-size: 20px;
+    font-weight: 600;
+  }
+}
+.editMode {
+  .wrapper {
+    min-height: 3rem;
+    min-width: 14rem;
+    font-size: 1rem;
+    position: relative;
+    overflow: hidden;
+    color: white;
+    mask-image: linear-gradient(
+      to right,
+      rgba(0, 0, 0, 0),
+      rgba(0, 0, 0, 1) 30%,
+      rgba(0, 0, 0, 1) 70%,
+      rgba(0, 0, 0, 0)
+    );
+    font-family: monospace;
+  }
+
+  .letter {
+    width: 1ch;
+    position: absolute;
+    top: 50%;
+    transform: translate(0px, -50%);
+    left: 100%;
+    animation: scroll 2.5s linear infinite;
+  }
+
+  .letter1 {
+    animation-delay: calc(2.5s / 10 * (10 - 1) * -1);
+  }
+  .letter2 {
+    animation-delay: calc(2.5s / 10 * (10 - 2) * -1);
+  }
+  .letter3 {
+    animation-delay: calc(2.5s / 10 * (10 - 3) * -1);
+  }
+  .letter4 {
+    animation-delay: calc(2.5s / 10 * (10 - 4) * -1);
+  }
+  .letter5 {
+    animation-delay: calc(2.5s / 10 * (10 - 5) * -1);
+  }
+  .letter6 {
+    animation-delay: calc(2.5s / 10 * (10 - 6) * -1);
+  }
+  .letter7 {
+    animation-delay: calc(2.5s / 10 * (10 - 7) * -1);
+  }
+  .letter8 {
+    animation-delay: calc(2.5s / 10 * (10 - 8) * -1);
+  }
+  .letter9 {
+    animation-delay: calc(2.5s / 10 * (10 - 9) * -1);
+  }
+  .letter10 {
+    animation-delay: calc(2.5s / 10 * (10 - 10) * -1);
+  }
+}
+@keyframes scroll {
+  to {
+    left: -1ch;
+  }
 }
