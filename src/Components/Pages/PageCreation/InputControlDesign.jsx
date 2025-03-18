@@ -1750,6 +1750,41 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                               <div className='mb-2'></div>
                             </div>
                           )}
+                          {open.key === 'button' && (
+                            <>
+                              <h2 className='text-lg font-bold text-main-color mt-2'>
+                                {locale === 'ar' ? 'في البداية' : 'OnMount'}
+                              </h2>
+                              <FormControl fullWidth margin='normal'>
+                                <InputLabel>{locale === 'ar' ? 'الحالة' : 'State'}</InputLabel>
+                                <Select
+                                  variant='filled'
+                                  value={roles?.onMount?.type}
+                                  onChange={e => {
+                                    const additional_fields = data.additional_fields ?? []
+                                    const findMyInput = additional_fields.find(inp => inp.key === open.id)
+                                    if (findMyInput) {
+                                      findMyInput.roles.onMount.type = e.target.value
+                                    } else {
+                                      const myEdit = {
+                                        key: open.id,
+                                        design: objectToCss(Css).replaceAll('NaN', ''),
+                                        roles: {
+                                          ...roles,
+                                          onMount: { type: e.target.value, value: roles.onMount.value }
+                                        }
+                                      }
+                                      additional_fields.push(myEdit)
+                                    }
+                                    onChange({ ...data, additional_fields: additional_fields })
+                                  }}
+                                >
+                                  <MenuItem value={'disable'}>{locale === 'ar' ? 'معطل' : 'Disable'}</MenuItem>
+                                  <MenuItem value={'hide'}>{locale === 'ar' ? 'مخفي' : 'Hide'}</MenuItem>
+                                </Select>
+                              </FormControl>
+                            </>
+                          )}
                           <div className='border-t-2 border-dashed border-main-color pt-2'>
                             <h2 className='text-lg font-bold text-main-color mt-2'>
                               {open.key === 'button'
@@ -1975,6 +2010,20 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                                   </Button>
                                 </>
                               )}
+
+                              <div className=''>
+                                <div className='flex flex-col gap-2 justify-center items-center py-2 '>
+                                  <Button
+                                    onClick={() => {
+                                      setOpenTrigger(true)
+                                    }}
+                                    variant='contained'
+                                    color='primary'
+                                  >
+                                    {locale === 'ar' ? 'اضافة متابعة' : 'Add Trigger'}
+                                  </Button>
+                                </div>
+                              </div>
                             </>
                           ) : (
                             <div className='px-4'>

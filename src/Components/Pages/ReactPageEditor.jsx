@@ -235,7 +235,7 @@ const ReactPageEditor = ({ pageName, initialData, initialDataApi }) => {
         style={{
           background: theme.palette.background.default
         }}
-        className={`duration-300 ${readOnly ? `overflow-auto fixed inset-0 pb-10` : '!bg-white'}`}
+        className={`duration-300 ${readOnly ? `overflow-auto fixed inset-0 z-[1111111] pb-10` : '!bg-white'}`}
       >
         {readOnly && (
           <div className='fixed top-[10px] end-[10px] z-[11111111]'>

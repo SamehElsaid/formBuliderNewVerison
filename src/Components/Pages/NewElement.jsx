@@ -2,8 +2,9 @@ import { useIntl } from 'react-intl'
 import { axiosGet } from '../axiosCall'
 import Link from 'next/link'
 
-function NewElement({ input, onBlur, value, setValue, roles, onChangeEvent, disabledBtn }) {
+function NewElement({ input, onBlur, value, setValue, roles, onChangeEvent, disabledBtn, isDisable, readOnly }) {
   const { locale } = useIntl()
+
 
   const handleCheckboxChange = e => {
     try {
@@ -134,10 +135,11 @@ function NewElement({ input, onBlur, value, setValue, roles, onChangeEvent, disa
         <div className='w-full'>
           <a
             href={roles?.onMount?.href}
-            className='btn block text-center'
+            className={`btn ${isDisable === 'hide' ? (readOnly ? '' : 'hidden') : ''} block text-center`}
             onClick={handleClick}
             target='_blank'
             rel='noopener noreferrer'
+            disabled={isDisable === 'disable'}
           >
             {locale === 'ar' ? input?.name_ar : input?.name_en}
           </a>
@@ -147,7 +149,12 @@ function NewElement({ input, onBlur, value, setValue, roles, onChangeEvent, disa
     if (roles?.onMount?.href) {
       return (
         <div className='w-full'>
-          <Link href={`/${locale}${roles?.onMount?.href}`} className='btn block text-center' onClick={handleClick}>
+          <Link
+            href={`/${locale}${roles?.onMount?.href}`}
+            className={`btn block text-center  ${isDisable === 'hide' ? (readOnly ? '' : 'hidden') : ''} block`}
+            onClick={handleClick}
+            disabled={isDisable === 'disable'}
+          >
             {locale === 'ar' ? input?.name_ar : input?.name_en}
           </Link>
         </div>
@@ -163,7 +170,12 @@ function NewElement({ input, onBlur, value, setValue, roles, onChangeEvent, disa
     }
 
     return (
-      <button onClick={handleClick} type='button' className='btn'>
+      <button
+        disabled={isDisable === 'disable'}
+        onClick={handleClick}
+        type='button'
+        className={`btn ${isDisable === 'hide' ? (readOnly ? '' : 'hidden') : ''} block `}
+      >
         {locale === 'ar' ? input.name_ar : input.name_en}
       </button>
     )

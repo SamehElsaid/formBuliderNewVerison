@@ -1080,6 +1080,8 @@ export default function DisplayField({
           )}
           {input.type === 'new_element' ? (
             <NewElement
+              isDisable={isDisable}
+              readOnly={readOnly}
               disabledBtn={disabledBtn}
               input={input}
               roles={roles}
@@ -1392,11 +1394,9 @@ const ViewInput = ({
       maxDate = new Date(roles?.afterDateValue)
     }
 
-
     return !readOnly ? (
       <DatePickerWrapper className='w-full'>
         <DatePicker
-
           selected={value}
           onChange={date => onChange(date)}
           timeInputLabel='Time:'
@@ -1416,7 +1416,6 @@ const ViewInput = ({
           disabled={isDisable === 'disabled'}
           minDate={minDate}
           maxDate={maxDate}
-
         />
       </DatePickerWrapper>
     ) : (
