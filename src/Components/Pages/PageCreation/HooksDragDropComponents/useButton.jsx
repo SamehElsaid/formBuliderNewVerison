@@ -46,10 +46,12 @@ export default function useButton({ locale, buttonRef }) {
         return isValidURL(data.href) ? (
           <a href={data.href} target='_blank' rel='noopener noreferrer' {...options}>
             {data.buttonText}
+            {console.log('2')}
           </a>
         ) : data.href ? (
-          <Link href={data.href} target='_blank' rel='noopener noreferrer' {...options}>
+          <Link href={data.href} {...options}>
             {data.buttonText}
+            {console.log('3')}
           </Link>
         ) : (
           <button {...options}>{data.buttonText}</button>
@@ -68,7 +70,7 @@ export default function useButton({ locale, buttonRef }) {
       }
     }
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [locale])
 
   return { ButtonCell }

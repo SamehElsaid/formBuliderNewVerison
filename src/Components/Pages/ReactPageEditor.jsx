@@ -42,6 +42,11 @@ const ReactPageEditor = ({ pageName, initialData, initialDataApi }) => {
 
   // Loading State To Stop Rendering Editor
   useEffect(() => {
+
+    setNewData(initialData)
+    setEditorValue(initialData)
+  }, [initialData])
+  useEffect(() => {
     setTimeout(() => {
       dispatch(SET_ACTIVE_LOADING())
     }, 1000)
