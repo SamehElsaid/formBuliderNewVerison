@@ -92,7 +92,6 @@ export const getTypeFromCollection = (type, description) => {
 }
 
 export const DefaultStyle = type => {
-
   if (type === 'textarea') {
     return `
     #parent-input{
@@ -629,3 +628,8 @@ export const extractValueAndUnit = cssValue => {
 
   return { value: '', unit: cssValue }
 }
+
+export const VaildId = name => {
+  return name.replaceAll(' ', '').replaceAll('[', '').replaceAll(']', '').replaceAll('/', '')
+}
+

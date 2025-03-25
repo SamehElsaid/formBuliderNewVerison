@@ -34,7 +34,7 @@ const AddCollection = props => {
     name_en: yup.string().required(messages['required']),
     description_ar: yup.string(),
     description_en: yup.string(),
-    key: yup.string().required(messages['required'])
+    key: yup.string().required(messages['required']).matches(/^[A-Za-z]+$/, locale === 'ar' ? 'يجب أن يكون المفتاح عبارة عن أحرف' : 'Key must be a string')
   })
 
   const defaultValues = {
@@ -136,7 +136,7 @@ const AddCollection = props => {
       setValue('name_ar', open.nameAr)
       setValue('name_en', open.nameEn)
       setValue('description_ar', open.descriptionAr ?? '')
-      setValue('key', open.key)
+      setValue('key', open.key.trim())
       setValue('description_en', open.descriptionEn ?? '')
       trigger('name_ar')
       trigger('name_en')

@@ -30,7 +30,13 @@ const AddPage = props => {
   const { messages, locale } = useIntl()
 
   const schema = yup.object().shape({
-    name: yup.string().required(messages['required']),
+    name: yup
+      .string()
+      .required(messages['required'])
+      .matches(
+        /^(?!-)([A-Za-z]+-?)*[A-Za-z]+$/,
+        locale === 'ar' ? 'اسم الصفحة غير صالح' : 'Invalid page name'
+      ),
     description: yup.string(),
     versionReason: yup.string().required(messages['required'])
   })

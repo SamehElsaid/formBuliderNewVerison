@@ -1683,3 +1683,6 @@ sortable-list {
     left: -1ch;
   }
 }
+.page-control input:disabled {
+  @apply !bg-gray-200 hover:!border-gray-200;
+}

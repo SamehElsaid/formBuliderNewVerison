@@ -10,7 +10,7 @@ import InputControlDesign from './InputControlDesign'
 import GridLayout, { WidthProvider } from 'react-grid-layout'
 import 'react-grid-layout/css/styles.css'
 import 'react-resizable/css/styles.css'
-import { DefaultStyle, getTypeFromCollection } from 'src/Components/_Shared'
+import { DefaultStyle, getTypeFromCollection, VaildId } from 'src/Components/_Shared'
 import { IoMdSettings } from 'react-icons/io'
 
 const ResponsiveGridLayout = WidthProvider(GridLayout)
@@ -70,8 +70,16 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
 
   const handleSubmit = e => {
     e.preventDefault()
-    const sendData = { ...dataRef.current }
-
+    const initialSendData = { ...dataRef.current }
+    const sendData = {}
+    Object.keys(initialSendData).forEach(key => {
+      console.log(key)
+      // const keyData = key.trim()
+      const keyData = key
+      if (initialSendData[keyData] !== null) {
+        sendData[keyData] = initialSendData[keyData]
+      }
+    })
     if (data.type_of_sumbit === '' || (data.type_of_sumbit === 'api' && !data.submitApi)) {
       return
     }
@@ -206,17 +214,29 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
     [data?.additional_fields]
   )
 
+  console.log(data)
+
   const refTest = useRef()
 
   useEffect(() => {
     if (layout) {
-      document.querySelectorAll('.drag-handle').forEach((ele, index) => {
-        if (ele.querySelector('.react-datepicker-wrapper')) {
-          ele.style.zIndex = document.querySelectorAll('.drag-handle').length + 500 - index
-        } else {
-          ele.style.zIndex = document.querySelectorAll('.drag-handle').length + 50 - index
+      const sortedArray = layout.sort((a, b) => a.y - b.y)
+      console.log(sortedArray)
+      sortedArray.forEach((ele, index) => {
+        const element = document.querySelector('.ss' + ele.i)
+        if (element) {
+
+          element.style.zIndex = sortedArray.length + 50000 - index
         }
       })
+
+      // document.querySelectorAll('.drag-handle').forEach((ele, index) => {
+      //   if (ele.querySelector('.react-datepicker-wrapper')) {
+      //     ele.style.zIndex = document.querySelectorAll('.drag-handle').length + 500 - index
+      //   } else {
+      //     ele.style.zIndex = document.querySelectorAll('.drag-handle').length + 50 + index
+      //   }
+      // })
     }
   }, [layout])
 
@@ -254,10 +274,15 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
             margin={[10, 10]} // هامش بين العناصر
           >
             {[...getFields.filter(filed => data?.selected?.includes(filed?.key)), ...addMoreElement].map(filed => (
-              <div key={filed.id} className={`relative w-full drag-handle ${!readOnly ? 'px-2' : ''}`}>
+              <div
+                key={filed.id}
+                className={`relative w-full ${
+                  filed.type === 'new_element' ? `s${filed.id}` : 'ss' + filed.id
+                } drag-handle ${!readOnly ? 'px-2' : ''}`}
+              >
                 {!readOnly && (
                   <div className='absolute inset-0 z-20 flex || justify-end border-main-color border-dashed border rounded-md'>
-                    <button
+                    {/* <button
                       onMouseDown={e => {
                         e.stopPropagation()
                       }}
@@ -292,8 +317,9 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
                           ? `s${filed.id}`
                           : filed.key.trim() + filed.nameEn.trim().replaceAll(' ', '')}
                       </span>
-                    </button>
+                    </button> */}
                     <button
+                      type='button'
                       title={locale !== 'ar' ? 'Setting' : 'التحكم'}
                       onMouseDown={e => {
                         e.stopPropagation()

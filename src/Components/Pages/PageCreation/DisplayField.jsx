@@ -15,6 +15,8 @@ import { FaCalendarAlt } from 'react-icons/fa'
 import NewElement from '../NewElement'
 import { toast } from 'react-toastify'
 import addDays from 'date-fns/addDays'
+import { VaildId } from 'src/Components/_Shared'
+import { IoMdInformationCircleOutline } from 'react-icons/io'
 
 export default function DisplayField({
   from,
@@ -929,41 +931,21 @@ export default function DisplayField({
     }
   }, [input])
 
-  const errorRefHeight = useRef(null)
-
   useEffect(() => {
     setTimeout(() => {
       if (layout && !loading) {
-        if (errorView || error) {
-          if (errorRefHeight.current) {
-            setLayout(prev =>
-              prev.map(ele =>
-                `${ele.i}` === `${input.id}`
-                  ? {
-                      ...ele,
-                      h:
-                        ((isDisable === 'hidden' && !readOnly ? 0 : mainRef.current.scrollHeight) +
-                          errorRefHeight.current.scrollHeight) /
-                        71
-                    }
-                  : ele
-              )
+        if (mainRef.current) {
+          setLayout(prev => {
+            return prev.map(ele =>
+              `${ele.i}` === `${input.id}`
+                ? { ...ele, h: isDisable === 'hidden' && !readOnly ? 0 : mainRef.current.scrollHeight / 71 }
+                : ele
             )
-          }
-        } else {
-          if (mainRef.current) {
-            setLayout(prev => {
-              return prev.map(ele =>
-                `${ele.i}` === `${input.id}`
-                  ? { ...ele, h: isDisable === 'hidden' && !readOnly ? 0 : mainRef.current.scrollHeight / 71 }
-                  : ele
-              )
-            })
-          }
+          })
         }
       }
     }, 100)
-  }, [errorView, error, isDisable, readOnly, layout?.length, loading])
+  }, [isDisable, readOnly, layout?.length, loading])
 
   const mainRef = useRef()
 
@@ -1045,11 +1027,9 @@ export default function DisplayField({
   return (
     <div
       className={`reset ${isDisable === 'hidden' && !readOnly ? 'hidden' : ''} relative group w-full`}
-      id={input.type === 'new_element' ? `s${input.id}` : input.key.trim() + input.nameEn.trim().replaceAll(' ', '')}
+      id={input.type === 'new_element' ? `s${input.id}` : VaildId(input.key.trim() + input.nameEn.trim())}
     >
-      <style>{`#${
-        input.type === 'new_element' ? `s${input.id}` : input.key.trim() + input.nameEn.trim().replaceAll(' ', '')
-      } {
+      <style>{`#${input.type === 'new_element' ? `s${input.id}` : VaildId(input.key.trim() + input.nameEn.trim())} {
         ${design}
       }`}</style>
       {hoverText && (
@@ -1059,7 +1039,9 @@ export default function DisplayField({
       )}
       <div ref={mainRef} id='parent-input'>
         <div className='flex items-center gap-2 justify-between mb-2'>
-          <div>{input.type !== 'File' && label}</div>
+          <div className='flex items-center gap-2'>
+            {input.type !== 'File' && label} <span className='text-xs text-red-500'>{validations.Required && '*'}</span>
+          </div>
           {hintText && (
             <button
               type='button'
@@ -1116,11 +1098,20 @@ export default function DisplayField({
           )}
         </div>
       </div>
-      <Collapse transition={`height 300ms cubic-bezier(.4, 0, .2, 1)`} isOpen={Boolean(errorView || error)}>
-        <div ref={errorRefHeight} class='!text-sm text-red-500 mt-1 px-2'>
-          {errorView || error}
+        <div
+          class={`${
+            errorView || error ? 'opacity-100 visible' : 'opacity-0 invisible'
+          } w-fit text-[#fb866e]   text-2xl end-[2px] bg-white z-10 mt-1 px-2 absolute top-[calc(50%+13px)] -translate-y-1/2 rounded-md transition-all duration-300`}
+        >
+          <IoMdInformationCircleOutline />
         </div>
-      </Collapse>
+      <div
+        class={`${
+          errorView || error ? 'opacity-100 visible' : 'opacity-0 invisible'
+        } !text-sm bg-[#fb866e] text-white  z-10 w-fit end-[0] mt-1 px-2 absolute top-[100%] rounded-md transition-all duration-300`}
+      >
+        {errorView || error}
+      </div>
     </div>
   )
 }

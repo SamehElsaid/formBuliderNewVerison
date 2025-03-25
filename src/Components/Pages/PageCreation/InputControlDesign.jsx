@@ -1547,7 +1547,7 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                                     onChange({ ...data, additional_fields: additional_fields })
                                   }}
                                 >
-                                  <MenuItem selected disabled value={'empty Data'}>
+                                  <MenuItem selected  value={'empty Data'}>
                                     {locale === 'ar' ? 'فارغ' : 'Empty Data'}
                                   </MenuItem>
                                   <MenuItem value={'disable'}>{locale === 'ar' ? 'معطل' : 'Disable'}</MenuItem>
@@ -1680,6 +1680,7 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                                         }
                                       }
                                     }
+                                    console.log(myEdit)
                                     additional_fields.push(myEdit)
                                   }
                                   onChange({ ...data, additional_fields: additional_fields })

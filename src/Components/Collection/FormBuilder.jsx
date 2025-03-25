@@ -45,9 +45,6 @@ const FormBuilder = ({ open, setOpen, setRefresh }) => {
     unique: false,
     minLength: '',
     maxLength: '',
-    regex: '',
-    regexMessageAr: '',
-    regexMessageEn: '',
     format: 'MM/dd/yyyy',
     showTime: 'false'
   })
@@ -172,8 +169,13 @@ const FormBuilder = ({ open, setOpen, setRefresh }) => {
   const { messages, locale } = useIntl()
 
   const handleNext = () => {
+    const regex = /^[A-Za-z]+$/;
+
     if (activeStep === 0 && !fieldType) return toast.error(messages.please_select_field_type)
     if (activeStep === 1 && (!fieldLabel || !fieldLabelEn || !key)) return toast.error(messages.please_enter_label)
+    if (activeStep === 1 && !regex.test(key)) {
+      return toast.error(locale === 'ar' ? 'يجب أن يكون المفتاح عبارة عن أحرف' : 'Key must be a string')
+    }
     if (activeStep === 2 && !isOptionsStep && !isFileStep) {
       setActiveStep(steps.length - 1) // Skip the setup step if not required
     } else {
@@ -212,12 +214,10 @@ const FormBuilder = ({ open, setOpen, setRefresh }) => {
       .then(res => {
         if (res.status) {
           setOptionsCollection(res.data)
-
         }
       })
       .finally(() => {
         setLoadingCollection(false)
-
       })
   }, [locale, dataSourceId])
 
@@ -266,7 +266,12 @@ const FormBuilder = ({ open, setOpen, setRefresh }) => {
   }
 
   const FindFieldCategory = fieldType => {
-    if (fieldType === 'select' || fieldType === 'radio' || fieldType === 'checkbox' || fieldType === 'multiple_select') {
+    if (
+      fieldType === 'select' ||
+      fieldType === 'radio' ||
+      fieldType === 'checkbox' ||
+      fieldType === 'multiple_select'
+    ) {
       return 'Associations'
     }
 
@@ -315,11 +320,11 @@ const FormBuilder = ({ open, setOpen, setRefresh }) => {
 
     const sendData = {
       collectionId: open.id,
-      key: key,
-      nameAr: fieldLabel,
-      nameEn: fieldLabelEn,
-      descriptionAr: fieldLabel,
-      descriptionEn: fieldLabelEn,
+      key: key.trim(),
+      nameAr: fieldLabel.trim(),
+      nameEn: fieldLabelEn.trim(),
+      descriptionAr: fieldLabel.trim(),
+      descriptionEn: fieldLabelEn.trim(),
       type: getType(fieldType),
       FieldCategory: FindFieldCategory(fieldType),
 
@@ -327,12 +332,7 @@ const FormBuilder = ({ open, setOpen, setRefresh }) => {
         uiSchema: {
           xComponentProps: {
             cssClass: DefaultStyle(fieldType),
-            fileTypes: isFileStep ? fileExtensions : [],
-            errorMessage: JSON.stringify({
-              ar: validations.regexMessageAr,
-              en: validations.regexMessageEn,
-              regex: validations.regex
-            })
+            fileTypes: isFileStep ? fileExtensions : []
           }
         }
       },
@@ -345,14 +345,18 @@ const FormBuilder = ({ open, setOpen, setRefresh }) => {
       })
     }
 
-
-    if (fieldType === 'select' || fieldType === 'radio' || fieldType === 'checkbox' || fieldType === 'multiple_select') {
+    if (
+      fieldType === 'select' ||
+      fieldType === 'radio' ||
+      fieldType === 'checkbox' ||
+      fieldType === 'multiple_select'
+    ) {
       sendData.descriptionEn = JSON.stringify(selectedOptions)
       sendData.descriptionAr = fieldType
       if (fieldType !== 'checkbox') {
-        sendData.options.foreignKey = key+"Id"
+        sendData.options.foreignKey = key + 'Id'
         sendData.options.sourceKey = 'id'
-        sendData.options.targetKey = open.key+"Id"
+        sendData.options.targetKey = open.key + 'Id'
       }
       sendData.options.source = collection.key
       sendData.options.target = open.key
@@ -365,14 +369,13 @@ const FormBuilder = ({ open, setOpen, setRefresh }) => {
       sendData.options.source = open.key
       sendData.options.junctionTable = `${open.key}${collection.key}`
       sendData.key = `${open.key}${collection.key}`
-      
     }
     if (fieldType === 'multiple_select') {
       sendData.options.target = collection.key
       sendData.options.source = open.key
       sendData.options.junctionTable = `${open.key}${collection.key}`
       sendData.key = `${open.key}${collection.key}`
-      sendData.descriptionAr = "multiple_select"
+      sendData.descriptionAr = 'multiple_select'
     }
     setLoading(true)
 
@@ -584,47 +587,7 @@ const FormBuilder = ({ open, setOpen, setRefresh }) => {
                     })
                   }
                 />
-                <TextField
-                  label={locale === 'ar' ? 'التعبير الرياضي' : 'Regex'}
-                  type='text'
-                  fullWidth
-                  margin='normal'
-                  value={validations.regex}
-                  onChange={e =>
-                    setValidations({
-                      ...validations,
-                      regex: e.target.value
-                    })
-                  }
-                />{' '}
-                <TextField
-                  label={locale === 'ar' ? 'رسالة الخطأ بالعربية' : 'Error Message Arabic'}
-                  type='text'
-                  fullWidth
-                  disabled={!validations.regex}
-                  margin='normal'
-                  value={validations.regexMessageAr}
-                  onChange={e =>
-                    setValidations({
-                      ...validations,
-                      regexMessageAr: e.target.value
-                    })
-                  }
-                />
-                <TextField
-                  disabled={!validations.regex}
-                  label={locale === 'ar' ? 'رسالة الخطأ بالانجليزية' : 'Error Message English'}
-                  type='text'
-                  fullWidth
-                  margin='normal'
-                  value={validations.regexMessageEn}
-                  onChange={e =>
-                    setValidations({
-                      ...validations,
-                      regexMessageEn: e.target.value
-                    })
-                  }
-                />
+               
               </div>
             )}
 
