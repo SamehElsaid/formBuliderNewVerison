@@ -73,8 +73,6 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
     const initialSendData = { ...dataRef.current }
     const sendData = {}
     Object.keys(initialSendData).forEach(key => {
-      console.log(key)
-      // const keyData = key.trim()
       const keyData = key
       if (initialSendData[keyData] !== null) {
         sendData[keyData] = initialSendData[keyData]
