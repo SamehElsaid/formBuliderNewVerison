@@ -190,7 +190,7 @@ function Select({ onChange, data, type, buttonRef }) {
           renderInput={params => (
             <TextField
               {...params}
-              label={messages.Select_Collection}
+              label={locale === 'ar' ? 'نموذج البيانات' : 'Select Data Model'}
               variant='outlined'
               InputProps={{
                 ...params.InputProps,

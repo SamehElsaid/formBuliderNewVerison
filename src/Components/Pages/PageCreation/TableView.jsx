@@ -149,15 +149,11 @@ function TableView({ data, locale, onChange, readOnly, disabled }) {
                   {ele?.fieldCategory === 'Associations' ? (
                     <ViewValueInTable data={ele} value={row?.[ele?.key] ?? ''} />
                   ) : ele?.type === 'Date' ? (
-                    <>
-                      {Object.keys(row?.[ele?.key]).length !== 0 ? (
-                        <GetTimeinTable data={row[ele.key]} />
-                      ) : (
-                        '-'
-                      )}
-                    </>
+                    <>{Object.keys(row?.[ele?.key]).length !== 0 ? <GetTimeinTable data={row[ele.key]} /> : '-'}</>
                   ) : (
                     <>
+                      {console.log(row?.[ele?.key])}
+
                       {Object.keys(row?.[ele?.key]).length !== 0 ? (
                         row?.[ele?.key].includes('/Uploads/') ? (
                           <a
@@ -170,10 +166,12 @@ function TableView({ data, locale, onChange, readOnly, disabled }) {
                               row?.[ele?.key].split('/Uploads/')[1].split('.').pop()}
                           </a>
                         ) : (
-                          row?.[ele?.key]
+                          row?.[ele?.key] 
                         )
                       ) : (
-                        '-'
+                        <>
+                          {row?.[ele?.key] ?? '-'}
+                        </>
                       )}
                     </>
                   )}
@@ -381,7 +379,7 @@ function TableView({ data, locale, onChange, readOnly, disabled }) {
         <>
           {!readOnly && <SortableList items={filterWithSelect} onSortEnd={onSortEnd} axis='xy' />}
           <div className='flex justify-end  mb-3 px-5'>
-            <Button
+            {/* <Button
               variant='contained'
               color='success'
               onClick={() => {
@@ -400,7 +398,7 @@ function TableView({ data, locale, onChange, readOnly, disabled }) {
               }}
             >
               {messages.add}
-            </Button>
+            </Button> */}
           </div>
           <div
             id=''
@@ -425,11 +423,11 @@ function TableView({ data, locale, onChange, readOnly, disabled }) {
               setPaginationModel={setPaginationModel}
             />
           </div>
-          <div id={`btn-actions-${data.collectionId}`}>
+          {/* <div id={`btn-actions-${data.collectionId}`}>
             <Button variant='contained' color='success'>
               {messages.add}
             </Button>
-          </div>
+          </div> */}
         </>
       )}
     </div>

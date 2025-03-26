@@ -121,12 +121,17 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
           setReload(prev => prev + 1)
           toast.success(locale === 'ar' ? 'تم إرسال البيانات بنجاح' : 'Data sent successfully')
           if (data.redirect) {
-            push(`/${locale}/setting/pages/${data.redirect}`)
+            push(`/${locale}/${data.redirect}`)
           }
         }
       })
       .finally(() => {
         setLoadingSubmit(false)
+        if (data.redirect) {
+          setReload(prev => prev + 1)
+          toast.success(locale === 'ar' ? 'تم إرسال البيانات بنجاح' : 'Data sent successfully')
+          push(`/${locale}/${data.redirect}`)
+        }
       })
   }
 

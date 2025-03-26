@@ -598,7 +598,7 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                   }}
                   variant={selected === 'roles' ? 'contained' : 'outlined'}
                 >
-                  {locale === 'ar' ? 'الصلاحيات' : 'Roles'}
+                  {locale === 'ar' ? 'الصلاحيات' : 'Rules'}
                 </Button>
                 {open.data && (
                   <Button
