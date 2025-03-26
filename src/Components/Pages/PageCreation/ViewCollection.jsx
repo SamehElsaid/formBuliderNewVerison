@@ -30,6 +30,14 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
   const addMoreElement = data.addMoreElement ?? []
   const dataLength = getFields.length + addMoreElement.length
 
+  const convertTheTheSameYToGroup = layout
+    ? Object?.values(
+        layout?.reduce((acc, item) => ((acc[Math.floor(item.y)] = acc[Math.floor(item.y)] || []).push(item), acc), {})
+      )
+    : []
+  const SortWithXInGroup = convertTheTheSameYToGroup.map(group => group.sort((a, b) => a.x - b.x))
+  const sortedData = SortWithXInGroup.flat()
+
   useEffect(() => {
     if (!loading) {
       if (
@@ -123,15 +131,16 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
           if (data.redirect) {
             push(`/${locale}/${data.redirect}`)
           }
+        } else {
+          setReload(prev => prev + 1)
+          toast.success(locale === 'ar' ? 'تم إرسال البيانات بنجاح' : 'Data sent successfully')
+          if (data.redirect) {
+            push(`/${locale}/${data.redirect}`)
+          }
         }
       })
       .finally(() => {
         setLoadingSubmit(false)
-        if (data.redirect) {
-          setReload(prev => prev + 1)
-          toast.success(locale === 'ar' ? 'تم إرسال البيانات بنجاح' : 'Data sent successfully')
-          push(`/${locale}/${data.redirect}`)
-        }
       })
   }
 
@@ -217,32 +226,24 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
     [data?.additional_fields]
   )
 
-  console.log(data)
-
   const refTest = useRef()
 
   useEffect(() => {
     if (layout) {
-      const sortedArray = layout.sort((a, b) => a.y - b.y)
-      console.log(sortedArray)
-      sortedArray.forEach((ele, index) => {
+      sortedData.forEach((ele, index) => {
         const element = document.querySelector('.ss' + ele.i)
         if (element) {
-
-          element.style.zIndex = sortedArray.length + 50000 - index
+          element.style.zIndex = sortedData.length + 50000 - index
         }
       })
-
-      // document.querySelectorAll('.drag-handle').forEach((ele, index) => {
-      //   if (ele.querySelector('.react-datepicker-wrapper')) {
-      //     ele.style.zIndex = document.querySelectorAll('.drag-handle').length + 500 - index
-      //   } else {
-      //     ele.style.zIndex = document.querySelectorAll('.drag-handle').length + 50 + index
-      //   }
-      // })
     }
   }, [layout])
 
+  const sortedLoop = [...getFields.filter(filed => data?.selected?.includes(filed?.key)), ...addMoreElement].sort(
+    (a, b) =>
+      (sortedData.findIndex(f => f.i === a.id) === -1 ? Infinity : sortedData.findIndex(f => f.i === a.id)) -
+      (sortedData.findIndex(f => f.i === b.id) === -1 ? Infinity : sortedData.findIndex(f => f.i === b.id))
+  )
   return (
     <div className={`${disabled ? 'text-main' : ''}`}>
       <InputControlDesign
@@ -276,7 +277,7 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
             isDraggable={!readOnly}
             margin={[10, 10]} // هامش بين العناصر
           >
-            {[...getFields.filter(filed => data?.selected?.includes(filed?.key)), ...addMoreElement].map(filed => (
+            {sortedLoop.map(filed => (
               <div
                 key={filed.id}
                 className={`relative w-full ${

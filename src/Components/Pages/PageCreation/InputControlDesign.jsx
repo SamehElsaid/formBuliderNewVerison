@@ -1680,7 +1680,6 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                                         }
                                       }
                                     }
-                                    console.log(myEdit)
                                     additional_fields.push(myEdit)
                                   }
                                   onChange({ ...data, additional_fields: additional_fields })

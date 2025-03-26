@@ -1478,7 +1478,7 @@ const ViewInput = ({
         <select
           value={value}
           onChange={e => onChange(e)}
-          disabled={isDisable === 'disabled'}
+          disabled={isDisable === 'disabled' || selectedOptions.length === 0}
           onBlur={e => {
             if (onBlur) {
               const evaluatedFn = eval('(' + onBlur + ')')
