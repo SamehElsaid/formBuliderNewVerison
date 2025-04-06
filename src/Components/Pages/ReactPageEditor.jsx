@@ -31,6 +31,7 @@ const ReactPageEditor = ({ pageName, initialData, initialDataApi, workflowId }) 
   const [openBack, setOpenBack] = useState(false)
   const [saveData, setSaveData] = useState(false)
   const [loadingSaveData, setLoadingSaveData] = useState(false)
+  const [isChanged, setIsChanged] = useState(false);
   const theme = useTheme()
   const { push } = useRouter()
   const apiData = useSelector(state => state.api.data)
@@ -38,6 +39,52 @@ const ReactPageEditor = ({ pageName, initialData, initialDataApi, workflowId }) 
   const buttonRef = useRef(null)
   const { cellPlugins } = useCellPlugins({ advancedEdit, locale, readOnly, buttonRef, workflowId })
   const dispatch = useDispatch()
+
+
+
+useEffect(() => {
+  if (JSON.stringify(editorValue) !== JSON.stringify(newData)) {
+    setIsChanged(true);
+  } else {
+    setIsChanged(false);
+  }
+}, [editorValue, newData]);
+
+useEffect(() => {
+  const handleBeforeUnload = (event) => {
+    if (isChanged) {
+      // Standard message for the browser's confirmation dialog
+      const message = locale === 'ar' 
+        ? 'هل أنت متأكد أنك تريد مغادرة الصفحة؟ التغييرات التي أجريتها لم يتم حفظها.'
+        : 'Are you sure you want to leave this page? You have unsaved changes.';
+      
+      // This is the standard way to trigger the browser dialog
+      event.preventDefault();
+      event.returnValue = message; // Required for Chrome
+      return message; // Required for older browsers
+    }
+  };
+  
+  // Handle browser back/forward navigation
+  const handlePopState = (event) => {
+    if (isChanged) {
+      window.history.pushState(null, '', window.location.pathname);
+ 
+      setOpenBack(true);
+    }
+  };
+
+  window.addEventListener('beforeunload', handleBeforeUnload);
+  window.addEventListener('popstate', handlePopState);
+  window.history.pushState(null, '', window.location.pathname);
+  
+  return () => {
+    window.removeEventListener('beforeunload', handleBeforeUnload);
+    window.removeEventListener('popstate', handlePopState);
+  };
+}, [isChanged, locale]);
+
+
 
   // Loading State To Stop Rendering Editor
   useEffect(() => {
@@ -71,6 +118,7 @@ const ReactPageEditor = ({ pageName, initialData, initialDataApi, workflowId }) 
 
   return (
     <div className='relative'>
+    
       <div className='absolute z-0 invisible'>
         <button
           ref={buttonRef}
@@ -89,6 +137,7 @@ const ReactPageEditor = ({ pageName, initialData, initialDataApi, workflowId }) 
       <ApiData open={openApiData} setOpen={setOpenApiData} initialDataApi={initialDataApi} />
       <Dialog open={openBack} onClose={() => setOpenBack(false)} fullWidth>
         <DialogTitle>
+        
           {locale === 'ar'
             ? 'العودة إلى الصفحة السابقة بدون حفظ التغيرات'
             : 'Return to Previous Page Without Save Changes'}
@@ -176,7 +225,7 @@ const ReactPageEditor = ({ pageName, initialData, initialDataApi, workflowId }) 
                 }}
               >
                 <MdOutlineSaveAs className='text-xl me-1' />
-                {locale === 'ar' ? ' حفظ التغيرات' : 'Save Changes'}
+                {locale === 'ar' ? ' حفظ التغيرات' : 'Save Changes'} 
               </Button>
               <button
                 className={`w-[50px] h-[50px] flex items-center justify-center rounded-full bg-[#dfdfdf] hover:!bg-white duration-300 shadow-main ${
