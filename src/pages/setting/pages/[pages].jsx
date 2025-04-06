@@ -1,5 +1,5 @@
 // pages/index.js
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import dynamic from 'next/dynamic'
 import BlankLayout from 'src/@core/layouts/BlankLayout'
 import * as cookie from 'cookie'
@@ -26,6 +26,17 @@ const Index = ({ pageName, initialData, initialDataApi }) => {
 
 
   const { locale } = useIntl()
+
+  useEffect(() => {
+    console.log('object')
+    return () => {
+      document.body.classList.remove('edit-mode')
+    }
+  }, [])
+
+
+  
+  
 
   return (
     <div className=''>
