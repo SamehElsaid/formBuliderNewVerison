@@ -25,7 +25,7 @@ const Index = ({ pageName, initialData, initialDataApi, workflowId }) => {
   const { locale } = useIntl()
 
   useEffect(() => {
-    console.log('object')
+    
     return () => {
       document.body.classList.remove('edit-mode')
     }

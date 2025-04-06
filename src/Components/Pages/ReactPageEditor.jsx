@@ -37,7 +37,7 @@ const ReactPageEditor = ({ pageName, initialData, initialDataApi, workflowId }) 
   const apiData = useSelector(state => state.api.data)
 
   // CellPlugins Hook Calling
-  
+
   const buttonRef = useRef(null)
   const { cellPlugins } = useCellPlugins({ advancedEdit, locale, readOnly, buttonRef, workflowId })
   const dispatch = useDispatch()
@@ -63,6 +63,7 @@ useEffect(() => {
       // This is the standard way to trigger the browser dialog
       event.preventDefault();
       event.returnValue = message; // Required for Chrome
+      
       return message; // Required for older browsers
     }
   };
