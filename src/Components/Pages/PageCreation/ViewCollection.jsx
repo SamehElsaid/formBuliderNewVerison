@@ -247,6 +247,7 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
       (sortedData.findIndex(f => f.i === a.id) === -1 ? Infinity : sortedData.findIndex(f => f.i === a.id)) -
       (sortedData.findIndex(f => f.i === b.id) === -1 ? Infinity : sortedData.findIndex(f => f.i === b.id))
   )
+  
   return (
     <div className={`${disabled ? 'text-main' : ''}`}>
       <InputControlDesign
