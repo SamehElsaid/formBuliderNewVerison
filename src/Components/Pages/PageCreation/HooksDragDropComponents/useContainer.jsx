@@ -20,7 +20,7 @@ export default function useContainer({ locale, buttonRef }) {
       ),
       id: 'containerPlugin',
       title: locale === 'ar' ? 'حاوية' : 'Container',
-      description: locale === 'ar' ? 'حاوية المحتوى' : 'Container of content',
+      description: locale === 'ar' ? 'تضمين عناصر متعددة في جزء' : 'Group and organize multiple elements within a section.',
       version: 1,
       icon: <TbContainer className='text-2xl' />,
       controls: {

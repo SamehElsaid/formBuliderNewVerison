@@ -20,7 +20,7 @@ export default function useTable({ advancedEdit, locale, readOnly, buttonRef }) 
       },
       id: locale === 'ar' ? 'جدول' : 'Table',
       title: locale === 'ar' ? 'جدول' : 'Table',
-      description: locale === 'ar' ? 'جدول' : 'Table',
+      description: locale === 'ar' ? 'يمكن عرض البيانات بشكل منظم في صفوف وأعمدة' : 'Displays structured data in rows and columns.',
       version: 1,
       controls: {
         type: 'custom',

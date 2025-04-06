@@ -29,8 +29,8 @@ export default function useBackground({ locale, buttonRef }) {
         </div>
       ),
       id: 'backgroundPlugin',
-      title: locale === 'ar' ? 'خلفية' : 'Background',
-      description: locale === 'ar' ? 'خلفية مع محتوى' : 'Background with content',
+      title: locale === 'ar' ? 'الخلفية' : 'Background',
+      description: locale === 'ar' ? 'يمكن أن تشمل الخلفيات ألوان صلبة أو صور' : 'Backgrounds can include solid colors or images',
       version: 1,
       controls: {
         type: 'custom',

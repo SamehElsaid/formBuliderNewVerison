@@ -14,8 +14,8 @@ export default function useCart({ locale, readOnly, buttonRef }) {
         )
       },
       id: 'cart',
-      title: locale === 'ar' ? 'عرض' : 'Card',
-      description: locale === 'ar' ? 'عرض' : 'Card',
+      title: locale === 'ar' ? 'حاوية' : 'Card',
+      description: locale === 'ar' ? 'حاوية مصممة لتجميع المحتوى المرتبط.' : 'A styled container for grouping related content.',
       version: 1,
       icon: <TbViewportWide className='text-2xl' />,
       controls: {

@@ -18,9 +18,9 @@ import '@react-page/plugins-spacer/lib/index.css';
 import useProgressBar from './useProgressBar';
 import useOtp from './useOtp';
 
-export default function useCellPlugins({ advancedEdit, locale, readOnly, buttonRef }) {
+export default function useCellPlugins({ advancedEdit, locale, readOnly, buttonRef, workflowId }) {
   // Hooks Drag Drop Components
-  const { collection } = useCollection({ advancedEdit, locale, readOnly, buttonRef });
+  const { collection } = useCollection({ advancedEdit, locale, readOnly, buttonRef, workflowId });
   const { backgroundPlugin } = useBackground({ locale, buttonRef });
   const { table } = useTable({ advancedEdit, locale, buttonRef });
   const { ContainerPlugin } = useContainer({ locale, buttonRef });

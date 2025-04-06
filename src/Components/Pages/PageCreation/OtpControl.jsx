@@ -51,7 +51,7 @@ export default function OtpControl({ data, onChange, locale, type, buttonRef }) 
 
   return (
     <div>
-      <CloseNav text={locale === 'ar' ? 'اختيار العداد/رقم' : 'Counter/Number'} buttonRef={buttonRef} />
+      <CloseNav text={locale === 'ar' ? 'العداد/التوقيت' : 'Counter/Timer'} buttonRef={buttonRef} />
       <div className='p-4 mt-4 rounded border border-dashed border-main-color'>
         {renderTextField(
           obj

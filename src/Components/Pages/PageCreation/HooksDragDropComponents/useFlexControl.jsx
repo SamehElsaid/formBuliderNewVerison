@@ -40,8 +40,8 @@ export default function useFlexControl({locale ,buttonRef}) {
         return <div ref={ref}>{children}</div>
       },
       id: 'flexControl',
-      title: locale === 'ar' ? 'Flex' : 'Flex Control',
-      description: locale === 'ar' ? 'تسطيع التحكم في المحتوى' : 'Flex Control',
+      title: locale === 'ar' ? 'التحكم المرن' : 'Flex Control',
+      description: locale === 'ar' ? 'أداة تخطيط لترتيب العناصر باستخدام المواضع المرنة.' : 'A layout tool for arranging elements using flexible positioning.',
       version: 1,
       icon: <CiGrid42 className='text-2xl' />,
       controls: {

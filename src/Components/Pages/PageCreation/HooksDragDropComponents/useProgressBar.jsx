@@ -55,7 +55,7 @@ export default function useProgressBar({ locale, buttonRef }) {
       },
       id: 'progressBar',
       title: locale === 'ar' ? 'شريط تقدم' : 'Progress Bar',
-      description: locale === 'ar' ? 'شريط تقدم' : 'Progress Bar',
+      description: locale === 'ar' ? 'يمكن عرض التقدم نحو هدف أو نسبة الانتهاء' : 'Visually represents progress towards a goal or completion percentage.',
       version: 1,
       icon: <FaBarsProgress className='text-2xl' />,
       controls: {

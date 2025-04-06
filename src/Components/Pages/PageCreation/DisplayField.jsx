@@ -552,6 +552,7 @@ export default function DisplayField({
 
     //  End hidden Control
 
+    
     // ! Start Visible Control
     if (roles?.trigger?.typeOfValidation === 'visible' && roles?.trigger?.mainValue && !loading) {
       if (input.fieldCategory === 'Basic') {
@@ -563,8 +564,9 @@ export default function DisplayField({
               if (res.status) {
                 const data = res.entities?.[0] ?? false
                 if (data) {
-                  if (roles?.trigger.isEqual === 'equal') {
-                    if (data?.[roles?.trigger?.triggerKey] === roles?.trigger?.mainValue) {
+                  if (roles?.trigger.isEqual === 'equal ') {
+
+                    if (data?.[roles?.trigger?.triggerKey].toLowerCase() === roles?.trigger?.mainValue.toLowerCase()) {
                       setIsDisable(null)
                     } else {
                       setIsDisable('hidden')
@@ -605,7 +607,7 @@ export default function DisplayField({
                 const data = res.entities?.[0] ?? false
                 if (data) {
                   if (roles?.trigger.isEqual === 'equal') {
-                    if (data?.[roles?.trigger?.triggerKey] === roles?.trigger?.mainValue) {
+                    if (data?.[roles?.trigger?.triggerKey].toLowerCase() === roles?.trigger?.mainValue.toLowerCase()) {
                       setIsDisable(null)
                     } else {
                       setIsDisable('hidden')
@@ -1098,13 +1100,13 @@ export default function DisplayField({
           )}
         </div>
       </div>
-        <div
-          class={`${
-            errorView || error ? 'opacity-100 visible' : 'opacity-0 invisible'
-          } w-fit text-[#fb866e]   text-2xl end-[2px] bg-white z-10 mt-1 px-2 absolute top-[calc(50%+13px)] -translate-y-1/2 rounded-md transition-all duration-300`}
-        >
-          <IoMdInformationCircleOutline />
-        </div>
+      <div
+        class={`${
+          errorView || error ? 'opacity-100 visible' : 'opacity-0 invisible'
+        } w-fit text-[#fb866e]   text-2xl end-[2px] bg-white z-10 mt-1 px-2 absolute top-[calc(50%+13px)] -translate-y-1/2 rounded-md transition-all duration-300`}
+      >
+        <IoMdInformationCircleOutline />
+      </div>
       <div
         class={`${
           errorView || error ? 'opacity-100 visible' : 'opacity-0 invisible'

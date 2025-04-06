@@ -21,7 +21,7 @@ import useCellPlugins from './PageCreation/HooksDragDropComponents/useCellPlugin
 import { useDispatch } from 'react-redux'
 import { SET_ACTIVE_LOADING } from 'src/store/apps/LoadingPages/LoadingPages'
 
-const ReactPageEditor = ({ pageName, initialData, initialDataApi }) => {
+const ReactPageEditor = ({ pageName, initialData, initialDataApi, workflowId }) => {
   const [newData, setNewData] = useState(initialData)
   const [editorValue, setEditorValue] = useState(initialData ?? null)
   const [readOnly, setReadOnly] = useState(false)
@@ -34,10 +34,9 @@ const ReactPageEditor = ({ pageName, initialData, initialDataApi }) => {
   const theme = useTheme()
   const { push } = useRouter()
   const apiData = useSelector(state => state.api.data)
-
   // CellPlugins Hook Calling
   const buttonRef = useRef(null)
-  const { cellPlugins } = useCellPlugins({ advancedEdit, locale, readOnly, buttonRef })
+  const { cellPlugins } = useCellPlugins({ advancedEdit, locale, readOnly, buttonRef, workflowId })
   const dispatch = useDispatch()
 
   // Loading State To Stop Rendering Editor

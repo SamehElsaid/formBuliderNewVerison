@@ -23,7 +23,7 @@ export default function useUploadVideo({ locale, buttonRef }) {
       ),
       id: 'uploadVideo',
       title: locale === 'ar' ? 'فيديو' : ' Video',
-      description: locale === 'ar' ? 'فيديو' : ' Video',
+      description: locale === 'ar' ? 'مشغل فيديو لعرض محتوى الوسائط': ' Video player to showcase media content',
       version: 1,
       icon: <CiVideoOn className='text-2xl' />,
       controls: {

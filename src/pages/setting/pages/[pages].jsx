@@ -19,11 +19,8 @@ let ReactPageEditor = dynamic(
   }
 )
 
-const Index = ({ pageName, initialData, initialDataApi }) => {
+const Index = ({ pageName, initialData, initialDataApi, workflowId }) => {
   const loading = useSelector(rx => rx.LoadingPages.loading)
-  
-
-
 
   const { locale } = useIntl()
 
@@ -53,7 +50,12 @@ const Index = ({ pageName, initialData, initialDataApi }) => {
             </div>
           </div>
         )}
-        <ReactPageEditor pageName={pageName} initialData={initialData} initialDataApi={initialDataApi} />
+        <ReactPageEditor
+          pageName={pageName}
+          initialData={initialData}
+          initialDataApi={initialDataApi}
+          workflowId={workflowId}
+        />
       </div>
     </div>
   )
@@ -79,12 +81,14 @@ export async function getServerSideProps(context) {
     const data = JSON.parse(response?.data?.jsonData) ?? null
     const initialData = data?.editorValue ?? null
     const initialDataApi = data?.apiData ?? null
+    const workflowId = data?.workflowId ?? ''
 
     return {
       props: {
         pageName,
         initialData,
-        initialDataApi
+        initialDataApi,
+        workflowId
       }
     }
   } catch (error) {

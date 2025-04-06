@@ -15,7 +15,7 @@ import { IoMdSettings } from 'react-icons/io'
 
 const ResponsiveGridLayout = WidthProvider(GridLayout)
 
-export default function ViewCollection({ data, locale, onChange, readOnly, disabled }) {
+export default function ViewCollection({ data, locale, onChange, readOnly, disabled, workflowId }) {
   const [getFields, setGetFields] = useState([])
   const [loading, setLoading] = useState(true)
   const [loadingSubmit, setLoadingSubmit] = useState(false)
@@ -25,6 +25,7 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
   const dataRef = useRef({})
   const [triggerData, setTriggerData] = useState(0)
   const { push } = useRouter()
+  console.log(workflowId)
 
   const [layout, setLayout] = useState()
   const addMoreElement = data.addMoreElement ?? []
@@ -78,7 +79,8 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
 
   const handleSubmit = e => {
     e.preventDefault()
-    const initialSendData = { ...dataRef.current }
+    const initialSendData = { ...dataRef.current, workflowId }
+
     const sendData = {}
     Object.keys(initialSendData).forEach(key => {
       const keyData = key
@@ -86,6 +88,7 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
         sendData[keyData] = initialSendData[keyData]
       }
     })
+    console.log(sendData)
     if (data.type_of_sumbit === '' || (data.type_of_sumbit === 'api' && !data.submitApi)) {
       return
     }

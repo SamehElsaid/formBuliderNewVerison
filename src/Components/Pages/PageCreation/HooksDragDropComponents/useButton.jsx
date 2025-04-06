@@ -57,7 +57,7 @@ export default function useButton({ locale, buttonRef }) {
       },
       id: 'button',
       title: locale === 'ar' ? 'زر' : 'Button',
-      description: locale === 'ar' ? 'زر' : 'Button',
+      description: locale === 'ar' ? 'يمكن أن يحتوي الزر على نص أو صورة أو رابط' : 'A clickable element to trigger actions.',
       version: 1,
       icon: <GiClick className='text-2xl' />,
       controls: {

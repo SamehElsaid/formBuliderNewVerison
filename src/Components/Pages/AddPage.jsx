@@ -10,12 +10,12 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import { useForm, Controller } from 'react-hook-form'
 import Icon from 'src/@core/components/icon'
 import { useIntl } from 'react-intl'
-import { InputAdornment } from '@mui/material'
+import { InputAdornment, MenuItem } from '@mui/material'
 import { useEffect, useState } from 'react'
 import axios from 'axios'
 import { toast } from 'react-toastify'
 import { LoadingButton } from '@mui/lab'
-import { UrlTranEn, UrlTranAr, axiosPost } from '../axiosCall'
+import { UrlTranEn, UrlTranAr, axiosPost, axiosGet } from '../axiosCall'
 
 const Header = styled(Box)(({ theme }) => ({
   display: 'flex',
@@ -33,10 +33,7 @@ const AddPage = props => {
     name: yup
       .string()
       .required(messages['required'])
-      .matches(
-        /^(?!-)([A-Za-z]+-?)*[A-Za-z]+$/,
-        locale === 'ar' ? 'اسم الصفحة غير صالح' : 'Invalid page name'
-      ),
+      .matches(/^(?!-)([A-Za-z]+-?)*[A-Za-z]+$/, locale === 'ar' ? 'اسم الصفحة غير صالح' : 'Invalid page name'),
     description: yup.string(),
     versionReason: yup.string().required(messages['required'])
   })
@@ -61,7 +58,12 @@ const AddPage = props => {
     resolver: yupResolver(schema)
   })
   const [loading, setLoading] = useState(false)
-
+  const [workflows, setWorkflows] = useState([
+    { id: '4d731e3e20364b89', name: 'MedicalMember' },
+    { id: '6bacd960b225b6f', name: 'Payment' },
+    { id: '73a8202ca9d1ab64', name: 'FacilityRegistration' },
+    { id: 'DocumentApprovalWorkflow:1.0', name: 'DocumentApprovalWorkflow' }
+  ])
   const onSubmit = data => {
     setLoading(true)
 
@@ -69,6 +71,9 @@ const AddPage = props => {
       name: data.name,
       description: data.description,
       versionReason: data.versionReason
+    }
+    if (data.workflow) {
+      sendData.workflowId = data.workflow
     }
 
     axiosPost('page', locale, sendData)
@@ -97,6 +102,14 @@ const AddPage = props => {
       trigger('versionReason')
     }
   }, [open, setValue, trigger])
+
+  useEffect(() => {
+    axiosGet('Workflow/get-workflows', locale).then(res => {
+      if (res.status) {
+        setWorkflows(res.data)
+      }
+    })
+  }, [])
 
   const handleClose = () => {
     toggle()
@@ -191,7 +204,28 @@ const AddPage = props => {
                 />
               )}
             />
-
+            <Controller
+              name='workflow'
+              control={control}
+              render={({ field: { value, onChange } }) => (
+                <CustomTextField
+                  fullWidth
+                  select
+                  type='text'
+                  label={'Workflow'}
+                  value={value}
+                  sx={{ mb: 4 }}
+                  onChange={onChange}
+                >
+                  {console.log(workflows)}
+                  {workflows.map(workflow => (
+                    <MenuItem key={workflow.id} value={workflow.id}>
+                      {workflow.name}
+                    </MenuItem>
+                  ))}
+                </CustomTextField>
+              )}
+            />
             <Box sx={{ display: 'flex', alignItems: 'center' }} className='gap-4 justify-end py-4 mt-auto'>
               <LoadingButton type='submit' variant='contained' loading={loading}>
                 {locale === 'ar' ? 'ارسال' : 'Submit'}

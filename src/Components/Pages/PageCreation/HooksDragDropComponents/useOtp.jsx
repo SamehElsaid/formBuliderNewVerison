@@ -81,11 +81,12 @@ export default function useOtp({ locale, buttonRef }) {
                 <OTPInput
                   value={otp}
                   onChange={setOtp}
-                  numInputs={data?.numberOfOtp || 5}
+                  numInputs={data?.numberOfOtp ? data?.numberOfOtp > 20 ? 20 : data?.numberOfOtp : 5}
                   renderSeparator={<span style={{ color: data?.titleColor || '#00cfe8' }}>-</span>}
                   containerStyle={{
                     flexWrap: 'wrap',
-                    gap: '5px'
+                    gap: '5px',
+                    justifyContent: 'center'
                   }}
                   renderInput={props => (
                     <input
@@ -94,7 +95,7 @@ export default function useOtp({ locale, buttonRef }) {
                         border: `1px solid ${data?.titleColor || '#00cfe8'}`,
                         outline: 'none'
                       }}
-                      className='inputFix rounded-md  !mx-2 !w-[100%] max-w-[200px]  min-w-[60px] || !h-[50px] !px-0 md:!px-2'
+                      className='inputFix rounded-md  !mx-2 !w-[100%] max-w-[50px]  min-w-[60px] || !h-[50px] !px-0 md:!px-2'
                     />
                   )}
                 />
@@ -170,8 +171,8 @@ export default function useOtp({ locale, buttonRef }) {
         )
       },
       id: 'otp',
-      title: locale === 'ar' ? 'عداد/رقم' : 'Counter/Number',
-      description: locale === 'ar' ? 'عداد/رقم' : 'Counter/Number',
+      title: locale === 'ar' ? 'عداد/التوقيت' : 'Counter/Timer',
+      description: locale === 'ar' ? 'يمكن عرض عداد أو عداد عدد الثواني' : 'Displays a dynamic countdown or count-up timer.',
       version: 1,
       icon: <FaBarsProgress className='text-2xl' />,
       controls: {

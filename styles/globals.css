@@ -1687,3 +1687,6 @@ sortable-list {
 .page-control select:disabled {
   @apply !bg-gray-200 hover:!border-gray-200;
 }
+.MuiInputBase-input.MuiFilledInput-input[type='color'] {
+  @apply !mt-3;
+}

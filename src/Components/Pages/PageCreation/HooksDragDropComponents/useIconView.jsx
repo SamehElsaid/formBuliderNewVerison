@@ -32,8 +32,8 @@ export default function useIconView({ locale, buttonRef }) {
         )
       },
       id: 'Icon',
-      title: locale === 'ar' ? 'ايقون' : 'Icon',
-      description: locale === 'ar' ? 'ايقون' : 'Icon',
+      title: locale === 'ar' ? 'ايقونة' : 'Icon',
+      description: locale === 'ar' ? 'ايقونة صغيرة مستخدمة للإشارات البصرية.' : 'A small graphical symbol used for visual cues.',
       version: 1,
       icon: <GiClick className='text-2xl' />,
       controls: {

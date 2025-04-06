@@ -17,7 +17,7 @@ export default function useBox({ locale, buttonRef }) {
       ),
       id: 'boxControl',
       title: locale === 'ar' ? 'محتوى' : 'Box',
-      description: locale === 'ar' ? 'تسطيع التحكم في حكم المحتوى' : 'Box of content',
+      description: locale === 'ar' ? 'يمكن أن يحتوي المحتوى على نص أو صور أو عناصر أخرى' : 'A structured content block that can hold text, images, or other elements',
       version: 1,
       icon: <IoMdResize className='text-2xl' />,
       controls: {

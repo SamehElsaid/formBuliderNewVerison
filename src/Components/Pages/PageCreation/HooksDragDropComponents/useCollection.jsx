@@ -3,7 +3,7 @@ import { useMemo } from 'react'
 import Select from '../Select'
 import ViewCollection from '../ViewCollection'
 
-export default function useCollection({ advancedEdit, locale, readOnly, buttonRef }) {
+export default function useCollection({ advancedEdit, locale, readOnly, buttonRef, workflowId }) {
   const collection = useMemo(() => {
     return {
       Renderer: ({ data, onChange }) => {
@@ -14,12 +14,13 @@ export default function useCollection({ advancedEdit, locale, readOnly, buttonRe
             onChange={onChange}
             readOnly={!advancedEdit}
             disabled={!readOnly}
+            workflowId={workflowId}
           />
         )
       },
       id: 'collection',
       title: locale === 'ar' ? 'مدخل البيانات' : 'Form Input',
-      description: locale === 'ar' ? 'مدخل البيانات' : 'My first cell plugin just displays a title',
+      description: locale === 'ar' ? 'يمكن أن يحتوي المدخل على نص أو أرقام أو بيانات أخرى' : 'A field for users to enter text, numbers, or other data in forms.',
       version: 1,
       controls: {
         type: 'custom',

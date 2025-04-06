@@ -22,7 +22,7 @@ export default function useUploadImage({ locale, buttonRef }) {
       ),
       id: 'uploadImage',
       title: locale === 'ar' ? ' صورة' : ' Image',
-      description: locale === 'ar' ? ' صورة' : ' Image',
+      description: locale === 'ar' ? 'يمكن عرض صور أو أيقونات أو رسومات' : 'Display photos, icons, or illustrations.',
       version: 1,
       icon: <CiImageOn className='text-2xl' />,
       controls: {

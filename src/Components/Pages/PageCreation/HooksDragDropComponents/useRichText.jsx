@@ -32,7 +32,7 @@ export default function useRichText({ locale, buttonRef }) {
       },
       id: 'richText',
       title: locale === 'ar' ? 'نص منسق' : 'Text',
-      description: locale === 'ar' ? 'نص منسق' : 'Text',
+      description: locale === 'ar' ? 'يمكن إضافة نص منسق إلى الصفحة' : 'Adds customizable text content to the page.',
       version: 1,
       icon: <TbTextCaption className='text-2xl' />,
       controls: {
