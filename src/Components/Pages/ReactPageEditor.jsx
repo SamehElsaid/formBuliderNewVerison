@@ -35,7 +35,9 @@ const ReactPageEditor = ({ pageName, initialData, initialDataApi, workflowId }) 
   const theme = useTheme()
   const { push } = useRouter()
   const apiData = useSelector(state => state.api.data)
+
   // CellPlugins Hook Calling
+  
   const buttonRef = useRef(null)
   const { cellPlugins } = useCellPlugins({ advancedEdit, locale, readOnly, buttonRef, workflowId })
   const dispatch = useDispatch()
