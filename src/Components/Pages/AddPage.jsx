@@ -58,12 +58,14 @@ const AddPage = props => {
     resolver: yupResolver(schema)
   })
   const [loading, setLoading] = useState(false)
+
   const [workflows, setWorkflows] = useState([
     { id: '4d731e3e20364b89', name: 'MedicalMember' },
     { id: '6bacd960b225b6f', name: 'Payment' },
     { id: '73a8202ca9d1ab64', name: 'FacilityRegistration' },
     { id: 'DocumentApprovalWorkflow:1.0', name: 'DocumentApprovalWorkflow' }
   ])
+  
   const onSubmit = data => {
     setLoading(true)
 
