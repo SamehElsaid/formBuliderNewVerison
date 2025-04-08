@@ -29,6 +29,7 @@ import HomeApp from 'src/Components/HomeApp'
 import { cssTransition, ToastContainer } from 'react-toastify'
 import { useCookies } from 'react-cookie'
 import 'animate.css/animate.min.css'
+import { useEffect } from 'react'
 
 const clientSideEmotionCache = createEmotionCache()
 
@@ -60,6 +61,25 @@ const App = props => {
       return 'rtl'
     }
   }
+
+  useEffect(() => {
+document.querySelectorAll('li').forEach(item => {
+  if (item.textContent.trim() === 'Add blocks to page' || 
+      item.innerHTML.includes('**Add blocks to page**')) {
+    item.remove();
+  }
+});
+
+const parentElement = document.querySelector('ul.menu-name');
+if (parentElement) {
+  parentElement.querySelectorAll('li').forEach(item => {
+    if (item.textContent.includes('Add blocks to page')) {
+      item.remove();
+    }
+  });
+}
+  }, [])
+  
 
   return (
     <Provider store={store}>

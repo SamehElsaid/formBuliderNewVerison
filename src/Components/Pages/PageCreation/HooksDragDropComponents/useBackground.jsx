@@ -7,6 +7,7 @@ export default function useBackground({ locale, buttonRef }) {
     return {
       Renderer: ({ data, children }) => (
         <div
+         className="background-container"
           style={{
             backgroundColor: data.backgroundColor || 'transparent',
             backgroundImage: data.backgroundImage ? `url(${data.backgroundImage})` : 'none',

@@ -1690,3 +1690,17 @@ sortable-list {
 .MuiInputBase-input.MuiFilledInput-input[type='color'] {
   @apply !mt-3;
 }
+.react-page-toolbar-draggable{
+  transition: background-color 0.3s ease;
+}
+.react-page-toolbar-draggable:hover {
+  background-color: gray !important; 
+}
+
+input[placeholder="Search for blocks"] {
+display: none;
+}
+li:has(:contains("Add blocks to page")), /* Modern browsers */
+li:contains("Add blocks to page") {      /* jQuery pseudo-selector */
+  display: none !important;
+}

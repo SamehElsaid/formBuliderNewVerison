@@ -25,6 +25,7 @@ import { useSelector } from 'react-redux'
 import { axiosGet, axiosPost } from 'src/Components/axiosCall'
 import { toast } from 'react-toastify'
 import { LoadingButton } from '@mui/lab'
+import BreadcrumbComponent from 'src/Components/icon/BreadCrumb'
 
 const VerticalLayoutWrapper = styled('div')({
   height: '100%',
@@ -101,6 +102,7 @@ const VerticalLayout = props => {
           className='layout-content-wrapper'
           sx={{ ...(contentHeightFixed && { maxHeight: '100vh' }) }}
         >
+          <BreadcrumbComponent />
           {/* AppBar Component */}
           <AppBar
             toggleNavVisibility={toggleNavVisibility}

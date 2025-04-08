@@ -35,7 +35,7 @@ const AddPage = props => {
       .required(messages['required'])
       .matches(/^(?!-)([A-Za-z]+-?)*[A-Za-z]+$/, locale === 'ar' ? 'اسم الصفحة غير صالح' : 'Invalid page name'),
     description: yup.string(),
-    versionReason: yup.string().required(messages['required'])
+    // versionReason: yup.string().required(messages['required'])
   })
 
   const defaultValues = {
