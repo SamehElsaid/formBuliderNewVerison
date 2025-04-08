@@ -32,6 +32,7 @@ function FormEdit({ open, setOpen, setData }) {
   const updateField = () => {
     if (!fieldLabel || !fieldLabelEn) {
       toast.error(locale === 'ar' ? 'يجب إدخال الحقلين' : 'Please enter the fields')
+      
       return
     }
 
