@@ -10,6 +10,7 @@ import CustomTextField from 'src/@core/components/mui/text-field'
 import { getTypeFromCollection } from 'src/Components/_Shared'
 import { axiosDelete, axiosGet } from 'src/Components/axiosCall'
 import FormBuilder from 'src/Components/Collection/FormBuilder'
+import FormEdit from 'src/Components/FormEdit'
 import GetCollectionName from 'src/Components/GetCollectionName'
 import IconifyIcon from 'src/Components/icon'
 import TableEdit from 'src/Components/TableEdit/TableEdit'
@@ -22,6 +23,7 @@ function AddField() {
   const [paginationModel, setPaginationModel] = useState({ page: 0, pageSize: 10 })
   const [refresh, setRefresh] = useState(0)
   const [startSearch, setStartSearch] = useState('')
+  const [edit, setEdit] = useState(null)
 
   const {
     query: { addFiles }
@@ -146,7 +148,12 @@ function AddField() {
       renderCell: params => (
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           <Tooltip title={locale === 'ar' ? 'تعديل الحقل' : 'Edit Field'}>
-            <IconButton size='small' onClick={e => {}}>
+            <IconButton
+              size='small'
+              onClick={e => {
+                setEdit(params.row)
+              }}
+            >
               <IconifyIcon icon='tabler:edit' />
             </IconButton>
           </Tooltip>
@@ -220,9 +227,12 @@ function AddField() {
     }
   }, [refresh, addFiles])
 
+  console.log(edit)
+
   return (
     <div>
       <FormBuilder open={open} setOpen={setOpen} setRefresh={setRefresh} />
+      <FormEdit open={edit} setOpen={setEdit} setData={setData} />
 
       <Card className='w-[100%]  mb-5 py-4 '>
         <CardContent

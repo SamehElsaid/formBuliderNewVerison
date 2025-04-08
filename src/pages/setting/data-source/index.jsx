@@ -69,7 +69,7 @@ export default function Index() {
           className='capitalize !text-main-color underline text-overflow'
           sx={{ fontWeight: 500, color: 'text.secondary' }}
         >
-          {row.name} 
+          {row.name}
         </Typography>
       )
     },
@@ -84,6 +84,7 @@ export default function Index() {
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           <Tooltip title={messages.edit}>
             <IconButton
+              disabled
               size='small'
               onClick={e => {
                 setOpen(params.row)
@@ -94,6 +95,7 @@ export default function Index() {
           </Tooltip>
           <Tooltip title={messages.delete}>
             <IconButton
+              disabled
               size='small'
               onClick={e => {
                 setDeleteOpen(params.row.id)

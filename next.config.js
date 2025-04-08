@@ -10,8 +10,8 @@ module.exports = withTM({
     localeDetection: true,
   },
   env: {
-    // API_URL: 'https://localhost:7101/api',
-    API_URL: 'https://lowcodetest-ayeuaucehyerfves.uaenorth-01.azurewebsites.net/api',
+    API_URL: 'https://localhost:7101/api',
+    // API_URL: 'https://lowcodetest-ayeuaucehyerfves.uaenorth-01.azurewebsites.net/api',
   },
   images: {
     domains: [],

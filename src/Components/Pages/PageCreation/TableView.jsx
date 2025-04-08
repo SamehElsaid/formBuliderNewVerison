@@ -378,7 +378,7 @@ function TableView({ data, locale, onChange, readOnly, disabled }) {
         <>
           {!readOnly && <SortableList items={filterWithSelect} onSortEnd={onSortEnd} axis='xy' />}
           <div className='flex justify-end  mb-3 px-5'>
-            {/* <Button
+            <Button
               variant='contained'
               color='success'
               onClick={() => {
@@ -397,7 +397,7 @@ function TableView({ data, locale, onChange, readOnly, disabled }) {
               }}
             >
               {messages.add}
-            </Button> */}
+            </Button>
           </div>
           <div
             id=''

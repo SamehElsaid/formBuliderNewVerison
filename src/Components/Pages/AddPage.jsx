@@ -232,7 +232,7 @@ const AddPage = props => {
               <LoadingButton type='submit' variant='contained' loading={loading}>
                 {locale === 'ar' ? 'ارسال' : 'Submit'}
               </LoadingButton>
-              <Button variant='tonal' color='secondary' onClick={handleClose}>
+              <Button variant='contained' color='secondary' onClick={handleClose}>
                 {locale === 'ar' ? 'إلغاء' : 'Cancel'}
               </Button>
             </Box>
