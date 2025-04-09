@@ -35,7 +35,6 @@ const AddPage = props => {
       .required(messages['required'])
       .matches(/^(?!-)([A-Za-z]+-?)*[A-Za-z]+$/, locale === 'ar' ? 'اسم الصفحة غير صالح' : 'Invalid page name'),
     description: yup.string(),
-    // versionReason: yup.string().required(messages['required'])
   })
 
   const defaultValues = {
@@ -65,7 +64,7 @@ const AddPage = props => {
     { id: '73a8202ca9d1ab64', name: 'FacilityRegistration' },
     { id: 'DocumentApprovalWorkflow:1.0', name: 'DocumentApprovalWorkflow' }
   ])
-  
+
   const onSubmit = data => {
     setLoading(true)
 
