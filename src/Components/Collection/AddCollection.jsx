@@ -30,14 +30,15 @@ const AddCollection = props => {
   const { messages, locale } = useIntl()
 
   const schema = yup.object().shape({
-    name_ar: yup.string().required(messages['required']),
-    name_en: yup.string().required(messages['required']),
-    description_ar: yup.string(),
-    description_en: yup.string(),
+    name_ar: yup.string().required(messages['required']).trim(),
+    name_en: yup.string().required(messages['required']).trim(),
+    description_ar: yup.string().trim(),
+    description_en: yup.string().trim(),
     key: yup
       .string()
       .required(messages['required'])
       .matches(/^[A-Za-z]+$/, locale === 'ar' ? 'يجب أن يكون المفتاح عبارة عن أحرف' : 'Key must be a string')
+      .trim()
   })
 
   const defaultValues = {

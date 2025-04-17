@@ -10,12 +10,11 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import { useForm, Controller } from 'react-hook-form'
 import Icon from 'src/@core/components/icon'
 import { useIntl } from 'react-intl'
-import { InputAdornment, MenuItem } from '@mui/material'
+import { MenuItem } from '@mui/material'
 import { useEffect, useState } from 'react'
-import axios from 'axios'
 import { toast } from 'react-toastify'
 import { LoadingButton } from '@mui/lab'
-import { UrlTranEn, UrlTranAr, axiosPost, axiosGet } from '../axiosCall'
+import { axiosPost, axiosGet } from '../axiosCall'
 
 const Header = styled(Box)(({ theme }) => ({
   display: 'flex',
@@ -33,8 +32,9 @@ const AddPage = props => {
     name: yup
       .string()
       .required(messages['required'])
+      .trim()
       .matches(/^(?!-)([A-Za-z0-9]+-?)*[A-Za-z0-9]+$/, messages.nameNotValid),
-    description: yup.string()
+    description: yup.string().required(messages['required']).trim()
   })
 
   const defaultValues = {
@@ -110,7 +110,7 @@ const AddPage = props => {
         setWorkflows(res.data)
       }
     })
-  }, [])
+  }, [locale])
 
   const handleClose = () => {
     toggle()
