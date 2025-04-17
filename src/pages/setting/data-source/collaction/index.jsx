@@ -70,7 +70,7 @@ export default function Index() {
     {
       flex: 0.5,
       minWidth: 200,
-      field: 'name_en',
+      field: 'nameEn',
       disableColumnMenu: true,
       headerName: messages.collectionNameEN,
       renderCell: ({ row }) => (
@@ -86,7 +86,7 @@ export default function Index() {
     {
       flex: 0.5,
       minWidth: 200,
-      field: 'name_ar',
+      field: 'nameAr',
       disableColumnMenu: true,
       headerName: messages.collectionNameAR,
       renderCell: ({ row }) => (
@@ -121,6 +121,7 @@ export default function Index() {
             <IconButton
               size='small'
               onClick={e => {
+                console.log(params.row)
                 setOpen(params.row)
               }}
             >

@@ -8,6 +8,7 @@ import axios from 'axios'
 import https from 'https'
 import { useIntl } from 'react-intl'
 import { useSelector } from 'react-redux'
+import { createTheme, ThemeProvider } from '@mui/material/styles'
 
 let ReactPageEditor = dynamic(
   () =>
@@ -33,9 +34,14 @@ const Index = ({ pageName, initialData, initialDataApi, workflowId }) => {
 
 
   
-  
+  const lightTheme = createTheme({
+    palette: {
+      mode: 'light'
+    }
+  })
 
   return (
+    <ThemeProvider theme={lightTheme}>
     <div className=''>
       <div className='py-10 min-h-screen bg-white main-container'>
         {loading && (
@@ -69,6 +75,7 @@ const Index = ({ pageName, initialData, initialDataApi, workflowId }) => {
         />
       </div>
     </div>
+    </ThemeProvider>
   )
 }
 

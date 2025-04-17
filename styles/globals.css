@@ -1370,12 +1370,15 @@ sortable-list {
 .MuiTooltip-popper {
   z-index: 1111111111 !important;
 }
-.MuiButtonBase-root.MuiIconButton-root.MuiIconButton-colorPrimary.MuiIconButton-sizeMedium.css-1kuq5xv-MuiButtonBase-root-MuiIconButton-root {
+.MuiButtonBase-root.MuiIconButton-root.MuiIconButton-colorPrimary.MuiIconButton-sizeMedium {
   display: none !important;
 }
 .shadow-main {
   box-shadow: 0px 3px 5px -1px rgba(0, 0, 0, 0.2), 0px 6px 10px 0px rgba(0, 0, 0, 0.14),
     0px 1px 18px 0px rgba(0, 0, 0, 0.12);
+}
+.MuiGrid-root.MuiGrid-container .MuiAvatar-root.MuiAvatar-circular.MuiAvatar-colorDefault {
+  @apply !m-0;
 }
 .loading-animation {
   modelViewPort {
@@ -1690,17 +1693,18 @@ sortable-list {
 .MuiInputBase-input.MuiFilledInput-input[type='color'] {
   @apply !mt-3;
 }
-.react-page-toolbar-draggable{
+.react-page-toolbar-draggable {
   transition: background-color 0.3s ease;
 }
 .react-page-toolbar-draggable:hover {
-  background-color: gray !important; 
+  background-color: gray !important;
 }
 
-input[placeholder="Search for blocks"] {
-display: none;
+input[placeholder='Search for blocks'] {
+  display: none;
 }
 li:has(:contains("Add blocks to page")), /* Modern browsers */
-li:contains("Add blocks to page") {      /* jQuery pseudo-selector */
+li:contains("Add blocks to page") {
+  /* jQuery pseudo-selector */
   display: none !important;
 }

@@ -169,7 +169,7 @@ const FormBuilder = ({ open, setOpen, setRefresh }) => {
   const { messages, locale } = useIntl()
 
   const handleNext = () => {
-    const regex = /^[A-Za-z]+$/;
+    const regex = /^[A-Za-z]+$/
 
     if (activeStep === 0 && !fieldType) return toast.error(messages.please_select_field_type)
     if (activeStep === 1 && (!fieldLabel || !fieldLabelEn || !key)) return toast.error(messages.please_enter_label)
@@ -543,51 +543,60 @@ const FormBuilder = ({ open, setOpen, setRefresh }) => {
                     />
                   }
                   label={locale === 'ar' ? 'مميز' : 'Unique'}
-                />
-                <TextField
-                  label={messages.Min_Length}
-                  disabled={
-                    fieldType === 'checkbox' ||
-                    fieldType === 'radio' ||
-                    fieldType === 'select' ||
-                    fieldType === 'date' ||
-                    fieldType === 'file' ||
-                    fieldType === 'email' ||
-                    fieldType === 'tel'
-                  }
-                  type='number'
-                  fullWidth
-                  margin='normal'
-                  value={validations.minLength}
-                  onChange={e =>
-                    setValidations({
-                      ...validations,
-                      minLength: e.target.value
-                    })
-                  }
-                />
-                <TextField
-                  label={messages.Max_Length}
-                  disabled={
-                    fieldType === 'checkbox' ||
-                    fieldType === 'radio' ||
-                    fieldType === 'select' ||
-                    fieldType === 'date' ||
-                    fieldType === 'file' ||
-                    fieldType === 'tel'
-                  }
-                  type='number'
-                  fullWidth
-                  margin='normal'
-                  value={validations.maxLength}
-                  onChange={e =>
-                    setValidations({
-                      ...validations,
-                      maxLength: e.target.value
-                    })
-                  }
-                />
-               
+                />{' '}
+                {!(
+                  fieldType === 'checkbox' ||
+                  fieldType === 'radio' ||
+                  fieldType === 'select' ||
+                  fieldType === 'date' ||
+                  fieldType === 'file' ||
+                  fieldType === 'tel'
+                ) && (
+                  <TextField
+                    label={messages.Min_Length}
+                    disabled={
+                      fieldType === 'checkbox' ||
+                      fieldType === 'radio' ||
+                      fieldType === 'select' ||
+                      fieldType === 'date' ||
+                      fieldType === 'file' ||
+                      fieldType === 'email' ||
+                      fieldType === 'tel'
+                    }
+                    type='number'
+                    fullWidth
+                    margin='normal'
+                    value={validations.minLength}
+                    onChange={e =>
+                      setValidations({
+                        ...validations,
+                        minLength: e.target.value
+                      })
+                    }
+                  />
+                )}
+                {!(
+                  fieldType === 'checkbox' ||
+                  fieldType === 'radio' ||
+                  fieldType === 'select' ||
+                  fieldType === 'date' ||
+                  fieldType === 'file' ||
+                  fieldType === 'tel'
+                ) && (
+                  <TextField
+                    label={messages.Max_Length}
+                    type='number'
+                    fullWidth
+                    margin='normal'
+                    value={validations.maxLength}
+                    onChange={e =>
+                      setValidations({
+                        ...validations,
+                        maxLength: e.target.value
+                      })
+                    }
+                  />
+                )}
               </div>
             )}
 

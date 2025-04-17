@@ -12,16 +12,8 @@ import {
   TextField,
   Typography,
   FormControl,
-  DialogTitle,
-  DialogActions,
-  Dialog,
-  DialogContent,
-  Step,
-  Stepper,
-  StepLabel,
   InputLabel,
-  FormControlLabel,
-  Checkbox
+  Tabs
 } from '@mui/material'
 import { useEffect, useState } from 'react'
 import { styled } from '@mui/material/styles'
@@ -30,7 +22,6 @@ import CssEditor from 'src/Components/FormCreation/PageCreation/CssEditor'
 import { UnmountClosed } from 'react-collapse'
 import { useIntl } from 'react-intl'
 import { axiosGet, axiosPost } from 'src/Components/axiosCall'
-import { LoadingButton } from '@mui/lab'
 import IconifyIcon from 'src/Components/icon'
 import JsEditor from 'src/Components/FormCreation/PageCreation/jsEditor'
 import { useSelector } from 'react-redux'
@@ -38,6 +29,9 @@ import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { docco } from 'react-syntax-highlighter/dist/esm/styles/prism'
 import Collapse from '@kunukn/react-collapse'
 import { toast } from 'react-toastify'
+import Trigger from '../ControlDesignAndValidation/Trigger'
+import SwitchView from '../ControlDesignAndValidation/SwitchView'
+import TriggerControl from '../ControlDesignAndValidation/TriggerControl'
 
 const Header = styled(Box)(() => ({
   display: 'flex',
@@ -54,73 +48,21 @@ const Header = styled(Box)(() => ({
 export default function InputControlDesign({ open, handleClose, design, locale, data, onChange, roles, fields }) {
   const Css = cssToObject(design)
   const getApiData = useSelector(rx => rx.api.data)
-
-  const [activeStep, setActiveStep] = useState(0)
-
-  const [steps, setSteps] = useState([
-    locale === 'ar' ? 'حقل الإدخال' : 'Input Field',
-    locale === 'ar' ? 'نوع التحقق' : 'Type Of Validation'
-  ])
   const { messages } = useIntl()
   const [selected, setSelect] = useState('style')
   const [writeValue, setWriteValue] = useState(roles?.onMount?.value ?? '')
   const [openTrigger, setOpenTrigger] = useState(false)
-
-  useEffect(() => {
-    setWriteValue(roles?.onMount?.value ?? '')
-  }, [roles])
-
-  const UpdateData = (key, value) => {
-    const additional_fields = data.additional_fields ?? []
-    const findMyInput = additional_fields.find(inp => inp.key === open.id)
-
-    const Css = cssToObject(design)
-
-    const keys = key.split('.')
-
-    let current = Css
-    for (let i = 0; i < keys.length - 1; i++) {
-      const k = keys[i]
-      if (!current[k] || typeof current[k] !== 'object') {
-        current[k] = {}
-      }
-      current = current[k]
-    }
-
-    current[keys[keys.length - 1]] = value
-
-    if (findMyInput) {
-      findMyInput.design = objectToCss(Css).replaceAll('NaN', '')
-    } else {
-      const myEdit = {
-        key: open.id,
-        design: objectToCss(Css).replaceAll('NaN', ''),
-        roles: { ...roles }
-      }
-      additional_fields.push(myEdit)
-    }
-    onChange({ ...data, additional_fields: additional_fields })
-  }
-
-  const [selectedField, setSelectedField] = useState(null)
-  const [triggerKey, setTriggerKey] = useState(null)
-  const [typeOfValidation, setTypeOfValidation] = useState(null)
-  const [isEqual, setIsEqual] = useState('equal')
-  const [currentField, setCurrentField] = useState('Id')
-  const [currentFieldTrigger, setCurrentFieldTrigger] = useState('Id')
   const [currentFields, setCurrentFields] = useState([])
-  const [mainValue, setMainValue] = useState('')
-  const [parentKey, setParentKey] = useState(null)
   const [parentFields, setParentFields] = useState([])
-
-  const handleBack = () => {
-    setActiveStep(prev => prev - 1)
-  }
-
-  const handleNext = () => {
-    setActiveStep(prev => prev + 1)
-  }
+  const [parentKey, setParentKey] = useState(null)
   const [obj, setObj] = useState(false)
+  const [showEvent, setShowEvent] = useState(false)
+  const [showTrigger, setShowTrigger] = useState(false)
+  const addMoreElement = data.addMoreElement ?? []
+  const findMyInput = addMoreElement.find(inp => inp.id === open?.id)
+  const [openTab, setOpenTab] = useState(false)
+  const [tabData, setTabData] = useState({ name_ar: '', name_en: '', link: '', active: false })
+  const [editTab, setEditTab] = useState(false)
 
   useEffect(() => {
     if (roles.api_url) {
@@ -133,49 +75,6 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [roles.api_url])
-
-  const handleFinish = () => {
-    const sendData = {
-      selectedField,
-      triggerKey: currentFieldTrigger,
-      typeOfValidation,
-      isEqual,
-      currentField,
-      mainValue,
-      parentKey
-    }
-
-    const additional_fields = data.additional_fields ?? []
-    const findMyInput = additional_fields.find(inp => inp.key === open.id)
-    if (findMyInput) {
-      findMyInput.roles.trigger = sendData
-    } else {
-      const myEdit = {
-        key: open.id,
-        design: objectToCss(Css).replaceAll('NaN', ''),
-        roles: {
-          ...roles,
-          trigger: sendData
-        }
-      }
-      additional_fields.push(myEdit)
-    }
-    onChange({ ...data, additional_fields: additional_fields })
-    setOpenTrigger(false)
-    resetForm()
-  }
-
-  const resetForm = () => {
-    setActiveStep(0)
-    setOpenTrigger(false)
-    setSelectedField(null)
-    setTriggerKey(null)
-    setTypeOfValidation(null)
-    setCurrentField('Id')
-    setCurrentFieldTrigger('Id')
-    setIsEqual('equal')
-    setMainValue('')
-  }
 
   useEffect(() => {
     if (open && (open.type === 'OneToOne' || open.type === 'ManyToMany')) {
@@ -212,27 +111,46 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
     }
   }, [parentKey])
 
-  const [showEvent, setShowEvent] = useState(false)
-  const [showTrigger, setShowTrigger] = useState(false)
-
-  // useEffect(() => {
-  //   if (selectedField) {
-  //     setShowTrigger(true)
-  //   }
-  // }, [open])
-
-  const addMoreElement = data.addMoreElement ?? []
-
-  const findMyInput = addMoreElement.find(inp => inp.id === open?.id)
-  const [openTab, setOpenTab] = useState(false)
-  const [tabData, setTabData] = useState({ name_ar: '', name_en: '', link: '', active: false })
-
-  const [editTab, setEditTab] = useState(false)
+  useEffect(() => {
+    setWriteValue(roles?.onMount?.value ?? '')
+  }, [roles])
 
   const handleCloseTab = () => {
     setOpenTab(false)
     setTabData({ name_ar: '', name_en: '', link: '', active: false })
     setEditTab(false)
+  }
+
+  const UpdateData = (key, value) => {
+    const additional_fields = data.additional_fields ?? []
+    const findMyInput = additional_fields.find(inp => inp.key === open.id)
+
+    const Css = cssToObject(design)
+
+    const keys = key.split('.')
+
+    let current = Css
+    for (let i = 0; i < keys.length - 1; i++) {
+      const k = keys[i]
+      if (!current[k] || typeof current[k] !== 'object') {
+        current[k] = {}
+      }
+      current = current[k]
+    }
+
+    current[keys[keys.length - 1]] = value
+
+    if (findMyInput) {
+      findMyInput.design = objectToCss(Css).replaceAll('NaN', '')
+    } else {
+      const myEdit = {
+        key: open.id,
+        design: objectToCss(Css).replaceAll('NaN', ''),
+        roles: { ...roles }
+      }
+      additional_fields.push(myEdit)
+    }
+    onChange({ ...data, additional_fields: additional_fields })
   }
 
   const addTab = () => {
@@ -258,302 +176,43 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
       }
       handleCloseTab()
     } else {
-      toast.error(locale === 'ar' ? 'يجب عليك ادخال البيانات' : 'You must fill the data')
+      toast.error(messages.You_must_fill_the_data)
     }
   }
 
   return (
     <>
-      <Dialog open={openTab} onClose={handleCloseTab} fullWidth>
-        <DialogTitle>
-          {editTab ? (locale === 'ar' ? 'تعديل تبويب' : 'Edit Tab') : locale === 'ar' ? 'اضافة تبويب' : 'Add Tab'}
-        </DialogTitle>
-        <DialogContent>
-          <div className='p-4 mt-5 rounded-md border border-dashed border-main-color'>
-            <div className='p-4 mt-5 rounded-md border border-dashed border-main-color'>
-              <h2 className='text-lg font-bold text-main-color mt-2'>{locale === 'ar' ? 'التبويبات' : 'Tabs'}</h2>
-            </div>
-            <div className='flex flex-col gap-2'>
-              <div className='flex flex-col gap-2'>
-                <TextField
-                  label={locale === 'ar' ? 'الاسم بالعربية' : 'Name in Arabic'}
-                  value={tabData.name_ar}
-                  onChange={e => setTabData({ ...tabData, name_ar: e.target.value })}
-                />
-                <TextField
-                  label={locale === 'ar' ? 'الاسم بالانجليزية' : 'Name in English'}
-                  value={tabData.name_en}
-                  onChange={e => setTabData({ ...tabData, name_en: e.target.value })}
-                />
-                <TextField
-                  label={locale === 'ar' ? 'الرابط' : 'Link'}
-                  value={tabData.link}
-                  onChange={e => setTabData({ ...tabData, link: e.target.value })}
-                />
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      checked={tabData.active}
-                      onChange={e => setTabData({ ...tabData, active: e.target.checked })}
-                    />
-                  }
-                  label={locale === 'ar' ? 'التفعيل' : 'Active'}
-                />
-              </div>
-            </div>
-          </div>
-        </DialogContent>
+      {/* Tabs */}
+      <Tabs
+        openTab={openTab}
+        handleCloseTab={handleCloseTab}
+        messages={messages}
+        editTab={editTab}
+        tabData={tabData}
+        setTabData={setTabData}
+        addTab={addTab}
+      />
 
-        <DialogActions>
-          <Button onClick={handleCloseTab} variant='contained' color='warning'>
-            {messages.cancel}
-          </Button>
-          <Button onClick={addTab} variant='contained' color='primary'>
-            {editTab ? (locale === 'ar' ? 'تعديل' : 'Edit') : locale === 'ar' ? 'اضافة' : 'Add'}
-          </Button>
-        </DialogActions>
-      </Dialog>
+      {/*  Trigger */}
+      <Trigger
+        openTrigger={openTrigger}
+        messages={messages}
+        locale={locale}
+        fields={fields ?? []}
+        data={data}
+        onChange={onChange}
+        open={open}
+        setOpenTrigger={setOpenTrigger}
+        currentFields={currentFields}
+        parentFields={parentFields}
+        setParentKey={setParentKey}
+        parentKey={parentKey}
+        Css={design}
+        roles={roles}
+        design={design}
+        objectToCss={objectToCss}
+      />
 
-      <Dialog open={openTrigger} onClose={resetForm} fullWidth>
-        <DialogTitle>{messages.createInput}</DialogTitle>
-        <DialogContent>
-          <Stepper activeStep={activeStep} alternativeLabel>
-            {steps.map(label => (
-              <Step key={label}>
-                <StepLabel>{label}</StepLabel>
-              </Step>
-            ))}
-          </Stepper>
-          <div className='p-4 mt-5 rounded-md border border-dashed border-main-color'>
-            {activeStep === 0 && (
-              <>
-                <FormControl fullWidth margin='normal'>
-                  <InputLabel>{locale === 'ar' ? 'الحقل' : 'Field'}</InputLabel>
-                  <Select
-                    variant='filled'
-                    value={selectedField}
-                    onChange={e => {
-                      const field = fields.find(field => field.key === e.target.value)
-                      if (field.fieldCategory !== 'Basic') {
-                        setTriggerKey(field.key)
-                        if (field.type === 'OneToOne') {
-                          setTriggerKey(field.options.source)
-                        } else {
-                          setTriggerKey(field.options.target)
-                        }
-
-                        setParentKey(field.type === 'OneToOne' ? field.options.source : field.options.target)
-                      }
-                      setSelectedField(e.target.value)
-                    }}
-                  >
-                    {fields
-                      .filter(fil => fil.id !== open.id)
-                      .map(field => (
-                        <MenuItem key={field.key} value={field.key}>
-                          {locale === 'ar' ? field.nameAr : field.nameEn}
-                        </MenuItem>
-                      ))}
-                  </Select>
-                </FormControl>
-              </>
-            )}
-            {activeStep === 1 && (
-              <>
-                <FormControl fullWidth margin='normal'>
-                  <InputLabel>{locale === 'ar' ? 'نوع التحقق' : 'Type Of Validation'}</InputLabel>
-                  <Select
-                    variant='filled'
-                    value={typeOfValidation}
-                    onChange={e => {
-                      setTypeOfValidation(e.target.value)
-                    }}
-                  >
-                    {open.fieldCategory !== 'Basic' && (
-                      <MenuItem value={'filter'}>{locale === 'ar' ? 'تصفية' : 'Filter'}</MenuItem>
-                    )}
-
-                    <MenuItem value={'enable'}>{locale === 'ar' ? 'تفعيل' : 'Enable'}</MenuItem>
-                    <MenuItem value={'empty'}>{locale === 'ar' ? 'فارغ' : 'Empty'}</MenuItem>
-                    <MenuItem value={'hidden'}>{locale === 'ar' ? 'مخفي' : 'Hidden'}</MenuItem>
-                    <MenuItem value={'visible'}>{locale === 'ar' ? 'مرئي' : 'Visible'}</MenuItem>
-                  </Select>
-                  <UnmountClosed isOpened={Boolean(typeOfValidation === 'filter')}>
-                    <div className='flex border-main-color border mt-2 rounded-md '>
-                      <div className='w-full flex flex-col items-center justify-center capitalize text-sm px-2'>
-                        {triggerKey ? (
-                          <div className='w-full'>
-                            {' '}
-                            <h2 className='text-sm  capitalize'>
-                              {triggerKey} {locale === 'ar' ? 'حقول ' : 'Fields '}
-                            </h2>
-                            <Select
-                              fullWidth
-                              variant='filled'
-                              value={currentFieldTrigger}
-                              className='capitalize'
-                              onChange={e => {
-                                setCurrentFieldTrigger(e.target.value)
-                              }}
-                            >
-                              <MenuItem value={'Id'}>{locale === 'ar' ? 'ID' : 'ID'}</MenuItem>
-                            </Select>
-                          </div>
-                        ) : (
-                          selectedField
-                        )}
-                      </div>
-                      <div className='w-full py-2 px-1 border-x border-main-color'>
-                        <h2 className='text-sm  capitalize'>
-                          {locale === 'ar' ? open.nameAr : open.nameEn} {locale === 'ar' ? 'الحالة' : 'Status '}
-                        </h2>
-                        <Select
-                          fullWidth
-                          variant='filled'
-                          value={isEqual}
-                          onChange={e => {
-                            setIsEqual(e.target.value)
-                          }}
-                        >
-                          <MenuItem value={'equal'}>{locale === 'ar' ? 'مساوي' : 'Equal'}</MenuItem>
-                          <MenuItem value={'notEqual'}>{locale === 'ar' ? 'غير مساوي' : 'Not Equal'}</MenuItem>
-                        </Select>
-                      </div>
-                      <div className='w-full flex flex-col items-center justify-center px-2'>
-                        <div className='w-full'>
-                          <h2 className='text-sm  capitalize'>
-                            {locale === 'ar' ? open.nameAr : open.nameEn} {locale === 'ar' ? 'حقول ' : 'Fields '}
-                          </h2>
-                          <Select
-                            className='capitalize'
-                            fullWidth
-                            variant='filled'
-                            value={currentField}
-                            onChange={e => {
-                              setCurrentField(e.target.value)
-                            }}
-                          >
-                            <MenuItem value={'Id'}>{locale === 'ar' ? 'ID' : 'ID'}</MenuItem>
-                            {currentFields.map(field => (
-                              <MenuItem className='capitalize' key={field.key} value={field.key}>
-                                {locale === 'ar' ? field.nameAr : field.nameEn}
-                              </MenuItem>
-                            ))}
-                          </Select>
-                        </div>
-                      </div>
-                    </div>
-                  </UnmountClosed>
-                  <UnmountClosed isOpened={Boolean(typeOfValidation && typeOfValidation !== 'filter')}>
-                    <div className='flex border-main-color border mt-2 rounded-md '>
-                      <div className='w-full flex flex-col items-center justify-center capitalize text-sm px-2'>
-                        {triggerKey ? (
-                          <div className='w-full'>
-                            {' '}
-                            <h2 className='text-sm  capitalize'>
-                              {triggerKey} {locale === 'ar' ? 'حقول ' : 'Fields '}
-                            </h2>
-                            <Select
-                              fullWidth
-                              variant='filled'
-                              value={currentFieldTrigger}
-                              className='capitalize'
-                              onChange={e => {
-                                setCurrentFieldTrigger(e.target.value)
-                              }}
-                            >
-                              <MenuItem value={'Id'}>{locale === 'ar' ? 'ID' : 'ID'}</MenuItem>
-                              {parentFields.map(field => (
-                                <MenuItem className='capitalize' value={field.key} key={field.key}>
-                                  {locale === 'ar' ? field.nameAr : field.nameEn}
-                                </MenuItem>
-                              ))}
-                            </Select>
-                          </div>
-                        ) : (
-                          selectedField
-                        )}
-                      </div>
-                      <div className='w-full py-2 px-1 border-x border-main-color'>
-                        <h2 className='text-sm  capitalize'>
-                          {locale === 'ar' ? open.nameAr : open.nameEn} {locale === 'ar' ? 'الحالة' : 'Status '}
-                        </h2>
-                        <Select
-                          fullWidth
-                          variant='filled'
-                          value={isEqual}
-                          onChange={e => {
-                            setIsEqual(e.target.value)
-                          }}
-                        >
-                          <MenuItem value={'equal'}>{locale === 'ar' ? 'مساوي' : 'Equal'}</MenuItem>
-                          <MenuItem value={'notEqual'}>{locale === 'ar' ? 'غير مساوي' : 'Not Equal'}</MenuItem>
-                        </Select>
-                      </div>
-
-                      {/* {open?.fieldCategory !== 'Basic' && (
-                        <div className='w-full flex flex-col items-center justify-center px-2'>
-                          <div className='w-full'>
-                            <h2 className='text-sm  capitalize'>
-                              {locale === 'ar' ? open.nameAr : open.nameEn} {locale === 'ar' ? 'حقول ' : 'Fields '}
-                            </h2>
-                            <Select
-                              className='capitalize'
-                              fullWidth
-                              variant='filled'
-                              value={currentField}
-                              onChange={e => {
-                                setCurrentField(e.target.value)
-                              }}
-                            >
-                              <MenuItem value={'id'}>{locale === 'ar' ? 'ID' : 'ID'}</MenuItem>
-                              {currentFields.map(field => (
-                                <MenuItem className='capitalize' value={field.key}>
-                                  {locale === 'ar' ? field.nameAr : field.nameEn}
-                                </MenuItem>
-                              ))}
-                            </Select>
-                          </div>
-                        </div>
-                      )} */}
-
-                      <div className='w-full flex flex-col items-center justify-center px-2'>
-                        <div className='w-full'>
-                          <h2 className='text-sm  capitalize'>{locale === 'ar' ? 'القيمة' : 'Value '}</h2>
-                          <TextField
-                            fullWidth
-                            variant='filled'
-                            value={mainValue}
-                            onChange={e => setMainValue(e.target.value)}
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  </UnmountClosed>
-                </FormControl>
-              </>
-            )}
-          </div>
-        </DialogContent>
-
-        <DialogActions>
-          {activeStep > 0 && (
-            <Button onClick={handleBack} variant='contained' color='warning'>
-              {messages.back}
-            </Button>
-          )}
-          {activeStep < steps.length - 1 && (
-            <Button onClick={handleNext} variant='contained' color='primary'>
-              {messages.next}
-            </Button>
-          )}
-          {activeStep === steps.length - 1 && (
-            <LoadingButton onClick={handleFinish} variant='contained' color='primary'>
-              {messages.finish}
-            </LoadingButton>
-          )}
-        </DialogActions>
-      </Dialog>
       <Drawer
         open={open}
         anchor='right'
@@ -1507,7 +1166,7 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                             icon={showEvent ? 'mdi:chevron-up' : 'mdi:chevron-down'}
                           />
                         </IconButton>
-                        {locale === 'ar' ? 'الأحداث' : 'Events'}
+                        {messages.Events}
                         <IconButton>
                           <IconifyIcon
                             className='text-white'
@@ -1520,11 +1179,9 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                         <div className='px-2 pb-2'>
                           {open.type !== 'new_element' && (
                             <>
-                              <h2 className='text-lg font-bold text-main-color mt-2'>
-                                {locale === 'ar' ? 'في البداية' : 'OnMount'}
-                              </h2>
+                              <h2 className='text-lg font-bold text-main-color mt-2'>{messages.OnMount}</h2>
                               <FormControl fullWidth margin='normal'>
-                                <InputLabel>{locale === 'ar' ? 'الحالة' : 'State'}</InputLabel>
+                                <InputLabel>{messages.State}</InputLabel>
                                 <Select
                                   variant='filled'
                                   value={roles?.onMount?.type}
@@ -1547,47 +1204,49 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                                     onChange({ ...data, additional_fields: additional_fields })
                                   }}
                                 >
-                                  <MenuItem selected  value={'empty Data'}>
-                                    {locale === 'ar' ? 'فارغ' : 'Empty Data'}
+                                  <MenuItem selected value={'empty Data'}>
+                                    {messages.select}
                                   </MenuItem>
-                                  <MenuItem value={'disable'}>{locale === 'ar' ? 'معطل' : 'Disable'}</MenuItem>
-                                  <MenuItem value={'hide'}>{locale === 'ar' ? 'مخفي' : 'Hide'}</MenuItem>
+                                  <MenuItem value={'disable'}>{messages.Disable}</MenuItem>
+                                  <MenuItem value={'hide'}>{messages.Hide}</MenuItem>
                                 </Select>
-                                <TextField
-                                  select
-                                  fullWidth
-                                  className='!mb-4'
-                                  value={roles.api_url || ''}
-                                  onChange={e => {
-                                    const additional_fields = data.additional_fields ?? []
-                                    const findMyInput = additional_fields.find(inp => inp.key === open.id)
-                                    if (findMyInput) {
-                                      findMyInput.roles.api_url = e.target.value
-                                    } else {
-                                      const myEdit = {
-                                        key: open.id,
-                                        design: objectToCss(Css).replaceAll('NaN', ''),
-                                        roles: {
-                                          ...roles,
-                                          api_url: e.target.value
+                                {getApiData.length > 0 && (
+                                  <TextField
+                                    select
+                                    fullWidth
+                                    className='!mb-4'
+                                    value={roles.api_url || ''}
+                                    onChange={e => {
+                                      const additional_fields = data.additional_fields ?? []
+                                      const findMyInput = additional_fields.find(inp => inp.key === open.id)
+                                      if (findMyInput) {
+                                        findMyInput.roles.api_url = e.target.value
+                                      } else {
+                                        const myEdit = {
+                                          key: open.id,
+                                          design: objectToCss(Css).replaceAll('NaN', ''),
+                                          roles: {
+                                            ...roles,
+                                            api_url: e.target.value
+                                          }
                                         }
+                                        additional_fields.push(myEdit)
                                       }
-                                      additional_fields.push(myEdit)
-                                    }
-                                    onChange({ ...data, additional_fields: additional_fields })
-                                  }}
-                                  label={locale === 'ar' ? 'جلب البيانات من الAPI' : 'Get From API'}
-                                  variant='filled'
-                                >
-                                  {getApiData.map(
-                                    ({ link, data }, index) =>
-                                      !Array.isArray(data) && (
-                                        <MenuItem key={link + index} value={link}>
-                                          {link}
-                                        </MenuItem>
-                                      )
-                                  )}
-                                </TextField>
+                                      onChange({ ...data, additional_fields: additional_fields })
+                                    }}
+                                    label={messages.Get_From_API}
+                                    variant='filled'
+                                  >
+                                    {getApiData.map(
+                                      ({ link, data }, index) =>
+                                        !Array.isArray(data) && (
+                                          <MenuItem key={link + index} value={link}>
+                                            {link}
+                                          </MenuItem>
+                                        )
+                                    )}
+                                  </TextField>
+                                )}
                                 {roles.api_url && (
                                   <div className='flex justify-center'>
                                     <Button
@@ -1604,15 +1263,13 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                                         onChange({ ...data, additional_fields: additional_fields })
                                       }}
                                     >
-                                      {locale === 'ar' ? 'تفريغ البيانات' : 'Clear Data'}
+                                      {messages.Clear_Data}
                                     </Button>
                                   </div>
                                 )}
                                 <Collapse transition={`height 300ms cubic-bezier(.4, 0, .2, 1)`} isOpen={Boolean(obj)}>
                                   <div className='p-2 my-4 rounded border border-dashed border-main-color'>
-                                    <h2 className='mb-4 text-2xl text-main-color'>
-                                      {locale === 'ar' ? 'عرض البيانات' : 'View Object'}
-                                    </h2>
+                                    <h2 className='mb-4 text-2xl text-main-color'>{messages.View_Object}</h2>
                                     <SyntaxHighlighter language='json' style={docco}>
                                       {JSON.stringify(obj, null, 2)}
                                     </SyntaxHighlighter>
@@ -1623,7 +1280,7 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                                   type='text'
                                   value={writeValue}
                                   variant='filled'
-                                  label={locale === 'ar' ? 'القيمة' : 'Value'}
+                                  label={messages.Value}
                                   onChange={e => {
                                     setWriteValue(e.target.value)
                                   }}
@@ -1655,9 +1312,7 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                           )}
                           {open.type !== 'new_element' && (
                             <div className='border-t-2 border-dashed border-main-color pt-2'>
-                              <h2 className='text-lg font-bold text-main-color mt-2'>
-                                {locale === 'ar' ? 'التحقق' : 'Regex'}
-                              </h2>
+                              <h2 className='text-lg font-bold text-main-color mt-2'>{messages.Regex}</h2>
                               <TextField
                                 fullWidth
                                 type='text'
@@ -1685,7 +1340,7 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                                   onChange({ ...data, additional_fields: additional_fields })
                                 }}
                                 variant='filled'
-                                label={locale === 'ar' ? 'التحقق' : 'Regex'}
+                                label={messages.Regex}
                               />
                               <TextField
                                 fullWidth
@@ -1715,7 +1370,7 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                                   onChange({ ...data, additional_fields: additional_fields })
                                 }}
                                 variant='filled'
-                                label={locale === 'ar' ? 'نص الخطأ العربي' : 'Regex Message Ar'}
+                                label={messages.Regex_Message_Ar}
                               />
                               <TextField
                                 fullWidth
@@ -1745,18 +1400,16 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                                   onChange({ ...data, additional_fields: additional_fields })
                                 }}
                                 variant='filled'
-                                label={locale === 'ar' ? 'نص الخطأ الانجليزي' : 'Regex Message En'}
+                                label={messages.Regex_Message_En}
                               />
                               <div className='mb-2'></div>
                             </div>
                           )}
                           {open.key === 'button' && (
                             <>
-                              <h2 className='text-lg font-bold text-main-color mt-2'>
-                                {locale === 'ar' ? 'في البداية' : 'OnMount'}
-                              </h2>
+                              <h2 className='text-lg font-bold text-main-color mt-2'>{messages.OnMount}</h2>
                               <FormControl fullWidth margin='normal'>
-                                <InputLabel>{locale === 'ar' ? 'الحالة' : 'State'}</InputLabel>
+                                <InputLabel>{messages.State}</InputLabel>
                                 <Select
                                   variant='filled'
                                   value={roles?.onMount?.type}
@@ -1779,21 +1432,15 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                                     onChange({ ...data, additional_fields: additional_fields })
                                   }}
                                 >
-                                  <MenuItem value={'disable'}>{locale === 'ar' ? 'معطل' : 'Disable'}</MenuItem>
-                                  <MenuItem value={'hide'}>{locale === 'ar' ? 'مخفي' : 'Hide'}</MenuItem>
+                                  <MenuItem value={'disable'}>{messages.Disable}</MenuItem>
+                                  <MenuItem value={'hide'}>{messages.Hide}</MenuItem>
                                 </Select>
                               </FormControl>
                             </>
                           )}
                           <div className='border-t-2 border-dashed border-main-color pt-2'>
                             <h2 className='text-lg font-bold text-main-color mt-2'>
-                              {open.key === 'button'
-                                ? locale === 'ar'
-                                  ? 'في الضغط'
-                                  : 'OnClick'
-                                : locale === 'ar'
-                                ? 'في التغيير'
-                                : 'OnChange'}
+                              {open.key === 'button' ? messages.OnClick : messages.OnChange}
                             </h2>
                             <JsEditor
                               jsCode={roles?.event?.onChange ?? ''}
@@ -1806,9 +1453,7 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                           </div>
                           {open.key !== 'button' && (
                             <div className='border-t-2 border-dashed border-main-color pt-2'>
-                              <h2 className='text-lg font-bold text-main-color mt-2'>
-                                {locale === 'ar' ? 'في الخروج' : 'OnBlur'}
-                              </h2>
+                              <h2 className='text-lg font-bold text-main-color mt-2'>{messages.OnBlur}</h2>
                               <JsEditor
                                 type='onBlur'
                                 jsCode={roles?.event?.onBlur ?? ''}
@@ -1822,9 +1467,7 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                           )}
                           {open.type !== 'new_element' && (
                             <div className='border-t-2 border-dashed border-main-color pt-2'>
-                              <h2 className='text-lg font-bold text-main-color mt-2'>
-                                {locale === 'ar' ? 'في الخروج من الصفحة' : 'OnUnmount'}
-                              </h2>
+                              <h2 className='text-lg font-bold text-main-color mt-2'>{messages.OnUnmount}</h2>
                               <JsEditor
                                 type='onUnmount'
                                 jsCode={roles?.event?.onUnmount ?? ''}
@@ -1840,41 +1483,18 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                       </UnmountClosed>
                     </div>
                     {open.type !== 'new_element' && (
-                      <div className='border-2 mt-2 border-main-color  rounded-md '>
-                        <h2
-                          onClick={() => setShowTrigger(!showTrigger)}
-                          className='text-lg font-bold bg-main-color cursor-pointer select-none text-white py-1 text-center px-2 flex items-center justify-between'
-                        >
-                          <IconButton>
-                            <IconifyIcon
-                              className='text-white opacity-0'
-                              icon={showTrigger ? 'mdi:chevron-up' : 'mdi:chevron-down'}
-                            />
-                          </IconButton>
-                          {locale === 'ar' ? 'متابعات' : 'Triggers'}
-                          <IconButton>
-                            <IconifyIcon
-                              className='text-white'
-                              icon={showTrigger ? 'mdi:chevron-up' : 'mdi:chevron-down'}
-                            />
-                          </IconButton>
-                        </h2>
-                        <UnmountClosed isOpened={Boolean(showTrigger)}>
-                          <div className=''>
-                            <div className='flex flex-col gap-2 justify-center items-center py-2 '>
-                              <Button
-                                onClick={() => {
-                                  setOpenTrigger(true)
-                                }}
-                                variant='contained'
-                                color='primary'
-                              >
-                                {locale === 'ar' ? 'اضافة متابعة' : 'Add Trigger'}
-                              </Button>
-                            </div>
-                          </div>
-                        </UnmountClosed>
-                      </div>
+                      <SwitchView title={messages.Triggers} show={showTrigger} setShow={setShowTrigger}>
+                        <TriggerControl
+                          roles={roles}
+                          setOpenTrigger={setOpenTrigger}
+                          messages={messages}
+                          data={data}
+                          onChange={onChange}
+                          open={open}
+                          objectToCss={objectToCss}
+                          Css={Css}
+                        />
+                      </SwitchView>
                     )}
                     {open.type === 'new_element' && (
                       <div className='border-2 mt-2 border-main-color  rounded-md '>
@@ -2153,11 +1773,9 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                 <UnmountClosed isOpened={Boolean(selected === 'tabs')}>
                   <div className='border-t-2 border-dashed border-main-color pt-2'>
                     <div className='flex items-center justify-between mb-3'>
-                      <h2 className='text-lg font-bold text-main-color mt-2'>
-                        {locale === 'ar' ? 'التبويبات' : 'Tabs'}
-                      </h2>
+                      <h2 className='text-lg font-bold text-main-color mt-2'>{messages.Tabs}</h2>
                       <Button variant='contained' color='primary' onClick={() => setOpenTab(true)}>
-                        {locale === 'ar' ? 'اضافة تبويب' : 'Add Tab'}
+                        {messages.Add_Tab}
                       </Button>
                     </div>
                     <div className='flex flex-wrap parent-tabs gap-1'>
@@ -2166,7 +1784,7 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                           key={index}
                           className='flex items-center justify-between w-full border-2 border-main-color rounded-md p-2'
                         >
-                          <span>{locale === 'ar' ? item.name_ar : item.name_en}</span>
+                          <span>{item?.[`name_${locale}`]}</span>
                           <div className='flex items-center '>
                             <IconButton
                               onClick={() => {

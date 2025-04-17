@@ -34,7 +34,10 @@ const AddCollection = props => {
     name_en: yup.string().required(messages['required']),
     description_ar: yup.string(),
     description_en: yup.string(),
-    key: yup.string().required(messages['required']).matches(/^[A-Za-z]+$/, locale === 'ar' ? 'يجب أن يكون المفتاح عبارة عن أحرف' : 'Key must be a string')
+    key: yup
+      .string()
+      .required(messages['required'])
+      .matches(/^[A-Za-z]+$/, locale === 'ar' ? 'يجب أن يكون المفتاح عبارة عن أحرف' : 'Key must be a string')
   })
 
   const defaultValues = {
@@ -61,8 +64,6 @@ const AddCollection = props => {
   const [loading, setLoading] = useState(false)
 
   const onSubmit = data => {
-    setLoading(true)
-
     const sendData = {
       nameAr: data.name_ar,
       nameEn: data.name_en,
@@ -84,8 +85,11 @@ const AddCollection = props => {
         open.descriptionAr === sendData.descriptionAr &&
         open.descriptionEn === sendData.descriptionEn
       ) {
-        toast.info(locale === 'ar' ? 'لا يوجد تغييرات' : 'No changes')
+        return toast.info(locale === 'ar' ? 'لا يوجد تغييرات' : 'No changes')
       }
+      setLoading(true)
+
+      delete sendData.key
       if (open.nameAr === sendData.nameAr) {
         delete sendData.nameAr
       }
@@ -98,8 +102,9 @@ const AddCollection = props => {
       if (open.descriptionEn === sendData.descriptionEn) {
         delete sendData.descriptionEn
       }
+      sendData.id = open.id
 
-      axiosPut('collections/add', locale, sendData)
+      axiosPut('collections/update', locale, sendData)
         .then(res => {
           if (res.status) {
             toast.success(locale === 'ar' ? 'تم إضافة نموذج البيانات بنجاح' : 'Data Model added successfully')
@@ -114,6 +119,7 @@ const AddCollection = props => {
           setLoading(false)
         })
     } else {
+      setLoading(true)
       axiosPost('collections/add', locale, sendData)
         .then(res => {
           if (res.status) {
@@ -167,8 +173,8 @@ const AddCollection = props => {
                 ? 'إضافة نموذج البيانات'
                 : 'Add Data Model'
               : locale === 'ar'
-              ? open.name_ar
-              : open.name_en}
+              ? open.nameAr
+              : open.nameEn}
           </Typography>
           <IconButton
             size='small'
@@ -355,10 +361,10 @@ const AddCollection = props => {
 
             <Box sx={{ display: 'flex', alignItems: 'center' }} className='gap-4 justify-end py-4 mt-auto'>
               <LoadingButton type='submit' variant='contained' loading={loading}>
-                {locale === 'ar' ? 'ارسال' : 'Submit'}
+                {typeof open === 'boolean' ? messages.submit : messages.Update}
               </LoadingButton>
-              <Button variant='tonal' color='secondary' onClick={handleClose}>
-                {locale === 'ar' ? 'إلغاء' : 'Cancel'}
+              <Button variant='contained' color='secondary' onClick={handleClose}>
+                {typeof open === 'boolean' ? messages.cancel : messages.cancel}
               </Button>
             </Box>
           </form>

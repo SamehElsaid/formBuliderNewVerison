@@ -25,10 +25,18 @@ export default function ButtonControl({ data, onChange, buttonRef }) {
       <TextField
         fullWidth
         type='text'
-        value={data.buttonText}
-        onChange={e => onChange({ ...data, buttonText: e.target.value })}
+        value={data.buttonTextEn}
+        onChange={e => onChange({ ...data, buttonTextEn: e.target.value })}
         variant='filled'
-        label={locale === 'ar' ? 'النص' : 'Text'}
+        label={locale === 'ar' ? 'النص باللغة الإنجليزية' : 'Text in English'}
+      />
+      <TextField
+        fullWidth
+        type='text'
+        value={data.buttonTextAr}
+        onChange={e => onChange({ ...data, buttonTextAr: e.target.value })}
+        variant='filled'
+        label={locale === 'ar' ? 'النص باللغة العربية' : 'Text in Arabic'}
       />
       <TextField
         fullWidth

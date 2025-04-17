@@ -42,7 +42,7 @@ export default function DisplayField({
   const [dirty, setDirty] = useState(dirtyProps)
   const [loading, setLoading] = useState(true)
   const [showPassword, setShowPassword] = useState(false)
-  const { locale } = useIntl()
+  const { locale, messages } = useIntl()
   const [validations, setValidations] = useState({})
   const [selectedOptions, setSelectedOptions] = useState([])
   const [oldSelectedOptions, setOldSelectedOptions] = useState([])
@@ -552,7 +552,6 @@ export default function DisplayField({
 
     //  End hidden Control
 
-    
     // ! Start Visible Control
     if (roles?.trigger?.typeOfValidation === 'visible' && roles?.trigger?.mainValue && !loading) {
       if (input.fieldCategory === 'Basic') {
@@ -565,7 +564,6 @@ export default function DisplayField({
                 const data = res.entities?.[0] ?? false
                 if (data) {
                   if (roles?.trigger.isEqual === 'equal ') {
-
                     if (data?.[roles?.trigger?.triggerKey].toLowerCase() === roles?.trigger?.mainValue.toLowerCase()) {
                       setIsDisable(null)
                     } else {
@@ -771,7 +769,7 @@ export default function DisplayField({
 
     if (dirty) {
       if (validations.Required && e?.target?.value?.length === 0 && isTypeNew) {
-        return setError('Required')
+        return setError(messages.required)
       }
       if (regex) {
         // Remove surrounding quotes if present
@@ -790,18 +788,18 @@ export default function DisplayField({
       }
 
       if (input.type === 'Phone' && validations.Required && e?.length === 0 && isTypeNew) {
-        return setError('Required')
+        return setError(messages.required)
       }
       if (input.type === 'Phone' && !isPossiblePhoneNumber('+' + e?.target?.value ?? '')) {
-        return setError('Invalid_Phone')
+        return setError(messages.Invalid_Phone)
       }
 
       if (validations.Required && newData.length === 0 && !isTypeNew) {
-        return setError('Required')
+        return setError(messages.required)
       }
 
       if (input.type === 'Email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e?.target?.value)) {
-        return setError('Invalid_Email')
+        return setError(messages.Invalid_Email)
       }
 
       if (
@@ -810,15 +808,19 @@ export default function DisplayField({
           e?.target?.value
         )
       ) {
-        return setError('Invalid_URL')
+        return setError(messages.Invalid_URL)
+      }
+      if (
+        validations.MinLength &&
+        e?.target?.value?.length !== 0 &&
+        e?.target?.value?.length < +validations?.MinLength?.minLength
+      ) {
+
+        return setError(messages.Min_Length + ' ' + +validations?.MinLength?.minLength)
       }
 
-      if (validations.MinLength && e?.target?.value?.length < +validations?.MinLength?.minLength) {
-        return setError('Min_Length')
-      }
-
-      if (validations.MaxLength && e?.target?.value?.length > +validations?.MaxLength?.maxLength) {
-        return setError('Max_Length')
+      if (validations.MaxLength && e?.target?.value?.length !== 0 && e?.target?.value?.length > +validations?.MaxLength?.maxLength) {
+        return setError(messages.Max_Length + ' ' + +validations?.MaxLength?.maxLength)
       }
 
       setError(false)
@@ -830,12 +832,12 @@ export default function DisplayField({
     const errorMessages = []
     if (validations.Required && (value?.length === 0 || value === '')) {
       errorWithoutDirty.push(true)
-      errorMessages.push('Required')
+      errorMessages.push(messages.required)
     }
 
     if (input.type === 'Email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) && value !== '') {
       errorWithoutDirty.push(true)
-      errorMessages.push('Invalid_Email')
+      errorMessages.push(messages.Invalid_Email)
     }
 
     if (regex) {
@@ -863,19 +865,19 @@ export default function DisplayField({
       value !== ''
     ) {
       errorWithoutDirty.push(true)
-      errorMessages.push('Invalid_URL')
+      errorMessages.push(messages.Invalid_URL)
     }
-    if (validations.MinLength && value.length < +validations?.MinLength?.minLength) {
+    if (validations.MinLength && `${value}`.length !== 0 && `${value}`.length < +validations?.MinLength?.minLength) {
       errorWithoutDirty.push(true)
-      errorMessages.push('Min_Length')
+      errorMessages.push(messages.Min_Length + ' ' + +validations?.MinLength?.minLength)
     }
-    if (validations.MaxLength && value.length > +validations?.MaxLength?.maxLength) {
+    if (validations.MaxLength && `${value}`.length !== 0 && `${value}`.length > +validations?.MaxLength?.maxLength) {
       errorWithoutDirty.push(true)
-      errorMessages.push('Max_Length')
+      errorMessages.push(messages.Max_Length + ' ' + +validations?.MaxLength?.maxLength)
     }
     if (input.type === 'Phone' && !isPossiblePhoneNumber('+' + value ?? '') && value !== '') {
       errorWithoutDirty.push(true)
-      errorMessages.push('Invalid_Phone')
+      errorMessages.push(messages.Invalid_Phone)
     }
     if (dataRef) {
       if (input.type === 'Date') {

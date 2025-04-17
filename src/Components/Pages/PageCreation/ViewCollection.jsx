@@ -134,12 +134,6 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
           if (data.redirect) {
             push(`/${locale}/${data.redirect}`)
           }
-        } else {
-          setReload(prev => prev + 1)
-          toast.success(locale === 'ar' ? 'تم إرسال البيانات بنجاح' : 'Data sent successfully')
-          if (data.redirect) {
-            push(`/${locale}/${data.redirect}`)
-          }
         }
       })
       .finally(() => {
@@ -248,7 +242,6 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
       (sortedData.findIndex(f => f.i === b.id) === -1 ? Infinity : sortedData.findIndex(f => f.i === b.id))
   )
 
-
   return (
     <div className={`${disabled ? 'text-main' : ''}`}>
       <InputControlDesign
@@ -291,42 +284,6 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
               >
                 {!readOnly && (
                   <div className='absolute inset-0 z-20 flex || justify-end border-main-color border-dashed border rounded-md'>
-                    {/* <button
-                      onMouseDown={e => {
-                        e.stopPropagation()
-                      }}
-                      onClick={async e => {
-                        e.stopPropagation() // Prevents event bubbling
-
-                        // Define the ID to be copied
-                        const idToCopy =
-                          filed.type === 'new_element'
-                            ? `s${filed.id}`
-                            : filed.key.trim() + filed.nameEn.trim().replaceAll(' ', '')
-
-                        try {
-                          // Use the Clipboard API to copy the ID
-                          await navigator.clipboard.writeText(idToCopy)
-
-                          // Optionally, provide user feedback (e.g., show a message)
-                          console.log('ID copied to clipboard:', idToCopy)
-                          toast.success(`ID "${idToCopy}" has been copied to the clipboard!`)
-                        } catch (error) {
-                          // Handle errors if the copy operation fails
-                          console.error('Failed to copy ID:', error)
-                          toast.success('Failed to copy ID. Please try again.')
-                        }
-                      }}
-                      className='flex gap-1 bg-white p-1 h-fit me-3 border border-main-color shadow-xl'
-                    >
-                      <span>ID:</span>
-                      <span>
-                        {' '}
-                        {filed.type === 'new_element'
-                          ? `s${filed.id}`
-                          : filed.key.trim() + filed.nameEn.trim().replaceAll(' ', '')}
-                      </span>
-                    </button> */}
                     <button
                       type='button'
                       title={locale !== 'ar' ? 'Setting' : 'التحكم'}

@@ -26,12 +26,12 @@ const ReactPageEditor = ({ pageName, initialData, initialDataApi, workflowId }) 
   const [editorValue, setEditorValue] = useState(initialData ?? null)
   const [readOnly, setReadOnly] = useState(false)
   const [advancedEdit, setAdvancedEdit] = useState(false)
-  const { locale } = useIntl()
+  const { locale, messages } = useIntl()
   const [openApiData, setOpenApiData] = useState(false)
   const [openBack, setOpenBack] = useState(false)
   const [saveData, setSaveData] = useState(false)
   const [loadingSaveData, setLoadingSaveData] = useState(false)
-  const [isChanged, setIsChanged] = useState(false);
+  const [isChanged, setIsChanged] = useState(false)
   const theme = useTheme()
   const { push } = useRouter()
   const apiData = useSelector(state => state.api.data)
@@ -42,56 +42,49 @@ const ReactPageEditor = ({ pageName, initialData, initialDataApi, workflowId }) 
   const { cellPlugins } = useCellPlugins({ advancedEdit, locale, readOnly, buttonRef, workflowId })
   const dispatch = useDispatch()
 
-
-
-useEffect(() => {
-  if (JSON.stringify(editorValue) !== JSON.stringify(newData)) {
-    setIsChanged(true);
-  } else {
-    setIsChanged(false);
-  }
-}, [editorValue, newData]);
-
-useEffect(() => {
-  const handleBeforeUnload = (event) => {
-    if (isChanged) {
-      // Standard message for the browser's confirmation dialog
-      const message = locale === 'ar' 
-        ? 'هل أنت متأكد أنك تريد مغادرة الصفحة؟ التغييرات التي أجريتها لم يتم حفظها.'
-        : 'Are you sure you want to leave this page? You have unsaved changes.';
-      
-      // This is the standard way to trigger the browser dialog
-      event.preventDefault();
-      event.returnValue = message; // Required for Chrome
-      
-      return message; // Required for older browsers
+  useEffect(() => {
+    if (JSON.stringify(editorValue) !== JSON.stringify(newData)) {
+      setIsChanged(true)
+    } else {
+      setIsChanged(false)
     }
-  };
-  
-  // Handle browser back/forward navigation
-  const handlePopState = (event) => {
-    if (isChanged) {
-      window.history.pushState(null, '', window.location.pathname);
- 
-      setOpenBack(true);
+  }, [editorValue, newData])
+
+  useEffect(() => {
+    const handleBeforeUnload = event => {
+      if (isChanged) {
+        // Standard message for the browser's confirmation dialog
+        const message = messages.AreYouSureYouWantToSaveTheChanges
+
+        // This is the standard way to trigger the browser dialog
+        event.preventDefault()
+        event.returnValue = message // Required for Chrome
+
+        return message // Required for older browsers
+      }
     }
-  };
 
-  window.addEventListener('beforeunload', handleBeforeUnload);
-  window.addEventListener('popstate', handlePopState);
-  window.history.pushState(null, '', window.location.pathname);
-  
-  return () => {
-    window.removeEventListener('beforeunload', handleBeforeUnload);
-    window.removeEventListener('popstate', handlePopState);
-  };
-}, [isChanged, locale]);
+    // Handle browser back/forward navigation
+    const handlePopState = event => {
+      if (isChanged) {
+        window.history.pushState(null, '', window.location.pathname)
 
+        setOpenBack(true)
+      }
+    }
 
+    window.addEventListener('beforeunload', handleBeforeUnload)
+    window.addEventListener('popstate', handlePopState)
+    window.history.pushState(null, '', window.location.pathname)
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload)
+      window.removeEventListener('popstate', handlePopState)
+    }
+  }, [isChanged, locale])
 
   // Loading State To Stop Rendering Editor
   useEffect(() => {
-
     setNewData(initialData)
     setEditorValue(initialData)
   }, [initialData])
@@ -119,49 +112,57 @@ useEffect(() => {
     }
   }, [])
 
+  const handleClick = () => {
+    const escEvent = new KeyboardEvent('keydown', {
+      key: 'Escape',
+      code: 'Escape',
+      keyCode: 27,
+      which: 27,
+      bubbles: true
+    })
+    document.dispatchEvent(escEvent)
+  }
+
   return (
-    <div className='relative'>
-    
+    <div
+      className='relative'
+      onMouseDown={e => {
+        if (
+          !e.target.closest(
+            '.MuiPaper-root.MuiPaper-elevation.MuiPaper-elevation0.MuiDrawer-paper.MuiDrawer-paperAnchorBottom.MuiDrawer-paperAnchorDockedBottom'
+          )
+        ) {
+          handleClick()
+          console.log('clicked')
+        } else {
+          console.log('not clicked')
+        }
+      }}
+    >
       <div className='absolute z-0 invisible'>
         <button
           ref={buttonRef}
           onClick={() => {
-            const escEvent = new KeyboardEvent('keydown', {
-              key: 'Escape',
-              code: 'Escape',
-              keyCode: 27,
-              which: 27,
-              bubbles: true
-            })
-            document.dispatchEvent(escEvent)
+            handleClick()
           }}
         ></button>
       </div>
       <ApiData open={openApiData} setOpen={setOpenApiData} initialDataApi={initialDataApi} />
       <Dialog open={openBack} onClose={() => setOpenBack(false)} fullWidth>
-        <DialogTitle>
-        
-          {locale === 'ar'
-            ? 'العودة إلى الصفحة السابقة بدون حفظ التغيرات'
-            : 'Return to Previous Page Without Save Changes'}
-        </DialogTitle>
+        <DialogTitle>{messages.ReturnToPrevious}</DialogTitle>
         <DialogContent>
           <DialogActions>
             <Button variant='contained' color='error' onClick={() => push(`/${locale}/setting/pages`)}>
-              {locale === 'ar' ? 'نعم' : 'Yes'}
+              {messages.yes}
             </Button>
             <Button variant='contained' color='secondary' onClick={() => setOpenBack(false)}>
-              {locale === 'ar' ? 'لا' : 'No'}
+              {messages.no}
             </Button>
           </DialogActions>
         </DialogContent>
       </Dialog>
       <Dialog open={saveData} onClose={() => setSaveData(false)} fullWidth>
-        <DialogTitle>
-          {locale === 'ar'
-            ? 'هل أنت متأكد من أنك تريد حفظ التغييرات؟ يرجى التأكد قبل المتابعة '
-            : 'Are you sure you want to save the changes? Please confirm before proceeding'}
-        </DialogTitle>
+        <DialogTitle>{messages.AreYouSureYouWantToSaveTheChanges}</DialogTitle>
         <DialogContent>
           <DialogActions>
             <LoadingButton
@@ -178,7 +179,7 @@ useEffect(() => {
                 })
                   .then(res => {
                     if (res.status) {
-                      toast.success(locale === 'ar' ? 'تم حفظ التغيرات' : 'Changes saved')
+                      toast.success(messages.ChangesSaved)
                       setNewData(editorValue)
                       setSaveData(false)
                     }
@@ -188,10 +189,10 @@ useEffect(() => {
                   })
               }}
             >
-              {locale === 'ar' ? 'حفظ' : 'Save'}
+              {messages.save}
             </LoadingButton>
             <Button variant='contained' color='error' onClick={() => setSaveData(false)}>
-              {locale === 'ar' ? 'الغاء' : 'Cancal'}
+              {messages.cancel}
             </Button>
           </DialogActions>
         </DialogContent>
@@ -203,7 +204,7 @@ useEffect(() => {
           } fixed top-0 py-2  duration-300  z-[11111] left-0 right-0 shadow-xl`}
         >
           <div className='container flex gap-2 justify-between'>
-            {advancedEdit && (
+            {advancedEdit ? (
               <div className='editMode'>
                 <div className='wrapper'>
                   <span className='letter letter1'>E</span>
@@ -218,6 +219,10 @@ useEffect(() => {
                   <span className='letter letter10'>.</span>
                 </div>
               </div>
+            ) : (
+              <div className='text-xl font-bold fixed start-[270px] top-0 z-[111111] h-[65.6px]  flex items-center gap-2 '>
+                <span className='text-2xl'>{pageName}</span>
+              </div>
             )}
             <div className='flex gap-2 ms-auto'>
               <Button
@@ -228,13 +233,13 @@ useEffect(() => {
                 }}
               >
                 <MdOutlineSaveAs className='text-xl me-1' />
-                {locale === 'ar' ? ' حفظ التغيرات' : 'Save Changes'} 
+                {messages.saveChanges}
               </Button>
               <button
                 className={`w-[50px] h-[50px] flex items-center justify-center rounded-full bg-[#dfdfdf] hover:!bg-white duration-300 shadow-main ${
                   openApiData ? '!bg-[#9f29b4] !text-white hover:!text-[#9f29b4]' : ''
                 }`}
-                title={locale === 'ar' ? 'التحكم بالبيانات المتصلة' : 'Api Control'}
+                title={messages.ApiControl}
                 onClick={() => {
                   setOpenApiData(!openApiData)
                 }}
@@ -245,7 +250,7 @@ useEffect(() => {
                 className={`w-[50px] h-[50px] flex items-center justify-center rounded-full bg-[#dfdfdf] hover:!bg-white duration-300 shadow-main ${
                   readOnly ? '!bg-[#9f29b4] !text-white hover:!text-[#9f29b4]' : ''
                 }`}
-                title={locale === 'ar' ? 'عرض الصفحة' : 'View Mode'}
+                title={messages.viewMode}
                 onClick={() => {
                   setReadOnly(!readOnly)
                   setAdvancedEdit(false)
@@ -257,7 +262,7 @@ useEffect(() => {
                 className={`w-[50px] h-[50px] flex items-center justify-center rounded-full bg-[#dfdfdf] hover:!bg-white duration-300 shadow-main ${
                   advancedEdit ? '!bg-[#9f29b4] !text-white hover:!text-[#9f29b4]' : ''
                 }`}
-                title={locale === 'ar' ? 'وصع التعديلات' : 'Edit Mode'}
+                title={messages.editMode}
                 onClick={() => {
                   setAdvancedEdit(!advancedEdit)
                   if (document.querySelector('[data-testid="DevicesIcon"]')) {

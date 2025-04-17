@@ -14,8 +14,8 @@ export default function useButton({ locale, buttonRef }) {
           onMouseLeave: () => setHover(false),
           style: {
             width: data.width || 'fit-content',
-            backgroundColor: hover ? data.hoverBackgroundColor || 'transparent' : data.backgroundColor || 'transparent',
-            color: hover ? data.hoverColor || 'white' : data.color || 'black',
+            backgroundColor: hover ? data.hoverBackgroundColor ?? data.backgroundColor ?? 'transparent' : data.backgroundColor ?? 'transparent',
+            color: hover ? data.hoverColor ?? data.color ?? 'black' : data.color ?? 'black',
             paddingBlock: data.paddingBlock + 'px' || '10px',
             paddingInline: data.paddingInline + 'px' || '20px',
             borderRadius: data.borderRadius + 'px' || '5px',
@@ -45,19 +45,20 @@ export default function useButton({ locale, buttonRef }) {
 
         return isValidURL(data.href) ? (
           <a href={data.href} target='_blank' rel='noopener noreferrer' {...options}>
-            {data.buttonText}
+            {(locale === 'ar' ? data.buttonTextAr : data.buttonTextEn) ?? 'Button'}
           </a>
         ) : data.href ? (
           <Link href={data.href} {...options}>
-            {data.buttonText}
+            {(locale === 'ar' ? data.buttonTextAr : data.buttonTextEn) ?? 'Button'}
           </Link>
         ) : (
-          <button {...options}>{data.buttonText}</button>
+          <button {...options}>{(locale === 'ar' ? data.buttonTextAr : data.buttonTextEn) ?? 'Button'} </button>
         )
       },
       id: 'button',
       title: locale === 'ar' ? 'زر' : 'Button',
-      description: locale === 'ar' ? 'يمكن أن يحتوي الزر على نص أو صورة أو رابط' : 'A clickable element to trigger actions.',
+      description:
+        locale === 'ar' ? 'يمكن أن يحتوي الزر على نص أو صورة أو رابط' : 'A clickable element to trigger actions.',
       version: 1,
       icon: <GiClick className='text-2xl' />,
       controls: {

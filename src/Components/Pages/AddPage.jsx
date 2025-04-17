@@ -33,8 +33,8 @@ const AddPage = props => {
     name: yup
       .string()
       .required(messages['required'])
-      .matches(/^(?!-)([A-Za-z]+-?)*[A-Za-z]+$/, locale === 'ar' ? 'اسم الصفحة غير صالح' : 'Invalid page name'),
-    description: yup.string(),
+      .matches(/^(?!-)([A-Za-z0-9]+-?)*[A-Za-z0-9]+$/, messages.nameNotValid),
+    description: yup.string()
   })
 
   const defaultValues = {
@@ -80,13 +80,13 @@ const AddPage = props => {
     axiosPost('page', locale, sendData)
       .then(res => {
         if (res.status) {
-          toast.success(locale === 'ar' ? 'تم إضافة الصفحة بنجاح' : 'Page added successfully')
+          toast.success(messages.pageAddedSuccessfully)
           handleClose()
           setRefresh(prev => prev + 1)
         }
       })
       .catch(err => {
-        toast.error(locale === 'ar' ? 'حدث خطأ' : 'An error occurred')
+        toast.error(messages.ErrorOccurred)
       })
       .finally(_ => {
         setLoading(false)
@@ -128,9 +128,7 @@ const AddPage = props => {
         sx={{ '& .MuiDrawer-paper': { width: { xs: '70%', sm: '50%' } } }}
       >
         <Header>
-          <Typography variant='h5'>
-            {typeof open === 'boolean' ? (locale === 'ar' ? 'إضافة الصفحة' : 'Add Page') : open.name}
-          </Typography>
+          <Typography variant='h5'>{typeof open === 'boolean' ? messages.addPage : open.name}</Typography>
           <IconButton
             size='small'
             onClick={handleClose}
@@ -229,10 +227,10 @@ const AddPage = props => {
             />
             <Box sx={{ display: 'flex', alignItems: 'center' }} className='gap-4 justify-end py-4 mt-auto'>
               <LoadingButton type='submit' variant='contained' loading={loading}>
-                {locale === 'ar' ? 'ارسال' : 'Submit'}
+                {messages.submit}
               </LoadingButton>
               <Button variant='contained' color='secondary' onClick={handleClose}>
-                {locale === 'ar' ? 'إلغاء' : 'Cancel'}
+                {messages.cancel}
               </Button>
             </Box>
           </form>
