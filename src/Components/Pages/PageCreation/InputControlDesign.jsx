@@ -13,7 +13,9 @@ import {
   Typography,
   FormControl,
   InputLabel,
-  Tabs
+  Tabs,
+  Checkbox,
+  FormControlLabel
 } from '@mui/material'
 import { useEffect, useState } from 'react'
 import { styled } from '@mui/material/styles'
@@ -310,7 +312,9 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                       open.type === 'Email' ||
                       open.type === 'Password' ||
                       open.descriptionAr === 'multiple_select' ||
-                      open.type === 'LongText') && (
+                      open.type === 'LongText' ||
+                      open.type === 'ManyToMany' ||
+                      open.type === 'OneToOne') && (
                       <>
                         <TextField
                           fullWidth
@@ -1519,37 +1523,68 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                         <UnmountClosed isOpened={Boolean(showTrigger)}>
                           {open.key === 'button' ? (
                             <>
-                              <TextField
-                                fullWidth
-                                type='text'
-                                defaultValue={roles?.onMount?.href || ''}
-                                onBlur={e => {
-                                  const additional_fields = data.additional_fields ?? []
-                                  const findMyInput = additional_fields.find(inp => inp.key === open.id)
-                                  if (findMyInput) {
-                                    findMyInput.roles.onMount.href = e.target.value
-                                  } else {
-                                    const myEdit = {
-                                      key: open.id,
-                                      design: objectToCss(Css).replaceAll('NaN', ''),
-                                      roles: {
-                                        ...roles,
-                                        onMount: {
-                                          ...roles.onMount,
-                                          href: e.target.value
+                              <div className='mt-4 px-4'>
+                                <TextField
+                                  fullWidth
+                                  type='text'
+                                  defaultValue={roles?.onMount?.href || ''}
+                                  onBlur={e => {
+                                    const additional_fields = data.additional_fields ?? []
+                                    const findMyInput = additional_fields.find(inp => inp.key === open.id)
+                                    if (findMyInput) {
+                                      findMyInput.roles.onMount.href = e.target.value
+                                    } else {
+                                      const myEdit = {
+                                        key: open.id,
+                                        design: objectToCss(Css).replaceAll('NaN', ''),
+                                        roles: {
+                                          ...roles,
+                                          onMount: {
+                                            ...roles.onMount,
+                                            href: e.target.value
+                                          }
                                         }
                                       }
+                                      additional_fields.push(myEdit)
                                     }
-                                    additional_fields.push(myEdit)
+                                    onChange({ ...data, additional_fields: additional_fields })
+                                  }}
+                                  label={locale === 'ar' ? 'الرابط' : 'Href'}
+                                  variant='filled'
+                                />
+                                <FormControlLabel
+                                  control={
+                                    <Checkbox
+                                      checked={roles?.onMount?.print}
+                                      onChange={e => {
+                                        const additional_fields = data.additional_fields ?? []
+                                        const findMyInput = additional_fields.find(inp => inp.key === open.id)
+                                        if (findMyInput) {
+                                          findMyInput.roles.onMount.print = e.target.checked
+                                        } else {
+                                          const myEdit = {
+                                            key: open.id,
+                                            design: objectToCss(Css).replaceAll('NaN', ''),
+                                            roles: {
+                                              ...roles,
+                                              onMount: {
+                                                ...roles.onMount,
+                                                print: e.target.checked
+                                              }
+                                            }
+                                          }
+                                          additional_fields.push(myEdit)
+                                        }
+                                        onChange({ ...data, additional_fields: additional_fields })
+                                      }}
+                                    />
                                   }
-                                  onChange({ ...data, additional_fields: additional_fields })
-                                }}
-                                label={locale === 'ar' ? 'الرابط' : 'Href'}
-                                variant='filled'
-                              />
+                                  label={locale === 'ar' ? 'طباعة' : 'Print'}
+                                />
+                              </div>
                               <div className='mt-4'></div>
                               {roles?.onMount?.file ? (
-                                <div className='p-2 my-4 rounded border border-dashed border-main-color'>
+                                <div className='p-2 my-4 rounded border border-dashed border-main-color '>
                                   <div className='flex items-center justify-between'>
                                     <div className='flex items-center gap-2'>
                                       <div className='text-sm'>{roles?.onMount?.file?.replaceAll('/Uploads/', '')}</div>
@@ -1572,62 +1607,65 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                                 </div>
                               ) : (
                                 <>
-                                  {' '}
-                                  <Button
-                                    variant='outlined'
-                                    className='!mb-4'
-                                    component='label'
-                                    fullWidth
-                                    startIcon={<Icon icon='ph:upload-fill' fontSize='2.25rem' className='!text-2xl ' />}
-                                  >
-                                    <input
-                                      type='file'
-                                      hidden
-                                      name='json'
-                                      onChange={event => {
-                                        const file = event.target.files[0]
-                                        const loading = toast.loading(locale === 'ar' ? 'جاري الرفع' : 'Uploading...')
-                                        if (file) {
-                                          axiosPost(
-                                            'file/upload',
-                                            'en',
-                                            {
-                                              file: file
-                                            },
-                                            true
-                                          )
-                                            .then(res => {
-                                              if (res.status) {
-                                                const additional_fields = data.additional_fields ?? []
-                                                const findMyInput = additional_fields.find(inp => inp.key === open.id)
-                                                if (findMyInput) {
-                                                  findMyInput.roles.onMount.file = res.filePath.data
-                                                } else {
-                                                  const myEdit = {
-                                                    key: open.id,
-                                                    design: objectToCss(Css).replaceAll('NaN', ''),
-                                                    roles: {
-                                                      ...roles,
-                                                      onMount: {
-                                                        ...roles.onMount,
-                                                        file: res.filePath.data
+                                  <div className='px-4'>
+                                    <Button
+                                      variant='outlined'
+                                      className='!mb-4'
+                                      component='label'
+                                      fullWidth
+                                      startIcon={
+                                        <Icon icon='ph:upload-fill' fontSize='2.25rem' className='!text-2xl ' />
+                                      }
+                                    >
+                                      <input
+                                        type='file'
+                                        hidden
+                                        name='json'
+                                        onChange={event => {
+                                          const file = event.target.files[0]
+                                          const loading = toast.loading(locale === 'ar' ? 'جاري الرفع' : 'Uploading...')
+                                          if (file) {
+                                            axiosPost(
+                                              'file/upload',
+                                              'en',
+                                              {
+                                                file: file
+                                              },
+                                              true
+                                            )
+                                              .then(res => {
+                                                if (res.status) {
+                                                  const additional_fields = data.additional_fields ?? []
+                                                  const findMyInput = additional_fields.find(inp => inp.key === open.id)
+                                                  if (findMyInput) {
+                                                    findMyInput.roles.onMount.file = res.filePath.data
+                                                  } else {
+                                                    const myEdit = {
+                                                      key: open.id,
+                                                      design: objectToCss(Css).replaceAll('NaN', ''),
+                                                      roles: {
+                                                        ...roles,
+                                                        onMount: {
+                                                          ...roles.onMount,
+                                                          file: res.filePath.data
+                                                        }
                                                       }
                                                     }
+                                                    additional_fields.push(myEdit)
                                                   }
-                                                  additional_fields.push(myEdit)
+                                                  onChange({ ...data, additional_fields: additional_fields })
                                                 }
-                                                onChange({ ...data, additional_fields: additional_fields })
-                                              }
-                                            })
-                                            .finally(() => {
-                                              toast.dismiss(loading)
-                                            })
-                                          event.target.value = ''
-                                        }
-                                      }}
-                                    />
-                                    {locale === 'ar' ? 'رفع ملف' : 'upload File'}
-                                  </Button>
+                                              })
+                                              .finally(() => {
+                                                toast.dismiss(loading)
+                                              })
+                                            event.target.value = ''
+                                          }
+                                        }}
+                                      />
+                                      {locale === 'ar' ? 'رفع ملف' : 'upload File'}
+                                    </Button>
+                                  </div>
                                 </>
                               )}
 

@@ -1,40 +1,39 @@
-import React, { useMemo } from 'react';
-import useCollection from './useCollection';
-import useBackground from './useBackground';
-import useTable from './useTable';
-import useContainer from './useContainer';
-import useBox from './useBox';
-import useUploadImage from './useUploadImage';
-import useUploadVideo from './useUploadVideo';
-import useRichText from './useRichText';
-import useFlexControl from './useFlexControl';
-import useButton from './useButton';
-import useIconView from './useIconView';
-import useCart from './useCart';
-import slate from '@react-page/plugins-slate';
-import spacer from '@react-page/plugins-spacer';
-import '@react-page/plugins-slate/lib/index.css';
-import '@react-page/plugins-spacer/lib/index.css';
-import useProgressBar from './useProgressBar';
-import useOtp from './useOtp';
+import React, { useMemo } from 'react'
+import useCollection from './useCollection'
+import useBackground from './useBackground'
+import useTable from './useTable'
+import useContainer from './useContainer'
+import useBox from './useBox'
+import useUploadImage from './useUploadImage'
+import useUploadVideo from './useUploadVideo'
+import useRichText from './useRichText'
+import useFlexControl from './useFlexControl'
+import useButton from './useButton'
+import useIconView from './useIconView'
+import useCart from './useCart'
+import slate from '@react-page/plugins-slate'
+import spacer from '@react-page/plugins-spacer'
+import '@react-page/plugins-slate/lib/index.css'
+import '@react-page/plugins-spacer/lib/index.css'
+import useProgressBar from './useProgressBar'
+import useOtp from './useOtp'
 
 export default function useCellPlugins({ advancedEdit, locale, readOnly, buttonRef, workflowId }) {
   // Hooks Drag Drop Components
-  const { collection } = useCollection({ advancedEdit, locale, readOnly, buttonRef, workflowId });
-  const { backgroundPlugin } = useBackground({ locale, buttonRef });
-  const { table } = useTable({ advancedEdit, locale, buttonRef });
-  const { ContainerPlugin } = useContainer({ locale, buttonRef });
-  const { BoxControl } = useBox({ locale, buttonRef });
-  const { UploadImage } = useUploadImage({ locale, buttonRef });
-  const { UploadVideo } = useUploadVideo({ locale, buttonRef });
-  const { RichText } = useRichText({ locale, buttonRef });
-  const { ProgressBar } = useProgressBar({ locale, buttonRef });
-  const { Otp } = useOtp({ locale, buttonRef });
-  const { FlexControlCell } = useFlexControl({ locale, buttonRef });
-  const { ButtonCell } = useButton({ locale, buttonRef });
-  const { cartCell } = useCart({ locale, readOnly, buttonRef });
-  const { IconView } = useIconView({ locale, buttonRef });
-
+  const { collection } = useCollection({ advancedEdit, locale, readOnly, buttonRef, workflowId })
+  const { backgroundPlugin } = useBackground({ locale, buttonRef })
+  const { table } = useTable({ advancedEdit, locale, buttonRef })
+  const { ContainerPlugin } = useContainer({ locale, buttonRef })
+  const { BoxControl } = useBox({ locale, buttonRef })
+  const { UploadImage } = useUploadImage({ locale, buttonRef })
+  const { UploadVideo } = useUploadVideo({ locale, buttonRef })
+  const { RichText } = useRichText({ locale, buttonRef })
+  const { ProgressBar } = useProgressBar({ locale, buttonRef })
+  const { Otp } = useOtp({ locale, buttonRef })
+  const { FlexControlCell } = useFlexControl({ locale, buttonRef })
+  const { ButtonCell } = useButton({ locale, buttonRef })
+  const { cartCell } = useCart({ locale, readOnly, buttonRef })
+  const { IconView } = useIconView({ locale, buttonRef })
 
   const cellPlugins = useMemo(
     () => [
@@ -53,7 +52,7 @@ export default function useCellPlugins({ advancedEdit, locale, readOnly, buttonR
       ButtonCell,
       FlexControlCell,
       cartCell,
-      IconView,
+      IconView
     ],
     [
       backgroundPlugin,
@@ -64,12 +63,14 @@ export default function useCellPlugins({ advancedEdit, locale, readOnly, buttonR
       collection,
       table,
       RichText,
+      ProgressBar,
+      Otp,
       ButtonCell,
       FlexControlCell,
       cartCell,
-      IconView,
+      IconView
     ]
-  );
+  )
 
-  return { cellPlugins };
+  return { cellPlugins }
 }

@@ -123,22 +123,24 @@ const ReactPageEditor = ({ pageName, initialData, initialDataApi, workflowId }) 
     document.dispatchEvent(escEvent)
   }
 
+  useEffect(() => {
+    const handleClickEvent = e => {
+      console.log(e.target, e.target.closest('.react-page-cell-insert-new'))
+      if (e.target.closest('.react-page-cell-insert-new')) {
+        console.log('clicked')
+        handleClick()
+      }
+    }
+
+    document.body.addEventListener('mousedown', handleClickEvent)
+
+    return () => {
+      document.body.removeEventListener('mousedown', handleClickEvent)
+    }
+  }, [])
+
   return (
-    <div
-      className='relative'
-      onMouseDown={e => {
-        if (
-          !e.target.closest(
-            '.MuiPaper-root.MuiPaper-elevation.MuiPaper-elevation0.MuiDrawer-paper.MuiDrawer-paperAnchorBottom.MuiDrawer-paperAnchorDockedBottom'
-          )
-        ) {
-          handleClick()
-          console.log('clicked')
-        } else {
-          console.log('not clicked')
-        }
-      }}
-    >
+    <div className='relative'> 
       <div className='absolute z-0 invisible'>
         <button
           ref={buttonRef}

@@ -833,9 +833,7 @@ input:-webkit-autofill {
       23px -23px 0 -5px rgba(255, 255, 255, 0), -23px -23px 0 -5px rgba(255, 255, 255, 0);
   }
 }
-.Toastify__toast-container {
-  z-index: 11111111111111111 !important;
-}
+
 
 .objectVideo video {
   object-fit: cover !important;
@@ -1540,41 +1538,11 @@ sortable-list {
   }
 }
 
-.Toastify__toast-container {
-  @apply !z-[111111111111111111];
-}
 .Toastify__toast-container.controlrtl .Toastify__toast {
   direction: rtl !important;
 }
-.Toastify__toast-container {
-  @apply flex justify-center items-center flex-col;
-}
-.Toastify__toast {
-  width: fit-content;
-  margin-bottom: 10px !important;
-  padding: 5px !important;
-  border-radius: 20px !important;
-  min-height: 0px !important;
-}
-@media (max-width: 640px) {
-  .Toastify__toast {
-    margin: 0 20px 10px 15px;
-  }
-}
 
-.Toastify__toast-container {
-  top: 1em !important;
-  left: 50% !important;
-  transform: translateX(-50%) !important;
-}
-.Toastify__toast-container button {
-  display: none !important;
-}
-.Toastify__toast-body {
-  margin: 0 !important;
-  padding: 3px !important;
-  padding-bottom: 5px !important;
-}
+
 
 .bgGradient {
   background: #8a2387; /* fallback for old browsers */
@@ -1707,4 +1675,18 @@ li:has(:contains("Add blocks to page")), /* Modern browsers */
 li:contains("Add blocks to page") {
   /* jQuery pseudo-selector */
   display: none !important;
+}
+
+.control-date input,
+.control-date #calendar-icon {
+  display: none !important;
+}
+.control-date .react-datepicker-popper {
+  @apply !top-1/2 !-translate-y-1/2 !left-1/2 !-translate-x-1/2;
+}
+.control-date .react-datepicker {
+  display: flex;
+  justify-content: center;
+  align-items: start;
+  width: fit-content;
 }

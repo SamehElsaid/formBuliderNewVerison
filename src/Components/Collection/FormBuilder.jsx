@@ -412,7 +412,7 @@ const FormBuilder = ({ open, setOpen, setRefresh }) => {
                 <Select variant='filled' value={fieldType} onChange={e => setFieldType(e.target.value)}>
                   {fieldTypes.map(type => (
                     <MenuItem key={type} value={type}>
-                      {messages[type]}
+                      {type === 'multiple_select' ? messages.Search_Select : messages[type]}
                     </MenuItem>
                   ))}
                 </Select>
@@ -518,7 +518,6 @@ const FormBuilder = ({ open, setOpen, setRefresh }) => {
                 <FormControlLabel
                   control={
                     <Checkbox
-                      disabled={fieldType === 'radio'}
                       checked={validations.required}
                       onChange={e =>
                         setValidations({

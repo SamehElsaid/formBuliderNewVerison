@@ -8,7 +8,7 @@ export default function FlexBoxControl({ data, onChange, buttonRef }) {
 
   return (
     <div style={{ padding: '10px' }}>
-      <CloseNav text={locale === 'ar' ? 'اختيار المحتوى' : 'Content'} buttonRef={buttonRef} />
+      <CloseNav text={locale === 'ar' ? 'محتوى' : 'Box'} buttonRef={buttonRef} />
 
       <TextField
         fullWidth

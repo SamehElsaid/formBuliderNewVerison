@@ -14,6 +14,7 @@ import FormEdit from 'src/Components/FormEdit'
 import GetCollectionName from 'src/Components/GetCollectionName'
 import IconifyIcon from 'src/Components/icon'
 import TableEdit from 'src/Components/TableEdit/TableEdit'
+import ViewField from 'src/Components/ViewFiled'
 
 function AddField() {
   const { locale, messages } = useIntl()
@@ -24,6 +25,7 @@ function AddField() {
   const [refresh, setRefresh] = useState(0)
   const [startSearch, setStartSearch] = useState('')
   const [edit, setEdit] = useState(null)
+  const [view, setView] = useState(null)
 
   const {
     query: { addFiles }
@@ -141,12 +143,22 @@ function AddField() {
     },
     {
       flex: 0.1,
-      minWidth: 100,
+      minWidth: 130,
       field: 'action',
       sortable: false,
       headerName: messages.actions,
       renderCell: params => (
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          <Tooltip title={locale === 'ar' ? 'عرض الحقل' : 'View Field'}>
+            <IconButton
+              size='small'
+              onClick={e => {
+                setView(params.row)
+              }}
+            >
+              <IconifyIcon icon='tabler:eye' />
+            </IconButton>
+          </Tooltip>
           <Tooltip title={locale === 'ar' ? 'تعديل الحقل' : 'Edit Field'}>
             <IconButton
               size='small'
@@ -233,7 +245,7 @@ function AddField() {
     <div>
       <FormBuilder open={open} setOpen={setOpen} setRefresh={setRefresh} />
       <FormEdit open={edit} setOpen={setEdit} setData={setData} />
-
+      <ViewField open={view} setOpen={setView} />
       <Card className='w-[100%]  mb-5 py-4 '>
         <CardContent
           className='h-full flex-col  md:flex-row gap-2'

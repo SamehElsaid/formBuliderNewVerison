@@ -5,7 +5,6 @@ import Link from 'next/link'
 function NewElement({ input, onBlur, value, setValue, roles, onChangeEvent, disabledBtn, isDisable, readOnly }) {
   const { locale } = useIntl()
 
-
   const handleCheckboxChange = e => {
     try {
       if (onChangeEvent) {
@@ -34,6 +33,9 @@ function NewElement({ input, onBlur, value, setValue, roles, onChangeEvent, disa
 
   const handleClick = e => {
     // if()
+    if (roles?.onMount?.print) {
+      window.print()
+    }
     if (roles?.onMount?.file) {
       const fileUrl = roles?.onMount?.file.replace('/Uploads/', process.env.API_URL + '/file/download/') // Replace with your file URL
 
@@ -128,6 +130,9 @@ function NewElement({ input, onBlur, value, setValue, roles, onChangeEvent, disa
         )}
       </div>
     )
+  }
+  if (input.key === 'text') {
+    return <div className='text-element'>{locale === 'ar' ? input.name_ar : input.name_en}</div>
   }
   if (input.key === 'button') {
     if (isValidURL(roles?.onMount?.href)) {

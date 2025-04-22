@@ -84,6 +84,10 @@ export const getTypeFromCollection = (type, description) => {
   if (type === 'OneToOne' && description !== 'select') {
     return 'radio'
   }
+
+  if (type === 'ManyToMany' && description === 'multiple_select') {
+    return 'Search_Select'
+  }
   if (type === 'ManyToMany') {
     return 'checkbox'
   }
@@ -434,23 +438,23 @@ input {
 
   if (type === 'button') {
     return `.btn{
-  background-color: #009fff;
-  color: white;
-  padding: 10px 20px;
-  border-radius: 5px;
-  width:100%;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-.btn:hover{
-  background-color: #009dff87;
-}
-.btn:disabled{
-  background-color: #009fff87 !important;
-  cursor: not-allowed !important;
-}
+              background-color: #009fff;
+              color: white;
+              padding: 10px 20px;
+              border-radius: 5px;
+              width:100%;
+              cursor: pointer;
+              transition: all 0.3s ease;
+              }
+              .btn:hover{
+                background-color: #009dff87;
+              }
+              .btn:disabled{
+                background-color: #009fff87 !important;
+                cursor: not-allowed !important;
+              }
 
-`
+              `
   }
   if (type === 'multiple_select') {
     return `
@@ -501,6 +505,16 @@ color:#555;
   background: #009fff;
   color: #fff;
 }
+
+    `
+  }
+  if (type === 'text') {
+    return `
+  .text-element{
+    color: #555;
+    font-size: 14px;
+    font-weight: 500;
+  }
 
     `
   }
@@ -632,4 +646,3 @@ export const extractValueAndUnit = cssValue => {
 export const VaildId = name => {
   return name.replaceAll(' ', '').replaceAll('[', '').replaceAll(']', '').replaceAll('/', '')
 }
-

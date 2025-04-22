@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect, useMemo, forwardRef, useRef } from 'react'
-import { Autocomplete, Button, FormLabel, IconButton, InputAdornment, TextField } from '@mui/material'
+import { Autocomplete, Button, Dialog, FormLabel, IconButton, InputAdornment, TextField } from '@mui/material'
 import { useIntl } from 'react-intl'
 import { isPossiblePhoneNumber } from 'react-phone-number-input'
 import DatePicker from 'react-datepicker'
@@ -8,7 +8,6 @@ import ar from 'date-fns/locale/ar-EG'
 import en from 'date-fns/locale/en-US'
 import { axiosGet, axiosPost } from 'src/Components/axiosCall'
 import { Icon } from '@iconify/react'
-import Collapse from '@kunukn/react-collapse'
 import { BsPaperclip, BsTrash } from 'react-icons/bs'
 import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'
 import { FaCalendarAlt } from 'react-icons/fa'
@@ -48,6 +47,7 @@ export default function DisplayField({
   const [oldSelectedOptions, setOldSelectedOptions] = useState([])
   const xComponentProps = useMemo(() => input?.options?.uiSchema?.xComponentProps ?? {}, [input])
   const [fileName, setFile] = useState('')
+  const [isOpen, setIsOpen] = useState(false)
   const [regex, setRegex] = useState(roles?.regex?.regex)
 
   const formatDate = (value, format) => {
@@ -78,7 +78,7 @@ export default function DisplayField({
       setShowPassword(false)
       setValidations({})
     } else {
-      if (input.type !== 'new_element') {
+      if (input.type != 'new_element') {
         const dataValidations = {}
         input.validationData.forEach(item => {
           dataValidations[item.ruleType] = item.parameters
@@ -92,18 +92,18 @@ export default function DisplayField({
   const [lastValue, setLastValue] = useState(null)
 
   useEffect(() => {
-    if (roles?.trigger?.typeOfValidation === 'filter' && !loading) {
-      if (dataRef?.current?.[roles?.trigger?.selectedField] !== undefined) {
-        const FilterWithKey = roles?.trigger?.currentField === 'id' ? 'Id' : roles?.trigger?.currentField
-        if (input?.type === 'ManyToMany') {
+    if (roles?.trigger?.typeOfValidation == 'filter' && !loading) {
+      if (dataRef?.current?.[roles?.trigger?.selectedField] != undefined) {
+        const FilterWithKey = roles?.trigger?.currentField == 'id' ? 'Id' : roles?.trigger?.currentField
+        if (input?.type == 'ManyToMany') {
           setValue([])
         }
         setSelectedOptions(
           oldSelectedOptions.filter(ele => {
-            if (roles?.trigger?.isEqual === 'equal') {
-              return ele?.[FilterWithKey] === dataRef.current?.[roles?.trigger?.selectedField]
+            if (roles?.trigger?.isEqual == 'equal') {
+              return ele?.[FilterWithKey] == dataRef.current?.[roles?.trigger?.selectedField]
             } else {
-              return ele?.[FilterWithKey] !== dataRef.current?.[roles?.trigger?.selectedField]
+              return ele?.[FilterWithKey] != dataRef.current?.[roles?.trigger?.selectedField]
             }
           })
         )
@@ -112,12 +112,12 @@ export default function DisplayField({
 
     // ! Start disable Control
 
-    if (roles?.trigger?.typeOfValidation === 'disable' && !roles?.trigger?.mainValue && !loading) {
-      if (dataRef?.current?.[roles?.trigger?.selectedField]?.length !== 0) {
+    if (roles?.trigger?.typeOfValidation == 'disable' && !roles?.trigger?.mainValue && !loading) {
+      if (dataRef?.current?.[roles?.trigger?.selectedField]?.length != 0) {
         setIsDisable('disabled')
       } else {
         setIsDisable(prev => {
-          if (roles?.onMount?.type === 'hide') {
+          if (roles?.onMount?.type == 'hide') {
             return 'hidden'
           }
 
@@ -129,8 +129,8 @@ export default function DisplayField({
     // End disable Control
 
     // ! Start enable Control
-    if (roles?.trigger?.typeOfValidation === 'enable' && roles?.trigger?.mainValue && !loading) {
-      if (input.fieldCategory === 'Basic') {
+    if (roles?.trigger?.typeOfValidation == 'enable' && roles?.trigger?.mainValue && !loading) {
+      if (input.fieldCategory == 'Basic') {
         if (roles?.trigger?.parentKey) {
           if (dataRef?.current?.[roles?.trigger?.selectedField]) {
             axiosGet(
@@ -139,10 +139,10 @@ export default function DisplayField({
               if (res.status) {
                 const data = res.entities?.[0] ?? false
                 if (data) {
-                  if (roles?.trigger.isEqual === 'equal') {
-                    if (data?.[roles?.trigger?.triggerKey] !== roles?.trigger?.mainValue) {
+                  if (roles?.trigger.isEqual == 'equal') {
+                    if (data?.[roles?.trigger?.triggerKey] != roles?.trigger?.mainValue) {
                       setIsDisable(prev => {
-                        if (roles?.onMount?.type === 'disable') {
+                        if (roles?.onMount?.type == 'disable') {
                           return 'disabled'
                         }
 
@@ -152,9 +152,9 @@ export default function DisplayField({
                       setIsDisable('enable')
                     }
                   } else {
-                    if (data?.[roles?.trigger?.triggerKey] === roles?.trigger?.mainValue) {
+                    if (data?.[roles?.trigger?.triggerKey] == roles?.trigger?.mainValue) {
                       setIsDisable(prev => {
-                        if (roles?.onMount?.type === 'disable') {
+                        if (roles?.onMount?.type == 'disable') {
                           return 'disabled'
                         }
 
@@ -169,10 +169,10 @@ export default function DisplayField({
             })
           }
         } else {
-          if (roles?.trigger.isEqual === 'equal') {
-            if (dataRef?.current?.[roles?.trigger?.selectedField] !== roles?.trigger?.mainValue) {
+          if (roles?.trigger.isEqual == 'equal') {
+            if (dataRef?.current?.[roles?.trigger?.selectedField] != roles?.trigger?.mainValue) {
               setIsDisable(prev => {
-                if (roles?.onMount?.type === 'disable') {
+                if (roles?.onMount?.type == 'disable') {
                   return 'disabled'
                 }
 
@@ -182,9 +182,9 @@ export default function DisplayField({
               setIsDisable('enable')
             }
           } else {
-            if (dataRef?.current?.[roles?.trigger?.selectedField] === roles?.trigger?.mainValue) {
+            if (dataRef?.current?.[roles?.trigger?.selectedField] == roles?.trigger?.mainValue) {
               setIsDisable(prev => {
-                if (roles?.onMount?.type === 'disable') {
+                if (roles?.onMount?.type == 'disable') {
                   return 'disabled'
                 }
 
@@ -204,10 +204,10 @@ export default function DisplayField({
               if (res.status) {
                 const data = res.entities?.[0] ?? false
                 if (data) {
-                  if (roles?.trigger.isEqual === 'equal') {
-                    if (data?.[roles?.trigger?.triggerKey] !== roles?.trigger?.mainValue) {
+                  if (roles?.trigger.isEqual == 'equal') {
+                    if (data?.[roles?.trigger?.triggerKey] != roles?.trigger?.mainValue) {
                       setIsDisable(prev => {
-                        if (roles?.onMount?.type === 'disable') {
+                        if (roles?.onMount?.type == 'disable') {
                           return 'disabled'
                         }
 
@@ -217,9 +217,9 @@ export default function DisplayField({
                       setIsDisable('enable')
                     }
                   } else {
-                    if (data?.[roles?.trigger?.triggerKey] === roles?.trigger?.mainValue) {
+                    if (data?.[roles?.trigger?.triggerKey] == roles?.trigger?.mainValue) {
                       setIsDisable(prev => {
-                        if (roles?.onMount?.type === 'disable') {
+                        if (roles?.onMount?.type == 'disable') {
                           return 'disabled'
                         }
 
@@ -234,10 +234,10 @@ export default function DisplayField({
             })
           }
         } else {
-          if (roles?.trigger.isEqual === 'equal') {
-            if (dataRef?.current?.[roles?.trigger?.selectedField] !== roles?.trigger?.mainValue) {
+          if (roles?.trigger.isEqual == 'equal') {
+            if (dataRef?.current?.[roles?.trigger?.selectedField] != roles?.trigger?.mainValue) {
               setIsDisable(prev => {
-                if (roles?.onMount?.type === 'disable') {
+                if (roles?.onMount?.type == 'disable') {
                   return 'disabled'
                 }
 
@@ -247,9 +247,9 @@ export default function DisplayField({
               setIsDisable('enable')
             }
           } else {
-            if (dataRef?.current?.[roles?.trigger?.selectedField] === roles?.trigger?.mainValue) {
+            if (dataRef?.current?.[roles?.trigger?.selectedField] == roles?.trigger?.mainValue) {
               setIsDisable(prev => {
-                if (roles?.onMount?.type === 'disable') {
+                if (roles?.onMount?.type == 'disable') {
                   return 'disabled'
                 }
 
@@ -262,12 +262,12 @@ export default function DisplayField({
         }
       }
     }
-    if (roles?.trigger?.typeOfValidation === 'enable' && !roles?.trigger?.mainValue && !loading) {
-      if (dataRef?.current?.[roles?.trigger?.selectedField]?.length !== 0) {
+    if (roles?.trigger?.typeOfValidation == 'enable' && !roles?.trigger?.mainValue && !loading) {
+      if (dataRef?.current?.[roles?.trigger?.selectedField]?.length != 0) {
         setIsDisable('enable')
       } else {
         setIsDisable(prev => {
-          if (roles?.onMount?.type === 'disable') {
+          if (roles?.onMount?.type == 'disable') {
             return 'disabled'
           }
 
@@ -279,8 +279,8 @@ export default function DisplayField({
     //  End enable Control
 
     // ! Start Empty Control
-    if (roles?.trigger?.typeOfValidation === 'empty' && roles?.trigger?.mainValue && !loading) {
-      if (input.fieldCategory === 'Basic') {
+    if (roles?.trigger?.typeOfValidation == 'empty' && roles?.trigger?.mainValue && !loading) {
+      if (input.fieldCategory == 'Basic') {
         if (roles?.trigger?.parentKey) {
           if (dataRef?.current?.[roles?.trigger?.selectedField]) {
             axiosGet(
@@ -289,11 +289,11 @@ export default function DisplayField({
               if (res.status) {
                 const data = res.entities?.[0] ?? false
                 if (data) {
-                  if (roles?.trigger.isEqual === 'equal') {
-                    if (data?.[roles?.trigger?.triggerKey] === roles?.trigger?.mainValue) {
+                  if (roles?.trigger.isEqual == 'equal') {
+                    if (data?.[roles?.trigger?.triggerKey] == roles?.trigger?.mainValue) {
                       setLastValue(true)
                       if (!lastValue) {
-                        if (typeof value === 'object') {
+                        if (typeof value == 'object') {
                           setValue([])
                         } else {
                           setValue('')
@@ -303,8 +303,8 @@ export default function DisplayField({
                       setLastValue(false)
                     }
                   } else {
-                    if (data?.[roles?.trigger?.triggerKey] !== roles?.trigger?.mainValue) {
-                      if (typeof value === 'object') {
+                    if (data?.[roles?.trigger?.triggerKey] != roles?.trigger?.mainValue) {
+                      if (typeof value == 'object') {
                         setValue([])
                       } else {
                         setValue('')
@@ -313,8 +313,8 @@ export default function DisplayField({
                   }
                 }
               } else {
-                if (roles?.trigger.isEqual !== 'equal') {
-                  if (typeof value === 'object') {
+                if (roles?.trigger.isEqual != 'equal') {
+                  if (typeof value == 'object') {
                     setValue([])
                   } else {
                     setValue('')
@@ -323,8 +323,8 @@ export default function DisplayField({
               }
             })
           } else {
-            if (roles?.trigger.isEqual !== 'equal') {
-              if (typeof value === 'object') {
+            if (roles?.trigger.isEqual != 'equal') {
+              if (typeof value == 'object') {
                 setValue([])
               } else {
                 setValue('')
@@ -332,11 +332,11 @@ export default function DisplayField({
             }
           }
         } else {
-          if (roles?.trigger.isEqual === 'equal') {
-            if (dataRef?.current?.[roles?.trigger?.selectedField] === roles?.trigger?.mainValue) {
+          if (roles?.trigger.isEqual == 'equal') {
+            if (dataRef?.current?.[roles?.trigger?.selectedField] == roles?.trigger?.mainValue) {
               setLastValue(true)
               if (!lastValue) {
-                if (typeof value === 'object') {
+                if (typeof value == 'object') {
                   setValue([])
                 } else {
                   setValue('')
@@ -346,8 +346,8 @@ export default function DisplayField({
               setLastValue(false)
             }
           } else {
-            if (dataRef?.current?.[roles?.trigger?.selectedField] !== roles?.trigger?.mainValue) {
-              if (typeof value === 'object') {
+            if (dataRef?.current?.[roles?.trigger?.selectedField] != roles?.trigger?.mainValue) {
+              if (typeof value == 'object') {
                 setValue([])
               } else {
                 setValue('')
@@ -364,11 +364,11 @@ export default function DisplayField({
               if (res.status) {
                 const data = res.entities?.[0] ?? false
                 if (data) {
-                  if (roles?.trigger.isEqual === 'equal') {
-                    if (data?.[roles?.trigger?.triggerKey] === roles?.trigger?.mainValue) {
+                  if (roles?.trigger.isEqual == 'equal') {
+                    if (data?.[roles?.trigger?.triggerKey] == roles?.trigger?.mainValue) {
                       setLastValue(true)
                       if (!lastValue) {
-                        if (typeof value === 'object') {
+                        if (typeof value == 'object') {
                           setValue([])
                         } else {
                           setValue('')
@@ -378,8 +378,8 @@ export default function DisplayField({
                       setLastValue(false)
                     }
                   } else {
-                    if (data?.[roles?.trigger?.triggerKey] !== roles?.trigger?.mainValue) {
-                      if (typeof value === 'object') {
+                    if (data?.[roles?.trigger?.triggerKey] != roles?.trigger?.mainValue) {
+                      if (typeof value == 'object') {
                         setValue([])
                       } else {
                         setValue('')
@@ -388,8 +388,8 @@ export default function DisplayField({
                   }
                 }
               } else {
-                if (roles?.trigger.isEqual !== 'equal') {
-                  if (typeof value === 'object') {
+                if (roles?.trigger.isEqual != 'equal') {
+                  if (typeof value == 'object') {
                     setValue([])
                   } else {
                     setValue('')
@@ -398,8 +398,8 @@ export default function DisplayField({
               }
             })
           } else {
-            if (roles?.trigger.isEqual !== 'equal') {
-              if (typeof value === 'object') {
+            if (roles?.trigger.isEqual != 'equal') {
+              if (typeof value == 'object') {
                 setValue([])
               } else {
                 setValue('')
@@ -407,11 +407,11 @@ export default function DisplayField({
             }
           }
         } else {
-          if (roles?.trigger.isEqual === 'equal') {
-            if (dataRef?.current?.[roles?.trigger?.selectedField] === roles?.trigger?.mainValue) {
+          if (roles?.trigger.isEqual == 'equal') {
+            if (dataRef?.current?.[roles?.trigger?.selectedField] == roles?.trigger?.mainValue) {
               setLastValue(true)
               if (!lastValue) {
-                if (typeof value === 'object') {
+                if (typeof value == 'object') {
                   setValue([])
                 } else {
                   setValue('')
@@ -421,8 +421,8 @@ export default function DisplayField({
               setLastValue(false)
             }
           } else {
-            if (dataRef?.current?.[roles?.trigger?.selectedField] !== roles?.trigger?.mainValue) {
-              if (typeof value === 'object') {
+            if (dataRef?.current?.[roles?.trigger?.selectedField] != roles?.trigger?.mainValue) {
+              if (typeof value == 'object') {
                 setValue([])
               } else {
                 setValue('')
@@ -433,10 +433,10 @@ export default function DisplayField({
       }
     }
 
-    if (roles?.trigger?.typeOfValidation === 'empty' && !roles?.trigger?.mainValue && !loading) {
+    if (roles?.trigger?.typeOfValidation == 'empty' && !roles?.trigger?.mainValue && !loading) {
       setLastValue(dataRef?.current?.[roles?.trigger?.selectedField])
-      if (dataRef?.current?.[roles?.trigger?.selectedField] !== lastValue) {
-        if (typeof value === 'object') {
+      if (dataRef?.current?.[roles?.trigger?.selectedField] != lastValue) {
+        if (typeof value == 'object') {
           setValue([])
         } else {
           setValue('')
@@ -447,8 +447,8 @@ export default function DisplayField({
     //  End Empty Control
 
     // ! Start hidden Control
-    if (roles?.trigger?.typeOfValidation === 'hidden' && roles?.trigger?.mainValue && !loading) {
-      if (input.fieldCategory === 'Basic') {
+    if (roles?.trigger?.typeOfValidation == 'hidden' && roles?.trigger?.mainValue && !loading) {
+      if (input.fieldCategory == 'Basic') {
         if (roles?.trigger?.parentKey) {
           if (dataRef?.current?.[roles?.trigger?.selectedField]) {
             axiosGet(
@@ -457,14 +457,14 @@ export default function DisplayField({
               if (res.status) {
                 const data = res.entities?.[0] ?? false
                 if (data) {
-                  if (roles?.trigger.isEqual === 'equal') {
-                    if (data?.[roles?.trigger?.triggerKey] !== roles?.trigger?.mainValue) {
+                  if (roles?.trigger.isEqual == 'equal') {
+                    if (data?.[roles?.trigger?.triggerKey] != roles?.trigger?.mainValue) {
                       setIsDisable(null)
                     } else {
                       setIsDisable('hidden')
                     }
                   } else {
-                    if (data?.[roles?.trigger?.triggerKey] === roles?.trigger?.mainValue) {
+                    if (data?.[roles?.trigger?.triggerKey] == roles?.trigger?.mainValue) {
                       setIsDisable(null)
                     } else {
                       setIsDisable('hidden')
@@ -474,19 +474,19 @@ export default function DisplayField({
               }
             })
           } else {
-            if (roles?.trigger?.isEqual !== 'equal') {
+            if (roles?.trigger?.isEqual != 'equal') {
               setIsDisable('hidden')
             }
           }
         } else {
-          if (roles?.trigger.isEqual === 'equal') {
-            if (dataRef?.current?.[roles?.trigger?.selectedField] !== roles?.trigger?.mainValue) {
+          if (roles?.trigger.isEqual == 'equal') {
+            if (dataRef?.current?.[roles?.trigger?.selectedField] != roles?.trigger?.mainValue) {
               setIsDisable(null)
             } else {
               setIsDisable('hidden')
             }
           } else {
-            if (dataRef?.current?.[roles?.trigger?.selectedField] === roles?.trigger?.mainValue) {
+            if (dataRef?.current?.[roles?.trigger?.selectedField] == roles?.trigger?.mainValue) {
               setIsDisable(null)
             } else {
               setIsDisable('hidden')
@@ -502,14 +502,14 @@ export default function DisplayField({
               if (res.status) {
                 const data = res.entities?.[0] ?? false
                 if (data) {
-                  if (roles?.trigger.isEqual === 'equal') {
-                    if (data?.[roles?.trigger?.triggerKey] !== roles?.trigger?.mainValue) {
+                  if (roles?.trigger.isEqual == 'equal') {
+                    if (data?.[roles?.trigger?.triggerKey] != roles?.trigger?.mainValue) {
                       setIsDisable(null)
                     } else {
                       setIsDisable('hidden')
                     }
                   } else {
-                    if (data?.[roles?.trigger?.triggerKey] === roles?.trigger?.mainValue) {
+                    if (data?.[roles?.trigger?.triggerKey] == roles?.trigger?.mainValue) {
                       setIsDisable(null)
                     } else {
                       setIsDisable('hidden')
@@ -520,14 +520,14 @@ export default function DisplayField({
             })
           }
         } else {
-          if (roles?.trigger.isEqual === 'equal') {
-            if (dataRef?.current?.[roles?.trigger?.selectedField] !== roles?.trigger?.mainValue) {
+          if (roles?.trigger.isEqual == 'equal') {
+            if (dataRef?.current?.[roles?.trigger?.selectedField] != roles?.trigger?.mainValue) {
               setIsDisable(null)
             } else {
               setIsDisable('hidden')
             }
           } else {
-            if (dataRef?.current?.[roles?.trigger?.selectedField] === roles?.trigger?.mainValue) {
+            if (dataRef?.current?.[roles?.trigger?.selectedField] == roles?.trigger?.mainValue) {
               setIsDisable(null)
             } else {
               setIsDisable('hidden')
@@ -536,12 +536,12 @@ export default function DisplayField({
         }
       }
     }
-    if (roles?.trigger?.typeOfValidation === 'hidden' && !roles?.trigger?.mainValue && !loading) {
-      if (dataRef?.current?.[roles?.trigger?.selectedField]?.length !== 0) {
+    if (roles?.trigger?.typeOfValidation == 'hidden' && !roles?.trigger?.mainValue && !loading) {
+      if (dataRef?.current?.[roles?.trigger?.selectedField]?.length != 0) {
         setIsDisable('hidden')
       } else {
         setIsDisable(prev => {
-          if (roles?.onMount?.type === 'hide') {
+          if (roles?.onMount?.type == 'hide') {
             return 'hidden'
           }
 
@@ -553,8 +553,8 @@ export default function DisplayField({
     //  End hidden Control
 
     // ! Start Visible Control
-    if (roles?.trigger?.typeOfValidation === 'visible' && roles?.trigger?.mainValue && !loading) {
-      if (input.fieldCategory === 'Basic') {
+    if (roles?.trigger?.typeOfValidation == 'visible' && roles?.trigger?.mainValue && !loading) {
+      if (input.fieldCategory == 'Basic') {
         if (roles?.trigger?.parentKey) {
           if (dataRef?.current?.[roles?.trigger?.selectedField]) {
             axiosGet(
@@ -563,14 +563,14 @@ export default function DisplayField({
               if (res.status) {
                 const data = res.entities?.[0] ?? false
                 if (data) {
-                  if (roles?.trigger.isEqual === 'equal ') {
-                    if (data?.[roles?.trigger?.triggerKey].toLowerCase() === roles?.trigger?.mainValue.toLowerCase()) {
+                  if (roles?.trigger.isEqual == 'equal ') {
+                    if (data?.[roles?.trigger?.triggerKey].toLowerCase() == roles?.trigger?.mainValue.toLowerCase()) {
                       setIsDisable(null)
                     } else {
                       setIsDisable('hidden')
                     }
                   } else {
-                    if (data?.[roles?.trigger?.triggerKey] !== roles?.trigger?.mainValue) {
+                    if (data?.[roles?.trigger?.triggerKey] != roles?.trigger?.mainValue) {
                       setIsDisable(null)
                     } else {
                       setIsDisable('hidden')
@@ -581,14 +581,14 @@ export default function DisplayField({
             })
           }
         } else {
-          if (roles?.trigger.isEqual === 'equal') {
-            if (dataRef?.current?.[roles?.trigger?.selectedField] === roles?.trigger?.mainValue) {
+          if (roles?.trigger.isEqual == 'equal') {
+            if (dataRef?.current?.[roles?.trigger?.selectedField] == roles?.trigger?.mainValue) {
               setIsDisable(null)
             } else {
               setIsDisable('hidden')
             }
           } else {
-            if (dataRef?.current?.[roles?.trigger?.selectedField] !== roles?.trigger?.mainValue) {
+            if (dataRef?.current?.[roles?.trigger?.selectedField] != roles?.trigger?.mainValue) {
               setIsDisable(null)
             } else {
               setIsDisable('hidden')
@@ -604,14 +604,14 @@ export default function DisplayField({
               if (res.status) {
                 const data = res.entities?.[0] ?? false
                 if (data) {
-                  if (roles?.trigger.isEqual === 'equal') {
-                    if (data?.[roles?.trigger?.triggerKey].toLowerCase() === roles?.trigger?.mainValue.toLowerCase()) {
+                  if (roles?.trigger.isEqual == 'equal') {
+                    if (data?.[roles?.trigger?.triggerKey].toLowerCase() == roles?.trigger?.mainValue.toLowerCase()) {
                       setIsDisable(null)
                     } else {
                       setIsDisable('hidden')
                     }
                   } else {
-                    if (data?.[roles?.trigger?.triggerKey] !== roles?.trigger?.mainValue) {
+                    if (data?.[roles?.trigger?.triggerKey] != roles?.trigger?.mainValue) {
                       setIsDisable(null)
                     } else {
                       setIsDisable('hidden')
@@ -622,14 +622,14 @@ export default function DisplayField({
             })
           }
         } else {
-          if (roles?.trigger.isEqual === 'equal') {
-            if (dataRef?.current?.[roles?.trigger?.selectedField] === roles?.trigger?.mainValue) {
+          if (roles?.trigger.isEqual == 'equal') {
+            if (dataRef?.current?.[roles?.trigger?.selectedField] == roles?.trigger?.mainValue) {
               setIsDisable(null)
             } else {
               setIsDisable('hidden')
             }
           } else {
-            if (dataRef?.current?.[roles?.trigger?.selectedField] !== roles?.trigger?.mainValue) {
+            if (dataRef?.current?.[roles?.trigger?.selectedField] != roles?.trigger?.mainValue) {
               setIsDisable(null)
             } else {
               setIsDisable('hidden')
@@ -638,12 +638,12 @@ export default function DisplayField({
         }
       }
     }
-    if (roles?.trigger?.typeOfValidation === 'visible' && !roles?.trigger?.mainValue && !loading) {
-      if (dataRef?.current?.[roles?.trigger?.selectedField]?.length !== 0) {
+    if (roles?.trigger?.typeOfValidation == 'visible' && !roles?.trigger?.mainValue && !loading) {
+      if (dataRef?.current?.[roles?.trigger?.selectedField]?.length != 0) {
         setIsDisable('visible')
       } else {
         setIsDisable(prev => {
-          if (roles?.onMount?.type === 'hide') {
+          if (roles?.onMount?.type == 'hide') {
             return 'hidden'
           }
 
@@ -660,7 +660,7 @@ export default function DisplayField({
       return
     }
 
-    if (roles?.event?.onUnmount === 'async function Action(e, args) {\n  // write your code here\n}') {
+    if (roles?.event?.onUnmount == 'async function Action(e, args) {\n  // write your code here\n}') {
       return
     }
 
@@ -679,25 +679,25 @@ export default function DisplayField({
   }, [roles])
 
   useEffect(() => {
-    if (findValue || findValue === '') {
+    if (findValue || findValue == '') {
       setValue(findValue)
-      if (input?.type === 'date') {
+      if (input?.type == 'date') {
         setValue(new Date(findValue))
       }
     } else {
-      if (input?.type === 'ManyToMany') {
+      if (input?.type == 'ManyToMany') {
         setValue([])
       }
-      if (input?.type === 'date') {
+      if (input?.type == 'date') {
         setValue(new Date())
       }
     }
   }, [input, findValue])
 
   useEffect(() => {
-    if (reload !== 0) {
+    if (reload != 0) {
       setValue('')
-      if (input?.type === 'ManyToMany') {
+      if (input?.type == 'ManyToMany') {
         setValue([])
       }
       setRegex('')
@@ -711,13 +711,13 @@ export default function DisplayField({
   useEffect(() => {
     if (!loading) {
       setTimeout(() => {
-        if (roles?.onMount?.type === 'disable') {
+        if (roles?.onMount?.type == 'disable') {
           setIsDisable('disabled')
         }
-        if (roles?.onMount?.type === 'enable') {
+        if (roles?.onMount?.type == 'enable') {
           setIsDisable('enable')
         }
-        if (roles?.onMount?.type === 'hide') {
+        if (roles?.onMount?.type == 'hide') {
           setIsDisable('hidden')
         }
 
@@ -740,35 +740,43 @@ export default function DisplayField({
         evaluatedFn(e)
       }
     } catch {}
-
+ 
     setDirty(true)
     let isTypeNew = true
-    if (input?.type === 'ManyToMany') {
+    if (input?.type == 'ManyToMany') {
       isTypeNew = false
     }
-    if (input?.type === 'date') {
+    if (input?.type == 'date') {
       isTypeNew = false
     }
 
     let newData = value
-    if (input?.type === 'ManyToMany') {
-      if (input.descriptionAr === 'multiple_select') {
-        setValue(newValue)
-        newData = newValue
+    if (input?.type == 'ManyToMany') {
+      if (input.descriptionAr == 'multiple_select') {
+        const maxLength = validations?.MaxLength?.maxLength ?? 9999999999
+        if (newValue.length > +maxLength) {
+          const newSelection = [...newValue.slice(0, maxLength - 1), newValue.at(-1)]
+
+          setValue(newSelection)
+          newData = newSelection
+        } else {
+          setValue(newValue)
+          newData = newValue
+        }
       } else {
-        setValue(e.target.checked ? [...value, e.target.value] : value.filter(v => v !== e.target.value))
-        newData = e.target.checked ? [...value, e.target.value] : value.filter(v => v !== e.target.value)
+        setValue(e.target.checked ? [...value, e.target.value] : value.filter(v => v != e.target.value))
+        newData = e.target.checked ? [...value, e.target.value] : value.filter(v => v != e.target.value)
       }
     } else {
-      if (input?.type === 'Date') {
+      if (input?.type == 'Date') {
         setValue(new Date(e))
       } else {
-        input.type === 'Number' ? setValue(+e.target.value) : setValue(e.target.value)
+        input.type == 'Number' ? setValue(+e.target.value) : setValue(e.target.value)
       }
     }
 
     if (dirty) {
-      if (validations.Required && e?.target?.value?.length === 0 && isTypeNew) {
+      if (validations.Required && e?.target?.value?.length == 0 && isTypeNew) {
         return setError(messages.required)
       }
       if (regex) {
@@ -783,27 +791,27 @@ export default function DisplayField({
         const [, pattern, flags] = regexMatch
         const regExp = new RegExp(pattern, flags)
         if (!regExp.test(e?.target?.value)) {
-          return setError(locale === 'ar' ? roles?.regex?.message_ar : roles?.regex?.message_en)
+          return setError(locale == 'ar' ? roles?.regex?.message_ar : roles?.regex?.message_en)
         }
       }
 
-      if (input.type === 'Phone' && validations.Required && e?.length === 0 && isTypeNew) {
+      if (input.type == 'Phone' && validations.Required && e?.length == 0 && isTypeNew) {
         return setError(messages.required)
       }
-      if (input.type === 'Phone' && !isPossiblePhoneNumber('+' + e?.target?.value ?? '')) {
+      if (input.type == 'Phone' && !isPossiblePhoneNumber('+' + e?.target?.value ?? '')) {
         return setError(messages.Invalid_Phone)
       }
 
-      if (validations.Required && newData.length === 0 && !isTypeNew) {
+      if (validations.Required && newData.length == 0 && !isTypeNew) {
         return setError(messages.required)
       }
 
-      if (input.type === 'Email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e?.target?.value)) {
+      if (input.type == 'Email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e?.target?.value)) {
         return setError(messages.Invalid_Email)
       }
 
       if (
-        input.type === 'URL' &&
+        input.type == 'URL' &&
         !/^(https?:\/\/)?(www\.)?[a-zA-Z0-9@:%._\+~#?&//=]{2,256}\.[a-z]{2,4}\b([-a-zA-Z0-9@:%._\+~#?&//=]*)$/i.test(
           e?.target?.value
         )
@@ -812,14 +820,17 @@ export default function DisplayField({
       }
       if (
         validations.MinLength &&
-        e?.target?.value?.length !== 0 &&
+        e?.target?.value?.length != 0 &&
         e?.target?.value?.length < +validations?.MinLength?.minLength
       ) {
-
         return setError(messages.Min_Length + ' ' + +validations?.MinLength?.minLength)
       }
 
-      if (validations.MaxLength && e?.target?.value?.length !== 0 && e?.target?.value?.length > +validations?.MaxLength?.maxLength) {
+      if (
+        validations.MaxLength &&
+        e?.target?.value?.length != 0 &&
+        e?.target?.value?.length > +validations?.MaxLength?.maxLength
+      ) {
         return setError(messages.Max_Length + ' ' + +validations?.MaxLength?.maxLength)
       }
 
@@ -830,12 +841,12 @@ export default function DisplayField({
     if (!input) return
     let errorWithoutDirty = []
     const errorMessages = []
-    if (validations.Required && (value?.length === 0 || value === '')) {
+    if (validations.Required && (value?.length == 0 || value == '')) {
       errorWithoutDirty.push(true)
       errorMessages.push(messages.required)
     }
 
-    if (input.type === 'Email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) && value !== '') {
+    if (input.type == 'Email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) && value != '') {
       errorWithoutDirty.push(true)
       errorMessages.push(messages.Invalid_Email)
     }
@@ -853,47 +864,46 @@ export default function DisplayField({
       const regExp = new RegExp(pattern, flags)
       if (!regExp.test(value)) {
         errorWithoutDirty.push(true)
-        errorMessages.push(locale === 'ar' ? roles?.regex?.message_ar : roles?.regex?.message_en)
+        errorMessages.push(locale == 'ar' ? roles?.regex?.message_ar : roles?.regex?.message_en)
       }
     }
 
     if (
-      input.type === 'URL' &&
+      input.type == 'URL' &&
       !/^(https?:\/\/)?(www\.)?[a-zA-Z0-9@:%._\+~#?&//=]{2,256}\.[a-z]{2,4}\b([-a-zA-Z0-9@:%._\+~#?&//=]*)$/i.test(
         value
       ) &&
-      value !== ''
+      value != ''
     ) {
       errorWithoutDirty.push(true)
       errorMessages.push(messages.Invalid_URL)
     }
-    if (validations.MinLength && `${value}`.length !== 0 && `${value}`.length < +validations?.MinLength?.minLength) {
+    if (validations.MinLength && `${value}`.length != 0 && `${value}`.length < +validations?.MinLength?.minLength) {
       errorWithoutDirty.push(true)
       errorMessages.push(messages.Min_Length + ' ' + +validations?.MinLength?.minLength)
     }
-    if (validations.MaxLength && `${value}`.length !== 0 && `${value}`.length > +validations?.MaxLength?.maxLength) {
+    if (validations.MaxLength && `${value}`.length != 0 && `${value}`.length > +validations?.MaxLength?.maxLength) {
       errorWithoutDirty.push(true)
       errorMessages.push(messages.Max_Length + ' ' + +validations?.MaxLength?.maxLength)
     }
-    if (input.type === 'Phone' && !isPossiblePhoneNumber('+' + value ?? '') && value !== '') {
+    if (input.type == 'Phone' && !isPossiblePhoneNumber('+' + value ?? '') && value != '') {
       errorWithoutDirty.push(true)
       errorMessages.push(messages.Invalid_Phone)
     }
     if (dataRef) {
-      if (input.type === 'Date') {
+      if (input.type == 'Date') {
         try {
           const lable = JSON.parse(input?.descriptionEn) ?? {
             format: 'yyyy-MM-dd',
             showTime: 'false'
           }
 
-          dataRef.current[input.type === 'new_element' ? input.id : input.key] =
-            value ?? formatDate(value, lable.format)
+          dataRef.current[input.type == 'new_element' ? input.id : input.key] = value ?? formatDate(value, lable.format)
         } catch (error) {
-          dataRef.current[input.type === 'new_element' ? input.id : input.key] = ''
+          dataRef.current[input.type == 'new_element' ? input.id : input.key] = ''
         }
       } else {
-        dataRef.current[input.type === 'new_element' ? input.id : input.key] = value
+        dataRef.current[input.type == 'new_element' ? input.id : input.key] = value
       }
       if (setTriggerData) {
         setTriggerData(prev => prev + 1)
@@ -902,13 +912,13 @@ export default function DisplayField({
     if (refError) {
       refError.current = {
         ...refError.current,
-        [input.type === 'new_element' ? input.id : input.key]: errorWithoutDirty.includes(true) ? errorMessages : false
+        [input.type == 'new_element' ? input.id : input.key]: errorWithoutDirty.includes(true) ? errorMessages : false
       }
     }
   }, [refError, input, value, dataRef, validations, setTriggerData])
 
   useEffect(() => {
-    if (input.type === 'OneToOne') {
+    if (input.type == 'OneToOne') {
       axiosGet(`generic-entities/${input?.options?.source}`)
         .then(res => {
           if (res.status) {
@@ -919,7 +929,7 @@ export default function DisplayField({
         .finally(() => {
           setLoading(false)
         })
-    } else if (input.type === 'ManyToMany') {
+    } else if (input.type == 'ManyToMany') {
       axiosGet(`generic-entities/${input?.options?.target}`)
         .then(res => {
           if (res.status) {
@@ -941,8 +951,8 @@ export default function DisplayField({
         if (mainRef.current) {
           setLayout(prev => {
             return prev.map(ele =>
-              `${ele.i}` === `${input.id}`
-                ? { ...ele, h: isDisable === 'hidden' && !readOnly ? 0 : mainRef.current.scrollHeight / 71 }
+              `${ele.i}` == `${input.id}`
+                ? { ...ele, h: isDisable == 'hidden' && !readOnly ? 0 : mainRef.current.scrollHeight / 71 }
                 : ele
             )
           })
@@ -956,7 +966,7 @@ export default function DisplayField({
   const onChangeFile = async e => {
     const file = e.target.files[0]
     if (file?.size > roles?.size * 1024) {
-      toast.error(locale === 'ar' ? `حجم الملف أكبر من ${roles?.size} كيلوبايت` : `File size exceeds ${roles?.size}KB`)
+      toast.error(locale == 'ar' ? `حجم الملف أكبر من ${roles?.size} كيلوبايت` : `File size exceeds ${roles?.size}KB`)
 
       return
     }
@@ -967,7 +977,7 @@ export default function DisplayField({
       } catch {}
     }
     if (!file) {
-      toast.error(locale === 'ar' ? 'لم يتم اختيار الملف' : 'No file selected')
+      toast.error(locale == 'ar' ? 'لم يتم اختيار الملف' : 'No file selected')
 
       return
     }
@@ -978,7 +988,7 @@ export default function DisplayField({
 
     if (isValid) {
       const file = event.target.files[0]
-      const loading = toast.loading(locale === 'ar' ? 'جاري الرفع' : 'Uploading...')
+      const loading = toast.loading(locale == 'ar' ? 'جاري الرفع' : 'Uploading...')
       if (file) {
         axiosPost(
           'file/upload',
@@ -1021,7 +1031,7 @@ export default function DisplayField({
 
   const label = (
     <label htmlFor={input.key} style={{ textTransform: 'capitalize' }}>
-      {locale === 'ar' ? input.nameAr : input.nameEn}
+      {locale == 'ar' ? input.nameAr : input.nameEn}
     </label>
   )
 
@@ -1030,10 +1040,10 @@ export default function DisplayField({
 
   return (
     <div
-      className={`reset ${isDisable === 'hidden' && !readOnly ? 'hidden' : ''} relative group w-full`}
-      id={input.type === 'new_element' ? `s${input.id}` : VaildId(input.key.trim() + input.nameEn.trim())}
+      className={`reset ${isDisable == 'hidden' && !readOnly ? 'hidden' : ''} relative group w-full`}
+      id={input.type == 'new_element' ? `s${input.id}` : VaildId(input.key.trim() + input.nameEn.trim())}
     >
-      <style>{`#${input.type === 'new_element' ? `s${input.id}` : VaildId(input.key.trim() + input.nameEn.trim())} {
+      <style>{`#${input.type == 'new_element' ? `s${input.id}` : VaildId(input.key.trim() + input.nameEn.trim())} {
         ${design}
       }`}</style>
       {hoverText && (
@@ -1044,7 +1054,7 @@ export default function DisplayField({
       <div ref={mainRef} id='parent-input'>
         <div className='flex items-center gap-2 justify-between mb-2'>
           <div className='flex items-center gap-2'>
-            {input.type !== 'File' && label} <span className='text-xs text-red-500'>{validations.Required && '*'}</span>
+            {input.type != 'File' && label} <span className='text-xs text-red-500'>{validations.Required && '*'}</span>
           </div>
           {hintText && (
             <button
@@ -1059,12 +1069,12 @@ export default function DisplayField({
           )}
         </div>
         <div className='relative' style={{ display: 'flex' }}>
-          {isDisable === 'hidden' && readOnly && (
+          {isDisable == 'hidden' && readOnly && (
             <div className='absolute inset-0 bg-white/50 z-10 rounded-md text-sm text-gray-500 flex items-center justify-center'>
-              {locale === 'ar' ? 'حقل مخفي' : 'Hidden Input'}
+              {locale == 'ar' ? 'حقل مخفي' : 'Hidden Input'}
             </div>
           )}
-          {input.type === 'new_element' ? (
+          {input.type == 'new_element' ? (
             <NewElement
               isDisable={isDisable}
               readOnly={readOnly}
@@ -1083,8 +1093,11 @@ export default function DisplayField({
               readOnly={readOnly}
               value={value}
               onBlur={roles?.event?.onBlur}
+              isOpen={isOpen}
+              setIsOpen={setIsOpen}
               onChange={onChange}
               from={from}
+              setValue={setValue}
               roles={roles}
               onChangeFile={onChangeFile}
               fileName={fileName}
@@ -1092,7 +1105,7 @@ export default function DisplayField({
               findError={findError}
               selectedOptions={selectedOptions}
               isDisable={isDisable}
-              placeholder={locale === 'ar' ? roles?.placeholder?.placeholder_ar : roles?.placeholder?.placeholder_en}
+              placeholder={locale == 'ar' ? roles?.placeholder?.placeholder_ar : roles?.placeholder?.placeholder_en}
               errorView={errorView}
               handleDelete={handleDelete}
               error={error}
@@ -1122,12 +1135,15 @@ export default function DisplayField({
 
 const ViewInput = ({
   input,
+  isOpen,
+  setIsOpen,
   value,
   onChangeFile,
   from,
   readOnly,
   roles,
   onChange,
+  setValue,
   locale,
   handleDelete,
   errorView,
@@ -1159,23 +1175,23 @@ const ViewInput = ({
   })
 
   const handleKeyDown = event => {
-    if (input.type !== 'Phone') return
-    if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
+    if (input.type != 'Phone') return
+    if (event.key == 'ArrowUp' || event.key == 'ArrowDown') {
       event.preventDefault()
     }
   }
 
   const handleWheel = event => {
-    if (input.type !== 'Phone') return
+    if (input.type != 'Phone') return
     event.preventDefault()
   }
   if (
-    input.type === 'SingleText' ||
-    input.type === 'Number' ||
-    input.type === 'Email' ||
-    input.type === 'URL' ||
-    input.type === 'Password' ||
-    input.type === 'Phone'
+    input.type == 'SingleText' ||
+    input.type == 'Number' ||
+    input.type == 'Email' ||
+    input.type == 'URL' ||
+    input.type == 'Password' ||
+    input.type == 'Phone'
   ) {
     return (
       <>
@@ -1184,11 +1200,11 @@ const ViewInput = ({
           type={
             showPassword
               ? 'text'
-              : input.type === 'URL'
+              : input.type == 'URL'
               ? 'text'
-              : input.type === 'SingleText'
+              : input.type == 'SingleText'
               ? 'text'
-              : input.type === 'Phone'
+              : input.type == 'Phone'
               ? 'number'
               : input.type
           }
@@ -1205,13 +1221,13 @@ const ViewInput = ({
             }
           }}
           placeholder={placeholder}
-          disabled={isDisable === 'disabled'}
+          disabled={isDisable == 'disabled'}
           onKeyDown={handleKeyDown}
           onWheel={handleWheel}
           className={`${errorView || error ? 'error' : ''} `}
           style={{ transition: '0.3s' }}
         />
-        {input.type === 'Password' && (
+        {input.type == 'Password' && (
           <div className='absolute top-1/2 || -translate-y-1/2 || end-[15px]'>
             <InputAdornment position='end'>
               <IconButton
@@ -1227,7 +1243,7 @@ const ViewInput = ({
       </>
     )
   }
-  if (input.type === 'LongText') {
+  if (input.type == 'LongText') {
     return (
       <textarea
         id={input.key}
@@ -1238,7 +1254,7 @@ const ViewInput = ({
         }}
         rows={4}
         placeholder={placeholder}
-        disabled={isDisable === 'disabled'}
+        disabled={isDisable == 'disabled'}
         className={`${errorView || error ? 'error' : ''} `}
         style={{ transition: '0.3s' }}
         onBlur={e => {
@@ -1252,12 +1268,12 @@ const ViewInput = ({
     )
   }
 
-  if (input.type === 'File') {
-    return from !== 'table' ? (
+  if (input.type == 'File') {
+    return from != 'table' ? (
       <div className='px-4 w-full'>
         <div id='file-upload-container'>
           <label htmlFor={input.key} id='file-upload-label'>
-            <div id='label-color'>{locale === 'ar' ? input.nameAr : input.nameEn}</div>
+            <div id='label-color'>{locale == 'ar' ? input.nameAr : input.nameEn}</div>
             <div id='file-upload-content'>
               <svg
                 id='file-upload-icon'
@@ -1276,11 +1292,11 @@ const ViewInput = ({
               </svg>
 
               <p id='file-upload-text'>
-                <span className='font-semibold'>{locale === 'ar' ? 'اضف الصورة' : 'Add Image'} </span>
-                {locale === 'ar' ? 'أو اسحب وأفلت' : 'or drag and drop'}
+                <span className='font-semibold'>{locale == 'ar' ? 'اضف الصورة' : 'Add Image'} </span>
+                {locale == 'ar' ? 'أو اسحب وأفلت' : 'or drag and drop'}
               </p>
               <p id='file-upload-subtext'>
-                {locale === 'ar' ? 'SVG, PNG, JPG or GIF (MAX. 800x400px)' : 'SVG, PNG, JPG or GIF (MAX. 800x400px)'}
+                {locale == 'ar' ? 'SVG, PNG, JPG or GIF (MAX. 800x400px)' : 'SVG, PNG, JPG or GIF (MAX. 800x400px)'}
               </p>
 
               {value && (
@@ -1303,7 +1319,7 @@ const ViewInput = ({
             </div>
             <input
               type='file'
-              disabled={isDisable === 'disabled'}
+              disabled={isDisable == 'disabled'}
               id={input.key}
               onChange={onChangeFile}
               onBlur={e => {
@@ -1344,7 +1360,7 @@ const ViewInput = ({
             />
             <input
               type='file'
-              disabled={isDisable === 'disabled'}
+              disabled={isDisable == 'disabled'}
               id={input.key}
               hidden
               onChange={onChangeFile}
@@ -1362,7 +1378,7 @@ const ViewInput = ({
       </div>
     )
   }
-  if (input.type === 'Date') {
+  if (input.type == 'Date') {
     const lable = JSON.parse(input?.descriptionEn) ?? {
       format: 'yyyy-MM-dd',
       showTime: 'false'
@@ -1371,52 +1387,107 @@ const ViewInput = ({
     let minDate = null
     let maxDate = null
 
-    // حساب minDate اعتماداً على beforeDateType
-    if (roles?.beforeDateType === 'days') {
-      // إذا كان النوع days، يتم حساب التاريخ بإضافة beforeDateValue (عدد الأيام) لتاريخ اليوم
+    if (roles?.beforeDateType == 'days') {
       minDate = addDays(today, roles?.beforeDateValue)
-    } else if (roles?.beforeDateType === 'date') {
-      // إذا كان النوع date، يتم استخدام التاريخ مباشرة
+    } else if (roles?.beforeDateType == 'date') {
       minDate = new Date(roles?.beforeDateValue)
     }
 
-    // حساب maxDate اعتماداً على afterDateType
-    if (roles?.afterDateType === 'days') {
-      // إذا كان النوع days، يتم حساب التاريخ بإضافة afterDateValue (عدد الأيام) لتاريخ اليوم
+    if (roles?.afterDateType == 'days') {
       maxDate = addDays(today, roles?.afterDateValue)
-    } else if (roles?.afterDateType === 'date') {
-      // إذا كان النوع date، يتم استخدام التاريخ مباشرة
+    } else if (roles?.afterDateType == 'date') {
       maxDate = new Date(roles?.afterDateValue)
     }
 
     return !readOnly ? (
-      <DatePickerWrapper className='w-full'>
-        <DatePicker
-          selected={value}
-          onChange={date => onChange(date)}
-          timeInputLabel='Time:'
-          dateFormat={`${lable.format ? lable.format : 'MM/dd/yyyy'}`}
-          showMonthDropdown
-          locale={locale === 'ar' ? ar : en}
-          showYearDropdown
-          onBlur={e => {
-            if (onBlur) {
-              const evaluatedFn = eval('(' + onBlur + ')')
+      <>
+        <div className='relative w-full'>
+          <div
+            className='absolute top-0 start-0 w-full h-full z-10 cursor-pointer '
+            onClick={() => setIsOpen(true)}
+          ></div>
+          <DatePickerWrapper className='w-full'>
+            <DatePicker
+              selected={value}
+              onChange={date => onChange(date)}
+              timeInputLabel='Time:'
+              dateFormat={`${lable.format ? lable.format : 'MM/dd/yyyy'}`}
+              showMonthDropdown
+              locale={locale == 'ar' ? ar : en}
+              showYearDropdown
+              onBlur={e => {
+                if (onBlur) {
+                  const evaluatedFn = eval('(' + onBlur + ')')
 
-              evaluatedFn(e)
-            }
-          }}
-          showTimeInput={lable.showTime === 'true'}
-          customInput={<ExampleCustomInput className='example-custom-input' />}
-          disabled={isDisable === 'disabled'}
-          minDate={minDate}
-          maxDate={maxDate}
-        />
-      </DatePickerWrapper>
+                  evaluatedFn(e)
+                }
+              }}
+              showTimeInput={lable.showTime == 'true'}
+              customInput={<ExampleCustomInput className='example-custom-input' />}
+              disabled={isDisable == 'disabled'}
+              minDate={minDate}
+              maxDate={maxDate}
+            />
+          </DatePickerWrapper>
+        </div>
+        <Dialog
+          open={isOpen}
+          onClose={() => setIsOpen(false)}
+          aria-labelledby='alert-dialog-title'
+          aria-describedby='alert-dialog-description'
+        >
+          <div className='min-h-[80vh] flex flex-col  control-date py-5'>
+            <div className='flex justify-end gap-2 px-5'>
+              <Button
+                type='button'
+                variant='contained'
+                color='error'
+                onClick={() => {
+                  setValue(null)
+                }}
+              >
+                {locale == 'ar' ? 'اعادة تعيين' : 'Reset'}
+              </Button>
+              <Button type='button' variant='contained' color='secondary' onClick={() => setIsOpen(false)}>
+                {locale == 'ar' ? 'اغلاق' : 'Close'}
+              </Button>
+            </div>
+            <DatePickerWrapper className='w-full'>
+              <DatePicker
+                selected={value}
+                open={isOpen}
+                onOpen={() => setIsOpen(true)}
+                onClose={() => setIsOpen(false)}
+                onChange={date => {
+                  onChange(date)
+                  setIsOpen(false)
+                }}
+                timeInputLabel='Time:'
+                dateFormat={`${lable.format ? lable.format : 'MM/dd/yyyy'}`}
+                showMonthDropdown
+                locale={locale == 'ar' ? ar : en}
+                showYearDropdown
+                onBlur={e => {
+                  if (onBlur) {
+                    const evaluatedFn = eval('(' + onBlur + ')')
+
+                    evaluatedFn(e)
+                  }
+                }}
+                showTimeInput={lable.showTime == 'true'}
+                customInput={<ExampleCustomInput className='example-custom-input' />}
+                disabled={isDisable == 'disabled'}
+                minDate={minDate}
+                maxDate={maxDate}
+              />
+            </DatePickerWrapper>
+          </div>
+        </Dialog>
+      </>
     ) : (
       <DatePicker
         selected={value}
-        locale={locale === 'ar' ? ar : en}
+        locale={locale == 'ar' ? ar : en}
         popperPlacement='bottom-start'
         onChange={date => onChange(date)}
         timeInputLabel='Time:'
@@ -1430,14 +1501,14 @@ const ViewInput = ({
           }
         }}
         showYearDropdown
-        showTimeInput={lable.showTime === 'true'}
+        showTimeInput={lable.showTime == 'true'}
         customInput={<ExampleCustomInput className='example-custom-input' />}
-        disabled={isDisable === 'disabled'}
+        disabled={isDisable == 'disabled'}
       />
     )
   }
 
-  if (input.type === 'OneToOne' && input.descriptionAr !== 'select') {
+  if (input.type == 'OneToOne' && input.descriptionAr != 'select') {
     const lable = JSON.parse(input?.descriptionEn)
 
     return (
@@ -1451,11 +1522,11 @@ const ViewInput = ({
                     <input
                       value={option.Id}
                       name={input.nameEn}
-                      checked={value === option.Id}
+                      checked={value == option.Id}
                       onChange={e => onChange(e)}
                       type='radio'
                       id={option.Id}
-                      disabled={isDisable === 'disabled'}
+                      disabled={isDisable == 'disabled'}
                       onBlur={e => {
                         if (onBlur) {
                           const evaluatedFn = eval('(' + onBlur + ')')
@@ -1474,7 +1545,7 @@ const ViewInput = ({
       </div>
     )
   }
-  if (input.type === 'OneToOne' && input.descriptionAr === 'select') {
+  if (input.type == 'OneToOne' && input.descriptionAr == 'select') {
     const lable = JSON.parse(input?.descriptionEn)
 
     return (
@@ -1482,7 +1553,7 @@ const ViewInput = ({
         <select
           value={value}
           onChange={e => onChange(e)}
-          disabled={isDisable === 'disabled' || selectedOptions.length === 0}
+          disabled={isDisable == 'disabled' || selectedOptions.length == 0}
           onBlur={e => {
             if (onBlur) {
               const evaluatedFn = eval('(' + onBlur + ')')
@@ -1491,8 +1562,8 @@ const ViewInput = ({
             }
           }}
         >
-          <option disabled selected value={''}>
-            {locale === 'ar' ? 'اختر ' : 'Select'}
+          <option selected value={''}>
+            {placeholder ?? (locale == 'ar' ? 'اختر ' : 'Select')}
           </option>
           {selectedOptions.map((option, index) => (
             <option key={option.Id} value={option.Id}>
@@ -1503,7 +1574,7 @@ const ViewInput = ({
       </div>
     )
   }
-  if (input.type === 'ManyToMany' && input.descriptionAr !== 'multiple_select') {
+  if (input.type == 'ManyToMany' && input.descriptionAr != 'multiple_select') {
     const lable = JSON.parse(input?.descriptionEn)
 
     return (
@@ -1514,11 +1585,11 @@ const ViewInput = ({
               <input
                 value={option.Id}
                 name={input.nameEn}
-                checked={value?.find(v => v === option.Id)}
+                checked={value?.find(v => v == option.Id)}
                 onChange={e => onChange(e)}
                 type='checkbox'
                 id={option.Id}
-                disabled={isDisable === 'disabled'}
+                disabled={isDisable == 'disabled'}
                 onBlur={e => {
                   if (onBlur) {
                     const evaluatedFn = eval('(' + onBlur + ')')
@@ -1535,7 +1606,7 @@ const ViewInput = ({
     )
   }
 
-  if (input.type === 'ManyToMany' && input.descriptionAr === 'multiple_select') {
+  if (input.type == 'ManyToMany' && input.descriptionAr == 'multiple_select') {
     const lable = JSON.parse(input?.descriptionEn)
 
     return (

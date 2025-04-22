@@ -26,7 +26,7 @@ import en from '../../i18n/en.json'
 import { IntlProvider } from 'react-intl'
 import { store } from 'src/store'
 import HomeApp from 'src/Components/HomeApp'
-import { cssTransition, ToastContainer } from 'react-toastify'
+import { ToastContainer } from 'react-toastify'
 import { useCookies } from 'react-cookie'
 import 'animate.css/animate.min.css'
 import { useEffect } from 'react'
@@ -37,11 +37,6 @@ const message = {
   en,
   ar
 }
-
-const bounce = cssTransition({
-  enter: 'animate__animated animate__bounceIn',
-  exit: 'animate__animated animate__bounceOut'
-})
 
 const App = props => {
   const { Component, emotionCache = clientSideEmotionCache, pageProps } = props
@@ -63,23 +58,21 @@ const App = props => {
   }
 
   useEffect(() => {
-document.querySelectorAll('li').forEach(item => {
-  if (item.textContent.trim() === 'Add blocks to page' || 
-      item.innerHTML.includes('**Add blocks to page**')) {
-    item.remove();
-  }
-});
+    document.querySelectorAll('li').forEach(item => {
+      if (item.textContent.trim() === 'Add blocks to page' || item.innerHTML.includes('**Add blocks to page**')) {
+        item.remove()
+      }
+    })
 
-const parentElement = document.querySelector('ul.menu-name');
-if (parentElement) {
-  parentElement.querySelectorAll('li').forEach(item => {
-    if (item.textContent.includes('Add blocks to page')) {
-      item.remove();
+    const parentElement = document.querySelector('ul.menu-name')
+    if (parentElement) {
+      parentElement.querySelectorAll('li').forEach(item => {
+        if (item.textContent.includes('Add blocks to page')) {
+          item.remove()
+        }
+      })
     }
-  });
-}
   }, [])
-  
 
   return (
     <Provider store={store}>
@@ -102,9 +95,6 @@ if (parentElement) {
                     <ThemeComponent settings={{ ...settings, direction: getDir(locale) }}>
                       <ToastContainer
                         theme={settings.mode}
-                        className='ToastContainer'
-                        position='top-center'
-                        transition={bounce}
                       />
                       <HomeApp>{getLayout(<Component {...pageProps} />)}</HomeApp>
                     </ThemeComponent>

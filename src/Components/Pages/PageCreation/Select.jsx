@@ -19,7 +19,6 @@ import { toast } from 'react-toastify'
 
 import CloseNav from './CloseNav'
 
-
 function Select({ onChange, data, type, buttonRef }) {
   const { locale } = useIntl()
   const [collection, setCollection] = useState('')
@@ -118,7 +117,8 @@ function Select({ onChange, data, type, buttonRef }) {
   const [addMoreElement] = useState([
     { name_ar: 'مربع الاختيار', name_en: 'CheckBox', key: 'check_box' },
     { name_ar: 'Button', name_en: 'Button', key: 'button' },
-    { name_ar: 'التبويبات', name_en: 'Tabs', key: 'tabs' }
+    { name_ar: 'التبويبات', name_en: 'Tabs', key: 'tabs' },
+    { name_ar: 'نص', name_en: 'Text', key: 'text' }
   ])
 
   const [moreElement, setMoreElement] = useState('')
@@ -304,6 +304,7 @@ function Select({ onChange, data, type, buttonRef }) {
                   <div className='flex justify-center my-3'>
                     <Button
                       onClick={() => {
+                        console.log(moreElement)
                         if (moreElement) {
                           if (moreElement === 'check_box') {
                             const oldAddMoreElement = data?.addMoreElement ?? []
@@ -363,6 +364,23 @@ function Select({ onChange, data, type, buttonRef }) {
                                       active: false
                                     }
                                   ],
+                                  id: 's' + new Date().getTime()
+                                }
+                              ]
+                            })
+                            setMoreElement('')
+                          }
+                          if (moreElement === 'text') {
+                            const oldAddMoreElement = data?.addMoreElement ?? []
+                            onChange({
+                              ...data,
+                              addMoreElement: [
+                                ...oldAddMoreElement,
+                                {
+                                  name_ar: 'نص',
+                                  name_en: 'Text',
+                                  key: 'text',
+                                  type: 'new_element',
                                   id: 's' + new Date().getTime()
                                 }
                               ]
@@ -557,6 +575,24 @@ function Select({ onChange, data, type, buttonRef }) {
                                         active: false
                                       }
                                     ],
+                                    id: 's' + new Date().getTime()
+                                  }
+                                ]
+                              })
+                              setMoreElement('')
+                            }
+                            console.log(moreElement)
+                            if (moreElement === 'text') {
+                              const oldAddMoreElement = data?.addMoreElement ?? []
+                              onChange({
+                                ...data,
+                                addMoreElement: [
+                                  ...oldAddMoreElement,
+                                  {
+                                    name_ar: 'نص',
+                                    name_en: 'Text',
+                                    key: 'text',
+                                    type: 'new_element',
                                     id: 's' + new Date().getTime()
                                   }
                                 ]
