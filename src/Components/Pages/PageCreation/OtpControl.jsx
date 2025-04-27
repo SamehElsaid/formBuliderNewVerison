@@ -7,17 +7,40 @@ export default function OtpControl({ data, onChange, locale, type, buttonRef }) 
   const [obj, setObj] = useState(false)
   const getApiData = useSelector(rx => rx.api.data)
 
-  const renderTextField = (label, valueKey, inputType = 'text', options = {}) => (
-    <TextField
-      fullWidth
-      type={inputType}
-      value={data[valueKey] || ''}
-      onChange={e => onChange({ ...data, [valueKey]: e.target.value })}
-      label={locale === 'ar' ? options.labelAr || label : label}
-      variant='filled'
-      {...options}
-    />
-  )
+  const renderTextField = (label, valueKey, inputType = 'text', options = {}) => {
+    // Add max validation specifically for the Number of OTP field
+    const isOtpNumberField = 
+      (locale === 'ar' && label === 'عدد الرمز') || 
+      (locale !== 'ar' && label === 'Number of OTP')
+    
+    const inputProps = isOtpNumberField 
+      ? { ...options.inputProps, max: 20 }
+      : options.inputProps
+    
+    const handleChange = (e) => {
+      let value = e.target.value
+      
+      // Add validation for number of OTP to not exceed 20
+      if (isOtpNumberField && value > 20) {
+        value = 20
+      }
+      
+      onChange({ ...data, [valueKey]: value })
+    }
+
+    return (
+      <TextField
+        fullWidth
+        type={inputType}
+        value={data[valueKey] || ''}
+        onChange={handleChange}
+        label={locale === 'ar' ? options.labelAr || label : label}
+        variant='filled'
+        inputProps={inputProps}
+        {...options}
+      />
+    )
+  }
 
   const renderSelect = (label, valueKey, optionsList, additionalProps = {}) => (
     <TextField
@@ -75,7 +98,9 @@ export default function OtpControl({ data, onChange, locale, type, buttonRef }) 
           'content_en',
           'text'
         )}
-        {renderTextField(locale === 'ar' ? 'عدد الرمز' : 'Number of OTP', 'numberOfOtp', 'number')}
+        {renderTextField(locale === 'ar' ? 'عدد الرمز' : 'Number of OTP', 'numberOfOtp', 'number', {
+          helperText: locale === 'ar' ? 'الحد الأقصى هو 20' : 'Maximum is 20'
+        })}
         {renderTextField(locale === 'ar' ? 'مدة التأكيد' : 'Timer time', 'timerTime', 'number', {
           InputProps: {
             endAdornment: <InputAdornment position='end'>{locale === 'ar' ? 'ثواني' : 'Seconds'}</InputAdornment>
