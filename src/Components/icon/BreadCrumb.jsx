@@ -12,14 +12,21 @@ import NextLink from 'next/link';
 const BreadcrumbComponent = () => {
   const router = useRouter();
 
-  // Get the current path and split it into segments
-  const pathSegments = router.asPath.split('/').filter(segment => segment);
+  // Get the current path including query parameters
+  const fullPath = router.asPath;
+  
+  // Extract just the path without query for building breadcrumbs
+  const pathWithoutQuery = fullPath.split('?')[0];
+  const pathSegments = pathWithoutQuery.split('/').filter(segment => segment);
+  
+  // Preserve the original query string
+  const queryString = fullPath.includes('?') ? fullPath.substring(fullPath.indexOf('?')) : '';
 
   // Function to generate breadcrumb items
   const getBreadcrumbs = () => {
     // Start with Home
     const breadcrumbs = [
-      { label: 'Home', path: '/' }
+      { label: 'Home', path: '/' + queryString }
     ];
 
     // Build up path as we go
@@ -33,7 +40,7 @@ const BreadcrumbComponent = () => {
 
       breadcrumbs.push({
         label,
-        path: currentPath
+        path: currentPath + queryString
       });
     });
 
