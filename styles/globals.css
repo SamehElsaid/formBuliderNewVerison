@@ -1676,7 +1676,9 @@ li:contains("Add blocks to page") {
   /* jQuery pseudo-selector */
   display: none !important;
 }
-
+.MuiListSubheader-sticky{
+  display: none !important;
+}
 .control-date input,
 .control-date #calendar-icon {
   display: none !important;
