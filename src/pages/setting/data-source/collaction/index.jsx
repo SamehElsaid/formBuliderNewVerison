@@ -1,4 +1,4 @@
-import { Avatar, Button, Card, CardContent, IconButton, Tooltip, Typography } from '@mui/material'
+import { Avatar, Button, Card, CardContent, IconButton, Tooltip, Typography, FormControl, InputLabel, Select, MenuItem } from '@mui/material'
 import { Box } from '@mui/system'
 import React, { useEffect, useState } from 'react'
 import CustomTextField from 'src/@core/components/mui/text-field'
@@ -8,7 +8,6 @@ import { toast } from 'react-toastify'
 import TableEdit from 'src/Components/TableEdit/TableEdit'
 import IconifyIcon from 'src/Components/icon'
 import AddCollection from 'src/Components/Collection/AddCollection'
-import FormBuilder from 'src/Components/Collection/FormBuilder'
 import { useRouter } from 'next/router'
 
 export default function Index() {
@@ -19,22 +18,45 @@ export default function Index() {
   const [loading, setLoading] = useState(false)
   const [refresh, setRefresh] = useState(0)
   const [data, setData] = useState([])
+  const [dataSources, setDataSources] = useState([])
+  const [selectedDataSource, setSelectedDataSource] = useState('')
 
+  const router = useRouter()
+
+  // Filter data based on search term and selected data source
   const dataFilter = data?.filter(
     ele =>
-      ele.nameEn.toLowerCase().includes(startSearch.toLowerCase()) ||
-      ele.nameAr.toLowerCase().includes(startSearch.toLowerCase())
+      (ele.nameEn.toLowerCase().includes(startSearch.toLowerCase()) ||
+        ele.nameAr.toLowerCase().includes(startSearch.toLowerCase())) &&
+      (selectedDataSource ? ele.dataSourceId === selectedDataSource : true)
   )
 
-  const {
-    query: { dataSourceId }
-  } = useRouter()
-
+  // Fetch data sources
   useEffect(() => {
-    if (!dataSourceId) return
     setLoading(true)
     const loadingToast = toast.loading(locale === 'ar' ? 'جاري التحميل...' : 'Loading...')
-    axiosGet(`collections/get/?dataSourceId=${dataSourceId}`, locale)
+    axiosGet(`data-source/get`, locale)
+      .then(res => {
+        if (res.status) {
+          setDataSources(res.data)
+          // If no data source is selected and there are data sources available, select the first one
+          if (!selectedDataSource && res.data.length > 0) {
+            setSelectedDataSource(res.data[0].id)
+          }
+        }
+      })
+      .finally(() => {
+        setLoading(false)
+        toast.dismiss(loadingToast)
+      })
+  }, [locale, refresh])
+
+  // Fetch collections based on selected data source
+  useEffect(() => {
+    if (!selectedDataSource) return
+    setLoading(true)
+    const loadingToast = toast.loading(locale === 'ar' ? 'جاري التحميل...' : 'Loading...')
+    axiosGet(`collections/get/?dataSourceId=${selectedDataSource}`, locale)
       .then(res => {
         if (res.status) {
           setData(res.data)
@@ -44,13 +66,24 @@ export default function Index() {
         setLoading(false)
         toast.dismiss(loadingToast)
       })
-  }, [locale, paginationModel.page, paginationModel.pageSize, refresh, dataSourceId])
+  }, [locale, paginationModel.page, paginationModel.pageSize, refresh, selectedDataSource])
 
   const handleClose = () => {
     setOpen(false)
   }
+  
   const [deletePage, setDeletePage] = useState(false)
   const { push } = useRouter()
+
+  const handleDataSourceChange = (event) => {
+    const dataSourceId = event.target.value
+    setSelectedDataSource(dataSourceId)
+    // Update the URL query parameter
+    router.push({
+      pathname: router.pathname,
+      query: { ...router.query, dataSourceId }
+    }, undefined, { shallow: true })
+  }
 
   const columns = [
     {
@@ -58,7 +91,6 @@ export default function Index() {
       minWidth: 60,
       field: 'index',
       disableColumnMenu: true,
-
       headerName: '#',
       renderCell: ({ row }) => (
         <Typography variant='subtitle2' sx={{ fontWeight: 500, color: 'text.secondary' }}>
@@ -66,7 +98,6 @@ export default function Index() {
         </Typography>
       )
     },
-
     {
       flex: 0.5,
       minWidth: 200,
@@ -110,8 +141,8 @@ export default function Index() {
           <Tooltip title={locale === 'ar' ? 'عرض جميع الحقول' : 'View All Fields'}>
             <IconButton
               size='small'
-              onClick={e => {
-                push(`/${locale}/setting/data-source/collaction/${params.row.id}?dataSourceId=${dataSourceId}`)
+              onClick={() => {
+                push(`/${locale}/setting/data-source/collaction/${params.row.id}?dataSourceId=${selectedDataSource}`)
               }}
             >
               <IconifyIcon icon='tabler:eye' />
@@ -120,8 +151,7 @@ export default function Index() {
           <Tooltip title={locale === 'ar' ? 'تعديل النموذج' : 'Edit Model'}>
             <IconButton
               size='small'
-              onClick={e => {
-                console.log(params.row)
+              onClick={() => {
                 setOpen(params.row)
               }}
             >
@@ -131,7 +161,7 @@ export default function Index() {
           <Tooltip title={messages.delete}>
             <IconButton
               size='small'
-              onClick={e => {
+              onClick={() => {
                 setDeletePage(params.row.id)
                 if (deletePage !== params.row.id) {
                   toast.info(locale === 'ar' ? 'هل أنت متأكد ؟' : 'Are you sure you want to delete this item?', {
@@ -179,8 +209,13 @@ export default function Index() {
 
   return (
     <div>
-      <AddCollection open={open} toggle={handleClose} setRefresh={setRefresh} />
-      <Card className='w-[100%]  mb-5 py-4 '>
+      <AddCollection 
+        open={open} 
+        toggle={handleClose} 
+        setRefresh={setRefresh} 
+        selectedDataSource={selectedDataSource}
+      />
+      <Card className='w-[100%] mb-5 py-4'>
         <CardContent
           className='h-full'
           sx={{
@@ -193,13 +228,18 @@ export default function Index() {
         >
           <div className='flex gap-2 justify-center items-center'>
             <Typography variant='h5' sx={{ color: 'primary.main', fontWeight: 'bold' }}>
-              {locale === 'ar' ? 'نموذج البيانات' : 'Data Model '}
+              {locale === 'ar' ? 'نموذج البيانات' : 'Data Model'}
             </Typography>
             <Avatar skin='light' sx={{ width: 30, height: 30 }}>
-              {data?.length}
+              {dataFilter?.length}
             </Avatar>
           </div>
-          <Button variant='contained' color='primary' onClick={() => setOpen(true)}>
+          <Button 
+            variant='contained' 
+            color='primary' 
+            onClick={() => setOpen(true)}
+            disabled={!selectedDataSource}
+          >
             {locale === 'ar' ? 'إضافة نموذج البيانات' : 'Add Data Model'}
           </Button>
         </CardContent>
@@ -207,41 +247,56 @@ export default function Index() {
       <Box sx={{ mb: 4 }}>
         <Card className='flex gap-3 flex-wrap md:px-[36px] px-0' sx={{ mb: 6, width: '100%', py: '3.5rem' }}>
           <div className='w-full'>
-            <form
-              onSubmit={e => {
-                // e.preventDefault()
-                // setStartSearch(e.target.elements.input.value)
-                // setPaginationModel({ page: 0, pageSize: 10 })
-              }}
-              className='px-5 ~~ mb-5 || flex ~~ flex-col  items-center md:items-end w-full || md:flex-row || gap-2'
-            >
-              <CustomTextField
-                id='input'
-                label={locale === 'ar' ? 'البحث' : 'Search'}
-                value={startSearch}
-                onChange={e => {
-                  setStartSearch(e.target.value)
-                }}
-              />
-              {startSearch && (
-                <Button
-                  variant='contained'
-                  color='error'
-                  onClick={() => {
-                    setStartSearch('')
-                  }}
+            <div className='px-5 mb-5 flex flex-col md:flex-row items-center justify-between w-full gap-4'>
+              {/* Data Source Dropdown */}
+              <FormControl sx={{ minWidth: 200 }}>
+                <InputLabel id="data-source-select-label">
+                  {locale === 'ar' ? 'مصدر البيانات' : 'Data Source'}
+                </InputLabel>
+                <Select
+                  labelId="data-source-select-label"
+                  id="data-source-select"
+                  value={selectedDataSource}
+                  label={locale === 'ar' ? 'مصدر البيانات' : 'Data Source'}
+                  onChange={handleDataSourceChange}
                 >
-                  {locale === 'ar' ? 'اعادة التعيين' : 'Reset'}
-                </Button>
-              )}
-            </form>
+                  {dataSources.map((source) => (
+                    <MenuItem key={source.id} value={source.id}>
+                      {source.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+              
+              {/* Search and Reset */}
+              <div className='flex items-center gap-2'>
+                <CustomTextField
+                  id='input'
+                  label={locale === 'ar' ? 'البحث' : 'Search'}
+                  value={startSearch}
+                  onChange={(e) => {
+                    setStartSearch(e.target.value)
+                  }}
+                />
+                {startSearch && (
+                  <Button
+                    variant='contained'
+                    color='error'
+                    onClick={() => {
+                      setStartSearch('')
+                    }}
+                  >
+                    {locale === 'ar' ? 'اعادة التعيين' : 'Reset'}
+                  </Button>
+                )}
+              </div>
+            </div>
 
             <TableEdit
               InvitationsColumns={columns}
               data={dataFilter?.map((ele, i) => {
                 const fData = { ...ele }
                 fData.index = i + paginationModel.page * paginationModel.pageSize
-
                 return fData
               })}
               getRowId={row => row.index}

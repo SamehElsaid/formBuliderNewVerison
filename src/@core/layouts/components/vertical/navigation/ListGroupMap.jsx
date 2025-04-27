@@ -28,7 +28,7 @@ const Navigation = () => {
       icon: 'proicons:box-drag',
       title_en: 'Data Model',
       title_ar: 'نموذج البيانات',
-      path: `setting/data-source`
+      path: `setting/data-source/collaction`
     },
 
     // {
