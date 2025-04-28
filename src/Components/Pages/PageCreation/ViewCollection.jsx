@@ -88,7 +88,6 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
         sendData[keyData] = initialSendData[keyData]
       }
     })
-    console.log(sendData)
     if (data.type_of_sumbit === '' || (data.type_of_sumbit === 'api' && !data.submitApi)) {
       return
     }
@@ -107,6 +106,12 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
       const additionalFieldFind = additionalFields.find(e => e.key === ele.id)
 
       if (additionalFieldFind?.roles?.onMount?.isRequired && ele.key === 'check_box') {
+        if (!dataRef?.current?.[ele.id]) {
+          refError.current[ele.id] = ['Required']
+          errors.push(refError.current[ele.id])
+        }
+      }
+      if (additionalFieldFind?.roles?.onMount?.isRequired && ele.key === 'tabs') {
         if (!dataRef?.current?.[ele.id]) {
           refError.current[ele.id] = ['Required']
           errors.push(refError.current[ele.id])

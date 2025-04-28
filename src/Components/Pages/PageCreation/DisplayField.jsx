@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect, useMemo, forwardRef, useRef } from 'react'
-import { Autocomplete, Button, Dialog, FormLabel, IconButton, InputAdornment, TextField } from '@mui/material'
+import { Autocomplete, Button, Dialog, IconButton, InputAdornment, TextField } from '@mui/material'
 import { useIntl } from 'react-intl'
 import { isPossiblePhoneNumber } from 'react-phone-number-input'
 import DatePicker from 'react-datepicker'
@@ -21,6 +21,8 @@ export default function DisplayField({
   from,
   input,
   dirtyProps,
+  onChangeData,
+  data,
   reload,
   refError,
   dataRef,
@@ -740,7 +742,7 @@ export default function DisplayField({
         evaluatedFn(e)
       }
     } catch {}
- 
+
     setDirty(true)
     let isTypeNew = true
     if (input?.type == 'ManyToMany') {
@@ -1070,7 +1072,7 @@ export default function DisplayField({
         </div>
         <div className='relative' style={{ display: 'flex' }}>
           {isDisable == 'hidden' && readOnly && (
-            <div className='absolute inset-0 bg-white/50 z-10 rounded-md text-sm text-gray-500 flex items-center justify-center'>
+            <div className='absolute inset-0 bg-main-color z-10 rounded-md text-sm text-white flex items-center justify-center'>
               {locale == 'ar' ? 'حقل مخفي' : 'Hidden Input'}
             </div>
           )}
@@ -1078,6 +1080,8 @@ export default function DisplayField({
             <NewElement
               isDisable={isDisable}
               readOnly={readOnly}
+              onChangeData={onChange}
+              data={data}
               disabledBtn={disabledBtn}
               input={input}
               roles={roles}
@@ -1430,6 +1434,7 @@ const ViewInput = ({
             />
           </DatePickerWrapper>
         </div>
+        {console.log(lable.showTime)}
         <Dialog
           open={isOpen}
           onClose={() => setIsOpen(false)}
@@ -1462,7 +1467,7 @@ const ViewInput = ({
                   onChange(date)
                   setIsOpen(false)
                 }}
-                timeInputLabel='Time:'
+                timeInputLabel={lable.showTime == 'true' ? (locale == 'ar' ? 'الوقت:' : 'Time:') : ''}
                 dateFormat={`${lable.format ? lable.format : 'MM/dd/yyyy'}`}
                 showMonthDropdown
                 locale={locale == 'ar' ? ar : en}
@@ -1474,7 +1479,7 @@ const ViewInput = ({
                     evaluatedFn(e)
                   }
                 }}
-                showTimeInput={lable.showTime == 'true'}
+                showTimeSelect={lable.showTime == 'true'}
                 customInput={<ExampleCustomInput className='example-custom-input' />}
                 disabled={isDisable == 'disabled'}
                 minDate={minDate}
@@ -1616,6 +1621,7 @@ const ViewInput = ({
         onChange={(event, newValue) => onChange(event, newValue)}
         sx={{ width: 325 }}
         options={selectedOptions}
+        disabled={isDisable == 'disabled'}
         filterSelectedOptions
         id='autocomplete-multiple-outlined'
         getOptionLabel={option => option[lable[0]] || ''}

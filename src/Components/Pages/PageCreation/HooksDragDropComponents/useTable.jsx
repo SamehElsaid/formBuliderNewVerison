@@ -24,7 +24,7 @@ export default function useTable({ advancedEdit, locale, readOnly, buttonRef }) 
       version: 1,
       controls: {
         type: 'custom',
-        Component: ({ data, onChange }) => <Select type='table' onChange={onChange} data={data} buttonRef={buttonRef} />
+        Component: ({ data, onChange }) => <Select title={locale === 'ar' ? 'جدول' : 'Table'} type='table' onChange={onChange} data={data} buttonRef={buttonRef} />
       },
       icon: <FaTableCells className='text-2xl' />
     }

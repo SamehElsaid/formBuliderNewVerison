@@ -20,15 +20,25 @@ export default function useCollection({ advancedEdit, locale, readOnly, buttonRe
       },
       id: 'collection',
       title: locale === 'ar' ? 'مدخل البيانات' : 'Form Input',
-      description: locale === 'ar' ? 'يمكن أن يحتوي المدخل على نص أو أرقام أو بيانات أخرى' : 'A field for users to enter text, numbers, or other data in forms.',
+      description:
+        locale === 'ar'
+          ? 'يمكن أن يحتوي المدخل على نص أو أرقام أو بيانات أخرى'
+          : 'A field for users to enter text, numbers, or other data in forms.',
       version: 1,
       controls: {
         type: 'custom',
-        Component: ({ data, onChange }) => <Select onChange={onChange} data={data} buttonRef={buttonRef} />
+        Component: ({ data, onChange }) => (
+          <Select
+            title={locale === 'ar' ? 'مدخل البيانات' : 'Form Input'}
+            onChange={onChange}
+            data={data}
+            buttonRef={buttonRef}
+          />
+        )
       },
       icon: <FaWpforms className='text-2xl' />
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [locale, advancedEdit, readOnly])
 
   return { collection }

@@ -203,7 +203,12 @@ const AddCollection = props => {
                 <CustomTextField
                   fullWidth
                   type='text'
-                  label={messages['key']}
+                  label={
+                    <span>
+                      {messages['key']}
+                      <span style={{ color: 'red' }}> *</span>
+                    </span>
+                  }
                   value={value}
                   sx={{ mb: 4 }}
                   onChange={onChange}
@@ -221,7 +226,12 @@ const AddCollection = props => {
                 <CustomTextField
                   fullWidth
                   type='text'
-                  label={messages['collectionNameAR']}
+                  label={
+                    <span>
+                      {messages['collectionNameAR']}
+                      <span style={{ color: 'red' }}> *</span>
+                    </span>
+                  }
                   value={value}
                   sx={{ mb: 4 }}
                   onChange={onChange}
@@ -257,7 +267,12 @@ const AddCollection = props => {
                 <CustomTextField
                   fullWidth
                   type='text'
-                  label={messages['collectionNameEN']}
+                  label={
+                    <span>
+                      {messages['collectionNameEN']}
+                      <span style={{ color: 'red' }}> *</span>
+                    </span>
+                  }
                   value={value}
                   sx={{ mb: 4 }}
                   onChange={onChange}

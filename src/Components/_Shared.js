@@ -482,6 +482,9 @@ color:#555;
   background-color: #3498ff;
   color: white;
 }
+  .MuiInputBase-root.MuiOutlinedInput-root.MuiInputBase-colorPrimary{
+    padding: 0px !important;
+  }
 .MuiSvgIcon-fontSizeMedium.MuiChip-deleteIcon.MuiChip-deleteIconMedium {
   color: white;
 }

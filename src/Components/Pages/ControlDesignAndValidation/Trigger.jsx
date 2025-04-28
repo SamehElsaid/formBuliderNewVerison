@@ -158,10 +158,13 @@ function Trigger({
                     setTypeOfValidation(e.target.value)
                   }}
                 >
-                  {open.fieldCategory !== 'Basic' && <MenuItem value={'filter'}>{messages.filter}</MenuItem>}
-
-                  <MenuItem value={'enable'}>{messages.enable}</MenuItem>
-                  <MenuItem value={'empty'}>{messages.empty}</MenuItem>
+                  {open.fieldCategory !== 'Basic' || open.key !== 'tabs' && <MenuItem value={'filter'}>{messages.filter}</MenuItem>}
+                  {open.key !== 'tabs' && (
+                    <>
+                      <MenuItem value={'enable'}>{messages.enable}</MenuItem>
+                      <MenuItem value={'empty'}>{messages.empty}</MenuItem>
+                    </>
+                  )}
                   <MenuItem value={'hidden'}>{messages.hidden}</MenuItem>
                   <MenuItem value={'visible'}>{messages.visible}</MenuItem>
                 </Select>

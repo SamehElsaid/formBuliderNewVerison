@@ -8,31 +8,35 @@ import {
   FormControlLabel,
   TextField
 } from '@mui/material'
+import { useIntl } from 'react-intl'
 
 function Tabs({ openTab, handleCloseTab, messages, editTab, tabData, setTabData, addTab }) {
+  const { locale } = useIntl()
+
   return (
     <Dialog open={openTab} onClose={handleCloseTab} fullWidth>
       <DialogTitle>{editTab ? messages.Edit_Tab : messages.Add_Tab}</DialogTitle>
       <DialogContent>
         <div className='p-4 mt-5 rounded-md border border-dashed border-main-color'>
-          <div className='p-4 mt-5 rounded-md border border-dashed border-main-color'>
-            <h2 className='text-lg font-bold text-main-color mt-2'>{messages.Tabs}</h2>
-          </div>
+       
           <div className='flex flex-col gap-2'>
             <div className='flex flex-col gap-2'>
               <TextField
                 label={messages.Name_in_Arabic}
                 value={tabData.name_ar}
+                variant='filled'
                 onChange={e => setTabData({ ...tabData, name_ar: e.target.value })}
               />
               <TextField
                 label={messages.Name_in_English}
                 value={tabData.name_en}
+                variant='filled'
                 onChange={e => setTabData({ ...tabData, name_en: e.target.value })}
               />
               <TextField
                 label={messages.Link}
                 value={tabData.link}
+                variant='filled'
                 onChange={e => setTabData({ ...tabData, link: e.target.value })}
               />
               <FormControlLabel

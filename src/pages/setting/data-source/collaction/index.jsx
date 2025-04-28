@@ -39,7 +39,6 @@ export default function Index() {
       .then(res => {
         if (res.status) {
           setDataSources(res.data)
-          // If no data source is selected and there are data sources available, select the first one
           if (!selectedDataSource && res.data.length > 0) {
             setSelectedDataSource(res.data[0].id)
           }
@@ -78,7 +77,6 @@ export default function Index() {
   const handleDataSourceChange = (event) => {
     const dataSourceId = event.target.value
     setSelectedDataSource(dataSourceId)
-    // Update the URL query parameter
     router.push({
       pathname: router.pathname,
       query: { ...router.query, dataSourceId }
@@ -297,6 +295,7 @@ export default function Index() {
               data={dataFilter?.map((ele, i) => {
                 const fData = { ...ele }
                 fData.index = i + paginationModel.page * paginationModel.pageSize
+                
                 return fData
               })}
               getRowId={row => row.index}

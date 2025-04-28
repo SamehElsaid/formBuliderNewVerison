@@ -7,8 +7,10 @@ import {
   FormControl,
   FormControlLabel,
   FormLabel,
+  IconButton,
   MenuItem,
-  TextField
+  TextField,
+  Tooltip
 } from '@mui/material'
 import { Box } from '@mui/system'
 import React, { useEffect, useState } from 'react'
@@ -18,8 +20,9 @@ import { axiosGet } from 'src/Components/axiosCall'
 import { toast } from 'react-toastify'
 
 import CloseNav from './CloseNav'
+import IconifyIcon from 'src/Components/icon'
 
-function Select({ onChange, data, type, buttonRef }) {
+function Select({ onChange, data, type, buttonRef, title }) {
   const { locale } = useIntl()
   const [collection, setCollection] = useState('')
   const [optionsCollection, setOptionsCollection] = useState([])
@@ -144,7 +147,7 @@ function Select({ onChange, data, type, buttonRef }) {
   return (
     <div>
       <div className=''>
-        <CloseNav text={locale === 'ar' ? 'اختيار نموذج البيانات' : 'Select Data Model'} buttonRef={buttonRef} />
+        <CloseNav text={title} buttonRef={buttonRef} />
       </div>
       <form
         className='flex flex-col p-4 h-full'
@@ -152,7 +155,7 @@ function Select({ onChange, data, type, buttonRef }) {
           e.preventDefault()
         }}
       >
-        <TextField
+        {/* <TextField
           select
           fullWidth
           value={data.data_source_id}
@@ -174,7 +177,7 @@ function Select({ onChange, data, type, buttonRef }) {
               {item.name}
             </MenuItem>
           ))}
-        </TextField>
+        </TextField> */}
         <div className='mb-4'></div>
         <Autocomplete
           options={loadingCollection ? [] : optionsCollection}
@@ -354,13 +357,13 @@ function Select({ onChange, data, type, buttonRef }) {
                                     {
                                       name_ar: 'التبويب الاول',
                                       name_en: 'Tab 1',
-                                      link: 'https://www.google.com',
+                                      link: '',
                                       active: true
                                     },
                                     {
                                       name_ar: 'التبويب الثاني',
                                       name_en: 'Tab 2',
-                                      link: 'https://www.google.com',
+                                      link: '',
                                       active: false
                                     }
                                   ],
@@ -406,21 +409,34 @@ function Select({ onChange, data, type, buttonRef }) {
                       ?.filter(ele => ele.kind !== 'submit')
                       ?.map(item => (
                         <div key={item.id}>
-                          <div className='flex items-center justify-between '>
-                            <div className='text-sm'>{locale === 'ar' ? item.name_ar : item.name_en}</div>
-                            <Button
-                              variant='outlined'
-                              color='error'
-                              onClick={() => {
-                                const oldAddMoreElement = data?.addMoreElement ?? []
-                                onChange({
-                                  ...data,
-                                  addMoreElement: oldAddMoreElement.filter(e => e.id !== item.id)
-                                })
-                              }}
-                            >
-                              {locale === 'ar' ? 'حذف' : 'Delete'}
-                            </Button>
+                          <div className='flex items-center justify-between  border border-main-color border-dashed rounded-md p-2'>
+                            <div className='text-sm '>
+                              <span className='text-main-color me-2'>
+                                (
+                                {
+                                  addMoreElement.find(ele => ele.key.toLowerCase() === item.key.toLowerCase())?.[
+                                    `name_${locale}`
+                                  ]
+                                }
+                                )
+                              </span>
+                              {locale === 'ar' ? item.name_ar : item.name_en}{' '}
+                            </div>
+                            <Tooltip title={messages.delete}>
+                              <IconButton
+                                size='small'
+                                color='error'
+                                onClick={() => {
+                                  const oldAddMoreElement = data?.addMoreElement ?? []
+                                  onChange({
+                                    ...data,
+                                    addMoreElement: oldAddMoreElement.filter(e => e.id !== item.id)
+                                  })
+                                }}
+                              >
+                                <IconifyIcon icon='tabler:trash' />
+                              </IconButton>
+                            </Tooltip>
                           </div>
                         </div>
                       ))}

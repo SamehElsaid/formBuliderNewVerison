@@ -5,6 +5,12 @@ import Link from 'next/link'
 function NewElement({ input, onBlur, value, setValue, roles, onChangeEvent, disabledBtn, isDisable, readOnly }) {
   const { locale } = useIntl()
 
+  const handleValidationChanges = e => {
+    e.preventDefault()
+    setValue('checked')
+  }
+  console.log(onChangeEvent, input.name_en)
+
   const handleCheckboxChange = e => {
     try {
       if (onChangeEvent) {
@@ -107,6 +113,7 @@ function NewElement({ input, onBlur, value, setValue, roles, onChangeEvent, disa
         {input.data.map((item, index) =>
           isValidURL(item.link) ? (
             <a
+              onClick={handleValidationChanges}
               key={index}
               href={item.link}
               target='_blank'
@@ -117,13 +124,19 @@ function NewElement({ input, onBlur, value, setValue, roles, onChangeEvent, disa
             </a>
           ) : item.link ? (
             <Link
+              onClick={handleValidationChanges}
               href={`/${locale}/${item.link.replace(/^\/+/, '')}`}
               className={`btn-tabs ${item.active ? 'active' : ''}`}
             >
               {locale === 'ar' ? item.name_ar : item.name_en}
             </Link>
           ) : (
-            <button key={index} className={`btn-tabs ${item.active ? 'active' : ''}`}>
+            <button
+              onClick={handleValidationChanges}
+              key={index}
+              type='button'
+              className={`btn-tabs ${item.active ? 'active' : ''}`}
+            >
               {locale === 'ar' ? item.name_ar : item.name_en}
             </button>
           )
@@ -168,7 +181,7 @@ function NewElement({ input, onBlur, value, setValue, roles, onChangeEvent, disa
 
     if (input.kind === 'submit') {
       return (
-        <button onClick={handleClick} className='btn' disabled={disabledBtn}>
+        <button onClick={handleClick} className='btn' disabled={disabledBtn} type='button'>
           {locale === 'ar' ? input.name_ar : input.name_en}
         </button>
       )

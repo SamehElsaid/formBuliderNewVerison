@@ -13,7 +13,6 @@ import {
   Typography,
   FormControl,
   InputLabel,
-  Tabs,
   Checkbox,
   FormControlLabel
 } from '@mui/material'
@@ -34,6 +33,7 @@ import { toast } from 'react-toastify'
 import Trigger from '../ControlDesignAndValidation/Trigger'
 import SwitchView from '../ControlDesignAndValidation/SwitchView'
 import TriggerControl from '../ControlDesignAndValidation/TriggerControl'
+import Tabs from '../ControlDesignAndValidation/Tabs'
 
 const Header = styled(Box)(() => ({
   display: 'flex',
@@ -538,7 +538,7 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                                   design: objectToCss(Css).replaceAll('NaN', ''),
                                   roles: {
                                     ...roles,
-                                    beforeDateType: e.target.value
+                                    beforeDateType: e.target.value === '' ? false : e.target.value
                                   }
                                 }
                                 additional_fields.push(myEdit)
@@ -546,6 +546,7 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                               onChange({ ...data, additional_fields: additional_fields })
                             }}
                           >
+                            <MenuItem value=''>{locale === 'ar' ? 'اختيار  ' : 'Select  '}</MenuItem>
                             <MenuItem value='date'>{locale === 'ar' ? 'ادراج تاريخ ' : 'Insert Date '}</MenuItem>
                             <MenuItem value='days'>{locale === 'ar' ? 'ادراج ايام' : 'Insert Days'}</MenuItem>
                           </Select>
@@ -568,7 +569,7 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                                   const myEdit = {
                                     key: open.id,
                                     design: objectToCss(Css).replaceAll('NaN', ''),
-                                    roles: { ...roles, beforeDateValue: e.target.value }
+                                    roles: { ...roles, beforeDateValue: e.target.value === '' ? false : e.target.value }
                                   }
                                   additional_fields.push(myEdit)
                                 }
@@ -630,6 +631,7 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                               onChange({ ...data, additional_fields: additional_fields })
                             }}
                           >
+                            <MenuItem value=''>{locale === 'ar' ? 'اختيار  ' : 'Select  '}</MenuItem>
                             <MenuItem value='date'>{locale === 'ar' ? 'ادراج تاريخ ' : 'Insert Date '}</MenuItem>
                             <MenuItem value='days'>{locale === 'ar' ? 'ادراج ايام' : 'Insert Days'}</MenuItem>
                           </Select>
@@ -1181,139 +1183,143 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
 
                       <UnmountClosed isOpened={Boolean(showEvent)}>
                         <div className='px-2 pb-2'>
-                          {open.type !== 'new_element' && (
-                            <>
-                              <h2 className='text-lg font-bold text-main-color mt-2'>{messages.OnMount}</h2>
-                              <FormControl fullWidth margin='normal'>
-                                <InputLabel>{messages.State}</InputLabel>
-                                <Select
-                                  variant='filled'
-                                  value={roles?.onMount?.type}
-                                  onChange={e => {
-                                    const additional_fields = data.additional_fields ?? []
-                                    const findMyInput = additional_fields.find(inp => inp.key === open.id)
-                                    if (findMyInput) {
-                                      findMyInput.roles.onMount.type = e.target.value
-                                    } else {
-                                      const myEdit = {
-                                        key: open.id,
-                                        design: objectToCss(Css).replaceAll('NaN', ''),
-                                        roles: {
-                                          ...roles,
-                                          onMount: { type: e.target.value, value: roles.onMount.value }
-                                        }
+                          <>
+                            <h2 className='text-lg font-bold text-main-color mt-2'>{messages.OnMount}</h2>
+                            <FormControl fullWidth margin='normal'>
+                              <InputLabel>{messages.State}</InputLabel>
+                              <Select
+                                variant='filled'
+                                value={roles?.onMount?.type}
+                                onChange={e => {
+                                  const additional_fields = data.additional_fields ?? []
+                                  const findMyInput = additional_fields.find(inp => inp.key === open.id)
+                                  if (findMyInput) {
+                                    findMyInput.roles.onMount.type = e.target.value
+                                  } else {
+                                    const myEdit = {
+                                      key: open.id,
+                                      design: objectToCss(Css).replaceAll('NaN', ''),
+                                      roles: {
+                                        ...roles,
+                                        onMount: { type: e.target.value, value: roles.onMount.value }
                                       }
-                                      additional_fields.push(myEdit)
                                     }
-                                    onChange({ ...data, additional_fields: additional_fields })
-                                  }}
-                                >
-                                  <MenuItem selected value={'empty Data'}>
-                                    {messages.select}
-                                  </MenuItem>
+                                    additional_fields.push(myEdit)
+                                  }
+                                  onChange({ ...data, additional_fields: additional_fields })
+                                }}
+                              >
+                                <MenuItem selected value={'empty Data'}>
+                                  {messages.select}
+                                </MenuItem>
+                                {open.type !== 'new_element' && (
                                   <MenuItem value={'disable'}>{messages.Disable}</MenuItem>
-                                  <MenuItem value={'hide'}>{messages.Hide}</MenuItem>
-                                </Select>
-                                {getApiData.length > 0 && (
-                                  <TextField
-                                    select
-                                    fullWidth
-                                    className='!mb-4'
-                                    value={roles.api_url || ''}
-                                    onChange={e => {
-                                      const additional_fields = data.additional_fields ?? []
-                                      const findMyInput = additional_fields.find(inp => inp.key === open.id)
-                                      if (findMyInput) {
-                                        findMyInput.roles.api_url = e.target.value
-                                      } else {
-                                        const myEdit = {
-                                          key: open.id,
-                                          design: objectToCss(Css).replaceAll('NaN', ''),
-                                          roles: {
-                                            ...roles,
-                                            api_url: e.target.value
-                                          }
-                                        }
-                                        additional_fields.push(myEdit)
-                                      }
-                                      onChange({ ...data, additional_fields: additional_fields })
-                                    }}
-                                    label={messages.Get_From_API}
-                                    variant='filled'
-                                  >
-                                    {getApiData.map(
-                                      ({ link, data }, index) =>
-                                        !Array.isArray(data) && (
-                                          <MenuItem key={link + index} value={link}>
-                                            {link}
-                                          </MenuItem>
-                                        )
-                                    )}
-                                  </TextField>
                                 )}
-                                {roles.api_url && (
-                                  <div className='flex justify-center'>
-                                    <Button
-                                      className='!my-4'
-                                      variant='contained'
-                                      color='error'
-                                      onClick={() => {
-                                        setObj(false)
+                                <MenuItem value={'hide'}>{messages.Hide}</MenuItem>
+                              </Select>
+                              {open.type !== 'new_element' && (
+                                <>
+                                  {getApiData.length > 0 && (
+                                    <TextField
+                                      select
+                                      fullWidth
+                                      className='!mb-4'
+                                      value={roles.api_url || ''}
+                                      onChange={e => {
                                         const additional_fields = data.additional_fields ?? []
                                         const findMyInput = additional_fields.find(inp => inp.key === open.id)
                                         if (findMyInput) {
-                                          findMyInput.roles.api_url = ''
+                                          findMyInput.roles.api_url = e.target.value
+                                        } else {
+                                          const myEdit = {
+                                            key: open.id,
+                                            design: objectToCss(Css).replaceAll('NaN', ''),
+                                            roles: {
+                                              ...roles,
+                                              api_url: e.target.value
+                                            }
+                                          }
+                                          additional_fields.push(myEdit)
                                         }
                                         onChange({ ...data, additional_fields: additional_fields })
                                       }}
+                                      label={messages.Get_From_API}
+                                      variant='filled'
                                     >
-                                      {messages.Clear_Data}
-                                    </Button>
-                                  </div>
-                                )}
-                                <Collapse transition={`height 300ms cubic-bezier(.4, 0, .2, 1)`} isOpen={Boolean(obj)}>
-                                  <div className='p-2 my-4 rounded border border-dashed border-main-color'>
-                                    <h2 className='mb-4 text-2xl text-main-color'>{messages.View_Object}</h2>
-                                    <SyntaxHighlighter language='json' style={docco}>
-                                      {JSON.stringify(obj, null, 2)}
-                                    </SyntaxHighlighter>
-                                  </div>
-                                </Collapse>
-                                <TextField
-                                  fullWidth
-                                  type='text'
-                                  value={writeValue}
-                                  variant='filled'
-                                  label={messages.Value}
-                                  onChange={e => {
-                                    setWriteValue(e.target.value)
-                                  }}
-                                  onBlur={e => {
-                                    const additional_fields = data.additional_fields ?? []
-                                    const findMyInput = additional_fields.find(inp => inp.key === open.id)
-                                    if (findMyInput) {
-                                      findMyInput.roles.onMount.value = e.target.value
-                                      if (obj) {
-                                        findMyInput.roles.apiKeyData = getData(obj, e.target.value, '')
-                                      }
-                                    } else {
-                                      const myEdit = {
-                                        key: open.id,
-                                        design: objectToCss(Css).replaceAll('NaN', ''),
-                                        roles: {
-                                          ...roles,
-                                          onMount: { type: roles.onMount.type, value: e.target.value },
-                                          apiKeyData: obj ? getData(obj, e.target.value, '') : ''
-                                        }
-                                      }
-                                      additional_fields.push(myEdit)
+                                      {getApiData.map(
+                                        ({ link, data }, index) =>
+                                          !Array.isArray(data) && (
+                                            <MenuItem key={link + index} value={link}>
+                                              {link}
+                                            </MenuItem>
+                                          )
+                                      )}
+                                    </TextField>
+                                  )}
+                                  {roles.api_url && (
+                                    <div className='flex justify-center'>
+                                      <Button
+                                        className='!my-4'
+                                        variant='contained'
+                                        color='error'
+                                        onClick={() => {
+                                          setObj(false)
+                                          const additional_fields = data.additional_fields ?? []
+                                          const findMyInput = additional_fields.find(inp => inp.key === open.id)
+                                          if (findMyInput) {
+                                            findMyInput.roles.api_url = ''
+                                          }
+                                          onChange({ ...data, additional_fields: additional_fields })
+                                        }}
+                                      >
+                                        {messages.Clear_Data}
+                                      </Button>
+                                    </div>
+                                  )}
+                                </>
+                              )}
+                              <Collapse transition={`height 300ms cubic-bezier(.4, 0, .2, 1)`} isOpen={Boolean(obj)}>
+                                <div className='p-2 my-4 rounded border border-dashed border-main-color'>
+                                  <h2 className='mb-4 text-2xl text-main-color'>{messages.View_Object}</h2>
+                                  <SyntaxHighlighter language='json' style={docco}>
+                                    {JSON.stringify(obj, null, 2)}
+                                  </SyntaxHighlighter>
+                                </div>
+                              </Collapse>
+                              <TextField
+                                fullWidth
+                                type='text'
+                                value={writeValue}
+                                variant='filled'
+                                label={messages.Value}
+                                onChange={e => {
+                                  setWriteValue(e.target.value)
+                                }}
+                                onBlur={e => {
+                                  const additional_fields = data.additional_fields ?? []
+                                  const findMyInput = additional_fields.find(inp => inp.key === open.id)
+                                  if (findMyInput) {
+                                    findMyInput.roles.onMount.value = e.target.value
+                                    if (obj) {
+                                      findMyInput.roles.apiKeyData = getData(obj, e.target.value, '')
                                     }
-                                    onChange({ ...data, additional_fields: additional_fields })
-                                  }}
-                                />
-                              </FormControl>
-                            </>
-                          )}
+                                  } else {
+                                    const myEdit = {
+                                      key: open.id,
+                                      design: objectToCss(Css).replaceAll('NaN', ''),
+                                      roles: {
+                                        ...roles,
+                                        onMount: { type: roles.onMount.type, value: e.target.value },
+                                        apiKeyData: obj ? getData(obj, e.target.value, '') : ''
+                                      }
+                                    }
+                                    additional_fields.push(myEdit)
+                                  }
+                                  onChange({ ...data, additional_fields: additional_fields })
+                                }}
+                              />
+                            </FormControl>
+                          </>
                           {open.type !== 'new_element' && (
                             <div className='border-t-2 border-dashed border-main-color pt-2'>
                               <h2 className='text-lg font-bold text-main-color mt-2'>{messages.Regex}</h2>
@@ -1486,6 +1492,7 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                         </div>
                       </UnmountClosed>
                     </div>
+                    {console.log(open.type !== 'new_element', open?.key !== 'tabs')}
                     {open.type !== 'new_element' && (
                       <SwitchView title={messages.Triggers} show={showTrigger} setShow={setShowTrigger}>
                         <TriggerControl
@@ -1493,6 +1500,7 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                           setOpenTrigger={setOpenTrigger}
                           messages={messages}
                           data={data}
+                          keyInput={open.key}
                           onChange={onChange}
                           open={open}
                           objectToCss={objectToCss}
@@ -1521,6 +1529,17 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                           </IconButton>
                         </h2>
                         <UnmountClosed isOpened={Boolean(showTrigger)}>
+                          <TriggerControl
+                            roles={roles}
+                            setOpenTrigger={setOpenTrigger}
+                            messages={messages}
+                            data={data}
+                          
+                            onChange={onChange}
+                            open={open}
+                            objectToCss={objectToCss}
+                            Css={Css}
+                          />
                           {open.key === 'button' ? (
                             <>
                               <div className='mt-4 px-4'>
