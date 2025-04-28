@@ -19,8 +19,6 @@ export default function OtpControl({ data, onChange, locale, type, buttonRef }) 
     
     const handleChange = (e) => {
       let value = e.target.value
-      
-      // Add validation for number of OTP to not exceed 20
       if (isOtpNumberField && value > 20) {
         value = 20
       }

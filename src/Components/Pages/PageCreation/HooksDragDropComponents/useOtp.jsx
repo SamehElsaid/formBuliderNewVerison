@@ -95,7 +95,7 @@ export default function useOtp({ locale, buttonRef }) {
                         border: `1px solid ${data?.titleColor || '#00cfe8'}`,
                         outline: 'none'
                       }}
-                      className='inputFix rounded-md  !mx-2 !w-[100%] max-w-[50px]  min-w-[60px] || !h-[50px] !px-0 md:!px-2'
+                      className='inputFix rounded-md  !mx-2 w-[40px] || !h-[50px] !px-0 md:!px-2 text-center'
                     />
                   )}
                 />
@@ -117,7 +117,7 @@ export default function useOtp({ locale, buttonRef }) {
                   <span className=' w-[20px] || h-[20px] || border-2 || border-mainColor || rounded-full border-t-transparent || animate-spin'></span>
                 </span>
 
-                {locale === 'ar' ? 'إكمال' : 'Compelte'}
+                {locale === 'ar' ? 'إكمال' : 'complete'}
               </button>
               <div className='mt-4'>
                 <div className='flex gap-1 justify-center items-center'>
