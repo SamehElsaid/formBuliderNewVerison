@@ -152,7 +152,6 @@ function TableView({ data, locale, onChange, readOnly, disabled }) {
                     <>{Object.keys(row?.[ele?.key]).length !== 0 ? <GetTimeinTable data={row[ele.key]} /> : '-'}</>
                   ) : (
                     <>
-
                       {Object.keys(row?.[ele?.key]).length !== 0 ? (
                         row?.[ele?.key].includes('/Uploads/') ? (
                           <a
@@ -165,12 +164,10 @@ function TableView({ data, locale, onChange, readOnly, disabled }) {
                               row?.[ele?.key].split('/Uploads/')[1].split('.').pop()}
                           </a>
                         ) : (
-                          row?.[ele?.key] 
+                          row?.[ele?.key]
                         )
                       ) : (
-                        <>
-                          {row?.[ele?.key] ?? '-'}
-                        </>
+                        <>{row?.[ele?.key] ?? '-'}</>
                       )}
                     </>
                   )}
@@ -307,6 +304,8 @@ function TableView({ data, locale, onChange, readOnly, disabled }) {
   }
 
   const dispatch = useDispatch()
+
+  console.log(getFields)
 
   return (
     <div>

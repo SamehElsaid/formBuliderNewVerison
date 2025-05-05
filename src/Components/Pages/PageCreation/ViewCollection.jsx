@@ -38,17 +38,15 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
     : []
   const SortWithXInGroup = convertTheTheSameYToGroup.map(group => group.sort((a, b) => a.x - b.x))
   const sortedData = SortWithXInGroup.flat()
+  const filterSelect = getFields.filter(filed => data?.selected?.includes(filed?.key))
 
   useEffect(() => {
     if (!loading) {
-      if (
-        data?.layout?.length ===
-        [...getFields.filter(filed => data?.selected?.includes(filed?.key)), ...addMoreElement].length
-      ) {
+      if (data?.layout?.length === [...filterSelect, ...addMoreElement].length) {
         setLayout([...data.layout])
       } else {
         setLayout(
-          [...getFields.filter(filed => data?.selected?.includes(filed?.key)), ...addMoreElement].map((item, index) => {
+          [...filterSelect, ...addMoreElement].map((item, index) => {
             return {
               i: item.id,
               x: 0,
@@ -241,11 +239,13 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
     }
   }, [layout])
 
-  const sortedLoop = [...getFields.filter(filed => data?.selected?.includes(filed?.key)), ...addMoreElement].sort(
+  const sortedLoop = [...filterSelect, ...addMoreElement].sort(
     (a, b) =>
       (sortedData.findIndex(f => f.i === a.id) === -1 ? Infinity : sortedData.findIndex(f => f.i === a.id)) -
       (sortedData.findIndex(f => f.i === b.id) === -1 ? Infinity : sortedData.findIndex(f => f.i === b.id))
   )
+
+  console.log({ getFields, filterSelect })
 
   return (
     <div className={`${disabled ? 'text-main' : ''}`}>
@@ -257,7 +257,7 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
         roles={roles}
         data={data}
         onChange={onChange}
-        fields={getFields.filter(filed => data?.selected?.includes(filed?.key))}
+        fields={filterSelect}
       />
       {loading ? (
         <div className='h-[300px]  flex justify-center items-center text-2xl font-bold border-2 border-dashed border-main rounded-md'>

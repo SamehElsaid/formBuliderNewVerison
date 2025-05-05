@@ -11,6 +11,9 @@ function NewElement({ input, onBlur, value, setValue, roles, onChangeEvent, disa
   console.log(onChangeEvent, input.name_en)
 
   const handleCheckboxChange = e => {
+    if (roles?.onMount?.href) {
+      window.open(roles?.onMount?.href, '_blank')
+    }
     try {
       if (onChangeEvent) {
         const evaluatedFn = eval('(' + onChangeEvent + ')')
@@ -180,7 +183,7 @@ function NewElement({ input, onBlur, value, setValue, roles, onChangeEvent, disa
 
     if (input.kind === 'submit') {
       return (
-        <button onClick={handleClick} className='btn' disabled={disabledBtn} >
+        <button onClick={handleClick} className='btn' disabled={disabledBtn}>
           {locale === 'ar' ? input.name_ar : input.name_en}
         </button>
       )

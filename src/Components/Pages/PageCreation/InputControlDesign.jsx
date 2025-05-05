@@ -48,6 +48,7 @@ const Header = styled(Box)(() => ({
 }))
 
 export default function InputControlDesign({ open, handleClose, design, locale, data, onChange, roles, fields }) {
+  console.log(fields)
   const Css = cssToObject(design)
   const getApiData = useSelector(rx => rx.api.data)
   const { messages } = useIntl()
@@ -65,7 +66,7 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
   const [openTab, setOpenTab] = useState(false)
   const [tabData, setTabData] = useState({ name_ar: '', name_en: '', link: '', active: false })
   const [editTab, setEditTab] = useState(false)
-
+  const [controlTrigger, setControlTrigger] = useState(false)
   useEffect(() => {
     if (roles.api_url) {
       const items = getApiData.find(item => item.link === roles.api_url)?.data
@@ -195,7 +196,6 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
         addTab={addTab}
       />
 
-      {/*  Trigger */}
       <Trigger
         openTrigger={openTrigger}
         messages={messages}
@@ -1194,8 +1194,11 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                                   const additional_fields = data.additional_fields ?? []
                                   const findMyInput = additional_fields.find(inp => inp.key === open.id)
                                   if (findMyInput) {
+                                    console.log(e.target.value)
                                     findMyInput.roles.onMount.type = e.target.value
                                   } else {
+                                    console.log(e.target.value)
+
                                     const myEdit = {
                                       key: open.id,
                                       design: objectToCss(Css).replaceAll('NaN', ''),
@@ -1206,6 +1209,7 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                                     }
                                     additional_fields.push(myEdit)
                                   }
+                                  console.log(additional_fields)
                                   onChange({ ...data, additional_fields: additional_fields })
                                 }}
                               >
@@ -1492,55 +1496,42 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                         </div>
                       </UnmountClosed>
                     </div>
-                    {console.log(open.type !== 'new_element', open?.key !== 'tabs')}
-                    {open.type !== 'new_element' && (
-                      <SwitchView title={messages.Triggers} show={showTrigger} setShow={setShowTrigger}>
-                        <TriggerControl
-                          roles={roles}
-                          setOpenTrigger={setOpenTrigger}
-                          messages={messages}
-                          data={data}
-                          keyInput={open.key}
-                          onChange={onChange}
-                          open={open}
-                          objectToCss={objectToCss}
-                          Css={Css}
-                        />
-                      </SwitchView>
-                    )}
+
+                    <SwitchView title={messages.Triggers} show={showTrigger} setShow={setShowTrigger}>
+                      <TriggerControl
+                        roles={roles}
+                        setOpenTrigger={setOpenTrigger}
+                        messages={messages}
+                        data={data}
+                        keyInput={open.key}
+                        onChange={onChange}
+                        open={open}
+                        objectToCss={objectToCss}
+                        Css={Css}
+                      />
+                    </SwitchView>
                     {open.type === 'new_element' && (
                       <div className='border-2 mt-2 border-main-color  rounded-md '>
                         <h2
-                          onClick={() => setShowTrigger(!showTrigger)}
+                          onClick={() => setControlTrigger(!controlTrigger)}
                           className='text-lg font-bold bg-main-color cursor-pointer select-none text-white py-1 text-center px-2 flex items-center justify-between'
                         >
                           <IconButton>
                             <IconifyIcon
                               className='text-white opacity-0'
-                              icon={showTrigger ? 'mdi:chevron-up' : 'mdi:chevron-down'}
+                              icon={controlTrigger ? 'mdi:chevron-up' : 'mdi:chevron-down'}
                             />
                           </IconButton>
                           {locale === 'ar' ? 'التحكم' : 'Controls'}
                           <IconButton>
                             <IconifyIcon
                               className='text-white'
-                              icon={showTrigger ? 'mdi:chevron-up' : 'mdi:chevron-down'}
+                              icon={controlTrigger ? 'mdi:chevron-up' : 'mdi:chevron-down'}
                             />
                           </IconButton>
                         </h2>
-                        <UnmountClosed isOpened={Boolean(showTrigger)}>
-                          <TriggerControl
-                            roles={roles}
-                            setOpenTrigger={setOpenTrigger}
-                            messages={messages}
-                            data={data}
-                          
-                            onChange={onChange}
-                            open={open}
-                            objectToCss={objectToCss}
-                            Css={Css}
-                          />
-                          {open.key === 'button' ? (
+                        <UnmountClosed isOpened={Boolean(controlTrigger)}>
+                          {open.key === 'button' || open.key === 'check_box' ? (
                             <>
                               <div className='mt-4 px-4'>
                                 <TextField
@@ -1571,35 +1562,37 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                                   label={locale === 'ar' ? 'الرابط' : 'Href'}
                                   variant='filled'
                                 />
-                                <FormControlLabel
-                                  control={
-                                    <Checkbox
-                                      checked={roles?.onMount?.print}
-                                      onChange={e => {
-                                        const additional_fields = data.additional_fields ?? []
-                                        const findMyInput = additional_fields.find(inp => inp.key === open.id)
-                                        if (findMyInput) {
-                                          findMyInput.roles.onMount.print = e.target.checked
-                                        } else {
-                                          const myEdit = {
-                                            key: open.id,
-                                            design: objectToCss(Css).replaceAll('NaN', ''),
-                                            roles: {
-                                              ...roles,
-                                              onMount: {
-                                                ...roles.onMount,
-                                                print: e.target.checked
+                                {open.key !== 'check_box' && (
+                                  <FormControlLabel
+                                    control={
+                                      <Checkbox
+                                        checked={roles?.onMount?.print}
+                                        onChange={e => {
+                                          const additional_fields = data.additional_fields ?? []
+                                          const findMyInput = additional_fields.find(inp => inp.key === open.id)
+                                          if (findMyInput) {
+                                            findMyInput.roles.onMount.print = e.target.checked
+                                          } else {
+                                            const myEdit = {
+                                              key: open.id,
+                                              design: objectToCss(Css).replaceAll('NaN', ''),
+                                              roles: {
+                                                ...roles,
+                                                onMount: {
+                                                  ...roles.onMount,
+                                                  print: e.target.checked
+                                                }
                                               }
                                             }
+                                            additional_fields.push(myEdit)
                                           }
-                                          additional_fields.push(myEdit)
-                                        }
-                                        onChange({ ...data, additional_fields: additional_fields })
-                                      }}
-                                    />
-                                  }
-                                  label={locale === 'ar' ? 'طباعة' : 'Print'}
-                                />
+                                          onChange({ ...data, additional_fields: additional_fields })
+                                        }}
+                                      />
+                                    }
+                                    label={locale === 'ar' ? 'طباعة' : 'Print'}
+                                  />
+                                )}
                               </div>
                               <div className='mt-4'></div>
                               {roles?.onMount?.file ? (

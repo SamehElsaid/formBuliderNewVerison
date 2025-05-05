@@ -10,7 +10,7 @@ import { axiosGet, axiosPost } from 'src/Components/axiosCall'
 import { Icon } from '@iconify/react'
 import { BsPaperclip, BsTrash } from 'react-icons/bs'
 import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'
-import { FaCalendarAlt } from 'react-icons/fa'
+import { FaCalendarAlt, FaEyeSlash } from 'react-icons/fa'
 import NewElement from '../NewElement'
 import { toast } from 'react-toastify'
 import addDays from 'date-fns/addDays'
@@ -722,6 +722,9 @@ export default function DisplayField({
         if (roles?.onMount?.type == 'hide') {
           setIsDisable('hidden')
         }
+        if (roles?.onMount?.type == 'empty Data') {
+          setIsDisable('null')
+        }
 
         if (roles?.onMount?.value) {
           if (roles?.api_url) {
@@ -1049,7 +1052,8 @@ export default function DisplayField({
         ${design}
       }`}</style>
       {hoverText && (
-        <div className='absolute glass-effect z-10 w-full top-[calc(100%+5px)] invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-all duration-300'>
+        <div className='absolute w-full glass-effect z-10 start-0 border border-main-color border-dashed top-[calc(100%+5px)] invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-all duration-300'>
+          <div className='arrow-up w-fit absolute top-[-8px] '></div>
           {hoverText}
         </div>
       )}
@@ -1072,8 +1076,10 @@ export default function DisplayField({
         </div>
         <div className='relative' style={{ display: 'flex' }}>
           {isDisable == 'hidden' && readOnly && (
-            <div className='absolute inset-0 bg-main-color z-10 rounded-md text-sm text-white flex items-center justify-center'>
-              {locale == 'ar' ? 'حقل مخفي' : 'Hidden Input'}
+            <div className='absolute inset-0 bg-main-color/20 z-10 rounded-md text-sm text-white flex items-center justify-center'>
+              <div className=' w-[30px] || h-[30px] || bg-main-color || rounded-full || flex || items-center || justify-center'>
+                <FaEyeSlash />
+              </div>
             </div>
           )}
           {input.type == 'new_element' ? (
@@ -1595,6 +1601,7 @@ const ViewInput = ({
                 type='checkbox'
                 id={option.Id}
                 disabled={isDisable == 'disabled'}
+                className={`${isDisable == 'disabled' ? '!color-gray-400' : ''}`}
                 onBlur={e => {
                   if (onBlur) {
                     const evaluatedFn = eval('(' + onBlur + ')')
@@ -1603,7 +1610,15 @@ const ViewInput = ({
                   }
                 }}
               />
-              <label htmlFor={option.Id}>{lable.map(ele => option[ele]).join('-')}</label>
+              <label
+                style={{
+                  color: isDisable == 'disabled' ? 'gray' : '',
+                  cursor: isDisable == 'disabled' ? 'not-allowed' : ''
+                }}
+                htmlFor={option.Id}
+              >
+                {lable.map(ele => option[ele]).join('-')}
+              </label>
             </div>
           ))}
         </div>

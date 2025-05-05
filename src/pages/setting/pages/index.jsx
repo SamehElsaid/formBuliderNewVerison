@@ -10,6 +10,7 @@ import IconifyIcon from 'src/Components/icon'
 import AddPage from 'src/Components/Pages/AddPage'
 import Link from 'next/link'
 import { Icon } from '@iconify/react'
+import DeletePopUp from 'src/Components/DeletePopUp'
 
 export default function Index() {
   const { locale, messages } = useIntl()
@@ -101,42 +102,6 @@ export default function Index() {
               size='small'
               onClick={e => {
                 setDeletePage(params.row.name)
-                if (deletePage !== params.row.name) {
-                  toast.info(locale === 'ar' ? 'هل أنت متأكد ؟' : 'Are you sure you want to delete this item?', {
-                    position: 'bottom-right',
-                    autoClose: 4000,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    progress: undefined,
-                    theme: 'colored',
-                    icon: <Icon icon='tabler:trash' />,
-                    iconColor: 'red',
-                    iconSize: 20,
-                    iconPosition: 'left',
-                    onClick: () => {
-                      const loadingToast = toast.loading(locale === 'ar' ? 'جاري حذف الصفحة...' : 'Deleting page...')
-                      axiosDelete(`page/${params.row.name}/`, locale)
-                        .then(res => {
-                          if (res.status) {
-                            toast.success(locale === 'ar' ? 'تم حذف الصفحة بنجاح' : 'Page deleted successfully')
-                            setData(data.filter((item, i) => i !== params.row.index))
-                            setRefresh(prev => prev + 1)
-                          }
-                        })
-                        .finally(() => {
-                          toast.dismiss(loadingToast)
-                          setDeletePage(false)
-                        })
-                    },
-                    onClose: () => {
-                      setDeletePage(false)
-                    }
-                  })
-                }
-
-                
               }}
             >
               <IconifyIcon icon='tabler:trash' />
@@ -147,8 +112,35 @@ export default function Index() {
     }
   ]
 
+  const [deleteLoading, setDeleteLoading] = useState(false)
+
+  const handleDelete = () => {
+    setDeleteLoading(true)
+    const loadingToast = toast.loading(locale === 'ar' ? 'جاري حذف الصفحة...' : 'Deleting page...')
+    axiosDelete(`page/${deletePage}/`, locale)
+      .then(res => {
+        if (res.status) {
+          toast.success(locale === 'ar' ? 'تم حذف الصفحة بنجاح' : 'Page deleted successfully')
+          setData(data.filter(ele => ele.name !== deletePage))
+          setRefresh(prev => prev + 1)
+        }
+      })
+      .finally(() => {
+        toast.dismiss(loadingToast)
+        setDeleteLoading(false)
+        setDeletePage(false)
+      })
+  }
+
   return (
     <div>
+      <DeletePopUp
+        open={deletePage}
+        setOpen={setDeletePage}
+        handleDelete={handleDelete}
+        loadingButton={deleteLoading}
+      />
+
       <AddPage open={open} toggle={handleClose} setRefresh={setRefresh} />
 
       <Card className='w-[100%]  mb-5 py-4 '>
@@ -199,12 +191,14 @@ export default function Index() {
 
             <TableEdit
               InvitationsColumns={columns}
-              data={data?.filter(ele => ele.name.toLowerCase().includes(search.toLowerCase())).map((ele, i) => {
-                const fData = { ...ele }
-                fData.index = i + paginationModel.page * paginationModel.pageSize
+              data={data
+                ?.filter(ele => ele.name.toLowerCase().includes(search.toLowerCase()))
+                .map((ele, i) => {
+                  const fData = { ...ele }
+                  fData.index = i + paginationModel.page * paginationModel.pageSize
 
-                return fData
-              })}
+                  return fData
+                })}
               getRowId={row => row.index}
               loading={loading}
               locale={locale}

@@ -121,6 +121,8 @@ function Trigger({
                   variant='filled'
                   value={selectedField}
                   onChange={e => {
+                    console.log(e.target.value)
+
                     const field = fields.find(field => field.key === e.target.value)
                     if (field.fieldCategory !== 'Basic') {
                       setTriggerKey(field.key)
@@ -129,13 +131,12 @@ function Trigger({
                       } else {
                         setTriggerKey(field.options.target)
                       }
-                      console.log(field)
-                      console.log(field.type === 'OneToOne' ? field.options.source : field.options.target)
                       setParentKey(field.type === 'OneToOne' ? field.options.source : field.options.target)
                     }
                     setSelectedField(e.target.value)
                   }}
                 >
+                  {console.log(fields, open)}
                   {fields
                     ?.filter(fil => fil.id !== open.id)
                     ?.map(field => (
@@ -155,16 +156,19 @@ function Trigger({
                   variant='filled'
                   value={typeOfValidation}
                   onChange={e => {
+                    console.log(e.target.value)
+
                     setTypeOfValidation(e.target.value)
                   }}
                 >
-                  {open.fieldCategory !== 'Basic' || open.key !== 'tabs' && <MenuItem value={'filter'}>{messages.filter}</MenuItem>}
-                  {open.key !== 'tabs' && (
-                    <>
-                      <MenuItem value={'enable'}>{messages.enable}</MenuItem>
-                      <MenuItem value={'empty'}>{messages.empty}</MenuItem>
-                    </>
-                  )}
+                  {open.fieldCategory !== 'Basic' ||
+                    (open.key !== 'tabs' && <MenuItem value={'filter'}>{messages.filter}</MenuItem>)}
+                  <MenuItem value={'enable'} disabled={open.type === 'new_element'}>
+                    {messages.enable}
+                  </MenuItem>
+                  <MenuItem value={'empty'} disabled={open.type === 'new_element'}>
+                    {messages.empty}
+                  </MenuItem>
                   <MenuItem value={'hidden'}>{messages.hidden}</MenuItem>
                   <MenuItem value={'visible'}>{messages.visible}</MenuItem>
                 </Select>

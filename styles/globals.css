@@ -834,7 +834,6 @@ input:-webkit-autofill {
   }
 }
 
-
 .objectVideo video {
   object-fit: cover !important;
 }
@@ -1542,8 +1541,6 @@ sortable-list {
   direction: rtl !important;
 }
 
-
-
 .bgGradient {
   background: #8a2387; /* fallback for old browsers */
   background: -webkit-linear-gradient(to right, #f27121, #e94057, #8a2387); /* Chrome 10-25, Safari 5.1-6 */
@@ -1676,7 +1673,7 @@ li:contains("Add blocks to page") {
   /* jQuery pseudo-selector */
   display: none !important;
 }
-.MuiListSubheader-sticky{
+.MuiListSubheader-sticky {
   display: none !important;
 }
 .control-date input,
@@ -1691,4 +1688,10 @@ li:contains("Add blocks to page") {
   justify-content: center;
   align-items: start;
   width: fit-content;
+}
+
+.arrow-up {
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-bottom: 8px solid #00cfe8;
 }
