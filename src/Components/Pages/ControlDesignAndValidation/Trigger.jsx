@@ -169,6 +169,7 @@ function Trigger({
                   </MenuItem>
                   <MenuItem value={'empty'} disabled={open.type === 'new_element'}>
                     {messages.empty}
+                    
                   </MenuItem>
                   <MenuItem value={'hidden'}>{messages.hidden}</MenuItem>
                 </Select>
