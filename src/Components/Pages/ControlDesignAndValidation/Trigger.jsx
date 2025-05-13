@@ -170,9 +170,9 @@ function Trigger({
                     {messages.empty}
                   </MenuItem>
                   <MenuItem value={'hidden'}>{messages.hidden}</MenuItem>
-                </Select>
-                  <MenuItem value={'visible'}>{messages.visible}</MenuItem>
                   <MenuItem value={'filter'}>{messages.filter}</MenuItem>
+                </Select>
+                <MenuItem value={'visible'}>{messages.visible}</MenuItem>
                 <UnmountClosed isOpened={Boolean(typeOfValidation === 'filter')}>
                   <div className='flex border-main-color border mt-2 rounded-md '>
                     <div className='w-full flex flex-col items-center justify-center capitalize text-sm px-2'>
