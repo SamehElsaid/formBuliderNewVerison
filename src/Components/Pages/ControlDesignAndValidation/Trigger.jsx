@@ -161,8 +161,9 @@ function Trigger({
                     setTypeOfValidation(e.target.value)
                   }}
                 >
-                  {open.fieldCategory !== 'Basic' ||
-                    (open.key !== 'tabs' && <MenuItem value={'filter'}>{messages.filter}</MenuItem>)}
+                  {(open.fieldCategory !== 'Basic' || open.key !== 'tabs') && (
+                    <MenuItem value={'filter'}>{messages.filter}</MenuItem>
+                  )}
                   <MenuItem value={'enable'} disabled={open.type === 'new_element'}>
                     {messages.enable}
                   </MenuItem>
@@ -170,7 +171,6 @@ function Trigger({
                     {messages.empty}
                   </MenuItem>
                   <MenuItem value={'hidden'}>{messages.hidden}</MenuItem>
-                  <MenuItem value={'filter'}>{messages.filter}</MenuItem>
                 </Select>
                 <MenuItem value={'visible'}>{messages.visible}</MenuItem>
                 <UnmountClosed isOpened={Boolean(typeOfValidation === 'filter')}>
