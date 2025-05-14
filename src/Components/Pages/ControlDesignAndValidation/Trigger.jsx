@@ -16,6 +16,7 @@ import {
 } from '@mui/material'
 import { useState } from 'react'
 import { UnmountClosed } from 'react-collapse'
+import { cssToObject, objectToCss } from 'src/Components/_Shared'
 
 function Trigger({
   openTrigger,
@@ -29,8 +30,7 @@ function Trigger({
   currentFields,
   parentFields,
   setParentKey,
-  Css,
-  objectToCss,
+  design,
   roles,
   parentKey
 }) {
@@ -59,6 +59,8 @@ function Trigger({
   }
 
   const handleFinish = () => {
+    const Css = cssToObject(design)
+
     const sendData = {
       selectedField,
       triggerKey: currentFieldTrigger,
@@ -74,6 +76,8 @@ function Trigger({
     if (findMyInput) {
       findMyInput.roles.trigger = sendData
     } else {
+      console.log(Css, objectToCss(Css))
+
       const myEdit = {
         key: open.id,
         design: objectToCss(Css).replaceAll('NaN', ''),
@@ -84,6 +88,7 @@ function Trigger({
       }
       additional_fields.push(myEdit)
     }
+
     onChange({ ...data, additional_fields: additional_fields })
     setOpenTrigger(false)
     resetForm()
@@ -136,7 +141,6 @@ function Trigger({
                     setSelectedField(e.target.value)
                   }}
                 >
-                  {console.log(fields, open)}
                   {fields
                     ?.filter(fil => fil.id !== open.id)
                     ?.map(field => (
@@ -169,18 +173,16 @@ function Trigger({
                   </MenuItem>
                   <MenuItem value={'empty'} disabled={open.type === 'new_element'}>
                     {messages.empty}
-                    
                   </MenuItem>
                   <MenuItem value={'hidden'}>{messages.hidden}</MenuItem>
                 </Select>
-                <MenuItem value={'visible'}>{messages.visible}</MenuItem>
                 <UnmountClosed isOpened={Boolean(typeOfValidation === 'filter')}>
-                  <div className='flex border-main-color border mt-2 rounded-md '>
-                    <div className='w-full flex flex-col items-center justify-center capitalize text-sm px-2'>
+                  <div className='flex mt-2 rounded-md border border-main-color'>
+                    <div className='flex flex-col justify-center items-center px-2 w-full text-sm capitalize'>
                       {triggerKey ? (
                         <div className='w-full'>
                           {' '}
-                          <h2 className='text-sm  capitalize'>
+                          <h2 className='text-sm capitalize'>
                             {triggerKey} {messages.Fields}
                           </h2>
                           <Select
@@ -199,8 +201,8 @@ function Trigger({
                         selectedField
                       )}
                     </div>
-                    <div className='w-full py-2 px-1 border-x border-main-color'>
-                      <h2 className='text-sm  capitalize'>
+                    <div className='px-1 py-2 w-full border-x border-main-color'>
+                      <h2 className='text-sm capitalize'>
                         {open?.[`name${locale === 'ar' ? 'Ar' : 'En'}`]} {messages.Status}
                       </h2>
                       <Select
@@ -215,9 +217,9 @@ function Trigger({
                         <MenuItem value={'notEqual'}>{messages.Not_Equal}</MenuItem>
                       </Select>
                     </div>
-                    <div className='w-full flex flex-col items-center justify-center px-2'>
+                    <div className='flex flex-col justify-center items-center px-2 w-full'>
                       <div className='w-full'>
-                        <h2 className='text-sm  capitalize'>
+                        <h2 className='text-sm capitalize'>
                           {open?.[`name${locale === 'ar' ? 'Ar' : 'En'}`]} {messages.Fields}
                         </h2>
                         <Select
@@ -241,12 +243,12 @@ function Trigger({
                   </div>
                 </UnmountClosed>
                 <UnmountClosed isOpened={Boolean(typeOfValidation && typeOfValidation !== 'filter')}>
-                  <div className='flex border-main-color border mt-2 rounded-md '>
-                    <div className='w-full flex flex-col items-center justify-center capitalize text-sm px-2'>
+                  <div className='flex mt-2 rounded-md border border-main-color'>
+                    <div className='flex flex-col justify-center items-center px-2 w-full text-sm capitalize'>
                       {triggerKey ? (
                         <div className='w-full'>
                           {' '}
-                          <h2 className='text-sm  capitalize'>
+                          <h2 className='text-sm capitalize'>
                             {triggerKey} {messages.Fields}
                           </h2>
                           <Select
@@ -270,8 +272,8 @@ function Trigger({
                         selectedField
                       )}
                     </div>
-                    <div className='w-full py-2 px-1 border-x border-main-color'>
-                      <h2 className='text-sm  capitalize'>
+                    <div className='px-1 py-2 w-full border-x border-main-color'>
+                      <h2 className='text-sm capitalize'>
                         {open?.[`name${locale === 'ar' ? 'Ar' : 'En'}`]} {messages.Status}
                       </h2>
                       <Select
@@ -287,9 +289,9 @@ function Trigger({
                       </Select>
                     </div>
 
-                    <div className='w-full flex flex-col items-center justify-center px-2'>
+                    <div className='flex flex-col justify-center items-center px-2 w-full'>
                       <div className='w-full'>
-                        <h2 className='text-sm  capitalize'>{messages.Value}</h2>
+                        <h2 className='text-sm capitalize'>{messages.Value}</h2>
                         <TextField
                           fullWidth
                           variant='filled'

@@ -283,7 +283,7 @@ function Select({ onChange, data, type, buttonRef, title }) {
                 />
               </Collapse>
 
-              <div className='p-2 border-2 border-gray-300 rounded-md mt-4 '>
+              <div className='p-2 mt-4 rounded-md border-2 border-gray-300'>
                 <div className='text-lg font-bold'>{locale === 'ar' ? 'اضافة عناصر' : 'Add More Element'}</div>
 
                 <TextField
@@ -382,7 +382,7 @@ function Select({ onChange, data, type, buttonRef, title }) {
                                 {
                                   name_ar: 'نص',
                                   name_en: 'Text',
-                                  key: 'text',
+                                  key: 'text_content',
                                   type: 'new_element',
                                   id: 's' + new Date().getTime()
                                 }
@@ -409,8 +409,8 @@ function Select({ onChange, data, type, buttonRef, title }) {
                       ?.filter(ele => ele.kind !== 'submit')
                       ?.map(item => (
                         <div key={item.id}>
-                          <div className='flex items-center justify-between  border border-main-color border-dashed rounded-md p-2'>
-                            <div className='text-sm '>
+                          <div className='flex justify-between items-center p-2 rounded-md border border-dashed border-main-color'>
+                            <div className='text-sm'>
                               <span className='text-main-color me-2'>
                                 (
                                 {
@@ -508,7 +508,7 @@ function Select({ onChange, data, type, buttonRef, title }) {
                   />
                 </Collapse>
 
-                <div className='p-2 border-2 border-gray-300 rounded-md mt-4 '>
+                <div className='p-2 mt-4 rounded-md border-2 border-gray-300'>
                   <div className='text-lg font-bold'>{locale === 'ar' ? 'اضافة عناصر' : 'Add More Element'}</div>
 
                   <TextField
@@ -632,7 +632,7 @@ function Select({ onChange, data, type, buttonRef, title }) {
                     <div className='flex flex-col gap-2 my-3'>
                       {data?.addMoreElement?.map(item => (
                         <div key={item.id}>
-                          <div className='flex items-center justify-between '>
+                          <div className='flex justify-between items-center'>
                             <div className='text-sm'>{locale === 'ar' ? item.name_ar : item.name_en}</div>
                             <Button
                               variant='outlined'

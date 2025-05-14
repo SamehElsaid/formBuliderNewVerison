@@ -1161,10 +1161,10 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                 </UnmountClosed>
                 <UnmountClosed isOpened={Boolean(selected === 'roles')}>
                   <div>
-                    <div className='border-2 border-main-color  rounded-md '>
+                    <div className='rounded-md border-2 border-main-color'>
                       <h2
                         onClick={() => setShowEvent(!showEvent)}
-                        className='text-lg font-bold bg-main-color cursor-pointer select-none text-white py-1 text-center px-2 flex items-center justify-between'
+                        className='flex justify-between items-center px-2 py-1 text-lg font-bold text-center text-white cursor-pointer select-none bg-main-color'
                       >
                         <IconButton>
                           <IconifyIcon
@@ -1184,7 +1184,7 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                       <UnmountClosed isOpened={Boolean(showEvent)}>
                         <div className='px-2 pb-2'>
                           <>
-                            <h2 className='text-lg font-bold text-main-color mt-2'>{messages.OnMount}</h2>
+                            <h2 className='mt-2 text-lg font-bold text-main-color'>{messages.OnMount}</h2>
                             <FormControl fullWidth margin='normal'>
                               <InputLabel>{messages.State}</InputLabel>
                               <Select
@@ -1325,8 +1325,8 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                             </FormControl>
                           </>
                           {open.type !== 'new_element' && (
-                            <div className='border-t-2 border-dashed border-main-color pt-2'>
-                              <h2 className='text-lg font-bold text-main-color mt-2'>{messages.Regex}</h2>
+                            <div className='pt-2 border-t-2 border-dashed border-main-color'>
+                              <h2 className='mt-2 text-lg font-bold text-main-color'>{messages.Regex}</h2>
                               <TextField
                                 fullWidth
                                 type='text'
@@ -1421,7 +1421,7 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                           )}
                           {open.key === 'button' && (
                             <>
-                              <h2 className='text-lg font-bold text-main-color mt-2'>{messages.OnMount}</h2>
+                              <h2 className='mt-2 text-lg font-bold text-main-color'>{messages.OnMount}</h2>
                               <FormControl fullWidth margin='normal'>
                                 <InputLabel>{messages.State}</InputLabel>
                                 <Select
@@ -1452,8 +1452,8 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                               </FormControl>
                             </>
                           )}
-                          <div className='border-t-2 border-dashed border-main-color pt-2'>
-                            <h2 className='text-lg font-bold text-main-color mt-2'>
+                          <div className='pt-2 border-t-2 border-dashed border-main-color'>
+                            <h2 className='mt-2 text-lg font-bold text-main-color'>
                               {open.key === 'button' ? messages.OnClick : messages.OnChange}
                             </h2>
                             <JsEditor
@@ -1466,8 +1466,8 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                             />
                           </div>
                           {open.key !== 'button' && (
-                            <div className='border-t-2 border-dashed border-main-color pt-2'>
-                              <h2 className='text-lg font-bold text-main-color mt-2'>{messages.OnBlur}</h2>
+                            <div className='pt-2 border-t-2 border-dashed border-main-color'>
+                              <h2 className='mt-2 text-lg font-bold text-main-color'>{messages.OnBlur}</h2>
                               <JsEditor
                                 type='onBlur'
                                 jsCode={roles?.event?.onBlur ?? ''}
@@ -1480,8 +1480,8 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                             </div>
                           )}
                           {open.type !== 'new_element' && (
-                            <div className='border-t-2 border-dashed border-main-color pt-2'>
-                              <h2 className='text-lg font-bold text-main-color mt-2'>{messages.OnUnmount}</h2>
+                            <div className='pt-2 border-t-2 border-dashed border-main-color'>
+                              <h2 className='mt-2 text-lg font-bold text-main-color'>{messages.OnUnmount}</h2>
                               <JsEditor
                                 type='onUnmount'
                                 jsCode={roles?.event?.onUnmount ?? ''}
@@ -1511,10 +1511,10 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                       />
                     </SwitchView>
                     {open.type === 'new_element' && (
-                      <div className='border-2 mt-2 border-main-color  rounded-md '>
+                      <div className='mt-2 rounded-md border-2 border-main-color'>
                         <h2
                           onClick={() => setControlTrigger(!controlTrigger)}
-                          className='text-lg font-bold bg-main-color cursor-pointer select-none text-white py-1 text-center px-2 flex items-center justify-between'
+                          className='flex justify-between items-center px-2 py-1 text-lg font-bold text-center text-white cursor-pointer select-none bg-main-color'
                         >
                           <IconButton>
                             <IconifyIcon
@@ -1533,7 +1533,7 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                         <UnmountClosed isOpened={Boolean(controlTrigger)}>
                           {open.key === 'button' || open.key === 'check_box' ? (
                             <>
-                              <div className='mt-4 px-4'>
+                              <div className='px-4 mt-4'>
                                 <TextField
                                   fullWidth
                                   type='text'
@@ -1596,9 +1596,9 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                               </div>
                               <div className='mt-4'></div>
                               {roles?.onMount?.file ? (
-                                <div className='p-2 my-4 rounded border border-dashed border-main-color '>
-                                  <div className='flex items-center justify-between'>
-                                    <div className='flex items-center gap-2'>
+                                <div className='p-2 my-4 rounded border border-dashed border-main-color'>
+                                  <div className='flex justify-between items-center'>
+                                    <div className='flex gap-2 items-center'>
                                       <div className='text-sm'>{roles?.onMount?.file?.replaceAll('/Uploads/', '')}</div>
                                     </div>
                                     <Button
@@ -1682,7 +1682,7 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                               )}
 
                               <div className=''>
-                                <div className='flex flex-col gap-2 justify-center items-center py-2 '>
+                                <div className='flex flex-col gap-2 justify-center items-center py-2'>
                                   <Button
                                     onClick={() => {
                                       setOpenTrigger(true)
@@ -1733,8 +1733,8 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                               </FormControl>
                               {roles?.onMount?.file ? (
                                 <div className='p-2 my-4 rounded border border-dashed border-main-color'>
-                                  <div className='flex items-center justify-between'>
-                                    <div className='flex items-center gap-2'>
+                                  <div className='flex justify-between items-center'>
+                                    <div className='flex gap-2 items-center'>
                                       <div className='text-sm'>{roles?.onMount?.file?.replaceAll('/Uploads/', '')}</div>
                                     </div>
                                     <Button
@@ -1821,21 +1821,21 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                   </div>
                 </UnmountClosed>
                 <UnmountClosed isOpened={Boolean(selected === 'tabs')}>
-                  <div className='border-t-2 border-dashed border-main-color pt-2'>
-                    <div className='flex items-center justify-between mb-3'>
-                      <h2 className='text-lg font-bold text-main-color mt-2'>{messages.Tabs}</h2>
+                  <div className='pt-2 border-t-2 border-dashed border-main-color'>
+                    <div className='flex justify-between items-center mb-3'>
+                      <h2 className='mt-2 text-lg font-bold text-main-color'>{messages.Tabs}</h2>
                       <Button variant='contained' color='primary' onClick={() => setOpenTab(true)}>
                         {messages.Add_Tab}
                       </Button>
                     </div>
-                    <div className='flex flex-wrap parent-tabs gap-1'>
+                    <div className='flex flex-wrap gap-1 parent-tabs'>
                       {open?.data?.map((item, index) => (
                         <div
                           key={index}
-                          className='flex items-center justify-between w-full border-2 border-main-color rounded-md p-2'
+                          className='flex justify-between items-center p-2 w-full rounded-md border-2 border-main-color'
                         >
                           <span>{item?.[`name_${locale}`]}</span>
-                          <div className='flex items-center '>
+                          <div className='flex items-center'>
                             <IconButton
                               onClick={() => {
                                 setEditTab(index + 1)

@@ -511,7 +511,7 @@ color:#555;
 
     `
   }
-  if (type === 'text') {
+  if (type === 'text_content') {
     return `
   .text-element{
     color: #555;
@@ -617,6 +617,7 @@ export const objectToCss = cssObject => {
       cssString += `${selector} { ${styleString} }\n`
     }
   }
+  console.log(cssString)
 
   return cssString.trim() // إزالة المسافات الزائدة في النهاية
 }

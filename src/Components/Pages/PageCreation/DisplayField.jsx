@@ -1058,8 +1058,8 @@ export default function DisplayField({
         </div>
       )}
       <div ref={mainRef} id='parent-input'>
-        <div className='flex items-center gap-2 justify-between mb-2'>
-          <div className='flex items-center gap-2'>
+        <div className='flex gap-2 justify-between items-center mb-2'>
+          <div className='flex gap-2 items-center'>
             {input.type != 'File' && label} <span className='text-xs text-red-500'>{validations.Required && '*'}</span>
           </div>
           {hintText && (
@@ -1076,7 +1076,7 @@ export default function DisplayField({
         </div>
         <div className='relative' style={{ display: 'flex' }}>
           {isDisable == 'hidden' && readOnly && (
-            <div className='absolute inset-0 bg-main-color/20 z-10 rounded-md text-sm text-white flex items-center justify-center'>
+            <div className='flex absolute inset-0 z-10 justify-center items-center text-sm text-white rounded-md bg-main-color/20'>
               <div className=' w-[30px] || h-[30px] || bg-main-color || rounded-full || flex || items-center || justify-center'>
                 <FaEyeSlash />
               </div>
@@ -1345,7 +1345,7 @@ const ViewInput = ({
         </div>
       </div>
     ) : (
-      <div className='flex items-center gap-2'>
+      <div className='flex gap-2 items-center'>
         <a
           href={process.env.API_URL + '/file/download/' + value.replaceAll('/Uploads/', '')}
           target='_blank'
@@ -1413,7 +1413,7 @@ const ViewInput = ({
       <>
         <div className='relative w-full'>
           <div
-            className='absolute top-0 start-0 w-full h-full z-10 cursor-pointer '
+            className='absolute top-0 z-10 w-full h-full cursor-pointer start-0'
             onClick={() => setIsOpen(true)}
           ></div>
           <DatePickerWrapper className='w-full'>
@@ -1448,7 +1448,7 @@ const ViewInput = ({
           aria-describedby='alert-dialog-description'
         >
           <div className='min-h-[80vh] flex flex-col  control-date py-5'>
-            <div className='flex justify-end gap-2 px-5'>
+            <div className='flex gap-2 justify-end px-5'>
               <Button
                 type='button'
                 variant='contained'
@@ -1527,7 +1527,7 @@ const ViewInput = ({
         <div className=''>
           <div className=''>
             <div>
-              <div className='flex gap-1 flex-wrap'>
+              <div className='flex flex-wrap gap-1'>
                 {selectedOptions.map((option, index) => (
                   <div key={option.Id} className=''>
                     <input
@@ -1574,7 +1574,7 @@ const ViewInput = ({
           }}
         >
           <option selected value={''}>
-            {placeholder ?? (locale == 'ar' ? 'اختر ' : 'Select')}
+            {placeholder ? placeholder : (locale == 'ar' ? 'اختر ' : 'Select')}
           </option>
           {selectedOptions.map((option, index) => (
             <option key={option.Id} value={option.Id}>
@@ -1592,7 +1592,7 @@ const ViewInput = ({
       <div className='w-full'>
         <div className='flex flex-wrap gap-1'>
           {selectedOptions.map((option, index) => (
-            <div key={option.Id} className='flex items-center gap-1'>
+            <div key={option.Id} className='flex gap-1 items-center'>
               <input
                 value={option.Id}
                 name={input.nameEn}
