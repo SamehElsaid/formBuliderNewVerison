@@ -17,6 +17,7 @@ import '@react-page/plugins-slate/lib/index.css'
 import '@react-page/plugins-spacer/lib/index.css'
 import useProgressBar from './useProgressBar'
 import useOtp from './useOtp'
+import useHeader from './useHeader'
 
 export default function useCellPlugins({ advancedEdit, locale, readOnly, buttonRef, workflowId }) {
   // Hooks Drag Drop Components
@@ -30,6 +31,7 @@ export default function useCellPlugins({ advancedEdit, locale, readOnly, buttonR
   const { RichText } = useRichText({ locale, buttonRef })
   const { ProgressBar } = useProgressBar({ locale, buttonRef })
   const { Otp } = useOtp({ locale, buttonRef })
+  const { Header } = useHeader({ locale, buttonRef })
   const { FlexControlCell } = useFlexControl({ locale, buttonRef })
   const { ButtonCell } = useButton({ locale, buttonRef })
   const { cartCell } = useCart({ locale, readOnly, buttonRef })
@@ -52,7 +54,8 @@ export default function useCellPlugins({ advancedEdit, locale, readOnly, buttonR
       ButtonCell,
       FlexControlCell,
       cartCell,
-      IconView
+      IconView,
+      Header
     ],
     [
       backgroundPlugin,
@@ -68,7 +71,8 @@ export default function useCellPlugins({ advancedEdit, locale, readOnly, buttonR
       ButtonCell,
       FlexControlCell,
       cartCell,
-      IconView
+      IconView,
+      Header
     ]
   )
 
