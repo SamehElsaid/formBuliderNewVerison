@@ -19,6 +19,7 @@ import useProgressBar from './useProgressBar'
 import useOtp from './useOtp'
 import useHeader from './useHeader'
 import useSection from './UseSection'
+import useDynamicTable from './useDynamicTable'
 
 export default function useCellPlugins({ advancedEdit, locale, readOnly, buttonRef, workflowId }) {
   // Hooks Drag Drop Components
@@ -38,6 +39,7 @@ export default function useCellPlugins({ advancedEdit, locale, readOnly, buttonR
   const { cartCell } = useCart({ locale, readOnly, buttonRef })
   const { IconView } = useIconView({ locale, buttonRef })
   const { SectionControl } = useSection({ locale, buttonRef });
+const { dynamicTable } = useDynamicTable({ locale, buttonRef, advancedEdit });
 
   const cellPlugins = useMemo(
     () => [
@@ -58,7 +60,8 @@ export default function useCellPlugins({ advancedEdit, locale, readOnly, buttonR
       cartCell,
       IconView,
       Header,
-      SectionControl
+      SectionControl,
+      dynamicTable
     ],
     [
       backgroundPlugin,
@@ -76,7 +79,8 @@ export default function useCellPlugins({ advancedEdit, locale, readOnly, buttonR
       cartCell,
       IconView,
       Header,
-      SectionControl
+      SectionControl,
+      dynamicTable
     ]
   )
 
