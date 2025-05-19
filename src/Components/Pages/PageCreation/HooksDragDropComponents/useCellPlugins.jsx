@@ -20,6 +20,7 @@ import useOtp from './useOtp'
 import useHeader from './useHeader'
 import useSection from './UseSection'
 import useDynamicTable from './useDynamicTable'
+import useGoogleMap from './useMap'
 
 export default function useCellPlugins({ advancedEdit, locale, readOnly, buttonRef, workflowId }) {
   // Hooks Drag Drop Components
@@ -40,7 +41,7 @@ export default function useCellPlugins({ advancedEdit, locale, readOnly, buttonR
   const { IconView } = useIconView({ locale, buttonRef })
   const { SectionControl } = useSection({ locale, buttonRef });
 const { dynamicTable } = useDynamicTable({ locale, buttonRef, advancedEdit });
-
+const { GoogleMap } = useGoogleMap({ locale, buttonRef });
   const cellPlugins = useMemo(
     () => [
       slate(),
@@ -61,7 +62,8 @@ const { dynamicTable } = useDynamicTable({ locale, buttonRef, advancedEdit });
       IconView,
       Header,
       SectionControl,
-      dynamicTable
+      dynamicTable,
+      GoogleMap
     ],
     [
       backgroundPlugin,
@@ -80,7 +82,8 @@ const { dynamicTable } = useDynamicTable({ locale, buttonRef, advancedEdit });
       IconView,
       Header,
       SectionControl,
-      dynamicTable
+      dynamicTable,
+      GoogleMap
     ]
   )
 
