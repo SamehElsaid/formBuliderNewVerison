@@ -18,6 +18,10 @@ import useOtp from './useOtp'
 import useOrder from './useOrder'
 import '@react-page/plugins-slate/lib/index.css'
 import '@react-page/plugins-spacer/lib/index.css'
+import useHeader from './useHeader'
+import useSection from './UseSection'
+import useDynamicTable from './useDynamicTable'
+import useGoogleMap from './useMap'
 
 export default function useCellPlugins({ advancedEdit, locale, readOnly, buttonRef, workflowId }) {
   // Hooks Drag Drop Components
@@ -32,10 +36,14 @@ export default function useCellPlugins({ advancedEdit, locale, readOnly, buttonR
   const { RichText } = useRichText({ locale, buttonRef })
   const { ProgressBar } = useProgressBar({ locale, buttonRef })
   const { Otp } = useOtp({ locale, buttonRef })
+  const { Header } = useHeader({ locale, buttonRef })
   const { FlexControlCell } = useFlexControl({ locale, buttonRef })
   const { ButtonCell } = useButton({ locale, buttonRef })
   const { cartCell } = useCart({ locale, readOnly, buttonRef })
   const { IconView } = useIconView({ locale, buttonRef })
+  const { SectionControl } = useSection({ locale, buttonRef })
+  const { dynamicTable } = useDynamicTable({ locale, buttonRef, advancedEdit })
+  const { GoogleMap } = useGoogleMap({ locale, buttonRef })
 
   const cellPlugins = useMemo(
     () => [
@@ -55,7 +63,11 @@ export default function useCellPlugins({ advancedEdit, locale, readOnly, buttonR
       FlexControlCell,
       order,
       cartCell,
-      IconView
+      IconView,
+      Header,
+      SectionControl,
+      dynamicTable,
+      GoogleMap
     ],
     [
       backgroundPlugin,
@@ -72,7 +84,11 @@ export default function useCellPlugins({ advancedEdit, locale, readOnly, buttonR
       ButtonCell,
       FlexControlCell,
       cartCell,
-      IconView
+      IconView,
+      Header,
+      SectionControl,
+      dynamicTable,
+      GoogleMap
     ]
   )
 
