@@ -18,13 +18,14 @@ export default function DynamicTableView({ data, onChange, readOnly, disabled, l
   // Toggle cell selection
   const toggleCell = (rowIdx, colIdx) => {
     if (readOnly) return;
-    
+
     const key = cellKey(rowIdx, colIdx);
+
     const newSelections = {
       ...selections,
       [key]: !selections[key]
     };
-    
+
     onChange({
       ...data,
       selections: newSelections
@@ -34,13 +35,14 @@ export default function DynamicTableView({ data, onChange, readOnly, disabled, l
   // Check if cell is selected
   const isCellSelected = (rowIdx, colIdx) => {
     const key = cellKey(rowIdx, colIdx);
+
     return selections[key] || false;
   };
 
   // Add new column
   const addColumn = () => {
     if (readOnly) return;
-    
+
     if (newColumnName.trim()) {
       const newColumns = [...columns, newColumnName.trim()];
       onChange({
@@ -56,7 +58,7 @@ export default function DynamicTableView({ data, onChange, readOnly, disabled, l
   // Add new row
   const addRow = () => {
     if (readOnly) return;
-    
+
     if (newRowName.trim()) {
       const newRows = [...rows, newRowName.trim()];
       onChange({
@@ -72,9 +74,9 @@ export default function DynamicTableView({ data, onChange, readOnly, disabled, l
   // Remove column
   const removeColumn = (index) => {
     if (readOnly) return;
-    
+
     const newColumns = columns.filter((_, idx) => idx !== index);
-    
+
     // Clean up selected cells related to this column
     const newSelections = {...selections};
     Object.keys(newSelections).forEach(key => {
@@ -99,9 +101,9 @@ export default function DynamicTableView({ data, onChange, readOnly, disabled, l
   // Remove row
   const removeRow = (index) => {
     if (readOnly) return;
-    
+
     const newRows = rows.filter((_, idx) => idx !== index);
-    
+
     // Clean up selected cells related to this row
     const newSelections = {...selections};
     Object.keys(newSelections).forEach(key => {
@@ -132,14 +134,14 @@ export default function DynamicTableView({ data, onChange, readOnly, disabled, l
   };
 
   return (
-    <div className="flex flex-col space-y-4 w-full mx-auto p-4 border border-gray-200 rounded-md">
+    <div className="flex flex-col p-4 mx-auto space-y-4 w-full rounded-md border border-gray-200">
       <h2 className="text-xl font-semibold text-gray-800">
         {locale === 'ar' ? data?.title_ar || 'جدول ديناميكي' : data?.title_en || 'Dynamic Table'}
       </h2>
-      
+
       {/* Controls for adding columns and rows */}
       {!readOnly && (
-        <div className="flex flex-col md:flex-row gap-4 mb-4">
+        <div className="flex flex-col gap-4 mb-4 md:flex-row">
           <div className="flex flex-1 items-center space-x-2">
             <input
               type="text"
@@ -147,18 +149,18 @@ export default function DynamicTableView({ data, onChange, readOnly, disabled, l
               onChange={(e) => setNewColumnName(e.target.value)}
               onKeyDown={(e) => handleKeyDown(e, addColumn)}
               placeholder={locale === 'ar' ? 'اسم العمود الجديد' : 'New column name'}
-              className="flex-grow p-2 border border-gray-300 rounded"
+              className="flex-grow p-2 rounded border border-gray-300"
               disabled={disabled}
             />
             <button
               onClick={addColumn}
-              className="p-2 bg-blue-500 text-white rounded hover:bg-blue-600 flex items-center"
+              className="flex items-center p-2 text-white bg-blue-500 rounded hover:bg-blue-600"
               disabled={disabled}
             >
               <FaPlus className="mr-1" /> {locale === 'ar' ? 'إضافة عمود' : 'Add Column'}
             </button>
           </div>
-          
+
           <div className="flex flex-1 items-center space-x-2">
             <input
               type="text"
@@ -166,12 +168,12 @@ export default function DynamicTableView({ data, onChange, readOnly, disabled, l
               onChange={(e) => setNewRowName(e.target.value)}
               onKeyDown={(e) => handleKeyDown(e, addRow)}
               placeholder={locale === 'ar' ? 'اسم الصف الجديد' : 'New row name'}
-              className="flex-grow p-2 border border-gray-300 rounded"
+              className="flex-grow p-2 rounded border border-gray-300"
               disabled={disabled}
             />
             <button
               onClick={addRow}
-              className="p-2 bg-green-500 text-white rounded hover:bg-green-600 flex items-center"
+              className="flex items-center p-2 text-white bg-green-500 rounded hover:bg-green-600"
               disabled={disabled}
             >
               <FaPlus className="mr-1" /> {locale === 'ar' ? 'إضافة صف' : 'Add Row'}
@@ -179,19 +181,19 @@ export default function DynamicTableView({ data, onChange, readOnly, disabled, l
           </div>
         </div>
       )}
-      
+
       {/* Table */}
       <div className="overflow-x-auto">
         {columns.length > 0 && rows.length > 0 ? (
-          <table className="min-w-full border-collapse border border-gray-300">
+          <table className="min-w-full border border-gray-300 border-collapse">
             <thead>
               <tr>
                 <th className={`border border-gray-300 p-3 bg-gray-100 ${locale === 'ar' ? 'text-right' : 'text-left'}`}>
                   {data?.cornerLabel || ''}
                 </th>
                 {columns.map((column, colIdx) => (
-                  <th key={colIdx} className="border border-gray-300 p-3 bg-gray-100">
-                    <div className="flex items-center justify-between">
+                  <th key={colIdx} className="p-3 bg-gray-100 border border-gray-300">
+                    <div className="flex justify-between items-center">
                       <span>{column}</span>
                       {!readOnly && (
                         <button
@@ -211,7 +213,7 @@ export default function DynamicTableView({ data, onChange, readOnly, disabled, l
               {rows.map((row, rowIdx) => (
                 <tr key={rowIdx}>
                   <td className={`border border-gray-300 p-3 bg-gray-50 ${locale === 'ar' ? 'text-right' : 'text-left'}`}>
-                    <div className="flex items-center justify-between">
+                    <div className="flex justify-between items-center">
                       <span>{row}</span>
                       {!readOnly && (
                         <button
@@ -232,8 +234,8 @@ export default function DynamicTableView({ data, onChange, readOnly, disabled, l
                     >
                       {isCellSelected(rowIdx, colIdx) ? (
                         <div className="flex justify-center">
-                          <span 
-                            className="w-6 h-6 rounded-full flex items-center justify-center text-white"
+                          <span
+                            className="flex justify-center items-center w-6 h-6 text-white rounded-full"
                             style={{ backgroundColor: data?.checkColor || '#10B981' }}
                           >
                             <FaCheck size={12} />
@@ -247,9 +249,9 @@ export default function DynamicTableView({ data, onChange, readOnly, disabled, l
             </tbody>
           </table>
         ) : (
-          <div className="text-center p-4 border border-dashed border-gray-300 rounded">
-            {locale === 'ar' 
-              ? 'أضف أعمدة وصفوف لإنشاء الجدول' 
+          <div className="p-4 text-center rounded border border-gray-300 border-dashed">
+            {locale === 'ar'
+              ? 'أضف أعمدة وصفوف لإنشاء الجدول'
               : 'Add columns and rows to create the table'}
           </div>
         )}
@@ -257,18 +259,19 @@ export default function DynamicTableView({ data, onChange, readOnly, disabled, l
 
       {/* Summary view */}
       {data?.showSummary && columns.length > 0 && rows.length > 0 && (
-        <div className="mt-6 p-4 border border-gray-300 rounded-md bg-gray-50">
-          <h3 className="text-lg font-semibold mb-2">
+        <div className="p-4 mt-6 bg-gray-50 rounded-md border border-gray-300">
+          <h3 className="mb-2 text-lg font-semibold">
             {locale === 'ar' ? data?.summaryTitle_ar || 'ملخص التخصيصات:' : data?.summaryTitle_en || 'Summary of Assignments:'}
           </h3>
           <ul className="space-y-1">
             {rows.map((row, rowIdx) => {
               const selectedColumns = columns.filter((_, colIdx) => isCellSelected(rowIdx, colIdx));
+
               return (
                 <li key={rowIdx} className={locale === 'ar' ? 'text-right' : 'text-left'}>
                   <strong>{row}:</strong>{" "}
-                  {selectedColumns.length > 0 
-                    ? selectedColumns.join(", ") 
+                  {selectedColumns.length > 0
+                    ? selectedColumns.join(", ")
                     : (locale === 'ar' ? 'لا شيء' : 'None')}
                 </li>
               );

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import { 
-  FormControl, 
-  FormControlLabel, 
+import {
+  FormControl,
+  FormControlLabel,
   Switch,
   TextField,
   Box,
@@ -83,6 +83,7 @@ const DynamicTableControl = ({ data, onChange, title, locale, buttonRef }) => {
   // Parse comma-separated string into array of items
   const parseItems = (str) => {
     if (!str) return [];
+
     return str.split(',')
       .map(item => item.trim())
       .filter(item => item.length > 0);
@@ -92,7 +93,7 @@ const DynamicTableControl = ({ data, onChange, title, locale, buttonRef }) => {
   const handleColumnsChange = (e) => {
     const inputValue = e.target.value;
     setColumnsInput(inputValue);
-    
+
     const columnsArray = parseItems(inputValue);
     onChange({
       ...data,
@@ -104,7 +105,7 @@ const DynamicTableControl = ({ data, onChange, title, locale, buttonRef }) => {
   const handleRowsChange = (e) => {
     const inputValue = e.target.value;
     setRowsInput(inputValue);
-    
+
     const rowsArray = parseItems(inputValue);
     onChange({
       ...data,
@@ -121,11 +122,11 @@ const DynamicTableControl = ({ data, onChange, title, locale, buttonRef }) => {
   // Handle row selection for step 2
   const handleRowSelection = (selected) => {
     const newSelectedCells = [...selectedCells];
-    
+
     // Add new selections
     selected.forEach(row => {
       selectedColumns.forEach(column => {
-        const exists = newSelectedCells.some(cell => 
+        const exists = newSelectedCells.some(cell =>
           cell.row === row && cell.column === column
         );
         if (!exists) {
@@ -142,7 +143,7 @@ const DynamicTableControl = ({ data, onChange, title, locale, buttonRef }) => {
   // Update the table selections data structure
   const updateTableSelections = (cells) => {
     const newSelections = {};
-    
+
     cells.forEach(cell => {
       const rowIndex = data.rows.indexOf(cell.row);
       const colIndex = data.columns.indexOf(cell.column);
@@ -159,7 +160,7 @@ const DynamicTableControl = ({ data, onChange, title, locale, buttonRef }) => {
 
   // Remove a specific cell selection
   const removeCellSelection = (row, column) => {
-    const updated = selectedCells.filter(cell => 
+    const updated = selectedCells.filter(cell =>
       !(cell.row === row && cell.column === column)
     );
     setSelectedCells(updated);
@@ -180,9 +181,9 @@ const DynamicTableControl = ({ data, onChange, title, locale, buttonRef }) => {
       <Typography className='text-black' variant="h6" gutterBottom>
         {title} {locale === 'ar' ? 'الإعدادات' : 'Settings'}
       </Typography>
-      
-      <Accordion 
-        expanded={expanded === 'panel1'} 
+
+      <Accordion
+        expanded={expanded === 'panel1'}
         onChange={handleAccordionChange('panel1')}
       >
         <AccordionSummary
@@ -201,7 +202,7 @@ const DynamicTableControl = ({ data, onChange, title, locale, buttonRef }) => {
               value={data?.title_ar || ''}
               onChange={(e) => handleTextChange('title_ar', e.target.value)}
             />
-            
+
             <TextField
               label={locale === 'ar' ? 'عنوان الجدول (إنجليزي)' : 'Table Title (English)'}
               variant="outlined"
@@ -209,7 +210,7 @@ const DynamicTableControl = ({ data, onChange, title, locale, buttonRef }) => {
               value={data?.title_en || ''}
               onChange={(e) => handleTextChange('title_en', e.target.value)}
             />
-            
+
             <TextField
               label={locale === 'ar' ? 'تسمية الزاوية' : 'Corner Label'}
               variant="outlined"
@@ -217,7 +218,7 @@ const DynamicTableControl = ({ data, onChange, title, locale, buttonRef }) => {
               value={data?.cornerLabel || ''}
               onChange={(e) => handleTextChange('cornerLabel', e.target.value)}
             />
-            
+
             <FormControlLabel
               control={
                 <Switch
@@ -227,7 +228,7 @@ const DynamicTableControl = ({ data, onChange, title, locale, buttonRef }) => {
               }
               label={locale === 'ar' ? 'إظهار الملخص' : 'Show Summary'}
             />
-            
+
             {data?.showSummary && (
               <>
                 <TextField
@@ -237,7 +238,7 @@ const DynamicTableControl = ({ data, onChange, title, locale, buttonRef }) => {
                   value={data?.summaryTitle_ar || ''}
                   onChange={(e) => handleTextChange('summaryTitle_ar', e.target.value)}
                 />
-                
+
                 <TextField
                   label={locale === 'ar' ? 'عنوان الملخص (إنجليزي)' : 'Summary Title (English)'}
                   variant="outlined"
@@ -250,9 +251,9 @@ const DynamicTableControl = ({ data, onChange, title, locale, buttonRef }) => {
           </Box>
         </AccordionDetails>
       </Accordion>
-      
-      <Accordion 
-        expanded={expanded === 'panel2'} 
+
+      <Accordion
+        expanded={expanded === 'panel2'}
         onChange={handleAccordionChange('panel2')}
       >
         <AccordionSummary
@@ -273,31 +274,31 @@ const DynamicTableControl = ({ data, onChange, title, locale, buttonRef }) => {
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
-                    <IconButton 
+                    <IconButton
                       onClick={() => setShowColorPicker(!showColorPicker)}
                       size="small"
                     >
-                      <div 
-                        style={{ 
-                          width: 20, 
-                          height: 20, 
+                      <div
+                        style={{
+                          width: 20,
+                          height: 20,
                           backgroundColor: data?.checkColor || '#10B981',
                           borderRadius: '4px'
-                        }} 
+                        }}
                       />
                     </IconButton>
                   </InputAdornment>
                 ),
               }}
             />
-            
+
             {showColorPicker && (
               <Box sx={{ position: 'relative', zIndex: 1000 }}>
                 <div style={{ position: 'fixed', top: 0, right: 0, bottom: 0, left: 0 }} onClick={() => setShowColorPicker(false)} />
                 <Box sx={{ position: 'absolute', top: 0, left: 0 }}>
-                  <HexColorPicker 
-                    color={data?.checkColor || '#10B981'} 
-                    onChange={handleColorChange} 
+                  <HexColorPicker
+                    color={data?.checkColor || '#10B981'}
+                    onChange={handleColorChange}
                   />
                 </Box>
               </Box>
@@ -305,9 +306,9 @@ const DynamicTableControl = ({ data, onChange, title, locale, buttonRef }) => {
           </Box>
         </AccordionDetails>
       </Accordion>
-      
-      <Accordion 
-        expanded={expanded === 'panel3'} 
+
+      <Accordion
+        expanded={expanded === 'panel3'}
         onChange={handleAccordionChange('panel3')}
       >
         <AccordionSummary
@@ -320,11 +321,11 @@ const DynamicTableControl = ({ data, onChange, title, locale, buttonRef }) => {
         <AccordionDetails>
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
             <Typography variant="body2" color="text.secondary">
-              {locale === 'ar' 
-                ? 'أدخل الأعمدة المسبقة مفصولة بفواصل (،)' 
+              {locale === 'ar'
+                ? 'أدخل الأعمدة المسبقة مفصولة بفواصل (،)'
                 : 'Enter preset columns separated by commas'}
             </Typography>
-            
+
             <TextField
               label={locale === 'ar' ? 'الأعمدة المسبقة' : 'Preset Columns'}
               variant="outlined"
@@ -337,9 +338,9 @@ const DynamicTableControl = ({ data, onChange, title, locale, buttonRef }) => {
           </Box>
         </AccordionDetails>
       </Accordion>
-      
-      <Accordion 
-        expanded={expanded === 'panel4'} 
+
+      <Accordion
+        expanded={expanded === 'panel4'}
         onChange={handleAccordionChange('panel4')}
       >
         <AccordionSummary
@@ -352,11 +353,11 @@ const DynamicTableControl = ({ data, onChange, title, locale, buttonRef }) => {
         <AccordionDetails>
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
             <Typography variant="body2" color="text.secondary">
-              {locale === 'ar' 
-                ? 'أدخل الصفوف المسبقة مفصولة بفواصل (،)' 
+              {locale === 'ar'
+                ? 'أدخل الصفوف المسبقة مفصولة بفواصل (،)'
                 : 'Enter preset rows separated by commas'}
             </Typography>
-            
+
             <TextField
               label={locale === 'ar' ? 'الصفوف المسبقة' : 'Preset Rows'}
               variant="outlined"
@@ -370,8 +371,8 @@ const DynamicTableControl = ({ data, onChange, title, locale, buttonRef }) => {
         </AccordionDetails>
       </Accordion>
 
-      <Accordion 
-        expanded={expanded === 'panel5'} 
+      <Accordion
+        expanded={expanded === 'panel5'}
         onChange={handleAccordionChange('panel5')}
       >
         <AccordionSummary
@@ -405,15 +406,15 @@ const DynamicTableControl = ({ data, onChange, title, locale, buttonRef }) => {
                       ))}
                     </Select>
                     <FormHelperText>
-                      {locale === 'ar' 
-                        ? 'اختر الأعمدة التي تريد تحديد الخانات فيها' 
+                      {locale === 'ar'
+                        ? 'اختر الأعمدة التي تريد تحديد الخانات فيها'
                         : 'Select columns where you want to check cells'}
                     </FormHelperText>
                   </FormControl>
                 ) : (
                   <Typography color="text.secondary">
-                    {locale === 'ar' 
-                      ? 'لا توجد أعمدة محددة بعد' 
+                    {locale === 'ar'
+                      ? 'لا توجد أعمدة محددة بعد'
                       : 'No columns defined yet'}
                   </Typography>
                 )}
@@ -431,8 +432,8 @@ const DynamicTableControl = ({ data, onChange, title, locale, buttonRef }) => {
             {selectionStep === 2 && (
               <>
                 <Typography className='text-black' variant="subtitle1">
-                  {locale === 'ar' 
-                    ? `الخطوة 2: اختر الصفوف في الأعمدة المحددة (${selectedColumns.join(', ')})` 
+                  {locale === 'ar'
+                    ? `الخطوة 2: اختر الصفوف في الأعمدة المحددة (${selectedColumns.join(', ')})`
                     : `Step 2: Select Rows in chosen columns (${selectedColumns.join(', ')})`}
                 </Typography>
                 {data?.rows?.length > 0 ? (
@@ -452,15 +453,15 @@ const DynamicTableControl = ({ data, onChange, title, locale, buttonRef }) => {
                       ))}
                     </Select>
                     <FormHelperText>
-                      {locale === 'ar' 
-                        ? 'اختر الصفوف التي تريد تحديدها في الأعمدة المختارة' 
+                      {locale === 'ar'
+                        ? 'اختر الصفوف التي تريد تحديدها في الأعمدة المختارة'
                         : 'Select rows to check in the chosen columns'}
                     </FormHelperText>
                   </FormControl>
                 ) : (
                   <Typography className='text-black'>
-                    {locale === 'ar' 
-                      ? 'لا توجد صفوف محددة بعد' 
+                    {locale === 'ar'
+                      ? 'لا توجد صفوف محددة بعد'
                       : 'No rows defined yet'}
                   </Typography>
                 )}
@@ -495,8 +496,8 @@ const DynamicTableControl = ({ data, onChange, title, locale, buttonRef }) => {
                 <List dense>
                   {selectedCells.map((cell, index) => (
                     <ListItem key={index}>
-                      <ListItemText 
-                        primary={`${cell.column} - ${cell.row}`} 
+                      <ListItemText
+                        primary={`${cell.column} - ${cell.row}`}
                         primaryTypographyProps={{
                           style: locale === 'ar' ? { textAlign: 'right' } : {}
                         }}
