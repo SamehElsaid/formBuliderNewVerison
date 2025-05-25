@@ -1,3 +1,17 @@
+import {
+  button,
+  checkbox,
+  date,
+  file,
+  multiple_select,
+  radio,
+  select,
+  tabs,
+  text,
+  text_content,
+  textarea
+} from './FiledesCss'
+
 export const isArabic = (value, locale) => {
   const arabicRegex = /^[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\s.,،؟]+$/
 
@@ -28,540 +42,62 @@ export const getData = (item, key, defaultValue) => {
 }
 
 export const getType = type => {
-  if (type === 'text') {
-    return 'SingleText'
-  }
-  if (type === 'url') {
-    return 'URL'
-  }
-  if (type === 'tel') {
-    return 'Phone'
-  }
-  if (type === 'textarea') {
-    return 'LongText'
-  }
-  if (type === 'radio' || type === 'select') {
-    return 'OneToOne'
-  }
-  if (type === 'checkbox' || type === 'multiple_select') {
-    return 'ManyToMany'
+  const typeMap = {
+    text: 'SingleText',
+    url: 'URL',
+    tel: 'Phone',
+    textarea: 'LongText',
+    radio: 'OneToOne',
+    select: 'OneToOne',
+    checkbox: 'ManyToMany',
+    multiple_select: 'ManyToMany'
   }
 
-  return type.charAt(0).toUpperCase() + type.slice(1)
+  return typeMap[type] || type.charAt(0).toUpperCase() + type.slice(1)
 }
 
 export const getTypeFromCollection = (type, description) => {
-  if (type === 'SingleText') {
-    return 'text'
-  }
-  if (type === 'URL') {
-    return 'url'
-  }
-  if (type === 'Phone') {
-    return 'tel'
-  }
-  if (type === 'Email') {
-    return 'email'
-  }
-  if (type === 'Number') {
-    return 'number'
-  }
-  if (type === 'Date') {
-    return 'date'
-  }
-  if (type === 'Password') {
-    return 'password'
-  }
-  if (type === 'File') {
-    return 'file'
-  }
-  if (type === 'LongText') {
-    return 'textarea'
-  }
-  if (type === 'OneToOne' && description === 'select') {
-    return 'select'
-  }
-  if (type === 'OneToOne' && description !== 'select') {
-    return 'radio'
+  const baseTypes = {
+    SingleText: 'text',
+    URL: 'url',
+    Phone: 'tel',
+    Email: 'email',
+    Number: 'number',
+    Date: 'date',
+    Password: 'password',
+    File: 'file',
+    LongText: 'textarea'
   }
 
-  if (type === 'ManyToMany' && description === 'multiple_select') {
-    return 'Search_Select'
+  if (baseTypes[type]) return baseTypes[type]
+
+  if (type === 'OneToOne') {
+    return description === 'select' ? 'select' : 'radio'
   }
+
   if (type === 'ManyToMany') {
-    return 'checkbox'
+    return description === 'multiple_select' ? 'Search_Select' : 'checkbox'
   }
 
   return type.charAt(0).toUpperCase() + type.slice(1)
 }
 
+const styleMap = {
+  textarea,
+  checkbox,
+  check_box: checkbox,
+  radio,
+  select,
+  file,
+  date,
+  button,
+  multiple_select,
+  tabs,
+  text_content
+}
+
 export const DefaultStyle = type => {
-  if (type === 'textarea') {
-    return `
-    #parent-input{
-  width:100%;
-  height:auto;
-  margin-top:0px;
-  margin-bottom:0px;
-  margin-inline-start:0px;
-  margin-inline-end:0px;
-}
-     label{
-margin-bottom:5px;
-display:block;
-color:#555;
-}
-textarea:focus,
-textarea:hover {
-  border-color: #3498ff;
-}
-textarea:focus {
-  outline: 3px solid #3498ff40 ;
-}
-textarea {
-  width:100%;
-  padding:10px 20px;
-  border-radius:5px;
-  border:1px solid #e5e5ea;
-  height:auto;
-  margin-top:0px;
-  margin-bottom:0px;
-  margin-inline-start:0px;
-  margin-inline-end:0px;
-  background-color:transparent;
-  color:#575757;
-}
-textarea::placeholder {
-  height:auto;
-  color: #dfdfdf;
-}
-      `
-  } else if (type === 'checkbox' || type === 'check_box') {
-    return `
-     #parent-input{
-  width:100%;
-  height:auto;
-  margin-top:0px;
-  margin-bottom:0px;
-  margin-inline-start:0px;
-  margin-inline-end:0px;
-}
-  #shape{
-  display:flex;
-  fle
-  }
-#first-label{
-margin-top:0px;
-margin-bottom:5px;
-display:block;
-color:#555;
-}
-
-  input[type=checkbox] + label {
-   margin-top: 0.3em;
-    margin-bottom: 0.3em;
-    margin-inline-start: 0.3em;
-    margin-inline-end: 0.3em;
-    display: flex;
-    align-items: center;
-    color: #555;
-    cursor: pointer;
-    padding: 0.2em;
-      text-transform: capitalize
-}
-
-input[type=checkbox] {
-  display: none;
-}
-
-input[type=checkbox] + label:before {
-  content: "\\2714";
-  border: 0.1em solid #999;
-  border-radius: 0.2em;
-  width: 1em;
-  height: 1em;
-   display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  margin-inline-end: 0.2em;
-  vertical-align: bottom;
-  color: transparent;
-  transition: .2s;
-}
-
-input[type=checkbox] + label:active:before {
-  transform: scale(0);
-}
-
-input[type=checkbox]:checked + label:before {
-  background-color: #3498ff;
-  border-color: #3498ff;
-  color: #fff;
-}
-
-input[type=checkbox]:disabled + label:before {
-  transform: scale(1);
-  border-color: #aaa;
-}
-
-input[type=checkbox]:checked:disabled + label:before {
-  transform: scale(1);
-  background-color: #3498ffab;
-  border-color: #3498ffab;
-}
-
-      `
-  } else if (type === 'radio') {
-    return `
-#first-label{
-margin-top:0px;
-margin-bottom:5px;
-display:block;
-color:#555;
-}
-
-  input[type=radio] + label {
-   margin-top: 0.3em;
-    margin-bottom: 0.3em;
-    margin-inline-start: 0.3em;
-    margin-inline-end: 0.3em;
-    display: flex;
-    align-items: center;
-    color: #555;
-    cursor: pointer;
-    padding: 0.2em;
-      text-transform: capitalize
-}
-
-input[type=radio] {
-  display: none;
-}
-
-input[type=radio] + label:before {
-  content: "\\25CF";
-  border: 0.1em solid #999;
-  border-radius: 0.2em;
-  width: 1em;
-  height: 1em;
-   display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  margin-inline-end: 0.2em;
-  vertical-align: bottom;
-  color: transparent;
-  transition: .2s;
-  border-radius:50%;
-}
-
-input[type=radio] + label:active:before {
-  transform: scale(0);
-}
-
-input[type=radio]:checked + label:before {
-  background-color: #3498ff;
-  border-color: #3498ff;
-  color: #fff;
-}
-
-input[type=radio]:disabled + label:before {
-  transform: scale(1);
-  border-color: #aaa;
-}
-
-input[type=radio]:checked:disabled + label:before {
-  transform: scale(1);
-  background-color: #3498ffab;
-  border-color: #3498ffab;
-}
-#view-input-in-form-engine{
-  display:flex;
-  flex-direction:column;
-  flex-wrap:wrap;
-}
-      `
-  } else if (type === 'select') {
-    return `
-#first-label{
-margin-top:0px;
-margin-bottom:5px;
-display:block;
-color:#555;
-}
-    #custom-select {
-      position: relative;
-      width: 100%; /* عرض الـ select */
-    }
-
-    #custom-select select {
-      width: 100%;
-      padding: 10px;
-      border: 2px solid ;
-      border-color: #e5e5ea;
-      border-radius: 8px;
-      color: #333;
-      font-size: 16px;
-      appearance: none;
-      -webkit-appearance: none;
-      -moz-appearance: none;
-      cursor: pointer;
-    }
-
-    #custom-select::after {
-      content: '\\25BC';
-      position: absolute;
-      top: 50%;
-      right: 10px;
-      transform: translateY(-50%);
-      pointer-events: none;
-      color: #3498ff;
-      font-size: 14px;
-    }
-
-    #custom-select select:focus {
-      outline: none;
-      border-color: #3498ff;
-  outline: 3px solid #3498ff40 ;
-
-    }
-
-      `
-  } else if (type === 'file') {
-    return `
-
-#file-upload-container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom:0px;
-  width: 100%;
-}
-#label-color{
-    color: #3498ff;
-    font-weight:bold;
-    font-size:20px;
-    text-transform:capitalize;
-}
-label {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  border: 2px dashed ;
-  border-color:#d1d5db;
-  border-radius: 0.5rem;
-  cursor: pointer;
-  background-color: #f9fafb;
-  transition: background-color 0.2s;
-  min-height: 16rem;
-  transition: all 0.3s ease-in-out;
-}
-
-label:hover {
- border-radius: 1rem;
-}
-
-#file-upload-content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding-top: 5px;
-  padding-bottom: 5px;
-  color: #6b7280;
-}
-
-#file-upload-icon {
-  width: 2rem;
-  height: 2rem;
-  margin-bottom: 5px;
-}
-
-#file-upload-text {
-  margin-bottom: 5px;
-  font-size: 0.875rem;
-  margin-top:0px;
-}
-
-#file-upload-text .font-semibold {
-  font-weight: 600;
-}
-
-#file-upload-subtext {
-  font-size: 0.75rem;
-  margin-top:0px;
-}
-
-input {
-  display: none;
-}
-
-    `
-  }
-  if (type === 'date') {
-    return `
-label{
-margin-bottom:5px;
-display:block;
-color:#555;
-}
-input:focus,
-input:hover {
-  border-color: #3498ff;
-}
-input:focus {
-  outline: 3px solid #3498ff40 ;
-}
-input {
-  width:100%;
-  padding:10px 20px;
-  border-radius:5px;
-  border:1px solid #e5e5ea;
-  height:auto;
-  margin-top:0px;
-  margin-bottom:0px;
-  margin-inline-start:0px;
-  margin-inline-end:0px;
-  background-color:transparent;
-  color:#575757;
-}
-  input::placeholder {
-  height:auto;
-  color: #dfdfdf;
-}
-  #calendar-icon{
-  color:#555;
-  }
-
-`
-  }
-
-  if (type === 'button') {
-    return `.btn{
-              background-color: #009fff;
-              color: white;
-              padding: 10px 20px;
-              border-radius: 5px;
-              width:100%;
-              cursor: pointer;
-              transition: all 0.3s ease;
-              }
-              .btn:hover{
-                background-color: #009dff87;
-              }
-              .btn:disabled{
-                background-color: #009fff87 !important;
-                cursor: not-allowed !important;
-              }
-
-              `
-  }
-  if (type === 'multiple_select') {
-    return `
-#parent-input{
-  width:100%;
-  height:auto;
-  margin-top:0px;
-  margin-bottom:0px;
-  margin-inline-start:0px;
-  margin-inline-end:0px;
-}
-label{
-margin-bottom:5px;
-display:block;
-color:#555;
-}
-
-.MuiOutlinedInput-notchedOutline {
-  border-color: rgba(47, 43, 61, 0.2);
-}
-.Mui-focused .MuiOutlinedInput-notchedOutline {
-  border-color: #3498ff;
-}
-.MuiChip-sizeMedium.MuiChip-colorDefault {
-  background-color: #3498ff;
-  color: white;
-}
-  .MuiInputBase-root.MuiOutlinedInput-root.MuiInputBase-colorPrimary{
-    padding: 0px !important;
-  }
-.MuiSvgIcon-fontSizeMedium.MuiChip-deleteIcon.MuiChip-deleteIconMedium {
-  color: white;
-}
-
-
-`
-  }
-
-  if (type === 'tabs') {
-    return `
-   .btn-tabs {
-  background: transparent;
-  border: 1px solid #009fff;
-  padding: 10px;
-  color: #555;
-  font-size: 14px;
-  font-weight: 500;
-
-}
-.btn-tabs.active {
-  background: #009fff;
-  color: #fff;
-}
-
-    `
-  }
-  if (type === 'text_content') {
-    return `
-  .text-element{
-    color: #555;
-    font-size: 14px;
-    font-weight: 500;
-  }
-
-    `
-  }
-
-  return `
-#parent-input{
-  width:100%;
-  height:auto;
-  margin-top:0px;
-  margin-bottom:0px;
-  margin-inline-start:0px;
-  margin-inline-end:0px;
-}
-label{
-margin-bottom:5px;
-display:block;
-color:#555;
-}
-input:focus,
-input:hover {
-  border-color: #3498ff;
-}
-input:focus {
-  outline: 3px solid #3498ff40 ;
-}
-input {
-  width:100%;
-  padding:10px 20px;
-  border-radius:5px;
-  border:1px solid #e5e5ea;
-  height:auto;
-  margin-top:0px;
-  margin-bottom:0px;
-  margin-inline-start:0px;
-  margin-inline-end:0px;
-  background-color:transparent;
-  color:#575757;
-}
-  input::placeholder {
-  height:auto;
-  color: #dfdfdf;
-}
-
-`
+  return styleMap[type] || text
 }
 
 export const cssToObject = cssString => {
@@ -604,11 +140,9 @@ export const objectToCss = cssObject => {
         if (styles.hasOwnProperty(property)) {
           const styleValue = styles[property]
 
-          // إذا كانت القيمة تحتوي على value و unit
           if (typeof styleValue === 'object' && styleValue.value !== undefined) {
             styleString += `${property}:${styleValue.value}${styleValue.unit};`
           } else {
-            // إذا كانت القيمة سلسلة عادية
             styleString += `${property}:${styleValue};`
           }
         }
@@ -649,4 +183,23 @@ export const extractValueAndUnit = cssValue => {
 
 export const VaildId = name => {
   return name.replaceAll(' ', '').replaceAll('[', '').replaceAll(']', '').replaceAll('/', '')
+}
+
+export const formatDate = (value, format) => {
+  const date = new Date(value)
+
+  const year = date.getFullYear()
+
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+
+  const day = String(date.getDate()).padStart(2, '0')
+
+  let time = ''
+  if (format.includes('HH:mm')) {
+    const hours = String(date.getHours()).padStart(2, '0')
+    const minutes = String(date.getMinutes()).padStart(2, '0')
+    time = `T${hours}:${minutes}`
+  }
+
+  return `${year}-${month}-${day}${time}`
 }

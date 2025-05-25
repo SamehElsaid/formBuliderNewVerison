@@ -491,5 +491,6 @@
   "addPage": "إضافة صفحة",
   "nameNotValid": "اسم الصفحة غير صالح",
   "pageAddedSuccessfully": "تم إضافة الصفحة بنجاح",
-  "ErrorOccurred": "حدث خطأ"
+  "ErrorOccurred": "حدث خطأ",
+  "time": "الوقت"
 }

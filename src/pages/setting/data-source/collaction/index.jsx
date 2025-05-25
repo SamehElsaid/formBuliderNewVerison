@@ -1,4 +1,16 @@
-import { Avatar, Button, Card, CardContent, IconButton, Tooltip, Typography, FormControl, InputLabel, Select, MenuItem } from '@mui/material'
+import {
+  Avatar,
+  Button,
+  Card,
+  CardContent,
+  IconButton,
+  Tooltip,
+  Typography,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem
+} from '@mui/material'
 import { Box } from '@mui/system'
 import React, { useEffect, useState } from 'react'
 import CustomTextField from 'src/@core/components/mui/text-field'
@@ -58,7 +70,9 @@ export default function Index() {
     axiosGet(`collections/get/?dataSourceId=${selectedDataSource}`, locale)
       .then(res => {
         if (res.status) {
-          setData(res.data)
+          if (res.data) {
+            setData(res.data)
+          }
         }
       })
       .finally(() => {
@@ -70,17 +84,21 @@ export default function Index() {
   const handleClose = () => {
     setOpen(false)
   }
-  
+
   const [deletePage, setDeletePage] = useState(false)
   const { push } = useRouter()
 
-  const handleDataSourceChange = (event) => {
+  const handleDataSourceChange = event => {
     const dataSourceId = event.target.value
     setSelectedDataSource(dataSourceId)
-    router.push({
-      pathname: router.pathname,
-      query: { ...router.query, dataSourceId }
-    }, undefined, { shallow: true })
+    router.push(
+      {
+        pathname: router.pathname,
+        query: { ...router.query, dataSourceId }
+      },
+      undefined,
+      { shallow: true }
+    )
   }
 
   const columns = [
@@ -207,12 +225,7 @@ export default function Index() {
 
   return (
     <div>
-      <AddCollection 
-        open={open} 
-        toggle={handleClose} 
-        setRefresh={setRefresh} 
-        selectedDataSource={selectedDataSource}
-      />
+      <AddCollection open={open} toggle={handleClose} setRefresh={setRefresh} selectedDataSource={selectedDataSource} />
       <Card className='w-[100%] mb-5 py-4'>
         <CardContent
           className='h-full'
@@ -232,12 +245,7 @@ export default function Index() {
               {dataFilter?.length}
             </Avatar>
           </div>
-          <Button 
-            variant='contained' 
-            color='primary' 
-            onClick={() => setOpen(true)}
-            disabled={!selectedDataSource}
-          >
+          <Button variant='contained' color='primary' onClick={() => setOpen(true)} disabled={!selectedDataSource}>
             {locale === 'ar' ? 'إضافة نموذج البيانات' : 'Add Data Model'}
           </Button>
         </CardContent>
@@ -245,34 +253,34 @@ export default function Index() {
       <Box sx={{ mb: 4 }}>
         <Card className='flex gap-3 flex-wrap md:px-[36px] px-0' sx={{ mb: 6, width: '100%', py: '3.5rem' }}>
           <div className='w-full'>
-            <div className='px-5 mb-5 flex flex-col md:flex-row items-center justify-between w-full gap-4'>
+            <div className='flex flex-col gap-4 justify-between items-center px-5 mb-5 w-full md:flex-row'>
               {/* Data Source Dropdown */}
               <FormControl sx={{ minWidth: 200 }}>
-                <InputLabel id="data-source-select-label">
+                <InputLabel id='data-source-select-label'>
                   {locale === 'ar' ? 'مصدر البيانات' : 'Data Source'}
                 </InputLabel>
                 <Select
-                  labelId="data-source-select-label"
-                  id="data-source-select"
+                  labelId='data-source-select-label'
+                  id='data-source-select'
                   value={selectedDataSource}
                   label={locale === 'ar' ? 'مصدر البيانات' : 'Data Source'}
                   onChange={handleDataSourceChange}
                 >
-                  {dataSources.map((source) => (
+                  {dataSources.map(source => (
                     <MenuItem key={source.id} value={source.id}>
                       {source.name}
                     </MenuItem>
                   ))}
                 </Select>
               </FormControl>
-              
+
               {/* Search and Reset */}
-              <div className='flex items-center gap-2'>
+              <div className='flex gap-2 items-center'>
                 <CustomTextField
                   id='input'
                   label={locale === 'ar' ? 'البحث' : 'Search'}
                   value={startSearch}
-                  onChange={(e) => {
+                  onChange={e => {
                     setStartSearch(e.target.value)
                   }}
                 />
@@ -295,7 +303,7 @@ export default function Index() {
               data={dataFilter?.map((ele, i) => {
                 const fData = { ...ele }
                 fData.index = i + paginationModel.page * paginationModel.pageSize
-                
+
                 return fData
               })}
               getRowId={row => row.index}

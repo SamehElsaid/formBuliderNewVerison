@@ -14,16 +14,11 @@ import Divider from '@mui/material/Divider'
 import { styled } from '@mui/material/styles'
 import Typography from '@mui/material/Typography'
 import MenuItem from '@mui/material/MenuItem'
-
-// ** Icon Imports
 import Icon from 'src/@core/components/icon'
-
-// ** Context
 import { useDispatch, useSelector } from 'react-redux'
 import { useCookies } from 'react-cookie'
 import { REMOVE_USER } from 'src/store/apps/authSlice/authSlice'
 import Link from 'next/link'
-
 import { axiosPost } from 'src/Components/axiosCall'
 import Cookies from 'js-cookie'
 import { decryptData } from 'src/Components/encryption'

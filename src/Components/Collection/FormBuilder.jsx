@@ -31,6 +31,7 @@ import { axiosGet, axiosPost, UrlTranAr, UrlTranEn } from '../axiosCall'
 import Collapse from '@kunukn/react-collapse'
 import { DefaultStyle, getType } from '../_Shared'
 import { useRouter } from 'next/router'
+import { fieldTypes, fileTypes, OptionsStep, steps } from '../_formBuilderShared'
 
 const FormBuilder = ({ open, setOpen, setRefresh }) => {
   const [activeStep, setActiveStep] = useState(0)
@@ -48,123 +49,10 @@ const FormBuilder = ({ open, setOpen, setRefresh }) => {
     format: 'MM/dd/yyyy',
     showTime: 'false'
   })
+
   const [fileExtensions, setFileExtensions] = useState([])
 
-  const steps = ['Select_Field_Type', 'Enter_Label', 'Validation', 'Setup']
-
-  const fieldTypes = [
-    'text',
-    'password',
-    'textarea',
-    'checkbox',
-    'multiple_select',
-    'radio',
-    'select',
-    'date',
-    'number',
-    'file',
-    'email',
-    'url',
-    'tel'
-  ]
-
-  const fileTypes = [
-    // Images
-    '.png',
-    '.jpg',
-    '.jpeg',
-    '.gif',
-    '.bmp',
-    '.svg',
-    '.tiff',
-    '.webp',
-
-    // Documents
-    '.pdf',
-    '.doc',
-    '.docx',
-    '.txt',
-    '.rtf',
-    '.odt',
-    '.tex',
-
-    // Spreadsheets
-    '.xls',
-    '.xlsx',
-    '.csv',
-    '.ods',
-
-    // Presentations
-    '.ppt',
-    '.pptx',
-    '.odp',
-
-    // Audio
-    '.mp3',
-    '.wav',
-    '.ogg',
-    '.m4a',
-    '.aac',
-    '.flac',
-
-    // Video
-    '.mp4',
-    '.mov',
-    '.wmv',
-    '.avi',
-    '.mkv',
-    '.flv',
-    '.webm',
-    '.3gp',
-
-    // Archives
-    '.zip',
-    '.rar',
-    '.7z',
-    '.tar',
-    '.gz',
-    '.bz2',
-
-    // Code
-    '.html',
-    '.css',
-    '.js',
-    '.jsx',
-    '.ts',
-    '.tsx',
-    '.json',
-    '.xml',
-    '.yaml',
-    '.yml',
-    '.py',
-    '.java',
-    '.c',
-    '.cpp',
-    '.cs',
-    '.php',
-    '.rb',
-    '.go',
-    '.sh',
-    '.bat',
-
-    // Fonts
-    '.ttf',
-    '.otf',
-    '.woff',
-    '.woff2',
-
-    // Other
-    '.iso',
-    '.dmg',
-    '.exe',
-    '.apk',
-    '.bin',
-    '.dll',
-    '.icns',
-    '.ico'
-  ]
-
-  const isOptionsStep = ['checkbox', 'radio', 'select', 'multiple_select'].includes(fieldType)
+  const isOptionsStep = OptionsStep.includes(fieldType)
   const isFileStep = fieldType === 'file'
   const { messages, locale } = useIntl()
 
@@ -311,7 +199,7 @@ const FormBuilder = ({ open, setOpen, setRefresh }) => {
     if (fieldType === 'email') {
       validationData.push({ RuleType: 'Email', Parameters: {} })
     }
-    if (fieldType === 'date') {
+    if (fieldType === 'date' || fieldType === 'time') {
       validationData.push({ RuleType: 'ColumnDataType', Parameters: { expectedType: 'System.DateTime' } })
     }
     if (fieldType === 'number') {
@@ -325,20 +213,20 @@ const FormBuilder = ({ open, setOpen, setRefresh }) => {
       nameEn: fieldLabelEn.trim(),
       descriptionAr: fieldLabel.trim(),
       descriptionEn: fieldLabelEn.trim(),
-      type: getType(fieldType),
+      type: getType(fieldType === 'time' ? 'date' : fieldType),
       FieldCategory: FindFieldCategory(fieldType),
 
       options: {
         uiSchema: {
           xComponentProps: {
-            cssClass: DefaultStyle(fieldType),
+            cssClass: DefaultStyle(fieldType === 'time' ? 'date' : fieldType),
             fileTypes: isFileStep ? fileExtensions : []
           }
         }
       },
       validationData
     }
-    if (fieldType === 'date') {
+    if (fieldType === 'date' || fieldType === 'time') {
       sendData.descriptionEn = JSON.stringify({
         format: validations.format || 'MM/dd/yyyy',
         showTime: validations.showTime || 'false'
@@ -364,6 +252,9 @@ const FormBuilder = ({ open, setOpen, setRefresh }) => {
         return toast.error(locale === 'ar' ? 'يجب أن تختار حقل من المجموعة' : 'You must select a field from the group')
       }
     }
+    if (fieldType === 'time') {
+      sendData.descriptionEn = 'timeOnly'
+    }
     if (fieldType === 'checkbox') {
       sendData.options.target = collection.key
       sendData.options.source = open.key
@@ -377,6 +268,8 @@ const FormBuilder = ({ open, setOpen, setRefresh }) => {
       sendData.key = `${open.key}${collection.key}`
       sendData.descriptionAr = 'multiple_select'
     }
+
+
     setLoading(true)
 
     axiosPost('collection-fields/configure-fields', locale, sendData)
@@ -549,19 +442,11 @@ const FormBuilder = ({ open, setOpen, setRefresh }) => {
                   fieldType === 'select' ||
                   fieldType === 'date' ||
                   fieldType === 'file' ||
+                  fieldType === 'time' ||
                   fieldType === 'tel'
                 ) && (
                   <TextField
                     label={messages.Min_Length}
-                    disabled={
-                      fieldType === 'checkbox' ||
-                      fieldType === 'radio' ||
-                      fieldType === 'select' ||
-                      fieldType === 'date' ||
-                      fieldType === 'file' ||
-                      fieldType === 'email' ||
-                      fieldType === 'tel'
-                    }
                     type='number'
                     fullWidth
                     margin='normal'
@@ -580,6 +465,7 @@ const FormBuilder = ({ open, setOpen, setRefresh }) => {
                   fieldType === 'select' ||
                   fieldType === 'date' ||
                   fieldType === 'file' ||
+                  fieldType === 'time' ||
                   fieldType === 'tel'
                 ) && (
                   <TextField

@@ -13,14 +13,16 @@ import useIconView from './useIconView'
 import useCart from './useCart'
 import slate from '@react-page/plugins-slate'
 import spacer from '@react-page/plugins-spacer'
-import '@react-page/plugins-slate/lib/index.css'
-import '@react-page/plugins-spacer/lib/index.css'
 import useProgressBar from './useProgressBar'
 import useOtp from './useOtp'
+import useOrder from './useOrder'
+import '@react-page/plugins-slate/lib/index.css'
+import '@react-page/plugins-spacer/lib/index.css'
 
 export default function useCellPlugins({ advancedEdit, locale, readOnly, buttonRef, workflowId }) {
   // Hooks Drag Drop Components
   const { collection } = useCollection({ advancedEdit, locale, readOnly, buttonRef, workflowId })
+  const { order } = useOrder({ advancedEdit, locale, readOnly, buttonRef })
   const { backgroundPlugin } = useBackground({ locale, buttonRef })
   const { table } = useTable({ advancedEdit, locale, buttonRef })
   const { ContainerPlugin } = useContainer({ locale, buttonRef })
@@ -51,6 +53,7 @@ export default function useCellPlugins({ advancedEdit, locale, readOnly, buttonR
       Otp,
       ButtonCell,
       FlexControlCell,
+      order,
       cartCell,
       IconView
     ],
@@ -61,6 +64,7 @@ export default function useCellPlugins({ advancedEdit, locale, readOnly, buttonR
       UploadImage,
       UploadVideo,
       collection,
+      order,
       table,
       RichText,
       ProgressBar,

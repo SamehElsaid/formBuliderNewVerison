@@ -3,12 +3,12 @@ import { useIntl } from 'react-intl'
 import { SketchPicker } from 'react-color'
 import CloseNav from './CloseNav'
 
-export default function ButtonControl({ data, onChange, buttonRef }) {
+export default function ButtonControl({ data, onChange, buttonRef, type }) {
   const { locale } = useIntl()
 
   return (
     <div>
-      <CloseNav text={locale === 'ar' ? 'اختيار الزر' : 'Button'} buttonRef={buttonRef} />
+      {!type && <CloseNav text={locale === 'ar' ? 'اختيار الزر' : 'Button'} buttonRef={buttonRef} />}
       <TextField
         fullWidth
         type='text'
@@ -22,31 +22,34 @@ export default function ButtonControl({ data, onChange, buttonRef }) {
         <MenuItem value='auto'>Auto</MenuItem>
         <MenuItem value='100%'>100%</MenuItem>
       </TextField>
-      <TextField
-        fullWidth
-        type='text'
-        value={data.buttonTextEn}
-        onChange={e => onChange({ ...data, buttonTextEn: e.target.value })}
-        variant='filled'
-        label={locale === 'ar' ? 'النص باللغة الإنجليزية' : 'Text in English'}
-      />
-      <TextField
-        fullWidth
-        type='text'
-        value={data.buttonTextAr}
-        onChange={e => onChange({ ...data, buttonTextAr: e.target.value })}
-        variant='filled'
-        label={locale === 'ar' ? 'النص باللغة العربية' : 'Text in Arabic'}
-      />
-      <TextField
-        fullWidth
-        type='text'
-        value={data.href}
-        onChange={e => onChange({ ...data, href: e.target.value })}
-        variant='filled'
-        label={locale === 'ar' ? 'الرابط' : 'Href'}
-      />
-
+      {!type && (
+        <>
+          <TextField
+            fullWidth
+            type='text'
+            value={data.buttonTextEn}
+            onChange={e => onChange({ ...data, buttonTextEn: e.target.value })}
+            variant='filled'
+            label={locale === 'ar' ? 'النص باللغة الإنجليزية' : 'Text in English'}
+          />
+          <TextField
+            fullWidth
+            type='text'
+            value={data.buttonTextAr}
+            onChange={e => onChange({ ...data, buttonTextAr: e.target.value })}
+            variant='filled'
+            label={locale === 'ar' ? 'النص باللغة العربية' : 'Text in Arabic'}
+          />
+          <TextField
+            fullWidth
+            type='text'
+            value={data.href}
+            onChange={e => onChange({ ...data, href: e.target.value })}
+            variant='filled'
+            label={locale === 'ar' ? 'الرابط' : 'Href'}
+          />
+        </>
+      )}
       <TextField
         fullWidth
         type='number'

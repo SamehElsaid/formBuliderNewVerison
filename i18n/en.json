@@ -495,5 +495,6 @@
   "addPage": "Add Page",
   "nameNotValid": "Invalid Page Name",
   "pageAddedSuccessfully": "Page Added Successfully",
-  "ErrorOccurred": "An error occurred"
+  "ErrorOccurred": "An error occurred",
+  "time": "Time"
 }

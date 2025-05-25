@@ -26,14 +26,14 @@ const Index = ({ pageName, initialData, initialDataApi, workflowId }) => {
   const { locale } = useIntl()
 
   useEffect(() => {
-    
+
     return () => {
       document.body.classList.remove('edit-mode')
     }
   }, [])
 
 
-  
+
   const lightTheme = createTheme({
     palette: {
       mode: 'light'
@@ -62,7 +62,7 @@ const Index = ({ pageName, initialData, initialDataApi, workflowId }) => {
                 </div>
               </div>
             </div>
-            <div className='text-2xl font-bold animate-pulse mt-4'>
+            <div className='mt-4 text-2xl font-bold animate-pulse'>
               {locale === 'ar' ? 'جاري تحميل البيانات...' : 'Loading...'}
             </div>
           </div>
