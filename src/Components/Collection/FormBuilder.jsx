@@ -213,13 +213,13 @@ const FormBuilder = ({ open, setOpen, setRefresh }) => {
       nameEn: fieldLabelEn.trim(),
       descriptionAr: fieldLabel.trim(),
       descriptionEn: fieldLabelEn.trim(),
-      type: getType(fieldType === 'time' ? 'date' : fieldType),
+      type: getType(fieldType === 'time' ? 'date' : fieldType === 'rate' ? 'number' : fieldType),
       FieldCategory: FindFieldCategory(fieldType),
 
       options: {
         uiSchema: {
           xComponentProps: {
-            cssClass: DefaultStyle(fieldType === 'time' ? 'date' : fieldType),
+            cssClass: DefaultStyle(fieldType === 'time' ? 'date' : fieldType === 'rate' ? 'number' : fieldType),
             fileTypes: isFileStep ? fileExtensions : []
           }
         }
@@ -252,6 +252,9 @@ const FormBuilder = ({ open, setOpen, setRefresh }) => {
         return toast.error(locale === 'ar' ? 'يجب أن تختار حقل من المجموعة' : 'You must select a field from the group')
       }
     }
+    if (fieldType === 'rate') {
+      sendData.descriptionEn = 'rate'
+    }
     if (fieldType === 'time') {
       sendData.descriptionEn = 'timeOnly'
     }
@@ -268,7 +271,6 @@ const FormBuilder = ({ open, setOpen, setRefresh }) => {
       sendData.key = `${open.key}${collection.key}`
       sendData.descriptionAr = 'multiple_select'
     }
-
 
     setLoading(true)
 

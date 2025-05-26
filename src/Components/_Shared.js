@@ -151,7 +151,6 @@ export const objectToCss = cssObject => {
       cssString += `${selector} { ${styleString} }\n`
     }
   }
-  console.log(cssString)
 
   return cssString.trim() // إزالة المسافات الزائدة في النهاية
 }

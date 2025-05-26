@@ -305,21 +305,11 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                         />
                       </div>
                     )}
-                    {(open.type === 'SingleText' ||
-                      open.type === 'Number' ||
-                      open.type === 'Phone' ||
-                      open.type === 'URL' ||
-                      open.type === 'Email' ||
-                      open.type === 'Password' ||
-                      open.descriptionAr === 'multiple_select' ||
-                      open.type === 'LongText' ||
-                      open.type === 'ManyToMany' ||
-                      open.type === 'OneToOne') && (
+                    {open?.descriptionEn == 'rate' ? (
                       <>
                         <TextField
                           fullWidth
-                          type='text'
-                          defaultValue={roles?.placeholder?.placeholder_en || ''}
+                          defaultValue={roles?.placeholder?.placeholder_en || '5'}
                           onBlur={e => {
                             const additional_fields = data.additional_fields ?? []
                             const findMyInput = additional_fields.find(inp => inp.key === open.id)
@@ -341,38 +331,81 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                             }
                             onChange({ ...data, additional_fields: additional_fields })
                           }}
+                          type='number'
                           variant='filled'
-                          label={locale === 'ar' ? 'Placeholder باللغة الانجليزية' : 'Placeholder in English'}
-                        />
-                        <TextField
-                          fullWidth
-                          type='text'
-                          defaultValue={roles?.placeholder?.placeholder_ar || ''}
-                          onBlur={e => {
-                            const additional_fields = data.additional_fields ?? []
-                            const findMyInput = additional_fields.find(inp => inp.key === open.id)
-                            if (findMyInput) {
-                              findMyInput.roles.placeholder.placeholder_ar = e.target.value
-                            } else {
-                              const myEdit = {
-                                key: open.id,
-                                design: objectToCss(Css).replaceAll('NaN', ''),
-                                roles: {
-                                  ...roles,
-                                  placeholder: {
-                                    placeholder_ar: e.target.value,
-                                    placeholder_en: roles.placeholder.placeholder_en
-                                  }
-                                }
-                              }
-                              additional_fields.push(myEdit)
-                            }
-                            onChange({ ...data, additional_fields: additional_fields })
-                          }}
-                          variant='filled'
-                          label={locale === 'ar' ? 'Placeholder باللغة العربية' : 'Placeholder in Arabic'}
+                          label={locale === 'ar' ? 'القيمة العظمى' : 'Max Value'}
                         />
                       </>
+                    ) : (
+                      (open.type === 'SingleText' ||
+                        open.type === 'Number' ||
+                        open.type === 'Phone' ||
+                        open.type === 'URL' ||
+                        open.type === 'Email' ||
+                        open.type === 'Password' ||
+                        open.descriptionAr === 'multiple_select' ||
+                        open.type === 'LongText' ||
+                        open.type === 'ManyToMany' ||
+                        open.type === 'OneToOne') && (
+                        <>
+                          <TextField
+                            fullWidth
+                            type='text'
+                            defaultValue={roles?.placeholder?.placeholder_en || ''}
+                            onBlur={e => {
+                              const additional_fields = data.additional_fields ?? []
+                              const findMyInput = additional_fields.find(inp => inp.key === open.id)
+                              if (findMyInput) {
+                                findMyInput.roles.placeholder.placeholder_en = e.target.value
+                              } else {
+                                const myEdit = {
+                                  key: open.id,
+                                  design: objectToCss(Css).replaceAll('NaN', ''),
+                                  roles: {
+                                    ...roles,
+                                    placeholder: {
+                                      placeholder_ar: roles.placeholder.placeholder_ar,
+                                      placeholder_en: e.target.value
+                                    }
+                                  }
+                                }
+                                additional_fields.push(myEdit)
+                              }
+                              onChange({ ...data, additional_fields: additional_fields })
+                            }}
+                            variant='filled'
+                            label={locale === 'ar' ? 'Placeholder باللغة الانجليزية' : 'Placeholder in English'}
+                          />
+                          <TextField
+                            fullWidth
+                            type='text'
+                            defaultValue={roles?.placeholder?.placeholder_ar || ''}
+                            onBlur={e => {
+                              const additional_fields = data.additional_fields ?? []
+                              const findMyInput = additional_fields.find(inp => inp.key === open.id)
+                              if (findMyInput) {
+                                findMyInput.roles.placeholder.placeholder_ar = e.target.value
+                              } else {
+                                const myEdit = {
+                                  key: open.id,
+                                  design: objectToCss(Css).replaceAll('NaN', ''),
+                                  roles: {
+                                    ...roles,
+                                    placeholder: {
+                                      placeholder_ar: e.target.value,
+                                      placeholder_en: roles.placeholder.placeholder_en
+                                    }
+                                  }
+                                }
+                                additional_fields.push(myEdit)
+                              }
+                              onChange({ ...data, additional_fields: additional_fields })
+                            }}
+                            variant='filled'
+                            label={locale === 'ar' ? 'Placeholder باللغة العربية' : 'Placeholder in Arabic'}
+                          />
+                        </>
+                      )
                     )}
                     <TextField
                       fullWidth
@@ -699,149 +732,161 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                       open.type === 'Password' ||
                       open.type === 'LongText') && (
                       <>
-                        <TextField
-                          fullWidth
-                          type='number'
-                          value={extractValueAndUnit(getDataInObject(Css, '#parent-input.width')).value || ''}
-                          onChange={e =>
-                            UpdateData(
-                              '#parent-input.width',
-                              e.target.value + extractValueAndUnit(getDataInObject(Css, '#parent-input.width')).unit
-                            )
-                          }
-                          variant='filled'
-                          label={locale === 'ar' ? 'العرض' : 'Width'}
-                          disabled={
-                            extractValueAndUnit(getDataInObject(Css, '#parent-input.width')).unit === 'max-content' ||
-                            extractValueAndUnit(getDataInObject(Css, '#parent-input.width')).unit === 'min-content' ||
-                            extractValueAndUnit(getDataInObject(Css, '#parent-input.width')).unit === 'fit-content' ||
-                            extractValueAndUnit(getDataInObject(Css, '#parent-input.width')).unit === 'auto' ||
-                            !extractValueAndUnit(getDataInObject(Css, '#parent-input.width')).unit
-                          }
-                          InputProps={{
-                            endAdornment: (
-                              <InputAdornment position='end'>
-                                <Select
-                                  value={extractValueAndUnit(getDataInObject(Css, '#parent-input.width')).unit || '%'}
-                                  onChange={e => {
-                                    if (
-                                      e.target.value === 'max-content' ||
-                                      e.target.value === 'min-content' ||
-                                      e.target.value === 'fit-content' ||
-                                      e.target.value === 'auto'
-                                    ) {
-                                      UpdateData('#parent-input.width', e.target.value)
-                                    } else {
-                                      UpdateData(
-                                        '#parent-input.width',
-                                        extractValueAndUnit(getDataInObject(Css, '#parent-input.width')).value +
-                                          e.target.value
-                                      )
-                                    }
-                                  }}
-                                  displayEmpty
-                                  variant='standard'
-                                >
-                                  <MenuItem value='px'>PX</MenuItem>
-                                  <MenuItem value='%'>%</MenuItem>
-                                  <MenuItem value='EM'>EM</MenuItem>
-                                  <MenuItem value='VW'>VW</MenuItem>
-                                  <MenuItem value='max-content'>Max-Content</MenuItem>
-                                  <MenuItem value='min-content'>Min-Content</MenuItem>
-                                  <MenuItem value='fit-content'>Fit-Content</MenuItem>
-                                  <MenuItem value='auto'>Auto</MenuItem>
-                                </Select>
-                              </InputAdornment>
-                            )
-                          }}
-                        />
-                        <TextField
-                          fullWidth
-                          type='number'
-                          value={
-                            extractValueAndUnit(
-                              getDataInObject(Css, open.type === 'LongText' ? 'textarea.height' : 'input.height')
-                            ).value || ''
-                          }
-                          onChange={e =>
-                            UpdateData(
-                              open.type === 'LongText' ? 'textarea.height' : 'input.height',
-                              e.target.value +
+                        {open?.descriptionEn !== 'rate' && (
+                          <>
+                            <TextField
+                              fullWidth
+                              type='number'
+                              value={extractValueAndUnit(getDataInObject(Css, '#parent-input.width')).value || ''}
+                              onChange={e =>
+                                UpdateData(
+                                  '#parent-input.width',
+                                  e.target.value + extractValueAndUnit(getDataInObject(Css, '#parent-input.width')).unit
+                                )
+                              }
+                              variant='filled'
+                              label={locale === 'ar' ? 'العرض' : 'Width'}
+                              disabled={
+                                extractValueAndUnit(getDataInObject(Css, '#parent-input.width')).unit ===
+                                  'max-content' ||
+                                extractValueAndUnit(getDataInObject(Css, '#parent-input.width')).unit ===
+                                  'min-content' ||
+                                extractValueAndUnit(getDataInObject(Css, '#parent-input.width')).unit ===
+                                  'fit-content' ||
+                                extractValueAndUnit(getDataInObject(Css, '#parent-input.width')).unit === 'auto' ||
+                                !extractValueAndUnit(getDataInObject(Css, '#parent-input.width')).unit
+                              }
+                              InputProps={{
+                                endAdornment: (
+                                  <InputAdornment position='end'>
+                                    <Select
+                                      value={
+                                        extractValueAndUnit(getDataInObject(Css, '#parent-input.width')).unit || '%'
+                                      }
+                                      onChange={e => {
+                                        if (
+                                          e.target.value === 'max-content' ||
+                                          e.target.value === 'min-content' ||
+                                          e.target.value === 'fit-content' ||
+                                          e.target.value === 'auto'
+                                        ) {
+                                          UpdateData('#parent-input.width', e.target.value)
+                                        } else {
+                                          UpdateData(
+                                            '#parent-input.width',
+                                            extractValueAndUnit(getDataInObject(Css, '#parent-input.width')).value +
+                                              e.target.value
+                                          )
+                                        }
+                                      }}
+                                      displayEmpty
+                                      variant='standard'
+                                    >
+                                      <MenuItem value='px'>PX</MenuItem>
+                                      <MenuItem value='%'>%</MenuItem>
+                                      <MenuItem value='EM'>EM</MenuItem>
+                                      <MenuItem value='VW'>VW</MenuItem>
+                                      <MenuItem value='max-content'>Max-Content</MenuItem>
+                                      <MenuItem value='min-content'>Min-Content</MenuItem>
+                                      <MenuItem value='fit-content'>Fit-Content</MenuItem>
+                                      <MenuItem value='auto'>Auto</MenuItem>
+                                    </Select>
+                                  </InputAdornment>
+                                )
+                              }}
+                            />
+                            <TextField
+                              fullWidth
+                              type='number'
+                              value={
                                 extractValueAndUnit(
                                   getDataInObject(Css, open.type === 'LongText' ? 'textarea.height' : 'input.height')
-                                ).unit
-                            )
-                          }
-                          variant='filled'
-                          label={locale === 'ar' ? 'الطول' : 'Height'}
-                          disabled={
-                            extractValueAndUnit(
-                              getDataInObject(Css, open.type === 'LongText' ? 'textarea.height' : 'input.height')
-                            ).unit === 'max-content' ||
-                            extractValueAndUnit(
-                              getDataInObject(Css, open.type === 'LongText' ? 'textarea.height' : 'input.height')
-                            ).unit === 'min-content' ||
-                            extractValueAndUnit(
-                              getDataInObject(Css, open.type === 'LongText' ? 'textarea.height' : 'input.height')
-                            ).unit === 'fit-content' ||
-                            extractValueAndUnit(
-                              getDataInObject(Css, open.type === 'LongText' ? 'textarea.height' : 'input.height')
-                            ).unit === 'auto' ||
-                            !extractValueAndUnit(
-                              getDataInObject(Css, open.type === 'LongText' ? 'textarea.height' : 'input.height')
-                            ).unit
-                          }
-                          InputProps={{
-                            endAdornment: (
-                              <InputAdornment position='end'>
-                                <Select
-                                  value={
+                                ).value || ''
+                              }
+                              onChange={e =>
+                                UpdateData(
+                                  open.type === 'LongText' ? 'textarea.height' : 'input.height',
+                                  e.target.value +
                                     extractValueAndUnit(
                                       getDataInObject(
                                         Css,
                                         open.type === 'LongText' ? 'textarea.height' : 'input.height'
                                       )
-                                    ).unit || '%'
-                                  }
-                                  onChange={e => {
-                                    if (
-                                      e.target.value === 'max-content' ||
-                                      e.target.value === 'min-content' ||
-                                      e.target.value === 'fit-content' ||
-                                      e.target.value === 'auto'
-                                    ) {
-                                      UpdateData(
-                                        open.type === 'LongText' ? 'textarea.height' : 'input.height',
-                                        e.target.value
-                                      )
-                                    } else {
-                                      UpdateData(
-                                        open.type === 'LongText' ? 'textarea.height' : 'input.height',
+                                    ).unit
+                                )
+                              }
+                              variant='filled'
+                              label={locale === 'ar' ? 'الطول' : 'Height'}
+                              disabled={
+                                extractValueAndUnit(
+                                  getDataInObject(Css, open.type === 'LongText' ? 'textarea.height' : 'input.height')
+                                ).unit === 'max-content' ||
+                                extractValueAndUnit(
+                                  getDataInObject(Css, open.type === 'LongText' ? 'textarea.height' : 'input.height')
+                                ).unit === 'min-content' ||
+                                extractValueAndUnit(
+                                  getDataInObject(Css, open.type === 'LongText' ? 'textarea.height' : 'input.height')
+                                ).unit === 'fit-content' ||
+                                extractValueAndUnit(
+                                  getDataInObject(Css, open.type === 'LongText' ? 'textarea.height' : 'input.height')
+                                ).unit === 'auto' ||
+                                !extractValueAndUnit(
+                                  getDataInObject(Css, open.type === 'LongText' ? 'textarea.height' : 'input.height')
+                                ).unit
+                              }
+                              InputProps={{
+                                endAdornment: (
+                                  <InputAdornment position='end'>
+                                    <Select
+                                      value={
                                         extractValueAndUnit(
                                           getDataInObject(
                                             Css,
                                             open.type === 'LongText' ? 'textarea.height' : 'input.height'
                                           )
-                                        ).value + e.target.value
-                                      )
-                                    }
-                                  }}
-                                  displayEmpty
-                                  variant='standard'
-                                >
-                                  <MenuItem value='px'>PX</MenuItem>
-                                  <MenuItem value='%'>%</MenuItem>
-                                  <MenuItem value='EM'>EM</MenuItem>
-                                  <MenuItem value='VW'>VW</MenuItem>
-                                  <MenuItem value='max-content'>Max-Content</MenuItem>
-                                  <MenuItem value='min-content'>Min-Content</MenuItem>
-                                  <MenuItem value='fit-content'>Fit-Content</MenuItem>
-                                  <MenuItem value='auto'>Auto</MenuItem>
-                                </Select>
-                              </InputAdornment>
-                            )
-                          }}
-                        />
+                                        ).unit || '%'
+                                      }
+                                      onChange={e => {
+                                        if (
+                                          e.target.value === 'max-content' ||
+                                          e.target.value === 'min-content' ||
+                                          e.target.value === 'fit-content' ||
+                                          e.target.value === 'auto'
+                                        ) {
+                                          UpdateData(
+                                            open.type === 'LongText' ? 'textarea.height' : 'input.height',
+                                            e.target.value
+                                          )
+                                        } else {
+                                          UpdateData(
+                                            open.type === 'LongText' ? 'textarea.height' : 'input.height',
+                                            extractValueAndUnit(
+                                              getDataInObject(
+                                                Css,
+                                                open.type === 'LongText' ? 'textarea.height' : 'input.height'
+                                              )
+                                            ).value + e.target.value
+                                          )
+                                        }
+                                      }}
+                                      displayEmpty
+                                      variant='standard'
+                                    >
+                                      <MenuItem value='px'>PX</MenuItem>
+                                      <MenuItem value='%'>%</MenuItem>
+                                      <MenuItem value='EM'>EM</MenuItem>
+                                      <MenuItem value='VW'>VW</MenuItem>
+                                      <MenuItem value='max-content'>Max-Content</MenuItem>
+                                      <MenuItem value='min-content'>Min-Content</MenuItem>
+                                      <MenuItem value='fit-content'>Fit-Content</MenuItem>
+                                      <MenuItem value='auto'>Auto</MenuItem>
+                                    </Select>
+                                  </InputAdornment>
+                                )
+                              }}
+                            />
+                          </>
+                        )}
                         <TextField
                           fullWidth
                           type='number'
@@ -1098,47 +1143,81 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                             )
                           }}
                         />
-                        <TextField
-                          fullWidth
-                          type='color'
-                          defaultChecked={
-                            getDataInObject(
-                              Css,
-                              open.type === 'LongText' ? 'textarea.background-color' : 'input.background-color'
-                            ) || '#575757'
-                          }
-                          defaultValue={
-                            getDataInObject(
-                              Css,
-                              open.type === 'LongText' ? 'textarea.background-color' : 'input.background-color'
-                            ) || '#575757'
-                          }
-                          onBlur={e =>
-                            UpdateData(
-                              open.type === 'LongText' ? 'textarea.background-color' : 'input.background-color',
-                              e.target.value
-                            )
-                          }
-                          label={locale === 'ar' ? 'اللون الخلفي' : 'Background Color'}
-                          variant='filled'
-                        />
-                        <TextField
-                          fullWidth
-                          type='color'
-                          defaultChecked={
-                            getDataInObject(Css, open.type === 'LongText' ? 'textarea.color' : 'input.color') ||
-                            '#575757'
-                          }
-                          defaultValue={
-                            getDataInObject(Css, open.type === 'LongText' ? 'textarea.color' : 'input.color') ||
-                            '#575757'
-                          }
-                          onBlur={e =>
-                            UpdateData(open.type === 'LongText' ? 'textarea.color' : 'input.color', e.target.value)
-                          }
-                          label={locale === 'ar' ? 'اللون' : 'Color'}
-                          variant='filled'
-                        />
+                        {open?.descriptionEn !== 'rate' && (
+                          <>
+                            <TextField
+                              fullWidth
+                              type='color'
+                              defaultChecked={
+                                getDataInObject(
+                                  Css,
+                                  open.type === 'LongText' ? 'textarea.background-color' : 'input.background-color'
+                                ) || '#575757'
+                              }
+                              defaultValue={
+                                getDataInObject(
+                                  Css,
+                                  open.type === 'LongText' ? 'textarea.background-color' : 'input.background-color'
+                                ) || '#575757'
+                              }
+                              onBlur={e =>
+                                UpdateData(
+                                  open.type === 'LongText' ? 'textarea.background-color' : 'input.background-color',
+                                  e.target.value
+                                )
+                              }
+                              label={locale === 'ar' ? 'اللون الخلفي' : 'Background Color'}
+                              variant='filled'
+                            />
+                            <TextField
+                              fullWidth
+                              type='color'
+                              defaultChecked={
+                                getDataInObject(Css, open.type === 'LongText' ? 'textarea.color' : 'input.color') ||
+                                '#575757'
+                              }
+                              defaultValue={
+                                getDataInObject(Css, open.type === 'LongText' ? 'textarea.color' : 'input.color') ||
+                                '#575757'
+                              }
+                              onBlur={e =>
+                                UpdateData(open.type === 'LongText' ? 'textarea.color' : 'input.color', e.target.value)
+                              }
+                              label={locale === 'ar' ? 'اللون' : 'Color'}
+                              variant='filled'
+                            />
+                          </>
+                        )}
+                        {open?.descriptionEn === 'rate' && (
+                          <>
+                            <TextField
+                              fullWidth
+                              type='color'
+                              defaultChecked={roles?.color || '#faac00'}
+                              defaultValue={roles?.color || '#faac00'}
+                              onBlur={e => {
+                                const additional_fields = data.additional_fields ?? []
+                                const findMyInput = additional_fields.find(inp => inp.key === open.id)
+                                if (findMyInput) {
+                                  findMyInput.roles.color = e.target.value
+                                } else {
+                                  const myEdit = {
+                                    key: open.id,
+                                    design: objectToCss(Css).replaceAll('NaN', ''),
+                                    roles: {
+                                      ...roles,
+                                      color: e.target.value
+                                    }
+                                  }
+                                  additional_fields.push(myEdit)
+                                }
+                                onChange({ ...data, additional_fields: additional_fields })
+                              }}
+                              label={locale === 'ar' ? 'لون النجوم' : 'Star Color'}
+                              variant='filled'
+                            />
+                          </>
+                        )}
                         <TextField
                           fullWidth
                           type='color'

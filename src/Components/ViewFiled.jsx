@@ -28,7 +28,6 @@ function ViewField({ open, setOpen, setData }) {
     }
   }, [open])
 
-  console.log(open)
   const maxLength = open?.validationData?.find(item => item.ruleType.toLowerCase() === 'maxlength')?.parameters
   const minLength = open?.validationData?.find(item => item.ruleType.toLowerCase() === 'minlength')?.parameters
   const required = open?.validationData?.find(item => item.ruleType.toLowerCase() === 'required')?.parameters

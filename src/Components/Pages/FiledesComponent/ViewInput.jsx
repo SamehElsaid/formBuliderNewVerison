@@ -5,7 +5,7 @@ import ExampleCustomInput from './ExampleCustomInput'
 import DatePicker from 'react-datepicker'
 import ar from 'date-fns/locale/ar-EG'
 import en from 'date-fns/locale/en-US'
-import { Autocomplete, Button, Dialog, IconButton, InputAdornment, TextField } from '@mui/material'
+import { Autocomplete, Button, Dialog, IconButton, InputAdornment, Rating, TextField } from '@mui/material'
 import { Icon } from '@iconify/react'
 
 const ViewInput = ({
@@ -52,50 +52,82 @@ const ViewInput = ({
   ) {
     return (
       <>
-        <input
-          id={input.key}
-          type={
-            showPassword
-              ? 'text'
-              : input.type == 'URL'
-              ? 'text'
-              : input.type == 'SingleText'
-              ? 'text'
-              : input.type == 'Phone'
-              ? 'number'
-              : input.type
-          }
-          value={value}
-          name={input.nameEn}
-          onChange={e => {
-            onChange(e)
-          }}
-          onBlur={e => {
-            if (onBlur) {
-              const evaluatedFn = eval('(' + onBlur + ')')
+        {input.descriptionEn == 'rate' ? (
+          <>
+            <Rating
+              name={input.nameEn}
+              id={input.key}
+              sx={{
+                '& .MuiRating-iconFilled': {
+                  color: roles?.color ? roles.color : '#faac00'
+                }
+              }}
+              value={value}
+              precision={0.5}
+              max={placeholder ? +placeholder : 5}
+              onChange={e => {
+                onChange(e)
+              }}
+              onBlur={e => {
+                if (onBlur) {
+                  const evaluatedFn = eval('(' + onBlur + ')')
 
-              evaluatedFn(e)
-            }
-          }}
-          placeholder={placeholder}
-          disabled={isDisable == 'disabled'}
-          onKeyDown={handleKeyDown}
-          onWheel={handleWheel}
-          className={`${errorView || error ? 'error' : ''} `}
-          style={{ transition: '0.3s' }}
-        />
-        {input.type == 'Password' && (
-          <div className='absolute top-1/2 || -translate-y-1/2 || end-[15px]'>
-            <InputAdornment position='end'>
-              <IconButton
-                edge='end'
-                onMouseDown={e => e.preventDefault()}
-                onClick={() => setShowPassword(!showPassword)}
-              >
-                <Icon fontSize='1.25rem' icon={showPassword ? 'tabler:eye' : 'tabler:eye-off'} />
-              </IconButton>
-            </InputAdornment>
-          </div>
+                  evaluatedFn(e)
+                }
+              }}
+              disabled={isDisable == 'disabled'}
+              className={`${errorView || error ? 'error' : ''} `}
+              style={{ transition: '0.3s' }}
+            />
+          </>
+        ) : (
+          <>
+            <input
+              id={input.key}
+              type={
+                showPassword
+                  ? 'text'
+                  : input.type == 'URL'
+                  ? 'text'
+                  : input.type == 'SingleText'
+                  ? 'text'
+                  : input.type == 'Phone'
+                  ? 'number'
+                  : input.type
+              }
+              value={value}
+              name={input.nameEn}
+              onChange={e => {
+                onChange(e)
+              }}
+              onBlur={e => {
+                if (onBlur) {
+                  const evaluatedFn = eval('(' + onBlur + ')')
+
+                  evaluatedFn(e)
+                }
+              }}
+              placeholder={placeholder}
+              disabled={isDisable == 'disabled'}
+              onKeyDown={handleKeyDown}
+              onWheel={handleWheel}
+              className={`${errorView || error ? 'error' : ''} `}
+              style={{ transition: '0.3s' }}
+            />
+            {input.type == 'Password' && (
+              <div className='absolute top-1/2 || -translate-y-1/2 || end-[15px]'>
+                <InputAdornment position='end'>
+                  <IconButton
+                    edge='end'
+                    onMouseDown={e => e.preventDefault()}
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    <Icon fontSize='1.25rem' icon={showPassword ? 'tabler:eye' : 'tabler:eye-off'} />
+                  </IconButton>
+                </InputAdornment>
+              </div>
+            )}
+          </>
         )}
       </>
     )
@@ -327,7 +359,9 @@ const ViewInput = ({
                     evaluatedFn(e)
                   }
                 }}
-                customInput={<ExampleCustomInput value={value?.toString()} type='time' className='example-custom-input' />}
+                customInput={
+                  <ExampleCustomInput value={value?.toString()} type='time' className='example-custom-input' />
+                }
                 disabled={isDisable == 'disabled'}
                 minDate={minDate}
                 maxDate={maxDate}

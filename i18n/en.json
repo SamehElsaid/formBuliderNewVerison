@@ -390,6 +390,7 @@
   "text": "Text",
   "textarea": "Textarea",
   "checkbox": "Checkbox",
+  "rate": "Rate",
   "radio": "Radio",
   "select": "Select",
   "date": "Date",

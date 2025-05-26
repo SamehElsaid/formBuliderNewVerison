@@ -216,7 +216,6 @@ const AddPage = props => {
                   sx={{ mb: 4 }}
                   onChange={onChange}
                 >
-                  {console.log(workflows)}
                   {workflows.map(workflow => (
                     <MenuItem key={workflow.id} value={workflow.id}>
                       {workflow.name}

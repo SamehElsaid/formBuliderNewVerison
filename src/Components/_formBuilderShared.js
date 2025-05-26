@@ -8,6 +8,7 @@ export const fieldTypes = [
   'multiple_select',
   'radio',
   'select',
+  'rate',
   'date',
   'time',
   'number',
