@@ -30,7 +30,9 @@ export default function DisplayField({
   roles,
   layout,
   design,
-  triggerData
+  triggerData,
+  isRedirect,
+  setRedirect
 }) {
   const [value, setValue] = useState('')
   const [error, setError] = useState(false)
@@ -1085,6 +1087,8 @@ export default function DisplayField({
               setValue={setValue}
               roles={roles}
               onChangeFile={onChangeFile}
+              isRedirect={isRedirect}
+              setRedirect={setRedirect}
               fileName={fileName}
               locale={locale}
               findError={findError}

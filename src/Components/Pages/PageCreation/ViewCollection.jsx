@@ -19,6 +19,7 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
   const [getFields, setGetFields] = useState([])
   const [loading, setLoading] = useState(true)
   const [loadingSubmit, setLoadingSubmit] = useState(false)
+  const [redirect, setRedirect] = useState(false)
   const [reload, setReload] = useState(0)
   const [errors, setErrors] = useState(false)
   const refError = useRef({})
@@ -77,8 +78,12 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
 
   const handleSubmit = e => {
     e.preventDefault()
-    const initialSendData = { ...dataRef.current, workflowId }
 
+    const initialSendData = { ...dataRef.current, workflowId }
+    if (data.submitApi?.includes('/api/Account/Register')) {
+      delete initialSendData.workflowId
+      initialSendData.createdBy = 'system'
+    }
     const sendData = {}
     Object.keys(initialSendData).forEach(key => {
       const keyData = key
@@ -89,6 +94,14 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
     if (data.type_of_sumbit === '' || (data.type_of_sumbit === 'api' && !data.submitApi)) {
       return
     }
+
+    const dynamicUrl = data?.redirect?.replace(/\{(\w+)\}/g, (match, key) => {
+      const value = sendData[key]
+
+      return value ? encodeURIComponent(value) : ''
+    })
+
+    const finalUrl = dynamicUrl?.includes('=') && !dynamicUrl?.endsWith('=') ? dynamicUrl : '/otp'
 
     const errors = []
     if (refError.current) {
@@ -128,14 +141,25 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
     axiosPost(
       data.type_of_sumbit === 'collection' ? `generic-entities/${data.collectionName}` : data.submitApi,
       locale,
-      sendData
+      sendData,
+      false,
+      false,
+      data.type_of_sumbit !== 'collection' ? true : false
     )
       .then(res => {
         if (res.status) {
           setReload(prev => prev + 1)
           toast.success(locale === 'ar' ? 'تم إرسال البيانات بنجاح' : 'Data sent successfully')
-          if (data.redirect) {
-            push(`/${locale}/${data.redirect}`)
+          console.log(redirect)
+          if (data.redirect === '{{redirect}}') {
+            if (redirect) {
+              push(`/${locale}/${redirect}`)
+            }
+
+            return
+          }
+          if (data?.redirect) {
+            push(`/${locale}/${finalUrl}`)
           }
         }
       })
@@ -307,6 +331,8 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
                 )}
                 <DisplayField
                   input={filed}
+                  setRedirect={setRedirect}
+                  isRedirect={data.redirect === '{{redirect}}'}
                   design={getDesign(filed.id, filed)}
                   readOnly={disabled}
                   disabledBtn={!data.type_of_sumbit || (data.type_of_sumbit === 'api' && !data.submitApi)}

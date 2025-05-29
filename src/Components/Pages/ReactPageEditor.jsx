@@ -67,7 +67,7 @@ const ReactPageEditor = ({ pageName, initialData, initialDataApi, workflowId }) 
     // Handle browser back/forward navigation
     const handlePopState = event => {
       if (isChanged) {
-        window.history.pushState(null, '', window.location.pathname)
+        window.history.pushState(null, '', window.location.pathname + window.location.search)
 
         setOpenBack(true)
       }
@@ -75,7 +75,7 @@ const ReactPageEditor = ({ pageName, initialData, initialDataApi, workflowId }) 
 
     window.addEventListener('beforeunload', handleBeforeUnload)
     window.addEventListener('popstate', handlePopState)
-    window.history.pushState(null, '', window.location.pathname)
+    window.history.pushState(null, '', window.location.pathname + window.location.search)
 
     return () => {
       window.removeEventListener('beforeunload', handleBeforeUnload)
@@ -140,8 +140,8 @@ const ReactPageEditor = ({ pageName, initialData, initialDataApi, workflowId }) 
   }, [])
 
   return (
-    <div className='relative'> 
-      <div className='absolute z-0 invisible'>
+    <div className='relative'>
+      <div className='absolute invisible z-0'>
         <button
           ref={buttonRef}
           onClick={() => {
@@ -280,8 +280,7 @@ const ReactPageEditor = ({ pageName, initialData, initialDataApi, workflowId }) 
               </button>
               <button
                 className={`w-[50px] h-[50px] flex items-center justify-center rounded-full text-white bg-red-500 hover:bg-red-600 duration-300 shadow-main ${
-                  openBack ? 'bg-red-700 text-white hover:text-red-700' : ''
-                }`}
+                  openBack ? 'text-white bg-red-700 hover:text-red-700' : ''}`}
                 onClick={() => {
                   JSON.stringify(editorValue) === JSON.stringify(newData)
                     ? push(`/${locale}/setting/pages`)
@@ -298,7 +297,7 @@ const ReactPageEditor = ({ pageName, initialData, initialDataApi, workflowId }) 
         style={{
           background: !readOnly ? theme.palette.background.default : 'white'
         }}
-        className={`duration-300 ${readOnly ? `overflow-auto fixed inset-0 z-[1111111] pb-10` : '!bg-white'}`}
+        className={`duration-300 ${readOnly ? `overflow-auto fixed inset-0 pb-10 z-[1111111]` : '!bg-white'}`}
       >
         {readOnly && (
           <div className='fixed top-[10px] end-[10px] z-[11111111]'>

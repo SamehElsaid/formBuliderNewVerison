@@ -62,7 +62,7 @@ export const axiosPatch = async (url, locale, data, file, close) => {
   }
 }
 
-export const axiosPost = async (url, locale, data, file, close) => {
+export const axiosPost = async (url, locale, data, file, close, ExternalUrl) => {
   const authToken = Cookies.get('sub')
   const HeaderImg = { 'Content-Type': 'multipart/form-data' }
 
@@ -74,7 +74,7 @@ export const axiosPost = async (url, locale, data, file, close) => {
     delete headerToken.Authorization
   }
   try {
-    const fetchData = await axios.post(`${process.env.API_URL}/${url}`, data, {
+    const fetchData = await axios.post(`${ExternalUrl ? '' : process.env.API_URL + '/'}${url}`, data, {
       headers: {
         ...headerToken,
         'Accept-Language': locale

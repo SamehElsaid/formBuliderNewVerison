@@ -29,7 +29,9 @@ const ViewInput = ({
   selectedOptions,
   isDisable,
   placeholder,
-  onBlur
+  onBlur,
+  isRedirect,
+  setRedirect
 }) => {
   const handleKeyDown = event => {
     if (input.type != 'Phone') return
@@ -530,7 +532,12 @@ const ViewInput = ({
           onChange={e => onChange(e)}
           disabled={isDisable == 'disabled' || selectedOptions.length == 0}
           onBlur={e => {
+            if (isRedirect) {
+              const findOption = selectedOptions.find(option => option.Id == e.target.value)
+              setRedirect(findOption.redirect)
+            }
             if (onBlur) {
+
               const evaluatedFn = eval('(' + onBlur + ')')
 
               evaluatedFn(e)

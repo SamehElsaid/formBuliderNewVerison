@@ -12,6 +12,7 @@ module.exports = withTM({
   env: {
     // API_URL: 'https://localhost:7101/api',
     API_URL: 'https://lowcodetest-ayeuaucehyerfves.uaenorth-01.azurewebsites.net/api',
+    identityUrl: 'https://localhost:7000/',
   },
   images: {
     domains: [],

@@ -5,6 +5,7 @@ import { IoMdClose } from 'react-icons/io'
 import OtpControl from '../OtpControl'
 import { toast } from 'react-toastify'
 import axios from 'axios'
+import { useRouter } from 'next/router'
 
 export default function useOtp({ locale, buttonRef }) {
   const Otp = useMemo(() => {
@@ -14,6 +15,23 @@ export default function useOtp({ locale, buttonRef }) {
         const [otpOpen, setOtpOpen] = useState(false)
         const [resendOtp, setResendOtp] = useState(0)
         const [loading, setLoading] = useState(false)
+        const router = useRouter()
+        const [queries, setQueries] = useState([])
+
+        useEffect(() => {
+          if (data.params) {
+            const dataParams = []
+
+            data.params?.forEach(param => {
+              if (router.query[param.paramValue]) {
+                dataParams.push({ [param.param]: router.query[param.paramValue] })
+              }
+            })
+            console.log(dataParams)
+            setQueries(dataParams)
+          }
+          // eslint-disable-next-line react-hooks/exhaustive-deps
+        }, [data.params])
 
         useEffect(() => {
           if (otpOpen) {
@@ -40,23 +58,24 @@ export default function useOtp({ locale, buttonRef }) {
               }
 
               setLoading(true)
+
+              const sendData = {
+                [data?.key || 'code']: otp,
+                ...queries.reduce((acc, item) => ({ ...acc, ...item }), {})
+              }
+
               axios
-                .post(data?.api_url, {
-                  [data?.key || 'code']: otp
-                })
+                .post(data?.api_url, sendData)
                 .then(res => {
                   if (res.status === 200) {
                     toast.success(locale === 'ar' ? 'تم الانتهاء من العملية' : 'Process has been completed')
                     setOtp('')
+                    if (data?.redirectLink) {
+                      router.push(data?.redirectLink)
+                    }
                   }
                 })
-                .catch(err => {
-                  toast.error(
-                    err?.response?.data?.message || locale === 'ar'
-                      ? 'حصل خطا في العملية'
-                      : 'An error occurred in the process'
-                  )
-                })
+                .catch(err => {})
                 .finally(() => {
                   setOtp('')
                   setLoading(false)
@@ -81,7 +100,7 @@ export default function useOtp({ locale, buttonRef }) {
                 <OTPInput
                   value={otp}
                   onChange={setOtp}
-                  numInputs={data?.numberOfOtp ? data?.numberOfOtp > 20 ? 20 : data?.numberOfOtp : 5}
+                  numInputs={data?.numberOfOtp ? (data?.numberOfOtp > 20 ? 20 : data?.numberOfOtp) : 5}
                   renderSeparator={<span style={{ color: data?.titleColor || '#00cfe8' }}>-</span>}
                   containerStyle={{
                     flexWrap: 'wrap',
@@ -172,7 +191,8 @@ export default function useOtp({ locale, buttonRef }) {
       },
       id: 'otp',
       title: locale === 'ar' ? 'عداد/التوقيت' : 'Counter/Timer',
-      description: locale === 'ar' ? 'يمكن عرض عداد أو عداد عدد الثواني' : 'Displays a dynamic countdown or count-up timer.',
+      description:
+        locale === 'ar' ? 'يمكن عرض عداد أو عداد عدد الثواني' : 'Displays a dynamic countdown or count-up timer.',
       version: 1,
       icon: <FaBarsProgress className='text-2xl' />,
       controls: {
@@ -182,7 +202,7 @@ export default function useOtp({ locale, buttonRef }) {
         )
       }
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [locale])
 
   return { Otp }

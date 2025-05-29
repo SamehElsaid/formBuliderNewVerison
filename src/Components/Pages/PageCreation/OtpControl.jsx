@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { TextField, InputAdornment, MenuItem } from '@mui/material'
+import { TextField, InputAdornment, MenuItem, Button } from '@mui/material'
 import { useSelector } from 'react-redux'
 import CloseNav from './CloseNav'
 
@@ -9,20 +9,17 @@ export default function OtpControl({ data, onChange, locale, type, buttonRef }) 
 
   const renderTextField = (label, valueKey, inputType = 'text', options = {}) => {
     // Add max validation specifically for the Number of OTP field
-    const isOtpNumberField = 
-      (locale === 'ar' && label === 'عدد الرمز') || 
-      (locale !== 'ar' && label === 'Number of OTP')
-    
-    const inputProps = isOtpNumberField 
-      ? { ...options.inputProps, max: 20 }
-      : options.inputProps
-    
-    const handleChange = (e) => {
+    const isOtpNumberField =
+      (locale === 'ar' && label === 'عدد الرمز') || (locale !== 'ar' && label === 'Number of OTP')
+
+    const inputProps = isOtpNumberField ? { ...options.inputProps, max: 20 } : options.inputProps
+
+    const handleChange = e => {
       let value = e.target.value
       if (isOtpNumberField && value > 20) {
         value = 20
       }
-      
+
       onChange({ ...data, [valueKey]: value })
     }
 
@@ -107,8 +104,57 @@ export default function OtpControl({ data, onChange, locale, type, buttonRef }) 
         {renderTextField(locale === 'ar' ? 'مفتاح الرمز المرسل للِAPI' : 'Required code key for API', 'key', 'text')}
         {renderTextField(locale === 'ar' ? 'رابط التأكيد' : 'Verification link', 'api_url', 'text')}
         {renderTextField(locale === 'ar' ? 'رابط إعادة الإرسال' : 'Resend OTP link', 'resendOtpLink', 'text')}
+        {renderTextField(locale === 'ar' ? 'اعاده التوجيه' : 'redirect link', 'redirectLink', 'text')}
 
         {renderTextField('Color', 'titleColor', 'color')}
+
+        <h2 className='mt-4 text-xl font-bold'>{locale === 'ar' ? 'بيانات من الurl' : 'Data From URL'}</h2>
+        <div className='flex justify-end mb-2'>
+          <Button
+            variant='contained'
+            onClick={() => {
+              if (data.params) {
+                onChange({ ...data, params: [...data.params, { param: '', paramValue: '' }] })
+              } else {
+                onChange({ ...data, params: [{ param: '', paramValue: '' }] })
+              }
+            }}
+          >
+            {locale === 'ar' ? 'إضافة' : 'Add'}
+          </Button>
+        </div>
+        {data.params?.map((param, index) => (
+          <div key={index} className='flex gap-2'>
+            {/* {renderTextField(locale === 'ar' ? 'اسم المفتاح' : 'Key Name', param.param, 'text')} */}
+            <TextField
+              fullWidth
+              type='text'
+              value={param.param}
+              onChange={e =>
+                onChange({
+                  ...data,
+                  params: data.params.map((p, i) => (i === index ? { ...p, param: e.target.value } : p))
+                })
+              }
+              label={locale === 'ar' ? 'اسم المفتاح' : 'Key Name'}
+              variant='filled'
+            />
+            {/* {renderTextField(locale === 'ar' ? 'قيمة المفتاح' : 'Param value', param.paramValue, 'text')} */}
+            <TextField
+              fullWidth
+              type='text'
+              value={param.paramValue}
+              onChange={e =>
+                onChange({
+                  ...data,
+                  params: data.params.map((p, i) => (i === index ? { ...p, paramValue: e.target.value } : p))
+                })
+              }
+              label={locale === 'ar' ? 'قيمة المفتاح' : 'Param value'}
+              variant='filled'
+            />
+          </div>
+        ))}
       </div>
     </div>
   )
