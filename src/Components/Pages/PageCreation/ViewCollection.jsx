@@ -116,18 +116,13 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
       const additionalFields = data.additional_fields ?? []
       const additionalFieldFind = additionalFields.find(e => e.key === ele.id)
 
-      if (additionalFieldFind?.roles?.onMount?.isRequired && ele.key === 'check_box') {
+      if (additionalFieldFind?.roles?.onMount?.isRequired && ele?.type === 'new_element') {
         if (!dataRef?.current?.[ele.id]) {
           refError.current[ele.id] = ['Required']
           errors.push(refError.current[ele.id])
         }
       }
-      if (additionalFieldFind?.roles?.onMount?.isRequired && ele.key === 'tabs') {
-        if (!dataRef?.current?.[ele.id]) {
-          refError.current[ele.id] = ['Required']
-          errors.push(refError.current[ele.id])
-        }
-      }
+
 
       delete sendData[`${ele.id}`]
     })

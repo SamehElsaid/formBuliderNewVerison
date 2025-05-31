@@ -174,6 +174,9 @@ function Trigger({
                   <MenuItem value={'empty'} disabled={open.type === 'new_element'}>
                     {messages.empty}
                   </MenuItem>
+                  <MenuItem value={'optional'} disabled={open.type === 'new_element'}>
+                    {messages.optional}
+                  </MenuItem>
                   <MenuItem value={'hidden'}>{messages.hidden}</MenuItem>
                 </Select>
                 <UnmountClosed isOpened={Boolean(typeOfValidation === 'filter')}>

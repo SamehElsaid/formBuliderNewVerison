@@ -303,6 +303,45 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                           variant='filled'
                           label={locale === 'ar' ? 'الاسم باللغة العربية' : 'Name in Arabic'}
                         />
+                        {open.kind === 'submit' && (
+                          <>
+                            {' '}
+                            <TextField
+                              fullWidth
+                              type='text'
+                              defaultValue={findMyInput?.warningMessageEn || ''}
+                              onBlur={e => {
+                                const newData = { ...findMyInput, warningMessageEn: e.target.value }
+
+                                const newAddMoreElement = addMoreElement.map(inp =>
+                                  inp.id === open.id ? newData : inp
+                                )
+                                onChange({ ...data, addMoreElement: newAddMoreElement })
+                              }}
+                              variant='filled'
+                              label={
+                                locale === 'ar' ? 'رسالة التحذير باللغة الانجليزية' : 'Warning Message In Popup English'
+                              }
+                            />{' '}
+                            <TextField
+                              fullWidth
+                              type='text'
+                              defaultValue={findMyInput?.warningMessageAr || ''}
+                              onBlur={e => {
+                                const newData = { ...findMyInput, warningMessageAr: e.target.value }
+
+                                const newAddMoreElement = addMoreElement.map(inp =>
+                                  inp.id === open.id ? newData : inp
+                                )
+                                onChange({ ...data, addMoreElement: newAddMoreElement })
+                              }}
+                              variant='filled'
+                              label={
+                                locale === 'ar' ? 'رسالة التحذير باللغة العربية' : 'Warning Message In Popup Arabic'
+                              }
+                            />
+                          </>
+                        )}
                       </div>
                     )}
                     {open?.descriptionEn == 'rate' ? (
@@ -1276,8 +1315,6 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                                     console.log(e.target.value)
                                     findMyInput.roles.onMount.type = e.target.value
                                   } else {
-                                    console.log(e.target.value)
-
                                     const myEdit = {
                                       key: open.id,
                                       design: objectToCss(Css).replaceAll('NaN', ''),
@@ -1288,16 +1325,19 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                                     }
                                     additional_fields.push(myEdit)
                                   }
-                                  console.log(additional_fields)
                                   onChange({ ...data, additional_fields: additional_fields })
                                 }}
                               >
                                 <MenuItem selected value={'empty Data'}>
                                   {messages.select}
                                 </MenuItem>
-                                {open.type !== 'new_element' && (
-                                  <MenuItem value={'disable'}>{messages.Disable}</MenuItem>
-                                )}
+
+                                <MenuItem value={'disable'} disabled={open.type === 'new_element'}>
+                                  {messages.Disable}
+                                </MenuItem>
+                                <MenuItem value={'required'} disabled={open.type === 'new_element'}>
+                                  {messages.requiredFiled}
+                                </MenuItem>
                                 <MenuItem value={'hide'}>{messages.Hide}</MenuItem>
                               </Select>
                               {open.type !== 'new_element' && (
@@ -1610,6 +1650,41 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                           </IconButton>
                         </h2>
                         <UnmountClosed isOpened={Boolean(controlTrigger)}>
+                          <div className='px-4'>
+                            <FormControl fullWidth margin='normal'>
+                              <InputLabel>{locale === 'ar' ? 'اخباري' : 'Required'}</InputLabel>
+                              <Select
+                                variant='filled'
+                                value={roles?.onMount?.isRequired ? 'required' : 'optional'}
+                                onChange={e => {
+                                  const additional_fields = data.additional_fields ?? []
+                                  const findMyInput = additional_fields.find(inp => inp.key === open.id)
+                                  if (findMyInput) {
+                                    findMyInput.roles.onMount.isRequired = e.target.value === 'required' ? true : false
+                                  } else {
+                                    const myEdit = {
+                                      key: open.id,
+                                      design: objectToCss(Css).replaceAll('NaN', ''),
+                                      roles: {
+                                        ...roles,
+                                        onMount: {
+                                          ...roles.onMount,
+                                          isRequired: e.target.value === 'required' ? true : false
+                                        }
+                                      }
+                                    }
+                                    additional_fields.push(myEdit)
+                                  }
+                                  onChange({ ...data, additional_fields: additional_fields })
+                                }}
+                              >
+                                <MenuItem value={'required'}>{locale === 'ar' ? 'مطلوب' : 'Required'}</MenuItem>
+                                <MenuItem value={'optional'} selected>
+                                  {locale === 'ar' ? 'اختياري' : 'Optional'}
+                                </MenuItem>
+                              </Select>
+                            </FormControl>
+                          </div>
                           {open.key === 'button' || open.key === 'check_box' ? (
                             <>
                               <div className='px-4 mt-4'>
@@ -1776,40 +1851,6 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                             </>
                           ) : (
                             <div className='px-4'>
-                              <FormControl fullWidth margin='normal'>
-                                <InputLabel>{locale === 'ar' ? 'اخباري' : 'Required'}</InputLabel>
-                                <Select
-                                  variant='filled'
-                                  value={roles?.onMount?.isRequired ? 'required' : 'optional'}
-                                  onChange={e => {
-                                    const additional_fields = data.additional_fields ?? []
-                                    const findMyInput = additional_fields.find(inp => inp.key === open.id)
-                                    if (findMyInput) {
-                                      findMyInput.roles.onMount.isRequired =
-                                        e.target.value === 'required' ? true : false
-                                    } else {
-                                      const myEdit = {
-                                        key: open.id,
-                                        design: objectToCss(Css).replaceAll('NaN', ''),
-                                        roles: {
-                                          ...roles,
-                                          onMount: {
-                                            ...roles.onMount,
-                                            isRequired: e.target.value === 'required' ? true : false
-                                          }
-                                        }
-                                      }
-                                      additional_fields.push(myEdit)
-                                    }
-                                    onChange({ ...data, additional_fields: additional_fields })
-                                  }}
-                                >
-                                  <MenuItem value={'required'}>{locale === 'ar' ? 'مطلوب' : 'Required'}</MenuItem>
-                                  <MenuItem value={'optional'} selected>
-                                    {locale === 'ar' ? 'اختياري' : 'Optional'}
-                                  </MenuItem>
-                                </Select>
-                              </FormControl>
                               {roles?.onMount?.file ? (
                                 <div className='p-2 my-4 rounded border border-dashed border-main-color'>
                                   <div className='flex justify-between items-center'>

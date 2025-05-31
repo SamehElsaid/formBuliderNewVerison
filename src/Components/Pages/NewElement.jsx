@@ -1,9 +1,15 @@
 import { useIntl } from 'react-intl'
 import { axiosGet } from '../axiosCall'
 import Link from 'next/link'
+import { useRef, useState } from 'react'
+import { Button, Dialog, DialogContent, Typography } from '@mui/material'
+import { LoadingButton } from '@mui/lab'
 
 function NewElement({ input, onBlur, value, setValue, roles, onChangeEvent, disabledBtn, isDisable, readOnly }) {
+  const [open, setOpen] = useState(false)
   const { locale } = useIntl()
+  const [loadingButton, setLoadingButton] = useState(false)
+  const buttonRef = useRef(null)
 
   const handleValidationChanges = e => {
     setValue('checked')
@@ -40,7 +46,7 @@ function NewElement({ input, onBlur, value, setValue, roles, onChangeEvent, disa
   }
 
   const handleClick = e => {
-    // if()
+    setValue('checked')
     if (roles?.onMount?.print) {
       window.print()
     }
@@ -111,7 +117,7 @@ function NewElement({ input, onBlur, value, setValue, roles, onChangeEvent, disa
   }
   if (input.key === 'tabs') {
     return (
-      <div className='flex flex-wrap parent-tabs w-full'>
+      <div className='flex flex-wrap w-full parent-tabs'>
         {input.data.map((item, index) =>
           isValidURL(item.link) ? (
             <a
@@ -183,9 +189,66 @@ function NewElement({ input, onBlur, value, setValue, roles, onChangeEvent, disa
 
     if (input.kind === 'submit') {
       return (
-        <button onClick={handleClick} className='btn' disabled={disabledBtn}>
-          {locale === 'ar' ? input.name_ar : input.name_en}
-        </button>
+        <>
+          {input?.[locale === 'ar' ? 'warningMessageAr' : 'warningMessageEn'] && (
+            <Dialog
+              open={Boolean(open)}
+              aria-labelledby='alert-dialog-title'
+              aria-describedby='alert-dialog-description'
+              onClose={() => {
+                setOpen(false)
+              }}
+            >
+              <DialogContent>
+                <div className='flex flex-col gap-5 justify-center items-center px-1 py-5'>
+                  <Typography variant='body1' className='!text-lg' id='alert-dialog-description'>
+                    {input?.[locale === 'ar' ? 'warningMessageAr' : 'warningMessageEn']}
+                  </Typography>
+                  <div className='flex gap-5 justify-between items-end'>
+                    <LoadingButton
+                      variant='contained'
+                      color='primary'
+                      type='submit'
+                      loading={loadingButton}
+                      onClick={e => {
+                        handleClick(e)
+                        buttonRef.current.type = 'submit'
+                        console.log('dsa')
+                        setTimeout(() => {
+                          buttonRef.current.click()
+                          buttonRef.current.type = 'button'
+                          setOpen(false)
+                        }, 0)
+                      }}
+                    >
+                      {locale === 'ar' ? 'أرسل' : 'Submit'}
+                    </LoadingButton>
+                    <Button color='secondary' variant='contained' onClick={() => setOpen(false)}>
+                      {locale === 'ar' ? 'إلغاء' : 'Cancel'}
+                    </Button>
+                  </div>
+                </div>
+              </DialogContent>
+            </Dialog>
+          )}
+          <button
+            ref={buttonRef}
+            onClick={e => {
+              if (input?.[locale === 'ar' ? 'warningMessageAr' : 'warningMessageEn']) {
+                if (!open) {
+                  setOpen(true)
+                }
+              } else {
+                handleClick(e)
+              }
+            }}
+            type={input?.[locale === 'ar' ? 'warningMessageAr' : 'warningMessageEn'] ? 'button' : 'submit'}
+            className='btn'
+            disabled={disabledBtn}
+          >
+            {locale === 'ar' ? input.name_ar : input.name_en}
+          </button>
+        </>
       )
     }
 

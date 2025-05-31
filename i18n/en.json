@@ -497,5 +497,7 @@
   "nameNotValid": "Invalid Page Name",
   "pageAddedSuccessfully": "Page Added Successfully",
   "ErrorOccurred": "An error occurred",
-  "time": "Time"
+  "time": "Time",
+  "requiredFiled": "Required Field",
+  "optional": "Optional"
 }

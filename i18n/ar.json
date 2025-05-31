@@ -493,5 +493,7 @@
   "nameNotValid": "اسم الصفحة غير صالح",
   "pageAddedSuccessfully": "تم إضافة الصفحة بنجاح",
   "ErrorOccurred": "حدث خطأ",
-  "time": "الوقت"
+  "time": "الوقت",
+  "requiredFiled": "الحقل مطلوب",
+  "optional": "اختياري"
 }

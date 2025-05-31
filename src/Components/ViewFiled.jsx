@@ -19,7 +19,6 @@ function ViewField({ open, setOpen, setData }) {
   const { locale, messages } = useIntl()
   const [fieldLabel, setFieldLabel] = useState('')
   const [fieldLabelEn, setFieldLabelEn] = useState('')
-  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     if (open) {

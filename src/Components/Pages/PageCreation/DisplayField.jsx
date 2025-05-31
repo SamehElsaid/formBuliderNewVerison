@@ -32,7 +32,8 @@ export default function DisplayField({
   design,
   triggerData,
   isRedirect,
-  setRedirect
+  setRedirect,
+  isDisabled
 }) {
   const [value, setValue] = useState('')
   const [error, setError] = useState(false)
@@ -47,6 +48,14 @@ export default function DisplayField({
   const [fileName, setFile] = useState('')
   const [isOpen, setIsOpen] = useState(false)
   const [regex, setRegex] = useState(roles?.regex?.regex)
+  const [isDisable, setIsDisable] = useState(null)
+  const [lastValue, setLastValue] = useState(null)
+
+  useEffect(() => {
+    if (isDisabled) {
+      setIsDisable('disabled')
+    }
+  }, [isDisabled])
 
   useEffect(() => {
     if (!input) {
@@ -67,8 +76,6 @@ export default function DisplayField({
       }
     }
   }, [input])
-  const [isDisable, setIsDisable] = useState(null)
-  const [lastValue, setLastValue] = useState(null)
 
   useEffect(() => {
     if (roles?.trigger?.typeOfValidation == 'filter' && !loading) {
@@ -105,7 +112,6 @@ export default function DisplayField({
       }
     }
 
-    // End disable Control
 
     // ! Start enable Control
     if (roles?.trigger?.typeOfValidation == 'enable' && roles?.trigger?.mainValue && !loading) {
@@ -252,6 +258,189 @@ export default function DisplayField({
 
           return null
         })
+      }
+    }
+    if (roles?.trigger?.typeOfValidation == 'optional' && roles?.trigger?.mainValue && !loading) {
+      console.log('optional')
+
+      if (input.fieldCategory == 'Basic') {
+        if (roles?.trigger?.parentKey) {
+          if (dataRef?.current?.[roles?.trigger?.selectedField]) {
+            axiosGet(
+              `generic-entities/${roles?.trigger?.parentKey}/${dataRef?.current?.[roles?.trigger?.selectedField]}`
+            ).then(res => {
+              if (res.status) {
+                const data = res.entities?.[0] ?? false
+                if (data) {
+                  if (roles?.trigger.isEqual == 'equal') {
+                    console.log(1)
+                    console.log(data?.[roles?.trigger?.triggerKey], roles?.trigger?.mainValue)
+                    if (data?.[roles?.trigger?.triggerKey] != roles?.trigger?.mainValue) {
+                      if (!validations?.Required) {
+                        setValidations(prev => ({ ...prev, Required: true }))
+                      }
+                    } else {
+                      if (validations?.Required) {
+                        setValidations(prev => {
+                          const newPrev = { ...prev }
+                          delete newPrev.Required
+
+                          return newPrev
+                        })
+                      }
+                    }
+                  } else {
+                    if (data?.[roles?.trigger?.triggerKey] == roles?.trigger?.mainValue) {
+                      if (!validations?.Required) {
+                        setValidations(prev => ({ ...prev, Required: true }))
+                      }
+                    } else {
+                      if (validations?.Required) {
+                        setValidations(prev => {
+                          const newPrev = { ...prev }
+                          delete newPrev.Required
+
+                          return newPrev
+                        })
+                      }
+                    }
+                  }
+                }
+              }
+            })
+          }
+        } else {
+          console.log('s')
+
+          if (roles?.trigger.isEqual == 'equal') {
+            console.log(dataRef?.current?.[roles?.trigger?.selectedField], roles?.trigger?.mainValue)
+
+            if (dataRef?.current?.[roles?.trigger?.selectedField] != roles?.trigger?.mainValue) {
+              if (!validations?.Required) {
+                setValidations(prev => ({ ...prev, Required: true }))
+              }
+            } else {
+              console.log('1')
+
+              if (validations?.Required) {
+                setValidations(prev => {
+                  const newPrev = { ...prev }
+                  delete newPrev.Required
+
+                  return newPrev
+                })
+              }
+            }
+          } else {
+            if (dataRef?.current?.[roles?.trigger?.selectedField] == roles?.trigger?.mainValue) {
+              if (validations?.Required) {
+                setValidations(prev => {
+                  const newPrev = { ...prev }
+                  delete newPrev.Required
+
+                  return newPrev
+                })
+              }
+            } else {
+              if (!validations?.Required) {
+                setValidations(prev => ({ ...prev, Required: true }))
+              }
+            }
+          }
+        }
+      } else {
+        console.log('sa')
+        if (roles?.trigger?.parentKey) {
+          if (dataRef?.current?.[roles?.trigger?.selectedField]) {
+            axiosGet(
+              `generic-entities/${roles?.trigger?.parentKey}/${dataRef?.current?.[roles?.trigger?.selectedField]}`
+            ).then(res => {
+              if (res.status) {
+                const data = res.entities?.[0] ?? false
+                if (data) {
+                  if (roles?.trigger.isEqual == 'equal') {
+                    if (data?.[roles?.trigger?.triggerKey] != roles?.trigger?.mainValue) {
+                      if (!validations?.Required) {
+                        setValidations(prev => ({ ...prev, Required: true }))
+                      }
+                    } else {
+                      if (validations?.Required) {
+                        setValidations(prev => {
+                          delete prev.Required
+
+                          return prev
+                        })
+                      }
+                    }
+                  } else {
+                    if (data?.[roles?.trigger?.triggerKey] == roles?.trigger?.mainValue) {
+                      if (validations?.Required) {
+                        setValidations(prev => {
+                          delete prev.Required
+
+                          return prev
+                        })
+                      }
+                    } else {
+                      if (!validations?.Required) {
+                        setValidations(prev => ({ ...prev, Required: true }))
+                      }
+                    }
+                  }
+                }
+              }
+            })
+          }
+        } else {
+          if (roles?.trigger.isEqual == 'equal') {
+            if (dataRef?.current?.[roles?.trigger?.selectedField] != roles?.trigger?.mainValue) {
+              if (validations?.Required) {
+                setValidations(prev => {
+                  const newPrev = { ...prev }
+                  delete newPrev.Required
+
+                  return newPrev
+                })
+              }
+            } else {
+              if (!validations?.Required) {
+                setValidations(prev => ({ ...prev, Required: true }))
+              }
+            }
+          } else {
+            if (dataRef?.current?.[roles?.trigger?.selectedField] == roles?.trigger?.mainValue) {
+              if (validations?.Required) {
+                setValidations(prev => {
+                  const newPrev = { ...prev }
+                  delete newPrev.Required
+
+                  return newPrev
+                })
+              }
+            } else {
+              if (!validations?.Required) {
+                setValidations(prev => ({ ...prev, Required: true }))
+              }
+            }
+          }
+        }
+      }
+    }
+    if (roles?.trigger?.typeOfValidation == 'optional' && !roles?.trigger?.mainValue && !loading) {
+      console.log('sam')
+
+      // console.log("here");
+
+      if (dataRef?.current?.[roles?.trigger?.selectedField]?.length != 0) {
+        setValidations(prev => {
+          delete prev.Required
+
+          return prev
+        })
+      } else {
+        if (!validations?.Required) {
+          setValidations(prev => ({ ...prev, Required: true }))
+        }
       }
     }
 
@@ -673,6 +862,8 @@ export default function DisplayField({
     }
   }, [input, findValue])
 
+  console.log(validations, input.key)
+
   useEffect(() => {
     if (reload != 0) {
       setValue('')
@@ -686,12 +877,17 @@ export default function DisplayField({
       setShowPassword(false)
     }
   }, [reload, input])
-
   useEffect(() => {
+    console.log(roles?.onMount.type)
+
     if (!loading) {
       setTimeout(() => {
         if (roles?.onMount?.type == 'disable') {
           setIsDisable('disabled')
+        }
+        console.log({ here: roles?.onMount?.type, filed: input?.key })
+        if (roles?.onMount?.type == 'required') {
+          setValidations(prev => ({ ...prev, Required: true }))
         }
         if (roles?.onMount?.type == 'enable') {
           setIsDisable('enable')
@@ -712,7 +908,7 @@ export default function DisplayField({
         }
       }, 0)
     }
-  }, [roles, loading])
+  }, [roles?.onMount?.type, roles?.onMount?.value, loading])
 
   const onChange = (e, newValue) => {
     try {
