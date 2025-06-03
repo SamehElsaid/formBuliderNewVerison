@@ -15,6 +15,7 @@ import { useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
 import { LoadingButton } from '@mui/lab'
 import { axiosPost, axiosGet } from '../axiosCall'
+import CustomAutocomplete from 'src/@core/components/mui/autocomplete'
 
 const Header = styled(Box)(({ theme }) => ({
   display: 'flex',
@@ -40,7 +41,8 @@ const AddPage = props => {
   const defaultValues = {
     name: '',
     description: '',
-    versionReason: ''
+    versionReason: '',
+    workflow: []
   }
 
   const {
@@ -48,6 +50,7 @@ const AddPage = props => {
     control,
     setValue,
     setError,
+    getValues,
     handleSubmit,
     trigger,
     formState: { errors }
@@ -73,8 +76,12 @@ const AddPage = props => {
       description: data.description,
       versionReason: data.versionReason
     }
-    if (data.workflow) {
-      sendData.workflowId = data.workflow
+    console.log(data)
+    if (data.workflow?.length > 0) {
+      sendData.pageWorkflows = data.workflow.map((workflow, index) => ({
+        workflowId: workflow.id,
+        order: index + 1
+      }))
     }
 
     axiosPost('page', locale, sendData)
@@ -107,7 +114,7 @@ const AddPage = props => {
   useEffect(() => {
     axiosGet('Workflow/get-workflows', locale).then(res => {
       if (res.status) {
-        setWorkflows(res.data)
+        // setWorkflows(res.data)
       }
     })
   }, [locale])
@@ -207,21 +214,19 @@ const AddPage = props => {
               name='workflow'
               control={control}
               render={({ field: { value, onChange } }) => (
-                <CustomTextField
-                  fullWidth
-                  select
-                  type='text'
-                  label={'Workflow'}
-                  value={value}
-                  sx={{ mb: 4 }}
-                  onChange={onChange}
-                >
-                  {workflows.map(workflow => (
-                    <MenuItem key={workflow.id} value={workflow.id}>
-                      {workflow.name}
-                    </MenuItem>
-                  ))}
-                </CustomTextField>
+                <CustomAutocomplete
+                  multiple
+                  options={workflows}
+                  filterSelectedOptions
+                  id='autocomplete-multiple-outlined'
+                  getOptionLabel={option => option.name || ''}
+                  renderInput={params => (
+                    <CustomTextField {...params} label='filterSelectedOptions' placeholder='Favorites' />
+                  )}
+                  onChange={(event, newValue) => {
+                    onChange(newValue)
+                  }}
+                />
               )}
             />
             <Box sx={{ display: 'flex', alignItems: 'center' }} className='gap-4 justify-end py-4 mt-auto'>

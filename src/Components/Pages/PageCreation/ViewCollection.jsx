@@ -79,9 +79,9 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
   const handleSubmit = e => {
     e.preventDefault()
 
-    const initialSendData = { ...dataRef.current, workflowId }
+    const initialSendData = { ...dataRef.current, pageWorkflows: [{ workflowId, order: 0 }] }
     if (data.submitApi?.includes('/api/Account/Register')) {
-      delete initialSendData.workflowId
+      delete initialSendData.pageWorkflows
       initialSendData.createdBy = 'system'
     }
     const sendData = {}
@@ -122,7 +122,6 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
           errors.push(refError.current[ele.id])
         }
       }
-
 
       delete sendData[`${ele.id}`]
     })

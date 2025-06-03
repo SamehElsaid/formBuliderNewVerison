@@ -7,15 +7,16 @@ export default function useBackground({ locale, buttonRef }) {
     return {
       Renderer: ({ data, children }) => (
         <div
-         className="background-container"
+          className='flex justify-center items-center background-container'
           style={{
             backgroundColor: data.backgroundColor || 'transparent',
-            backgroundImage: data.backgroundImage ? `url(${data.backgroundImage})` : 'none',
+            backgroundImage: data.backgroundImage
+              ? `url(${data.backgroundImage.replace('/Uploads/', process.env.API_URL + '/file/download/')})`
+              : 'none',
             backgroundSize: data.backgroundSize || 'cover',
             backgroundPosition: data.backgroundPosition || 'center',
             backgroundAttachment: data.backgroundAttachment || 'scroll',
             backgroundRepeat: data.backgroundRepeat || 'no-repeat',
-            padding: '20px',
             height: data.backgroundHeight ? `${data.backgroundHeight}${data.backgroundHeightUnit || 'px'}` : 'auto',
             width: data.backgroundWidth ? `${data.backgroundWidth}${data.backgroundWidthUnit || 'px'}` : '100%',
             margin:
@@ -26,12 +27,13 @@ export default function useBackground({ locale, buttonRef }) {
                 : 'auto'
           }}
         >
-          {children}
+          <div className='w-[100%] h-fit'>{children}</div>
         </div>
       ),
       id: 'backgroundPlugin',
       title: locale === 'ar' ? 'الخلفية' : 'Background',
-      description: locale === 'ar' ? 'يمكن أن تشمل الخلفيات ألوان صلبة أو صور' : 'Backgrounds can include solid colors or images',
+      description:
+        locale === 'ar' ? 'يمكن أن تشمل الخلفيات ألوان صلبة أو صور' : 'Backgrounds can include solid colors or images',
       version: 1,
       controls: {
         type: 'custom',

@@ -1,6 +1,17 @@
 import { Icon } from '@iconify/react'
 import Collapse from '@kunukn/react-collapse'
-import { Button, FormControlLabel, IconButton, InputAdornment, MenuItem, Radio, RadioGroup, Select, TextField, Typography } from '@mui/material'
+import {
+  Button,
+  FormControlLabel,
+  IconButton,
+  InputAdornment,
+  MenuItem,
+  Radio,
+  RadioGroup,
+  Select,
+  TextField,
+  Typography
+} from '@mui/material'
 import { useEffect, useState } from 'react'
 import { SketchPicker } from 'react-color'
 import { useIntl } from 'react-intl'
@@ -9,8 +20,8 @@ import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { docco } from 'react-syntax-highlighter/dist/esm/styles/prism'
 import { getData } from 'src/Components/_Shared'
 import CloseNav from './CloseNav'
-
-
+import { axiosPost } from 'src/Components/axiosCall'
+import { toast } from 'react-toastify'
 
 export default function Background({ data, onChange, buttonRef }) {
   const [selectedOption, setSelectedOption] = useState(data?.backgroundImage ? 'image' : 'color')
@@ -20,9 +31,26 @@ export default function Background({ data, onChange, buttonRef }) {
   const handleFileUpload = event => {
     const file = event.target.files[0]
     if (file) {
-      const blob = new Blob([file], { type: file.type }) // إنشاء Blob من الملف
-      const blobUrl = URL.createObjectURL(blob) // إنشاء رابط من Blob
-      onChange({ ...data, backgroundImage: blobUrl }) // تخزين Blob والرابط
+      const loading = toast.loading(locale === 'ar' ? 'جاري التحميل...' : 'Uploading...')
+      if (file) {
+        axiosPost(
+          'file/upload',
+          'en',
+          {
+            file: file
+          },
+          true
+        )
+          .then(res => {
+            if (res.status) {
+              onChange({ ...data, backgroundImage: res.filePath.data })
+            }
+          })
+          .finally(() => {
+            toast.dismiss(loading)
+          })
+        event.target.value = ''
+      }
     }
   }
 
