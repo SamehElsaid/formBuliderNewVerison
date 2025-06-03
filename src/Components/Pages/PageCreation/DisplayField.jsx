@@ -1097,7 +1097,7 @@ export default function DisplayField({
 
   useEffect(() => {
     if (input.type == 'OneToOne') {
-      axiosGet(`generic-entities/${input?.options?.source}`)
+      axiosGet(`generic-entities/${input?.options?.source}?isLookup=true`)
         .then(res => {
           if (res.status) {
             setSelectedOptions(res.entities)
@@ -1108,7 +1108,7 @@ export default function DisplayField({
           setLoading(false)
         })
     } else if (input.type == 'ManyToMany') {
-      axiosGet(`generic-entities/${input?.options?.target}`)
+      axiosGet(`generic-entities/${input?.options?.target}?isLookup=true`)
         .then(res => {
           if (res.status) {
             setSelectedOptions(res.entities)

@@ -45,7 +45,7 @@ function TableView({ data, locale, onChange, readOnly, disabled }) {
       axiosGet(
         `generic-entities/${data.collectionName}?pageNumber=${paginationModel.page + 1}&pageSize=${
           paginationModel.pageSize
-        }`,
+        }&isLookup=true`,
         locale
       )
         .then(res => {
