@@ -46,7 +46,7 @@ export default function useFlexControl({ locale, buttonRef }) {
                 childrenView === 'auto' ? 'auto' : `repeat(${data.childrenView || 1}, minmax(0, 1fr))`
               };
               flex-direction: ${data.flexDirection || 'row'};
-              height: ${data.height + data.heightUnit || 'auto'};
+              min-height: ${data.height + data.heightUnit || 'auto'};
               gap: ${data.gap + 'px' || '10px'};
               flex-wrap: ${data.flexWrap || 'nowrap'};
               justify-content: ${data.justifyContent || 'center'};

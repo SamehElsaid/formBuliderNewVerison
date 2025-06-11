@@ -17,7 +17,7 @@ export default function useBackground({ locale, buttonRef }) {
             backgroundPosition: data.backgroundPosition || 'center',
             backgroundAttachment: data.backgroundAttachment || 'scroll',
             backgroundRepeat: data.backgroundRepeat || 'no-repeat',
-            height: data.backgroundHeight ? `${data.backgroundHeight}${data.backgroundHeightUnit || 'px'}` : 'auto',
+            minHeight: data.backgroundHeight ? `${data.backgroundHeight}${data.backgroundHeightUnit || 'px'}` : 'auto',
             width: data.backgroundWidth ? `${data.backgroundWidth}${data.backgroundWidthUnit || 'px'}` : '100%',
             margin:
               data.backgroundAlignment === 'start'
