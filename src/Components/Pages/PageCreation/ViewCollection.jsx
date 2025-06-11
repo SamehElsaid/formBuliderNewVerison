@@ -12,6 +12,9 @@ import 'react-grid-layout/css/styles.css'
 import 'react-resizable/css/styles.css'
 import { DefaultStyle, getTypeFromCollection, VaildId } from 'src/Components/_Shared'
 import { IoMdSettings } from 'react-icons/io'
+import { Elements } from '@stripe/react-stripe-js'
+import { loadStripe } from '@stripe/stripe-js'
+import SimpleStripeForm from './SimpleStripeForm'
 
 const ResponsiveGridLayout = WidthProvider(GridLayout)
 
@@ -25,7 +28,9 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
   const refError = useRef({})
   const dataRef = useRef({})
   const [triggerData, setTriggerData] = useState(0)
+  const [pay, updatePay] = useState(false)
   const { push } = useRouter()
+  const stripePromise = loadStripe('pk_test_12345...')
   console.log(workflowId)
 
   const [layout, setLayout] = useState()
@@ -144,6 +149,7 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
         if (res.status) {
           setReload(prev => prev + 1)
           toast.success(locale === 'ar' ? 'تم إرسال البيانات بنجاح' : 'Data sent successfully')
+          updatePay(true)
           console.log(redirect)
           if (data.redirect === '{{redirect}}') {
             if (redirect) {
@@ -265,7 +271,7 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
 
   console.log({ getFields, filterSelect })
 
-  return (
+  return !pay ? (
     <div className={`${disabled ? 'text-main' : ''}`}>
       <InputControlDesign
         open={open}
@@ -391,5 +397,9 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
         </form>
       )}
     </div>
+  ) : (
+    <Elements stripe={stripePromise}>
+      <SimpleStripeForm updatePay={updatePay} />
+    </Elements>
   )
 }
