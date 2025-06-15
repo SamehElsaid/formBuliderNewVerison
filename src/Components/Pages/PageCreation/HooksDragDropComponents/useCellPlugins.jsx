@@ -92,5 +92,13 @@ export default function useCellPlugins({ advancedEdit, locale, readOnly, buttonR
     ]
   )
 
-  return { cellPlugins }
+  console.log(
+    cellPlugins.map(item => {
+      return { title: item.title }
+    })
+  )
+
+  return {
+    cellPlugins: cellPlugins.sort((a, b) => a.title.trim().toLowerCase().localeCompare(b.title.trim().toLowerCase()))
+  }
 }

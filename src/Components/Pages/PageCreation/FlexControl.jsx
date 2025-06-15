@@ -96,6 +96,9 @@ export default function FlexControl({ data, onChange, locale, from, buttonRef })
         onChange={e => onChange({ ...data, gap: e.target.value })}
         variant='filled'
         label={locale === 'ar' ? 'المسافة بين العناصر' : 'Gap'}
+        InputProps={{
+          endAdornment: <InputAdornment position='end'>px</InputAdornment>
+        }}
       />
       <TextField
         fullWidth

@@ -92,8 +92,6 @@ export default function Background({ data, onChange, buttonRef }) {
                 <MenuItem value='px'>PX</MenuItem>
                 <MenuItem value='vw'>VW</MenuItem>
               </Select>
-              {/* <FormControl>
-              </FormControl> */}
             </InputAdornment>
           )
         }}
@@ -127,7 +125,7 @@ export default function Background({ data, onChange, buttonRef }) {
         fullWidth
         value={data.backgroundAlignment || 'center'}
         variant='filled'
-        label={locale === 'ar' ? 'محاذاة النص' : 'Text Alignment'}
+        label={locale === 'ar' ? 'محاذاة النص' : 'Alignment'}
         onChange={e => onChange({ ...data, backgroundAlignment: e.target.value })}
       >
         <MenuItem value='center'>Center</MenuItem>

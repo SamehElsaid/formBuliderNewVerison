@@ -162,7 +162,7 @@ const AddPage = props => {
                 <CustomTextField
                   fullWidth
                   type='text'
-                  label={messages['name']}
+                  label={<span>{messages['name']} <span style={{ color: 'red' }}>*</span></span>}
                   value={value}
                   sx={{ mb: 4 }}
                   onChange={onChange}
@@ -180,7 +180,7 @@ const AddPage = props => {
                 <CustomTextField
                   fullWidth
                   type='text'
-                  label={messages['description']}
+                  label={<span>{messages['description']} <span style={{ color: 'red' }}>*</span></span>}
                   value={value}
                   multiline
                   rows={4}

@@ -290,7 +290,7 @@ const FormBuilder = ({ open, setOpen, setRefresh }) => {
   return (
     <div>
       <Dialog open={open} onClose={resetForm} fullWidth>
-        <DialogTitle>{messages.createInput}</DialogTitle>
+        <DialogTitle>{locale === 'ar' ? 'اضافة حقل' : 'Add Filed'}</DialogTitle>
         <DialogContent>
           <Stepper activeStep={activeStep} alternativeLabel>
             {steps.map(label => (

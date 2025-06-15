@@ -31,8 +31,12 @@ function ViewField({ open, setOpen, setData }) {
   const minLength = open?.validationData?.find(item => item.ruleType.toLowerCase() === 'minlength')?.parameters
   const required = open?.validationData?.find(item => item.ruleType.toLowerCase() === 'required')?.parameters
   const unique = open?.validationData?.find(item => item.ruleType.toLowerCase() === 'unique')?.parameters
-
-  const data = open?.descriptionEn ? JSON.parse(open?.descriptionEn) : {}
+  let data = {}
+  try {
+    data = JSON.parse(open?.descriptionEn)
+  } catch (error) {
+    data = {}
+  }
 
   return (
     <Dialog open={open} onClose={() => setOpen(null)} fullWidth>

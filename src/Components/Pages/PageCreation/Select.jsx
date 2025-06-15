@@ -259,7 +259,7 @@ function Select({ onChange, data, type, buttonRef, title }) {
                 label={locale === 'ar' ? 'نوع الارسال' : 'Type Of Submit'}
                 variant='filled'
               >
-                <MenuItem value={'collection'}>{locale === 'ar' ? 'هذه التجميعة' : 'This Collection'}</MenuItem>
+                <MenuItem value={'collection'}>{locale === 'ar' ? 'هذه النموذج' : 'This Data model'}</MenuItem>
                 <MenuItem value={'api'}>{locale === 'ar' ? 'الي Api اخر' : 'Other API'}</MenuItem>
               </TextField>
               <TextField

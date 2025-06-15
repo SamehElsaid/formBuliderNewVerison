@@ -275,7 +275,7 @@ export default function Index() {
               </FormControl>
 
               {/* Search and Reset */}
-              <div className='flex gap-2 items-center'>
+              <div className='flex gap-2 items-end'>
                 <CustomTextField
                   id='input'
                   label={locale === 'ar' ? 'البحث' : 'Search'}

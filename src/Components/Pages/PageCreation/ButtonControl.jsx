@@ -1,4 +1,4 @@
-import { MenuItem, TextField } from '@mui/material'
+import { InputAdornment, MenuItem, TextField } from '@mui/material'
 import { useIntl } from 'react-intl'
 import { SketchPicker } from 'react-color'
 import CloseNav from './CloseNav'
@@ -57,6 +57,9 @@ export default function ButtonControl({ data, onChange, buttonRef, type }) {
         onChange={e => onChange({ ...data, paddingBlock: e.target.value })}
         variant='filled'
         label={locale === 'ar' ? 'المساحة الداخلية الطويلة' : 'Padding Block'}
+        InputProps={{
+          endAdornment: <InputAdornment position='end'>px</InputAdornment>
+        }}
       />
       <TextField
         fullWidth
@@ -65,6 +68,9 @@ export default function ButtonControl({ data, onChange, buttonRef, type }) {
         onChange={e => onChange({ ...data, paddingInline: e.target.value })}
         variant='filled'
         label={locale === 'ar' ? 'المساحة  الداخلية العرضية' : 'Padding Inline'}
+        InputProps={{
+          endAdornment: <InputAdornment position='end'>px</InputAdornment>
+        }}
       />
       <TextField
         fullWidth
@@ -73,6 +79,9 @@ export default function ButtonControl({ data, onChange, buttonRef, type }) {
         onChange={e => onChange({ ...data, borderRadius: e.target.value })}
         variant='filled'
         label={locale === 'ar' ? 'نصف القطر' : 'Border Radius'}
+        InputProps={{
+          endAdornment: <InputAdornment position='end'>px</InputAdornment>
+        }}
       />
       <TextField
         fullWidth
@@ -81,6 +90,9 @@ export default function ButtonControl({ data, onChange, buttonRef, type }) {
         onChange={e => onChange({ ...data, borderWidth: e.target.value })}
         variant='filled'
         label={locale === 'ar' ? 'عرض الحد' : 'Border Width'}
+        InputProps={{
+          endAdornment: <InputAdornment position='end'>px</InputAdornment>
+        }}
       />
       <div className='mb-5'></div>
       <h1 className='text-main-color'>{locale === 'ar' ? 'لون الخلفية' : 'Background Color'}</h1>
