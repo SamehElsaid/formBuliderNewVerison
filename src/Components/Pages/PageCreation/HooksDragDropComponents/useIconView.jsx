@@ -1,10 +1,13 @@
 import { Icon } from '@iconify/react'
 import { MenuItem, TextField } from '@mui/material'
 import { useMemo } from 'react'
-import { GiClick } from 'react-icons/gi'
+import { TfiThemifyFavicon } from 'react-icons/tfi'
 import CloseNav from '../CloseNav'
+import { useIntl } from 'react-intl'
 
 export default function useIconView({ locale, buttonRef }) {
+  const { messages } = useIntl()
+
   const IconView = useMemo(() => {
     return {
       Renderer: ({ data }) => {
@@ -32,29 +35,29 @@ export default function useIconView({ locale, buttonRef }) {
         )
       },
       id: 'Icon',
-      title: locale === 'ar' ? 'ايقونة' : 'Icon',
-      description: locale === 'ar' ? 'ايقونة صغيرة مستخدمة للإشارات البصرية.' : 'A small graphical symbol used for visual cues.',
+      title: messages.useIconView.icon,
+      description: messages.useIconView.iconDescription,
       version: 1,
-      icon: <GiClick className='text-2xl' />,
+      icon: <TfiThemifyFavicon   className='text-2xl' />,
       controls: {
         type: 'custom',
         Component: ({ data, onChange }) => (
           <div>
-            <CloseNav text={locale === 'ar' ? 'اختيار الايقونة' : 'Icon'} buttonRef={buttonRef} />
+            <CloseNav text={messages.useIconView.icon} buttonRef={buttonRef} />
             <TextField
               fullWidth
               type='text'
               value={data.text_en}
               onChange={e => onChange({ ...data, text_en: e.target.value })}
               variant='filled'
-              label={locale === 'ar' ? 'القيمة' : 'Value'}
+              label={messages.useIconView.icon}
             />
             <a
               href='https://iconify.design/icon-sets/ph/'
               target='_blank'
               className='my-1 text-sm underline text-main-color'
             >
-              {locale === 'ar' ? 'من هنا' : 'From Here'}{' '}
+              {messages.useIconView.iconFromHere}
             </a>
             <TextField
               fullWidth
@@ -62,7 +65,7 @@ export default function useIconView({ locale, buttonRef }) {
               value={data.width}
               onChange={e => onChange({ ...data, width: e.target.value })}
               variant='filled'
-              label={locale === 'ar' ? 'العرض' : 'Width'}
+              label={messages.useIconView.iconWidth}
             />
             <TextField
               fullWidth
@@ -70,7 +73,7 @@ export default function useIconView({ locale, buttonRef }) {
               value={data.height}
               onChange={e => onChange({ ...data, height: e.target.value })}
               variant='filled'
-              label={locale === 'ar' ? 'الطول' : 'Height'}
+              label={messages.useIconView.iconHeight}
             />
             <TextField
               fullWidth
@@ -78,7 +81,7 @@ export default function useIconView({ locale, buttonRef }) {
               value={data.borderRadius}
               onChange={e => onChange({ ...data, borderRadius: e.target.value })}
               variant='filled'
-              label={locale === 'ar' ? 'الدوران' : 'Border Radius'}
+              label={messages.useIconView.iconBorderRadius}
             />
             <TextField
               fullWidth
@@ -86,7 +89,7 @@ export default function useIconView({ locale, buttonRef }) {
               value={data.color}
               onChange={e => onChange({ ...data, color: e.target.value })}
               variant='filled'
-              label={locale === 'ar' ? 'اللون' : 'Color'}
+              label={messages.useIconView.iconColor}
             />
             <TextField
               fullWidth
@@ -94,7 +97,7 @@ export default function useIconView({ locale, buttonRef }) {
               value={data.backgroundColor}
               onChange={e => onChange({ ...data, backgroundColor: e.target.value })}
               variant='filled'
-              label={locale === 'ar' ? 'اللون الخلفي' : 'Background Color'}
+              label={messages.useIconView.iconBackgroundColor}
             />
             <TextField
               fullWidth
@@ -102,7 +105,7 @@ export default function useIconView({ locale, buttonRef }) {
               value={data.fontSize}
               onChange={e => onChange({ ...data, fontSize: e.target.value })}
               variant='filled'
-              label={locale === 'ar' ? 'الحجم' : 'Font Size'}
+              label={messages.useIconView.iconFontSize}
             />
             <TextField
               fullWidth
@@ -110,7 +113,7 @@ export default function useIconView({ locale, buttonRef }) {
               value={data.fontWeight}
               onChange={e => onChange({ ...data, fontWeight: e.target.value })}
               variant='filled'
-              label={locale === 'ar' ? 'الوزن' : 'Font Weight'}
+              label={messages.useIconView.iconFontWeight}
               select
             >
               <MenuItem value='100'>100</MenuItem>
@@ -123,35 +126,14 @@ export default function useIconView({ locale, buttonRef }) {
               <MenuItem value='800'>800</MenuItem>
               <MenuItem value='900'>900</MenuItem>
             </TextField>
-            <TextField
-              fullWidth
-              type='text'
-              value={data.fontFamily}
-              onChange={e => onChange({ ...data, fontFamily: e.target.value })}
-              variant='filled'
-              label={locale === 'ar' ? 'الخط' : 'Font Family'}
-              select
-            >
-              <MenuItem value='Arial'>Arial</MenuItem>
-              <MenuItem value='Helvetica'>Helvetica</MenuItem>
-              <MenuItem value='Times New Roman'>Times New Roman</MenuItem>
-              <MenuItem value='Georgia'>Georgia</MenuItem>
-            </TextField>
-            <TextField
-              fullWidth
-              type='text'
-              value={data.backgroundColor}
-              onChange={e => onChange({ ...data, backgroundColor: e.target.value })}
-              variant='filled'
-              label={locale === 'ar' ? 'اللون' : 'Background Color'}
-            />
+
             <TextField
               fullWidth
               type='text'
               value={data.marginBottom}
               onChange={e => onChange({ ...data, marginBottom: e.target.value })}
               variant='filled'
-              label={locale === 'ar' ? 'الهامش السفلي' : 'Margin Bottom'}
+              label={messages.useIconView.iconMarginBottom}
             />
           </div>
         )

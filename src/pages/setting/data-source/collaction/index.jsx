@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import {
   Avatar,
   Button,
@@ -46,7 +47,7 @@ export default function Index() {
   // Fetch data sources
   useEffect(() => {
     setLoading(true)
-    const loadingToast = toast.loading(locale === 'ar' ? 'جاري التحميل...' : 'Loading...')
+    const loadingToast = toast.loading(messages.loading)
     axiosGet(`data-source/get`, locale)
       .then(res => {
         if (res.status) {
@@ -66,7 +67,7 @@ export default function Index() {
   useEffect(() => {
     if (!selectedDataSource) return
     setLoading(true)
-    const loadingToast = toast.loading(locale === 'ar' ? 'جاري التحميل...' : 'Loading...')
+    const loadingToast = toast.loading(messages.loading)
     axiosGet(`collections/get/?dataSourceId=${selectedDataSource}`, locale)
       .then(res => {
         if (res.status) {
@@ -115,6 +116,22 @@ export default function Index() {
       )
     },
     {
+      flex: 0.2,
+      minWidth: 200,
+      field: 'key',
+      disableColumnMenu: true,
+      headerName: messages.key,
+      renderCell: ({ row }) => (
+        <Typography
+          variant='subtitle2'
+          className='capitalize text-overflow'
+          sx={{ fontWeight: 500, color: 'text.secondary' }}
+        >
+          {row.key}
+        </Typography>
+      )
+    },
+    {
       flex: 0.5,
       minWidth: 200,
       field: 'nameEn',
@@ -154,7 +171,7 @@ export default function Index() {
       headerName: messages.actions,
       renderCell: params => (
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <Tooltip title={locale === 'ar' ? 'عرض جميع الحقول' : 'View All Fields'}>
+          <Tooltip title={messages.collection.viewAllFields}>
             <IconButton
               size='small'
               onClick={() => {
@@ -164,7 +181,7 @@ export default function Index() {
               <IconifyIcon icon='tabler:eye' />
             </IconButton>
           </Tooltip>
-          <Tooltip title={locale === 'ar' ? 'تعديل النموذج' : 'Edit Model'}>
+          <Tooltip title={messages.collection.editCollection}>
             <IconButton
               size='small'
               onClick={() => {
@@ -180,7 +197,7 @@ export default function Index() {
               onClick={() => {
                 setDeletePage(params.row.id)
                 if (deletePage !== params.row.id) {
-                  toast.info(locale === 'ar' ? 'هل أنت متأكد ؟' : 'Are you sure you want to delete this item?', {
+                  toast.info(messages.areYouSure, {
                     position: 'bottom-right',
                     autoClose: 4000,
                     hideProgressBar: false,
@@ -194,11 +211,11 @@ export default function Index() {
                     iconSize: 20,
                     iconPosition: 'left',
                     onClick: () => {
-                      const loadingToast = toast.loading(locale === 'ar' ? 'جاري حذف النموذج...' : 'Deleting model...')
+                      const loadingToast = toast.loading(messages.delete)
                       axiosDelete(`collections/delete?collectionId=${params.row.id}`, locale)
                         .then(res => {
                           if (res.status) {
-                            toast.success(locale === 'ar' ? 'تم حذف النموذج بنجاح' : 'Model deleted successfully')
+                            toast.success(messages.deleteSuccess)
                             setData(data.filter((item, i) => i !== params.row.index))
                             setRefresh(prev => prev + 1)
                           }
@@ -239,14 +256,14 @@ export default function Index() {
         >
           <div className='flex gap-2 justify-center items-center'>
             <Typography variant='h5' sx={{ color: 'primary.main', fontWeight: 'bold' }}>
-              {locale === 'ar' ? 'نموذج البيانات' : 'Data Model'}
+              {messages.collection.collectionName}
             </Typography>
             <Avatar skin='light' sx={{ width: 30, height: 30 }}>
               {dataFilter?.length}
             </Avatar>
           </div>
           <Button variant='contained' color='primary' onClick={() => setOpen(true)} disabled={!selectedDataSource}>
-            {locale === 'ar' ? 'إضافة نموذج البيانات' : 'Add Data Model'}
+            {messages.collection.addCollection}
           </Button>
         </CardContent>
       </Card>
@@ -257,13 +274,13 @@ export default function Index() {
               {/* Data Source Dropdown */}
               <FormControl sx={{ minWidth: 200 }}>
                 <InputLabel id='data-source-select-label'>
-                  {locale === 'ar' ? 'مصدر البيانات' : 'Data Source'}
+                  {messages.collection.dataSource}
                 </InputLabel>
                 <Select
                   labelId='data-source-select-label'
                   id='data-source-select'
                   value={selectedDataSource}
-                  label={locale === 'ar' ? 'مصدر البيانات' : 'Data Source'}
+                  label={messages.collection.dataSource}
                   onChange={handleDataSourceChange}
                 >
                   {dataSources.map(source => (
@@ -278,7 +295,7 @@ export default function Index() {
               <div className='flex gap-2 items-end'>
                 <CustomTextField
                   id='input'
-                  label={locale === 'ar' ? 'البحث' : 'Search'}
+                  label={messages.search}
                   value={startSearch}
                   onChange={e => {
                     setStartSearch(e.target.value)
@@ -292,7 +309,7 @@ export default function Index() {
                       setStartSearch('')
                     }}
                   >
-                    {locale === 'ar' ? 'اعادة التعيين' : 'Reset'}
+                    {messages.reset}
                   </Button>
                 )}
               </div>
@@ -309,7 +326,7 @@ export default function Index() {
               getRowId={row => row.index}
               loading={loading}
               locale={locale}
-              noRow={locale === 'ar' ? 'لا يوجد' : 'Not Found'}
+              noRow={messages.notFound}
               paginationModel={paginationModel}
               setPaginationModel={setPaginationModel}
             />

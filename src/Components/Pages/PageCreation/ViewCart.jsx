@@ -5,6 +5,7 @@ import { Icon } from '@iconify/react'
 import CardCard from './CardCard'
 import { useSelector } from 'react-redux'
 import download from 'src/Components/img/download.png'
+import CardAppleWatch from 'src/Components/analytics/CardAppleWatch'
 
 export default function ViewCart({ data, locale, onChange, readOnly }) {
   const childrenView = data.childrenView ?? 'auto'
@@ -57,7 +58,8 @@ export default function ViewCart({ data, locale, onChange, readOnly }) {
         </div>
       ) : (
         <div className='relative ||  h-full'>
-          <Link
+          <CardAppleWatch />
+          {/* <Link
             href={`${locale}/${data.href ?? ''}`}
             className='border h-full relative  || border-gray-200 || rounded-md || overflow-hidden || flex || flex-col || hover:shadow-lg || hover:cursor-pointer || transition-all || hover:translate-y-[-5px] || duration-300'
           >
@@ -259,7 +261,7 @@ export default function ViewCart({ data, locale, onChange, readOnly }) {
                 )
               )}
             </div>
-          </Link>
+          </Link> */}
         </div>
       )}
     </div>

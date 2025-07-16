@@ -8,37 +8,54 @@ import { toast } from 'react-toastify'
 import { getData } from 'src/Components/_Shared'
 import { axiosPost } from 'src/Components/axiosCall'
 import CloseNav from './CloseNav'
+import { useIntl } from 'react-intl'
 
 export default function UpdateImage({ data, onChange, locale, type, buttonRef }) {
   const getApiData = useSelector(rx => rx.api.data)
+  const { messages } = useIntl()
 
   const handleFileUpload = event => {
     const file = event.target.files[0]
-    const loading = toast.loading(locale === 'ar' ? 'جاري الرفع' : 'Uploading...')
-    if (file) {
-      axiosPost(
-        'file/upload',
-        'en',
-        {
-          file: file
-        },
-        true
+    if (!file) return
+
+    const allowedImageTypes = ['image/png', 'image/jpeg', 'image/jpg']
+    const allowedVideoTypes = ['video/mp4', 'video/webm']
+
+    const isValidFile = type === 'video' ? allowedVideoTypes.includes(file.type) : allowedImageTypes.includes(file.type)
+
+    if (!isValidFile) {
+      toast.error(
+        type === 'video' ? messages.useUploadImage.videoFormatError : messages.useUploadImage.imageFormatError
       )
-        .then(res => {
-          if (res.status) {
-            if (type === 'video') {
-              onChange({ ...data, video: res.filePath.data }) 
-            } else {
-              onChange({ ...data, image: res.filePath.data }) 
-            }
-          }
-        })
-        .finally(() => {
-          toast.dismiss(loading)
-        })
       event.target.value = ''
+
+      return
     }
-  
+
+    const loading = toast.loading(messages.useUploadImage.uploading)
+
+    axiosPost(
+      'file/upload',
+      'en',
+      {
+        file: file
+      },
+      true
+    )
+      .then(res => {
+        if (res.status) {
+          if (type === 'video') {
+            onChange({ ...data, video: res.filePath.data })
+          } else {
+            onChange({ ...data, image: res.filePath.data })
+          }
+        }
+      })
+      .finally(() => {
+        toast.dismiss(loading)
+      })
+
+    event.target.value = ''
   }
 
   const [obj, setObj] = useState(false)
@@ -58,7 +75,10 @@ export default function UpdateImage({ data, onChange, locale, type, buttonRef })
 
   return (
     <div>
-      <CloseNav text={type === 'video' ? locale === 'ar' ? 'اختيار الفيديو' : 'Video' : locale === 'ar' ? 'اختيار الصورة' : 'Image'} buttonRef={buttonRef} />
+      <CloseNav
+        text={type === 'video' ? messages.useUploadImage.video : messages.useUploadImage.image}
+        buttonRef={buttonRef}
+      />
 
       <TextField
         select
@@ -66,7 +86,7 @@ export default function UpdateImage({ data, onChange, locale, type, buttonRef })
         className='!mb-4'
         value={data.api_url || ''}
         onChange={e => onChange({ ...data, api_url: e.target.value })}
-        label={locale === 'ar' ? 'جلب البيانات من الAPI' : 'Get From API'}
+        label={messages.useUploadImage.api}
         variant='filled'
       >
         {getApiData.map(
@@ -82,20 +102,20 @@ export default function UpdateImage({ data, onChange, locale, type, buttonRef })
         <div className='flex justify-center'>
           <Button
             className='!my-4'
-          variant='contained'
-          color='error'
-          onClick={() => {
-            setObj(false)
-            onChange({ ...data, items: [], api_url: '' })
-          }}
-        >
-            {locale === 'ar' ? 'تفريغ البيانات' : 'Clear Data'}
+            variant='contained'
+            color='error'
+            onClick={() => {
+              setObj(false)
+              onChange({ ...data, items: [], api_url: '' })
+            }}
+          >
+            {messages.useUploadImage.clearData}
           </Button>
         </div>
       )}
       <Collapse transition={`height 300ms cubic-bezier(.4, 0, .2, 1)`} isOpen={Boolean(obj)}>
         <div className='p-2 my-4 rounded border border-dashed border-main-color'>
-          <h2 className='mb-4 text-2xl text-main-color'>{locale === 'ar' ? 'عرض البيانات' : 'View Object'}</h2>
+          <h2 className='mb-4 text-2xl text-main-color'>{messages.useUploadImage.viewObject}</h2>
           <SyntaxHighlighter language='json' style={docco}>
             {JSON.stringify(obj, null, 2)}
           </SyntaxHighlighter>
@@ -104,7 +124,7 @@ export default function UpdateImage({ data, onChange, locale, type, buttonRef })
               fullWidth
               value={data.key || ''}
               variant='filled'
-              label={locale === 'ar' ? 'مفتاح المحتوى' : 'Content Key'}
+              label={messages.useUploadImage.contentKey}
               onChange={e => {
                 const image = getData(obj, e.target.value, '')
                 if (type === 'video') {
@@ -125,9 +145,37 @@ export default function UpdateImage({ data, onChange, locale, type, buttonRef })
           fullWidth
           startIcon={<Icon icon='ph:upload-fill' fontSize='2.25rem' className='!text-2xl ' />}
         >
-          <input type='file' accept={'image/*'} hidden name='json' onChange={handleFileUpload} />
-          {type !== 'video' ? locale === 'ar' ? 'رفع صورة' : 'Upload Image' : locale === 'ar' ? 'رفع فيديو' : 'Upload Video'}
+          <input
+            type='file'
+            accept={type !== 'video' ? 'image/png,image/jpeg,image/jpg' : 'video/mp4,video/webm'}
+            hidden
+            name='json'
+            onChange={handleFileUpload}
+          />
+          {type !== 'video' ? messages.useUploadImage.uploadImage : messages.useUploadImage.uploadVideo}
         </Button>
+      </Collapse>
+      <Collapse transition={`height 300ms cubic-bezier(.4, 0, .2, 1)`} isOpen={Boolean(type !== 'video' && data.image)}>
+        <div className='flex gap-2 justify-between items-center p-2 mb-3 rounded-md border border-dashed border-main-color'>
+          <p className='w-[calc(100%-30px)]'>{data.image}</p>
+          <button
+            className='w-[30px] h-[30px] flex items-center justify-center bg-red-500 text-white rounded-full'
+            onClick={() => onChange({ ...data, image: '' })}
+          >
+            x
+          </button>
+        </div>
+      </Collapse>
+      <Collapse transition={`height 300ms cubic-bezier(.4, 0, .2, 1)`} isOpen={Boolean(type === 'video' && data.video)}>
+        <div className='flex gap-2 justify-between items-center p-2 mb-3 rounded-md border border-dashed border-main-color'>
+          <p className='w-[calc(100%-30px)]'>{data.video}</p>
+          <button
+            className='w-[30px] h-[30px] flex items-center justify-center bg-red-500 text-white rounded-full'
+            onClick={() => onChange({ ...data, video: '' })}
+          >
+            x
+          </button>
+        </div>
       </Collapse>
       <TextField
         fullWidth
@@ -135,12 +183,12 @@ export default function UpdateImage({ data, onChange, locale, type, buttonRef })
         value={data.imageWidth}
         onChange={e => onChange({ ...data, imageWidth: e.target.value })}
         variant='filled'
-        label={locale === 'ar' ? 'العرض' : 'Width'}
+        label={messages.useUploadImage.width}
         InputProps={{
           endAdornment: (
             <InputAdornment position='end'>
               <Select
-                value={data.imageWidthUnit || 'px'} // الافتراضي px
+                value={data.imageWidthUnit || 'px'}
                 onChange={e => onChange({ ...data, imageWidthUnit: e.target.value })}
                 displayEmpty
                 variant='standard'
@@ -161,7 +209,7 @@ export default function UpdateImage({ data, onChange, locale, type, buttonRef })
         value={data.imageHeight}
         onChange={e => onChange({ ...data, imageHeight: e.target.value })}
         variant='filled'
-        label={locale === 'ar' ? 'الطول' : 'Height'}
+        label={messages.useUploadImage.height}
         InputProps={{
           endAdornment: (
             <InputAdornment position='end'>
@@ -184,14 +232,14 @@ export default function UpdateImage({ data, onChange, locale, type, buttonRef })
         fullWidth
         value={data.objectFit || 'cover'}
         variant='filled'
-        label={locale === 'ar' ? 'تطابق الصورة' : 'Object Fit'}
+        label={messages.useUploadImage.objectFit}
         onChange={e => onChange({ ...data, objectFit: e.target.value })}
       >
-        <MenuItem value='cover'>Cover</MenuItem>
-        <MenuItem value='contain'>Contain</MenuItem>
-        <MenuItem value='fill'>Fill</MenuItem>
-        <MenuItem value='none'>None</MenuItem>
-        <MenuItem value='scale-down'>Scale Down</MenuItem>
+        <MenuItem value='cover'>{messages.useUploadImage.cover}</MenuItem>
+        <MenuItem value='contain'>{messages.useUploadImage.contain}</MenuItem>
+        <MenuItem value='fill'>{messages.useUploadImage.fill}</MenuItem>
+        <MenuItem value='none'>{messages.useUploadImage.none}</MenuItem>
+        <MenuItem value='scale-down'>{messages.useUploadImage.scaleDown}</MenuItem>
       </TextField>
     </div>
   )

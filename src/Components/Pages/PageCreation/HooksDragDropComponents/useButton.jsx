@@ -2,8 +2,11 @@ import { useMemo, useState } from 'react'
 import { GiClick } from 'react-icons/gi'
 import ButtonControl from '../ButtonControl'
 import Link from 'next/link'
+import { useIntl } from 'react-intl'
 
 export default function useButton({ locale, buttonRef }) {
+  const { messages } = useIntl()
+
   const ButtonCell = useMemo(() => {
     return {
       Renderer: ({ data }) => {
@@ -14,7 +17,9 @@ export default function useButton({ locale, buttonRef }) {
           onMouseLeave: () => setHover(false),
           style: {
             width: data.width || 'fit-content',
-            backgroundColor: hover ? data.hoverBackgroundColor ?? data.backgroundColor ?? 'transparent' : data.backgroundColor ?? 'transparent',
+            backgroundColor: hover
+              ? data.hoverBackgroundColor ?? data.backgroundColor ?? 'transparent'
+              : data.backgroundColor ?? 'transparent',
             color: hover ? data.hoverColor ?? data.color ?? 'black' : data.color ?? 'black',
             paddingBlock: data.paddingBlock + 'px' || '10px',
             paddingInline: data.paddingInline + 'px' || '20px',
@@ -56,9 +61,8 @@ export default function useButton({ locale, buttonRef }) {
         )
       },
       id: 'button',
-      title: locale === 'ar' ? 'زر' : 'Button',
-      description:
-        locale === 'ar' ? 'يمكن أن يحتوي الزر على نص أو صورة أو رابط' : 'A clickable element to trigger actions.',
+      title: messages.useButton.button,
+      description: messages.useButton.buttonDescription,
       version: 1,
       icon: <GiClick className='text-2xl' />,
       controls: {

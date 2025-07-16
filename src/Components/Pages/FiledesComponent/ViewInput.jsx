@@ -8,6 +8,20 @@ import en from 'date-fns/locale/en-US'
 import { Autocomplete, Button, Dialog, IconButton, InputAdornment, Rating, TextField } from '@mui/material'
 import { Icon } from '@iconify/react'
 
+
+function convertMomentToDateFnsFormat(format) {
+  if (!format || typeof format !== 'string') return 'yyyy-MM-dd';
+
+  return format
+    .replace(/DD/g, 'dd')   // Day
+    .replace(/YYYY/g, 'yyyy') // Year full
+    .replace(/YY/g, 'yy')   // Year short
+    .replace(/HH/g, 'HH')   // 24-hour format (unchanged)
+    .replace(/mm/g, 'mm')   // minutes (unchanged)
+    .replace(/ss/g, 'ss');  // seconds (unchanged)
+}
+
+
 const ViewInput = ({
   input,
   isOpen,
@@ -394,10 +408,16 @@ const ViewInput = ({
   }
 
   if (input.type == 'Date') {
-    const lable = JSON.parse(input?.descriptionEn) ?? {
-      format: 'yyyy-MM-dd',
-      showTime: 'false'
-    }
+    const raw = JSON.parse(input?.descriptionEn ?? '{}');
+
+    const format = convertMomentToDateFnsFormat(raw.format);
+
+    const label = {
+      format,
+      showTime: raw.showTime === 'true',
+    };
+
+    console.log(label)
     const today = new Date()
     let minDate = null
     let maxDate = null
@@ -426,7 +446,7 @@ const ViewInput = ({
               selected={value}
               onChange={date => onChange(date)}
               timeInputLabel='Time:'
-              dateFormat={`${lable.format ? lable.format : 'MM/dd/yyyy'}`}
+              dateFormat={`${label.format ? label.format : 'MM/dd/yyyy'}`}
               showMonthDropdown
               locale={locale == 'ar' ? ar : en}
               showYearDropdown
@@ -437,7 +457,7 @@ const ViewInput = ({
                   evaluatedFn(e)
                 }
               }}
-              showTimeInput={lable.showTime == 'true'}
+              showTimeInput={label.showTime == 'true'}
               customInput={<ExampleCustomInput className='example-custom-input' />}
               disabled={isDisable == 'disabled'}
               minDate={minDate}
@@ -477,8 +497,8 @@ const ViewInput = ({
                   onChange(date)
                   setIsOpen(false)
                 }}
-                timeInputLabel={lable.showTime == 'true' ? (locale == 'ar' ? 'الوقت:' : 'Time:') : ''}
-                dateFormat={`${lable.format ? lable.format : 'MM/dd/yyyy'}`}
+                timeInputLabel={label.showTime == 'true' ? (locale == 'ar' ? 'الوقت:' : 'Time:') : ''}
+                dateFormat={`${label.format ? label.format : 'MM/dd/yyyy'}`}
                 showMonthDropdown
                 locale={locale == 'ar' ? ar : en}
                 showYearDropdown
@@ -489,7 +509,7 @@ const ViewInput = ({
                     evaluatedFn(e)
                   }
                 }}
-                showTimeSelect={lable.showTime == 'true'}
+                showTimeSelect={label.showTime == 'true'}
                 customInput={<ExampleCustomInput className='example-custom-input' />}
                 disabled={isDisable == 'disabled'}
                 minDate={minDate}
@@ -506,7 +526,7 @@ const ViewInput = ({
         popperPlacement='bottom-start'
         onChange={date => onChange(date)}
         timeInputLabel='Time:'
-        dateFormat={`${lable.format ? lable.format : 'MM/dd/yyyy'}`}
+        dateFormat={`${label.format ? label.format : 'MM/dd/yyyy'}`}
         showMonthDropdown
         onBlur={e => {
           if (onBlur) {
@@ -516,14 +536,14 @@ const ViewInput = ({
           }
         }}
         showYearDropdown
-        showTimeInput={lable.showTime == 'true'}
+        showTimeInput={label.showTime == 'true'}
         customInput={<ExampleCustomInput className='example-custom-input' />}
         disabled={isDisable == 'disabled'}
       />
     )
   }
   if (input.type == 'OneToOne' && input.descriptionAr == 'select') {
-    const lable = JSON.parse(input?.descriptionEn)
+    const label = JSON.parse(input?.descriptionEn)
 
     return (
       <div id='custom-select'>
@@ -537,7 +557,6 @@ const ViewInput = ({
               setRedirect(findOption.redirect)
             }
             if (onBlur) {
-
               const evaluatedFn = eval('(' + onBlur + ')')
 
               evaluatedFn(e)
@@ -549,7 +568,7 @@ const ViewInput = ({
           </option>
           {selectedOptions.map((option, index) => (
             <option key={option.Id} value={option.Id}>
-              {lable.map(ele => option[ele]).join('-')}
+              {label.map(ele => option[ele]).join('-')}
             </option>
           ))}
         </select>
@@ -557,7 +576,7 @@ const ViewInput = ({
     )
   }
   if (input.type == 'OneToOne') {
-    const lable = JSON.parse(input?.descriptionEn)
+    const label = JSON.parse(input?.descriptionEn)
 
     return (
       <div className=''>
@@ -583,7 +602,7 @@ const ViewInput = ({
                         }
                       }}
                     />
-                    <label htmlFor={option.Id}>{lable.map(ele => option[ele]).join('-')}</label>
+                    <label htmlFor={option.Id}>{label.map(ele => option[ele]).join('-')}</label>
                   </div>
                 ))}
               </div>
@@ -594,7 +613,7 @@ const ViewInput = ({
     )
   }
   if (input.type == 'ManyToMany' && input.descriptionAr == 'multiple_select') {
-    const lable = JSON.parse(input?.descriptionEn)
+    const label = JSON.parse(input?.descriptionEn)
 
     return (
       <Autocomplete
@@ -606,13 +625,13 @@ const ViewInput = ({
         disabled={isDisable == 'disabled'}
         filterSelectedOptions
         id='autocomplete-multiple-outlined'
-        getOptionLabel={option => option[lable[0]] || ''}
+        getOptionLabel={option => option[label[0]] || ''}
         renderInput={params => <TextField {...params} style={{ width: '100%' }} placeholder={placeholder} />}
       />
     )
   }
   if (input.type == 'ManyToMany') {
-    const lable = JSON.parse(input?.descriptionEn)
+    const label = JSON.parse(input?.descriptionEn)
 
     return (
       <div className='w-full'>
@@ -643,7 +662,7 @@ const ViewInput = ({
                 }}
                 htmlFor={option.Id}
               >
-                {lable.map(ele => option[ele]).join('-')}
+                {label.map(ele => option[ele]).join('-')}
               </label>
             </div>
           ))}

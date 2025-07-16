@@ -7,8 +7,8 @@ import { useDispatch } from 'react-redux'
 import { toast } from 'react-toastify'
 import { setApiData } from 'src/store/apps/apiSlice/apiSlice'
 
-export default function ApiData({ open, setOpen,initialDataApi }) {
-  const { locale } = useIntl()
+export default function ApiData({ open, setOpen, initialDataApi }) {
+  const { messages } = useIntl()
   const [links, setLinks] = useState([])
   const [link, setLink] = useState('')
   const dispatch = useDispatch()
@@ -32,18 +32,19 @@ export default function ApiData({ open, setOpen,initialDataApi }) {
         dispatch(setApiData(updatedLinks))
       })
     }
-  }, [links,dispatch])
+  }, [links, dispatch])
 
   return (
     <Dialog open={open} onClose={() => setOpen(false)} fullWidth>
-      <DialogTitle> {locale === 'ar' ? 'اضافة البيانات api' : 'Get Api Data'}</DialogTitle>
+      <DialogTitle> {messages.Api.addApiData}</DialogTitle>
       <DialogContent>
+        <div className="mt-3"></div>
         <TextField
           value={link}
           onChange={e => {
             setLink(e.target.value)
           }}
-          label={locale === 'ar' ? 'الرابط' : 'The Link'}
+          label={messages.Api.link}
           fullWidth
           InputProps={{
             endAdornment: (
@@ -52,23 +53,23 @@ export default function ApiData({ open, setOpen,initialDataApi }) {
                   onClick={() => {
                     if (
                       !/^(https?:\/\/)?(www\.)?[a-zA-Z0-9@:%._\+~#?&//=]{2,256}\.[a-z]{2,4}\b([-a-zA-Z0-9@:%._\+~#?&//=]*)$/i.test(
-                        link
+                        link.trim()
                       )
                     ) {
-                      return toast.error(locale === 'ar' ? 'الرابط غير صالح' : 'The Link is not valid')
+                      return toast.error(messages.Api.invalidLink)
                     }
                     setLinks(prev => [
                       ...prev,
                       {
                         data: null,
-                        link,
+                        link: link.trim(),
                         loading: true
                       }
                     ])
                     setLink('')
                   }}
                 >
-                  {locale === 'ar' ? 'اضافة' : 'Add'}
+                  {messages.add}
                 </Button>
               </InputAdornment>
             )

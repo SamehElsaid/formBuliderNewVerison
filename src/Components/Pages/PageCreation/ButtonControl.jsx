@@ -4,18 +4,18 @@ import { SketchPicker } from 'react-color'
 import CloseNav from './CloseNav'
 
 export default function ButtonControl({ data, onChange, buttonRef, type }) {
-  const { locale } = useIntl()
+  const { locale, messages } = useIntl()
 
   return (
     <div>
-      {!type && <CloseNav text={locale === 'ar' ? 'اختيار الزر' : 'Button'} buttonRef={buttonRef} />}
+      {!type && <CloseNav text={messages.useButton.button} buttonRef={buttonRef} />}
       <TextField
         fullWidth
         type='text'
         value={data.width}
         onChange={e => onChange({ ...data, width: e.target.value })}
         variant='filled'
-        label={locale === 'ar' ? 'العرض' : 'Width'}
+        label={messages.useButton.width}
         select
       >
         <MenuItem value='fit-content'>Fit</MenuItem>
@@ -30,7 +30,7 @@ export default function ButtonControl({ data, onChange, buttonRef, type }) {
             value={data.buttonTextEn}
             onChange={e => onChange({ ...data, buttonTextEn: e.target.value })}
             variant='filled'
-            label={locale === 'ar' ? 'النص باللغة الإنجليزية' : 'Text in English'}
+            label={messages.useButton.buttonTextEn}
           />
           <TextField
             fullWidth
@@ -38,7 +38,7 @@ export default function ButtonControl({ data, onChange, buttonRef, type }) {
             value={data.buttonTextAr}
             onChange={e => onChange({ ...data, buttonTextAr: e.target.value })}
             variant='filled'
-            label={locale === 'ar' ? 'النص باللغة العربية' : 'Text in Arabic'}
+            label={messages.useButton.buttonTextAr}
           />
           <TextField
             fullWidth
@@ -46,7 +46,7 @@ export default function ButtonControl({ data, onChange, buttonRef, type }) {
             value={data.href}
             onChange={e => onChange({ ...data, href: e.target.value })}
             variant='filled'
-            label={locale === 'ar' ? 'الرابط' : 'Href'}
+            label={messages.useButton.href}
           />
         </>
       )}
@@ -56,7 +56,7 @@ export default function ButtonControl({ data, onChange, buttonRef, type }) {
         value={data.paddingBlock}
         onChange={e => onChange({ ...data, paddingBlock: e.target.value })}
         variant='filled'
-        label={locale === 'ar' ? 'المساحة الداخلية الطويلة' : 'Padding Block'}
+        label={messages.useButton.paddingBlock}
         InputProps={{
           endAdornment: <InputAdornment position='end'>px</InputAdornment>
         }}
@@ -67,7 +67,7 @@ export default function ButtonControl({ data, onChange, buttonRef, type }) {
         value={data.paddingInline}
         onChange={e => onChange({ ...data, paddingInline: e.target.value })}
         variant='filled'
-        label={locale === 'ar' ? 'المساحة  الداخلية العرضية' : 'Padding Inline'}
+        label={messages.useButton.paddingInline}
         InputProps={{
           endAdornment: <InputAdornment position='end'>px</InputAdornment>
         }}
@@ -78,44 +78,30 @@ export default function ButtonControl({ data, onChange, buttonRef, type }) {
         value={data.borderRadius}
         onChange={e => onChange({ ...data, borderRadius: e.target.value })}
         variant='filled'
-        label={locale === 'ar' ? 'نصف القطر' : 'Border Radius'}
+        label={messages.useButton.borderRadius}
         InputProps={{
           endAdornment: <InputAdornment position='end'>px</InputAdornment>
         }}
       />
-      <TextField
-        fullWidth
-        type='number'
-        value={data.borderWidth}
-        onChange={e => onChange({ ...data, borderWidth: e.target.value })}
-        variant='filled'
-        label={locale === 'ar' ? 'عرض الحد' : 'Border Width'}
-        InputProps={{
-          endAdornment: <InputAdornment position='end'>px</InputAdornment>
-        }}
-      />
+
       <div className='mb-5'></div>
-      <h1 className='text-main-color'>{locale === 'ar' ? 'لون الخلفية' : 'Background Color'}</h1>
+      <h1 className='text-main-color'>{messages.useButton.backgroundColor}</h1>
       <SketchPicker
         color={data.backgroundColor || '#ffffff'}
         onChange={color => onChange({ ...data, backgroundColor: color.hex })}
       />
       <div className='mb-5'></div>
-      <h1 className='text-main-color'>{locale === 'ar' ? 'لون الخط' : 'Color'}</h1>
+      <h1 className='text-main-color'>{messages.useButton.color}</h1>
       <SketchPicker color={data.color || '#ffffff'} onChange={color => onChange({ ...data, color: color.hex })} />
       <div className='mb-5'></div>
-      <h1 className='text-main-color'>{locale === 'ar' ? 'لون الحد' : 'Border Color'}</h1>
-      <SketchPicker
-        color={data.borderColor || '#ffffff'}
-        onChange={color => onChange({ ...data, borderColor: color.hex })}
-      />
+
       <TextField
         fullWidth
         type='number'
         value={data.fontSize}
         onChange={e => onChange({ ...data, fontSize: e.target.value })}
         variant='filled'
-        label={locale === 'ar' ? 'حجم الخط' : 'Font Size'}
+        label={messages.useButton.fontSize}
       />
 
       <TextField
@@ -124,7 +110,23 @@ export default function ButtonControl({ data, onChange, buttonRef, type }) {
         value={data.fontWeight}
         onChange={e => onChange({ ...data, fontWeight: e.target.value })}
         variant='filled'
-        label={locale === 'ar' ? 'الوزن الخط' : 'Font Weight'}
+        label={messages.useButton.fontWeight}
+      />
+      <TextField
+        fullWidth
+        type='number'
+        value={data.borderWidth}
+        onChange={e => onChange({ ...data, borderWidth: e.target.value })}
+        variant='filled'
+        label={messages.useButton.borderWidth}
+        InputProps={{
+          endAdornment: <InputAdornment position='end'>px</InputAdornment>
+        }}
+      />
+      <h1 className='text-main-color'>{messages.useButton.borderColor}</h1>
+      <SketchPicker
+        color={data.borderColor || '#ffffff'}
+        onChange={color => onChange({ ...data, borderColor: color.hex })}
       />
       <TextField
         fullWidth
@@ -132,7 +134,7 @@ export default function ButtonControl({ data, onChange, buttonRef, type }) {
         value={data.borderStyle}
         onChange={e => onChange({ ...data, borderStyle: e.target.value })}
         variant='filled'
-        label={locale === 'ar' ? 'نوع الخط' : 'Font Family'}
+        label={messages.useButton.borderStyle}
         select
       >
         <MenuItem value='solid'>Solid</MenuItem>
@@ -142,19 +144,19 @@ export default function ButtonControl({ data, onChange, buttonRef, type }) {
       </TextField>
 
       <div className='mb-5'></div>
-      <h1 className='text-main-color'>{locale === 'ar' ? 'لون الخلفية عند التحديد' : 'hover BackgroundColor'}</h1>
+      <h1 className='text-main-color'>{messages.useButton.hoverBackgroundColor}</h1>
       <SketchPicker
         color={data.hoverBackgroundColor || '#ffffff'}
         onChange={color => onChange({ ...data, hoverBackgroundColor: color.hex })}
       />
       <div className='mb-5'></div>
-      <h1 className='text-main-color'>{locale === 'ar' ? 'لون الخط عند التحديد' : 'hover Color'}</h1>
+      <h1 className='text-main-color'>{messages.useButton.hoverColor}</h1>
       <SketchPicker
         color={data.hoverColor || '#ffffff'}
         onChange={color => onChange({ ...data, hoverColor: color.hex })}
       />
       <div className='mb-5'></div>
-      <h1 className='text-main-color'>{locale === 'ar' ? 'لون الحد عند التحديد' : 'hover Border Color'}</h1>
+      <h1 className='text-main-color'>{messages.useButton.hoverBorderColor}</h1>
       <SketchPicker
         color={data.hoverBorderColor || '#ffffff'}
         onChange={color => onChange({ ...data, hoverBorderColor: color.hex })}

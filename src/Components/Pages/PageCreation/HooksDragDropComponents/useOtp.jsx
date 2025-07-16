@@ -1,13 +1,16 @@
 import React, { useEffect, useMemo, useState } from 'react'
-import { FaBarsProgress } from 'react-icons/fa6'
 import OTPInput from 'react-otp-input'
 import { IoMdClose } from 'react-icons/io'
 import OtpControl from '../OtpControl'
 import { toast } from 'react-toastify'
 import axios from 'axios'
 import { useRouter } from 'next/router'
+import { useIntl } from 'react-intl'
+import { IoTimerOutline } from 'react-icons/io5'
 
 export default function useOtp({ locale, buttonRef }) {
+  const { messages } = useIntl()
+
   const Otp = useMemo(() => {
     return {
       Renderer: ({ data, onChange }) => {
@@ -54,7 +57,7 @@ export default function useOtp({ locale, buttonRef }) {
             onSubmit={e => {
               e.preventDefault()
               if (otp.length !== (+data?.numberOfOtp || 5)) {
-                return toast.error(locale === 'ar' ? 'ادخل الرمز المطلوب' : 'Enter the required code')
+                return toast.error(messages.useOtp.enterTheRequiredCode)
               }
 
               setLoading(true)
@@ -68,7 +71,7 @@ export default function useOtp({ locale, buttonRef }) {
                 .post(data?.api_url, sendData)
                 .then(res => {
                   if (res.status === 200) {
-                    toast.success(locale === 'ar' ? 'تم الانتهاء من العملية' : 'Process has been completed')
+                    toast.success(messages.useOtp.processHasCompleted)
                     setOtp('')
                     if (data?.redirectLink) {
                       router.push(data?.redirectLink)
@@ -92,9 +95,7 @@ export default function useOtp({ locale, buttonRef }) {
             </button>
             <div className='flex  || items-center || justify-center || flex-col'>
               <h2 className='text-[16px] || font-bold || text-mainColor || mb-3'>
-                {locale === 'ar'
-                  ? data?.content_ar || 'ادخل رمز التأكيد'
-                  : data?.content_en || 'Enter verification code'}
+                {data?.content_ar || messages.useOtp.enterVerificationCode}
               </h2>
               <div style={{ direction: 'ltr' }} className=''>
                 <OTPInput
@@ -136,18 +137,18 @@ export default function useOtp({ locale, buttonRef }) {
                   <span className=' w-[20px] || h-[20px] || border-2 || border-mainColor || rounded-full border-t-transparent || animate-spin'></span>
                 </span>
 
-                {locale === 'ar' ? 'إكمال' : 'complete'}
+                {messages.useOtp.complete}
               </button>
               <div className='mt-4'>
                 <div className='flex gap-1 justify-center items-center'>
-                  {resendOtp === 0 && (locale === 'ar' ? 'اذا لم تستلم' : 'If you did not receive')}
+                  {resendOtp === 0 && messages.useOtp.ifYouDidNotReceive}
                   <button
                     disabled={loading}
                     type='button'
                     onClick={() => {
                       setLoading(true)
                       setTimeout(() => {
-                        toast.success(locale === 'ar' ? 'تم ارسال رمز التأكيد' : 'Otp has been send')
+                        toast.success(messages.useOtp.otpHasBeenSend)
                         setResendOtp(+data?.timerTime || 60)
                         setLoading(false)
                       }, 1000)
@@ -155,17 +156,13 @@ export default function useOtp({ locale, buttonRef }) {
                         .get(data?.resendOtpLink)
                         .then(res => {
                           if (res.status === 200) {
-                            toast.success(locale === 'ar' ? 'تم ارسال رمز التأكيد' : 'Otp has been send')
+                            toast.success(messages.useOtp.otpHasBeenSend)
                             setResendOtp(+data?.timerTime || 60)
                             setLoading(false)
                           }
                         })
                         .catch(err => {
-                          toast.error(
-                            err?.response?.data?.message || locale === 'ar'
-                              ? 'حصل خطا في العملية'
-                              : 'An error occurred in the process'
-                          )
+                          toast.error(err?.response?.data?.message || messages.useOtp.errorOccurred)
                         })
                         .finally(() => {
                           setLoading(false)
@@ -176,12 +173,8 @@ export default function useOtp({ locale, buttonRef }) {
                     }`}
                   >
                     {resendOtp !== 0
-                      ? locale === 'ar'
-                        ? `لا تستطيع الارسال مجددا الا بعد ${resendOtp} ثواني`
-                        : ` You cannot resend again until after ${resendOtp} seconds`
-                      : locale === 'ar'
-                      ? 'اعادة ارسال'
-                      : 'Resend'}
+                      ? ` ${messages.useOtp.YouCannotResendAgainUntilAfter} ${resendOtp} ${messages.useOtp.seconds}`
+                      : messages.useOtp.resend}
                   </button>
                 </div>
               </div>
@@ -190,11 +183,10 @@ export default function useOtp({ locale, buttonRef }) {
         )
       },
       id: 'otp',
-      title: locale === 'ar' ? 'عداد/التوقيت' : 'Counter/Timer',
-      description:
-        locale === 'ar' ? 'يمكن عرض عداد أو عداد عدد الثواني' : 'Displays a dynamic countdown or count-up timer.',
+      title: messages.useOtp.title,
+      description: messages.useOtp.description,
       version: 1,
-      icon: <FaBarsProgress className='text-2xl' />,
+      icon: <IoTimerOutline className='text-2xl' />,
       controls: {
         type: 'custom',
         Component: ({ data, onChange }) => (

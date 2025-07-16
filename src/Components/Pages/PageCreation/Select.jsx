@@ -155,29 +155,6 @@ function Select({ onChange, data, type, buttonRef, title }) {
           e.preventDefault()
         }}
       >
-        {/* <TextField
-          select
-          fullWidth
-          value={data.data_source_id}
-          onChange={e => {
-            onChange({
-              ...data,
-              data_source_id: e.target.value,
-              collectionId: false,
-              collectionName: false,
-              selected: [],
-              sortWithId: false
-            })
-          }}
-          label={locale === 'ar' ? 'المصدر البياني' : 'Data Source'}
-          variant='filled'
-        >
-          {dataSources.map(item => (
-            <MenuItem key={item.id} value={item.id}>
-              {item.name}
-            </MenuItem>
-          ))}
-        </TextField> */}
         <div className='mb-4'></div>
         <Autocomplete
           options={loadingCollection ? [] : optionsCollection}

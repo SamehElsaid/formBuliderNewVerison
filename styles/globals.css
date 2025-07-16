@@ -1517,3 +1517,6 @@ li:contains("Add blocks to page") {
 .react-page-toolbar-draggable p {
  @apply  !text-xs
 }
+.react-grid-layout{
+  z-index: 1;
+}

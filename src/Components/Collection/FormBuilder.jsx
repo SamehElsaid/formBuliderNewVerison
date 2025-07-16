@@ -62,7 +62,7 @@ const FormBuilder = ({ open, setOpen, setRefresh }) => {
     if (activeStep === 0 && !fieldType) return toast.error(messages.please_select_field_type)
     if (activeStep === 1 && (!fieldLabel || !fieldLabelEn || !key)) return toast.error(messages.please_enter_label)
     if (activeStep === 1 && !regex.test(key)) {
-      return toast.error(locale === 'ar' ? 'يجب أن يكون المفتاح عبارة عن أحرف' : 'Key must be a string')
+      return toast.error(messages.generateInput.keyMustBeString)
     }
     if (activeStep === 2 && !isOptionsStep && !isFileStep) {
       setActiveStep(steps.length - 1) // Skip the setup step if not required
@@ -107,7 +107,7 @@ const FormBuilder = ({ open, setOpen, setRefresh }) => {
       .finally(() => {
         setLoadingCollection(false)
       })
-  }, [locale, dataSourceId])
+  }, [locale, dataSourceId, open])
 
   const handleInputChange = async (event, value) => {
     if (!value) {
@@ -249,7 +249,7 @@ const FormBuilder = ({ open, setOpen, setRefresh }) => {
       sendData.options.source = collection.key
       sendData.options.target = open.key
       if (selectedOptions.length === 0) {
-        return toast.error(locale === 'ar' ? 'يجب أن تختار حقل من المجموعة' : 'You must select a field from the group')
+        return toast.error(messages.generateInput.selectField)
       }
     }
     if (fieldType === 'rate') {
@@ -277,7 +277,7 @@ const FormBuilder = ({ open, setOpen, setRefresh }) => {
     axiosPost('collection-fields/configure-fields', locale, sendData)
       .then(res => {
         if (res.status) {
-          toast.success(locale === 'ar' ? 'تم إضافة الحقل بنجاح' : 'Field added successfully')
+          toast.success(messages.addedSuccessfully)
           resetForm()
           setRefresh(prev => prev + 1)
         }
@@ -290,7 +290,7 @@ const FormBuilder = ({ open, setOpen, setRefresh }) => {
   return (
     <div>
       <Dialog open={open} onClose={resetForm} fullWidth>
-        <DialogTitle>{locale === 'ar' ? 'اضافة حقل' : 'Add Filed'}</DialogTitle>
+        <DialogTitle>{messages.addFiled}</DialogTitle>
         <DialogContent>
           <Stepper activeStep={activeStep} alternativeLabel>
             {steps.map(label => (
@@ -328,7 +328,7 @@ const FormBuilder = ({ open, setOpen, setRefresh }) => {
                       <InputAdornment
                         position='end'
                         onClick={async () => {
-                          const loading = toast.loading(locale === 'ar' ? 'يتم الترجمه' : 'Translating')
+                          const loading = toast.loading(messages.translate)
                           const res = await UrlTranAr(fieldLabel)
                           setFieldLabelEn(res)
                           toast.dismiss(loading)
@@ -352,7 +352,7 @@ const FormBuilder = ({ open, setOpen, setRefresh }) => {
                       <InputAdornment
                         position='end'
                         onClick={async () => {
-                          const loading = toast.loading(locale === 'ar' ? 'يتم الترجمه' : 'Translating')
+                          const loading = toast.loading(messages.translate)
                           const res = await UrlTranEn(fieldLabelEn)
                           setFieldLabel(res)
                           toast.dismiss(loading)
@@ -382,7 +382,7 @@ const FormBuilder = ({ open, setOpen, setRefresh }) => {
                 {fieldType === 'date' && (
                   <>
                     <TextField
-                      label={locale === 'ar' ? 'التنسيق' : 'Format'}
+                      label={messages.generateInput.format}
                       type='text'
                       fullWidth
                       margin='normal'
@@ -406,7 +406,7 @@ const FormBuilder = ({ open, setOpen, setRefresh }) => {
                           }
                         />
                       }
-                      label={locale === 'ar' ? 'اظهار الوقت' : 'Show Time'}
+                      label={messages.generateInput.showTime}
                     />
                   </>
                 )}
@@ -436,10 +436,11 @@ const FormBuilder = ({ open, setOpen, setRefresh }) => {
                       }
                     />
                   }
-                  label={locale === 'ar' ? 'مميز' : 'Unique'}
-                />{' '}
+                  label={messages.generateInput.unique}
+                />
                 {!(
                   fieldType === 'checkbox' ||
+                  fieldType === 'email' ||
                   fieldType === 'radio' ||
                   fieldType === 'select' ||
                   fieldType === 'date' ||
@@ -463,6 +464,7 @@ const FormBuilder = ({ open, setOpen, setRefresh }) => {
                 )}
                 {!(
                   fieldType === 'checkbox' ||
+                  fieldType === 'email' ||
                   fieldType === 'radio' ||
                   fieldType === 'select' ||
                   fieldType === 'date' ||
@@ -502,7 +504,7 @@ const FormBuilder = ({ open, setOpen, setRefresh }) => {
                     setValueCollection('')
                     setSelectedOptions([])
                     if (value?.id) {
-                      const loadingToast = toast.loading(locale === 'ar' ? 'يتم التحميل' : 'Loading')
+                      const loadingToast = toast.loading(messages.loading)
                       axiosGet(`collection-fields/get?CollectionId=${value.id}`, locale)
                         .then(res => {
                           if (res.status) {
