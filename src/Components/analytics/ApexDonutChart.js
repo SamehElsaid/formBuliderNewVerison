@@ -6,23 +6,19 @@ import CardContent from '@mui/material/CardContent'
 
 // ** Component Import
 import ReactApexcharts from 'src/@core/components/react-apexcharts'
+import { useIntl } from 'react-intl'
 
-const donutColors = {
-  series1: '#fdd835',
-  series2: '#00d4bd',
-  series3: '#826bf8',
-  series4: '#1FD5EB',
-  series5: '#ffa1a1'
-}
+const ApexDonutChart = ({ mainData, onChange }) => {
+  const { messages } = useIntl()
 
-const ApexDonutChart = () => {
-  // ** Hook
+
+
   const theme = useTheme()
 
   const options = {
     stroke: { width: 0 },
-    labels: ['Operational', 'Networking', 'Hiring', 'R&D'],
-    colors: [donutColors.series1, donutColors.series5, donutColors.series3, donutColors.series2],
+    labels: mainData.map(item => item.label),
+    colors: mainData.map(item => item.color),
     dataLabels: {
       enabled: true,
       formatter: val => `${parseInt(val, 10)}%`
@@ -52,8 +48,8 @@ const ApexDonutChart = () => {
             total: {
               show: true,
               fontSize: '1.2rem',
-              label: 'Operational',
-              formatter: () => '31%',
+              label:messages.useChart.total,
+              formatter: () => '100%',
               color: theme.palette.text.primary
             }
           }
@@ -109,7 +105,7 @@ const ApexDonutChart = () => {
         subheaderTypographyProps={{ sx: { color: theme => `${theme.palette.text.disabled} !important` } }}
       />
       <CardContent>
-        <ReactApexcharts type='donut' height={400} options={options} series={[85, 16, 50, 50]} />
+        <ReactApexcharts type='donut' height={400} options={options} series={mainData.map(item => +item.value)} />
       </CardContent>
     </Card>
   )

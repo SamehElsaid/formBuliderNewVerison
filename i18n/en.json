@@ -321,6 +321,30 @@
     "products": "Products",
     "addItem": "Add Item",
     "product": "Product",
-    "analytic": "Analytic"
+    "analytic": "Analytic",
+    "progress": "Progress",
+    "tasksRemaining": "Tasks Remaining",
+    "active": "Active",
+    "pending": "Pending",
+    "inactive": "Inactive",
+    "status": "Status",
+    "statistic": "Statistic",
+    "value": "Value",
+    "green": "Green",
+    "blue": "Blue",
+    "yellow": "Yellow",
+    "red": "Red",
+    "purple": "Purple",
+    "pink": "Pink",
+    "icon": "Icon"
+  },
+  "useChart": {
+    "title": "Chart",
+    "description": "Chart",
+    "addItem": "Add Item",
+    "value": "Value",
+    "label": "Label",
+    "color": "Color",
+    "total": "Total"
   }
 }

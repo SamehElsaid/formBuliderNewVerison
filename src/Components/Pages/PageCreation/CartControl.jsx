@@ -158,6 +158,7 @@ function CartControl({ data, onChange, type, buttonRef }) {
           >
             <MenuItem value={'product'}>{messages.card.product}</MenuItem>
             <MenuItem value={'analytic'}>{messages.card.analytic}</MenuItem>
+            <MenuItem value={'statistic'}>{messages.card.statistic}</MenuItem>
           </TextField>
           <div className='p-2 rounded border border-dashed border-main-color'>
             <h2 className='mb-4 text-2xl text-main-color'>{messages.card.api}</h2>
@@ -278,7 +279,7 @@ function CartControl({ data, onChange, type, buttonRef }) {
             <h2 className='mb-4 text-2xl text-main-color'>{messages.card.title}</h2>
             {renderTextField(obj ? messages.card.title_ar_key : messages.card.title_ar, 'title_ar', 'text')}
             {renderTextField(obj ? messages.card.title_en_key : messages.card.title_en, 'title_en', 'text')}
-            {data.type === 'product' && (
+            {(data.cart_type === 'product' || !data.cart_type) && (
               <>
                 {renderTextField('Color', 'titleColor', 'color')}
                 {renderTextField('Font Size', 'fontSize', 'number', {
@@ -310,295 +311,436 @@ function CartControl({ data, onChange, type, buttonRef }) {
               </>
             )}
           </div>
-          {/* Description Section */}
-          <div className='p-4 mt-4 rounded border border-dashed border-main-color'>
-            <h2 className='mb-4 text-2xl text-main-color'>{messages.card.description}</h2>
-            {renderTextField(
-              obj ? messages.card.description_ar_key : messages.card.description_ar,
-              'description_ar',
-              'text'
-            )}
-            {renderTextField(
-              obj ? messages.card.description_en_key : messages.card.description_en,
-              'description_en',
-              'text'
-            )}
-            {renderTextField(messages.card.color, 'descriptionColor', 'color')}
-            {renderTextField(messages.card.fontSize, 'descriptionFontSize', 'number', {
-              InputProps: {
-                endAdornment: <InputAdornment position='end'>px</InputAdornment>
-              }
-            })}
-            {renderSelect(
-              messages.card.fontWeight,
-              'descriptionFontWeight',
-              Array.from({ length: 9 }, (_, i) => ({
-                value: `${(i + 1) * 100}`,
-                label: `${(i + 1) * 100}`
-              }))
-            )}
-            {renderSelect(messages.card.fontFamily, 'descriptionFontFamily', [
-              { value: 'Arial', label: 'Arial' },
-              { value: 'Tahoma', label: 'Tahoma' },
-              { value: 'Verdana', label: 'Verdana' },
-              { value: 'Times New Roman', label: 'Times New Roman' },
-              { value: 'Courier New', label: 'Courier New' }
-            ])}
-            {renderSelect(messages.card.descriptionTextAlign, 'descriptionTextAlign', [
-              { value: 'start', label: 'Start' },
-              { value: 'center', label: 'Center' },
-              { value: 'end', label: 'End' }
-            ])}
-            {renderSelect(messages.card.descriptionDisplay, 'descriptionDisplay', [
-              { value: 'block', label: 'Show' },
-              { value: 'none', label: 'Hide' }
-            ])}
-          </div>
-          <div className='p-4 mt-4 rounded border border-dashed border-main-color'>
-            <h2 className='mb-4 text-2xl text-main-color'>{messages.card.price}</h2>
-            {renderTextField(obj ? messages.card.price_key : messages.card.price, 'price', obj ? 'text' : 'number')}
-            {renderTextField(messages.card.priceColor, 'priceColor', 'color')}
-            {renderTextField(messages.card.priceFontSize, 'priceFontSize', 'number', {
-              InputProps: {
-                endAdornment: <InputAdornment position='end'>px</InputAdornment>
-              }
-            })}
-            {renderSelect(
-              messages.card.priceFontWeight,
-              'priceFontWeight',
-              Array.from({ length: 9 }, (_, i) => ({
-                value: `${(i + 1) * 100}`,
-                label: `${(i + 1) * 100}`
-              }))
-            )}
-            {renderSelect(messages.card.priceTextAlign, 'priceTextAlign', [
-              { value: 'end', label: 'End' },
-              { value: 'center', label: 'Center' },
-              { value: 'start', label: 'Start' }
-            ])}
-            {renderSelect(messages.card.priceFontFamily, 'priceFontFamily', [
-              { value: 'Arial', label: 'Arial' },
-              { value: 'Tahoma', label: 'Tahoma' },
-              { value: 'Verdana', label: 'Verdana' },
-              { value: 'Times New Roman', label: 'Times New Roman' },
-              { value: 'Courier New', label: 'Courier New' }
-            ])}
-            {renderSelect(messages.card.priceDisplay, 'priceDisplay', [
-              { value: 'block', label: 'Show' },
-              { value: 'none', label: 'Hide' }
-            ])}
-          </div>
-
-          <div className='p-4 mt-4 rounded border border-dashed border-main-color'>
-            <h2 className='mb-4 text-2xl text-main-color'>{messages.card.products}</h2>
-            <Button
-              variant='outlined'
-              fullWidth
-              className='!mb-4'
-              onClick={handleAddItem}
-              startIcon={<Icon icon='ph:plus-circle-fill' />}
-            >
-              {messages.card.addItem}
-            </Button>
-            <Collapse transition={`height 300ms cubic-bezier(.4, 0, .2, 1)`} isOpen={Boolean(items.length !== 0)}>
-              <div className='p-2 mx-2 rounded-md border border-dashed border-main-color'>
-                <h2 className='mb-4 text-2xl text-main-color'>{messages.card.item}</h2>
-                {items.map((item, index) => (
-                  <div key={index} className='p-2 my-2 rounded-md border border-dashed border-main-color'>
-                    <h2 className='mb-4 text-2xl text-main-color'>{item.name || ''}</h2>
-
-                    <Select
-                      fullWidth
-                      value={item.type}
-                      onChange={e => handleItemChange(index, 'type', e.target.value)}
-                      variant='filled'
-                    >
-                      <MenuItem value='text'>{messages.card.itemTypeText}</MenuItem>
-                      <MenuItem value='icon'>{messages.card.itemTypeIcon}</MenuItem>
-                      <MenuItem value='rating'>{messages.card.itemTypeRating}</MenuItem>
-                    </Select>
-                    <TextField
-                      fullWidth
-                      defaultValue={item.name || ''}
-                      onBlur={e => handleItemChange(index, 'name', e.target.value)}
-                      label={messages.card.itemName}
-                      variant='filled'
-                    />
-                    {item.type === 'text' && (
-                      <TextField
-                        fullWidth
-                        defaultValue={item.text_ar || ''}
-                        onBlur={e => handleItemChange(index, 'text_ar', e.target.value)}
-                        label={obj ? messages.card.itemTextArKey : messages.card.itemTextAr}
-                        variant='filled'
-                      />
-                    )}
-                    <TextField
-                      fullWidth
-                      defaultValue={item.text_en || ''}
-                      onBlur={e => handleItemChange(index, 'text_en', e.target.value)}
-                      label={
-                        item.type === 'text'
-                          ? obj
-                            ? messages.card.itemTextEnKey
-                            : messages.card.itemTextEn
-                          : messages.card.itemValue
+          {data.cart_type === 'analytic' && (
+            <>
+              <div className='p-4 mt-4 rounded border border-dashed border-main-color'>
+                <h2 className='mb-4 text-2xl text-main-color'>{messages.card.progress}</h2>
+                <TextField
+                  fullWidth
+                  type={obj ? 'text' : 'number'}
+                  value={data.progress || ''}
+                  label={messages.card.progress}
+                  variant='filled'
+                  onChange={e => {
+                    if (obj) {
+                      onChange({ ...data, progress: e.target.value })
+                    } else {
+                      if (e.target.value >= 0 && e.target.value <= 100) {
+                        onChange({ ...data, progress: e.target.value })
                       }
-                      variant='filled'
-                    />
-                    {item.type === 'icon' && (
-                      <a
-                        href='https://iconify.design/icon-sets/ph/'
-                        target='_blank'
-                        className='my-1 text-sm underline text-main-color'
-                      >
-                        {messages.card.iconLink}
-                      </a>
-                    )}
-                    {item.type !== 'rating' && (
-                      <>
-                        <TextField
-                          fullWidth
-                          type='number'
-                          defaultValue={item.width || ''}
-                          onBlur={e => handleItemChange(index, 'width', e.target.value)}
-                          label={messages.card.itemWidth}
-                          variant='filled'
-                        />
-                        <TextField
-                          fullWidth
-                          type='number'
-                          defaultValue={item.height || ''}
-                          onBlur={e => handleItemChange(index, 'height', e.target.value)}
-                          label={messages.card.itemHeight}
-                          variant='filled'
-                        />
-                      </>
-                    )}
-                    <TextField
-                      fullWidth
-                      type='number'
-                      defaultValue={item.rounded || ''}
-                      onBlur={e => handleItemChange(index, 'rounded', e.target.value)}
-                      label={messages.card.borderRadius}
-                      variant='filled'
-                    />
-
-                    <TextField
-                      fullWidth
-                      type='color'
-                      defaultValue={item.color || ''}
-                      onBlur={e => handleItemChange(index, 'color', e.target.value)}
-                      label={messages.card.color}
-                      variant='filled'
-                    />
-                    <TextField
-                      fullWidth
-                      type='color'
-                      defaultValue={item.backgroundColor || ''}
-                      onBlur={e => handleItemChange(index, 'backgroundColor', e.target.value)}
-                      label={messages.card.backgroundColor}
-                      variant='filled'
-                    />
-                    {item.type !== 'icon' && (
-                      <TextField
-                        fullWidth
-                        type='number'
-                        defaultValue={item.fontSize || ''}
-                        onBlur={e => handleItemChange(index, 'fontSize', e.target.value)}
-                        label={messages.card.fontSize}
-                        variant='filled'
-                      />
-                    )}
-                    {item.type !== 'icon' && (
-                      <TextField
-                        fullWidth
-                        type='number'
-                        defaultValue={item.fontWeight || ''}
-                        onBlur={e => handleItemChange(index, 'fontWeight', e.target.value)}
-                        label={messages.card.fontWeight}
-                        variant='filled'
-                      />
-                    )}
-                    {item.type !== 'icon' && (
-                      <TextField
-                        select
-                        fullWidth
-                        value={item.fontFamily || ''}
-                        onChange={e => handleItemChange(index, 'fontFamily', e.target.value)}
-                        label={messages.card.fontFamily}
-                        variant='filled'
-                      >
-                        <MenuItem value='Arial'>Arial</MenuItem>
-                        <MenuItem value='Tahoma'>Tahoma</MenuItem>
-                        <MenuItem value='Verdana'>Verdana</MenuItem>
-                        <MenuItem value='Times New Roman'>Times New Roman</MenuItem>
-                        <MenuItem value='Courier New'>Courier New</MenuItem>
-                      </TextField>
-                    )}
-                    <TextField
-                      fullWidth
-                      type='number'
-                      defaultValue={item.marginBottom || ''}
-                      onBlur={e => handleItemChange(index, 'marginBottom', e.target.value)}
-                      label={messages.card.marginBottom}
-                      variant='filled'
-                    />
-                    <TextField
-                      select
-                      fullWidth
-                      value={item.textAlign || ''}
-                      onChange={e => handleItemChange(index, 'textAlign', e.target.value)}
-                      label={messages.card.textAlign}
-                      variant='filled'
-                    >
-                      <MenuItem value='start'>Start</MenuItem>
-                      <MenuItem value='center'>Center</MenuItem>
-                      <MenuItem value='end'>End</MenuItem>
-                    </TextField>
-                    <TextField
-                      select
-                      fullWidth
-                      defaultValue={item.position || ''}
-                      onBlur={e => handleItemChange(index, 'position', e.target.value)}
-                      label={messages.card.position}
-                      variant='filled'
-                    >
-                      <MenuItem value='none'>{messages.card.positionNone}</MenuItem>
-                      <MenuItem value='top'>{messages.card.positionTop}</MenuItem>
-                      <MenuItem value='center'>{messages.card.positionCenter}</MenuItem>
-                      <MenuItem value='bottom'>{messages.card.positionBottom}</MenuItem>
-                      <MenuItem value='topLeft'>{messages.card.positionTopLeft}</MenuItem>
-                      <MenuItem value='topRight'>{messages.card.positionTopRight}</MenuItem>
-                      <MenuItem value='bottomLeft'>{messages.card.positionBottomLeft}</MenuItem>
-                      <MenuItem value='bottomRight'>{messages.card.positionBottomRight}</MenuItem>
-                    </TextField>
-
-                    <TextField
-                      fullWidth
-                      type='number'
-                      defaultValue={item.zIndex || ''}
-                      onBlur={e => handleItemChange(index, 'zIndex', e.target.value)}
-                      label={messages.card.zIndex}
-                      variant='filled'
-                    />
-
-                    <TextField
-                      select
-                      fullWidth
-                      defaultValue={item.display || ''}
-                      onBlur={e => handleItemChange(index, 'display', e.target.value)}
-                      label={messages.card.display}
-                      variant='filled'
-                    >
-                      <MenuItem value='block'>{messages.card.displayBlock}</MenuItem>
-                      <MenuItem value='none'>{messages.card.displayNone}</MenuItem>
-                    </TextField>
-                  </div>
-                ))}
+                    }
+                  }}
+                />
               </div>
-            </Collapse>
-          </div>
+              <div className='p-4 mt-4 rounded border border-dashed border-main-color'>
+                <h2 className='mb-4 text-2xl text-main-color'>{messages.card.tasksRemaining}</h2>
+                <TextField
+                  fullWidth
+                  type={obj ? 'text' : 'number'}
+                  value={data.tasksRemaining || ''}
+                  label={messages.card.tasksRemaining}
+                  variant='filled'
+                  onChange={e => {
+                    if (obj) {
+                      onChange({ ...data, tasksRemaining: e.target.value })
+                    } else {
+                      onChange({ ...data, tasksRemaining: e.target.value })
+                    }
+                  }}
+                />
+              </div>
+              <div className='p-4 mt-4 rounded border border-dashed border-main-color'>
+                <h2 className='mb-4 text-2xl text-main-color'>{messages.card.status}</h2>
+                {obj ? (
+                  <TextField
+                    fullWidth
+                    value={data.status}
+                    onChange={e => onChange({ ...data, status: e.target.value })}
+                    label={messages.card.status}
+                    variant='filled'
+                  />
+                ) : (
+                  <TextField
+                    select
+                    fullWidth
+                    value={data.status || 'active'}
+                    onChange={e => onChange({ ...data, status: e.target.value })}
+                    label={messages.card.status}
+                    variant='filled'
+                  >
+                    <MenuItem value={'active'}>{messages.card.active}</MenuItem>
+                    <MenuItem value={'pending'}>{messages.card.pending}</MenuItem>
+                    <MenuItem value={'inactive'}>{messages.card.inactive}</MenuItem>
+                  </TextField>
+                )}
+              </div>
+            </>
+          )}
+          {data.cart_type === 'statistic' && (
+            <>
+              <div className='p-4 mt-4 rounded border border-dashed border-main-color'>
+                <h2 className='mb-4 text-2xl text-main-color'>{messages.card.value}</h2>
+                <TextField
+                  fullWidth
+                  type='text'
+                  value={data.value || ''}
+                  label={messages.card.value}
+                  variant='filled'
+                  onChange={e => {
+                    onChange({ ...data, value: e.target.value })
+                  }}
+                />
+              </div>
+              <div className='p-4 mt-4 rounded border border-dashed border-main-color'>
+                <h2 className='mb-4 text-2xl text-main-color'>{messages.card.icon}</h2>
+                <TextField
+                  fullWidth
+                  type='text'
+                  value={data.icon || ''}
+                  label={messages.card.icon}
+                  variant='filled'
+                  onChange={e => {
+                    onChange({ ...data, icon: e.target.value })
+                  }}
+                />
+                <a
+                  href='https://icon-sets.iconify.design/'
+                  target='_blank'
+                  rel='noopener noreferrer'
+                  className='mt-1 text-sm underline text-main-color'
+                >
+                  {messages.useIconView.iconFromHere}
+                </a>
+              </div>
+              <div className='p-4 mt-4 rounded border border-dashed border-main-color'>
+                <h2 className='mb-4 text-2xl text-main-color'>{messages.card.color}</h2>
+                {obj ? (
+                  <TextField
+                    fullWidth
+                    type='text'
+                    value={data.color || ''}
+                    label={messages.card.color}
+                    variant='filled'
+                    onChange={e => {
+                      onChange({ ...data, color: e.target.value })
+                    }}
+                  />
+                ) : (
+                  <TextField
+                    fullWidth
+                    type='text'
+                    value={data.color || ''}
+                    label={messages.card.color}
+                    variant='filled'
+                    select
+                    onChange={e => {
+                      onChange({ ...data, color: e.target.value })
+                    }}
+                  >
+                    <MenuItem value={'green'}>{messages.card.green}</MenuItem>
+                    <MenuItem value={'blue'}>{messages.card.blue}</MenuItem>
+                    <MenuItem value={'yellow'}>{messages.card.yellow}</MenuItem>
+                    <MenuItem value={'red'}>{messages.card.red}</MenuItem>
+                    <MenuItem value={'purple'}>{messages.card.purple}</MenuItem>
+                    <MenuItem value={'pink'}>{messages.card.pink}</MenuItem>
+                  </TextField>
+                )}
+              </div>
+            </>
+          )}
+          {/* Description Section */}
+          {(data.cart_type === 'product' || !data.cart_type) && (
+            <>
+              <div className='p-4 mt-4 rounded border border-dashed border-main-color'>
+                <h2 className='mb-4 text-2xl text-main-color'>{messages.card.description}</h2>
+                {renderTextField(
+                  obj ? messages.card.description_ar_key : messages.card.description_ar,
+                  'description_ar',
+                  'text'
+                )}
+                {renderTextField(
+                  obj ? messages.card.description_en_key : messages.card.description_en,
+                  'description_en',
+                  'text'
+                )}
+                {renderTextField(messages.card.color, 'descriptionColor', 'color')}
+                {renderTextField(messages.card.fontSize, 'descriptionFontSize', 'number', {
+                  InputProps: {
+                    endAdornment: <InputAdornment position='end'>px</InputAdornment>
+                  }
+                })}
+                {renderSelect(
+                  messages.card.fontWeight,
+                  'descriptionFontWeight',
+                  Array.from({ length: 9 }, (_, i) => ({
+                    value: `${(i + 1) * 100}`,
+                    label: `${(i + 1) * 100}`
+                  }))
+                )}
+                {renderSelect(messages.card.fontFamily, 'descriptionFontFamily', [
+                  { value: 'Arial', label: 'Arial' },
+                  { value: 'Tahoma', label: 'Tahoma' },
+                  { value: 'Verdana', label: 'Verdana' },
+                  { value: 'Times New Roman', label: 'Times New Roman' },
+                  { value: 'Courier New', label: 'Courier New' }
+                ])}
+                {renderSelect(messages.card.descriptionTextAlign, 'descriptionTextAlign', [
+                  { value: 'start', label: 'Start' },
+                  { value: 'center', label: 'Center' },
+                  { value: 'end', label: 'End' }
+                ])}
+                {renderSelect(messages.card.descriptionDisplay, 'descriptionDisplay', [
+                  { value: 'block', label: 'Show' },
+                  { value: 'none', label: 'Hide' }
+                ])}
+              </div>
+              <div className='p-4 mt-4 rounded border border-dashed border-main-color'>
+                <h2 className='mb-4 text-2xl text-main-color'>{messages.card.price}</h2>
+                {renderTextField(obj ? messages.card.price_key : messages.card.price, 'price', obj ? 'text' : 'number')}
+                {renderTextField(messages.card.priceColor, 'priceColor', 'color')}
+                {renderTextField(messages.card.priceFontSize, 'priceFontSize', 'number', {
+                  InputProps: {
+                    endAdornment: <InputAdornment position='end'>px</InputAdornment>
+                  }
+                })}
+                {renderSelect(
+                  messages.card.priceFontWeight,
+                  'priceFontWeight',
+                  Array.from({ length: 9 }, (_, i) => ({
+                    value: `${(i + 1) * 100}`,
+                    label: `${(i + 1) * 100}`
+                  }))
+                )}
+                {renderSelect(messages.card.priceTextAlign, 'priceTextAlign', [
+                  { value: 'end', label: 'End' },
+                  { value: 'center', label: 'Center' },
+                  { value: 'start', label: 'Start' }
+                ])}
+                {renderSelect(messages.card.priceFontFamily, 'priceFontFamily', [
+                  { value: 'Arial', label: 'Arial' },
+                  { value: 'Tahoma', label: 'Tahoma' },
+                  { value: 'Verdana', label: 'Verdana' },
+                  { value: 'Times New Roman', label: 'Times New Roman' },
+                  { value: 'Courier New', label: 'Courier New' }
+                ])}
+                {renderSelect(messages.card.priceDisplay, 'priceDisplay', [
+                  { value: 'block', label: 'Show' },
+                  { value: 'none', label: 'Hide' }
+                ])}
+              </div>
+
+              <div className='p-4 mt-4 rounded border border-dashed border-main-color'>
+                <h2 className='mb-4 text-2xl text-main-color'>{messages.card.products}</h2>
+                <Button
+                  variant='outlined'
+                  fullWidth
+                  className='!mb-4'
+                  onClick={handleAddItem}
+                  startIcon={<Icon icon='ph:plus-circle-fill' />}
+                >
+                  {messages.card.addItem}
+                </Button>
+                <Collapse transition={`height 300ms cubic-bezier(.4, 0, .2, 1)`} isOpen={Boolean(items.length !== 0)}>
+                  <div className='p-2 mx-2 rounded-md border border-dashed border-main-color'>
+                    <h2 className='mb-4 text-2xl text-main-color'>{messages.card.item}</h2>
+                    {items.map((item, index) => (
+                      <div key={index} className='p-2 my-2 rounded-md border border-dashed border-main-color'>
+                        <h2 className='mb-4 text-2xl text-main-color'>{item.name || ''}</h2>
+
+                        <Select
+                          fullWidth
+                          value={item.type}
+                          onChange={e => handleItemChange(index, 'type', e.target.value)}
+                          variant='filled'
+                        >
+                          <MenuItem value='text'>{messages.card.itemTypeText}</MenuItem>
+                          <MenuItem value='icon'>{messages.card.itemTypeIcon}</MenuItem>
+                          <MenuItem value='rating'>{messages.card.itemTypeRating}</MenuItem>
+                        </Select>
+                        <TextField
+                          fullWidth
+                          defaultValue={item.name || ''}
+                          onBlur={e => handleItemChange(index, 'name', e.target.value)}
+                          label={messages.card.itemName}
+                          variant='filled'
+                        />
+                        {item.type === 'text' && (
+                          <TextField
+                            fullWidth
+                            defaultValue={item.text_ar || ''}
+                            onBlur={e => handleItemChange(index, 'text_ar', e.target.value)}
+                            label={obj ? messages.card.itemTextArKey : messages.card.itemTextAr}
+                            variant='filled'
+                          />
+                        )}
+                        <TextField
+                          fullWidth
+                          defaultValue={item.text_en || ''}
+                          onBlur={e => handleItemChange(index, 'text_en', e.target.value)}
+                          label={
+                            item.type === 'text'
+                              ? obj
+                                ? messages.card.itemTextEnKey
+                                : messages.card.itemTextEn
+                              : messages.card.itemValue
+                          }
+                          variant='filled'
+                        />
+                        {item.type === 'icon' && (
+                          <a
+                            href='https://iconify.design/icon-sets/ph/'
+                            target='_blank'
+                            className='my-1 text-sm underline text-main-color'
+                          >
+                            {messages.card.iconLink}
+                          </a>
+                        )}
+                        {item.type !== 'rating' && (
+                          <>
+                            <TextField
+                              fullWidth
+                              type='number'
+                              defaultValue={item.width || ''}
+                              onBlur={e => handleItemChange(index, 'width', e.target.value)}
+                              label={messages.card.itemWidth}
+                              variant='filled'
+                            />
+                            <TextField
+                              fullWidth
+                              type='number'
+                              defaultValue={item.height || ''}
+                              onBlur={e => handleItemChange(index, 'height', e.target.value)}
+                              label={messages.card.itemHeight}
+                              variant='filled'
+                            />
+                          </>
+                        )}
+                        <TextField
+                          fullWidth
+                          type='number'
+                          defaultValue={item.rounded || ''}
+                          onBlur={e => handleItemChange(index, 'rounded', e.target.value)}
+                          label={messages.card.borderRadius}
+                          variant='filled'
+                        />
+
+                        <TextField
+                          fullWidth
+                          type='color'
+                          defaultValue={item.color || ''}
+                          onBlur={e => handleItemChange(index, 'color', e.target.value)}
+                          label={messages.card.color}
+                          variant='filled'
+                        />
+                        <TextField
+                          fullWidth
+                          type='color'
+                          defaultValue={item.backgroundColor || ''}
+                          onBlur={e => handleItemChange(index, 'backgroundColor', e.target.value)}
+                          label={messages.card.backgroundColor}
+                          variant='filled'
+                        />
+                        {item.type !== 'icon' && (
+                          <TextField
+                            fullWidth
+                            type='number'
+                            defaultValue={item.fontSize || ''}
+                            onBlur={e => handleItemChange(index, 'fontSize', e.target.value)}
+                            label={messages.card.fontSize}
+                            variant='filled'
+                          />
+                        )}
+                        {item.type !== 'icon' && (
+                          <TextField
+                            fullWidth
+                            type='number'
+                            defaultValue={item.fontWeight || ''}
+                            onBlur={e => handleItemChange(index, 'fontWeight', e.target.value)}
+                            label={messages.card.fontWeight}
+                            variant='filled'
+                          />
+                        )}
+                        {item.type !== 'icon' && (
+                          <TextField
+                            select
+                            fullWidth
+                            value={item.fontFamily || ''}
+                            onChange={e => handleItemChange(index, 'fontFamily', e.target.value)}
+                            label={messages.card.fontFamily}
+                            variant='filled'
+                          >
+                            <MenuItem value='Arial'>Arial</MenuItem>
+                            <MenuItem value='Tahoma'>Tahoma</MenuItem>
+                            <MenuItem value='Verdana'>Verdana</MenuItem>
+                            <MenuItem value='Times New Roman'>Times New Roman</MenuItem>
+                            <MenuItem value='Courier New'>Courier New</MenuItem>
+                          </TextField>
+                        )}
+                        <TextField
+                          fullWidth
+                          type='number'
+                          defaultValue={item.marginBottom || ''}
+                          onBlur={e => handleItemChange(index, 'marginBottom', e.target.value)}
+                          label={messages.card.marginBottom}
+                          variant='filled'
+                        />
+                        <TextField
+                          select
+                          fullWidth
+                          value={item.textAlign || ''}
+                          onChange={e => handleItemChange(index, 'textAlign', e.target.value)}
+                          label={messages.card.textAlign}
+                          variant='filled'
+                        >
+                          <MenuItem value='start'>Start</MenuItem>
+                          <MenuItem value='center'>Center</MenuItem>
+                          <MenuItem value='end'>End</MenuItem>
+                        </TextField>
+                        <TextField
+                          select
+                          fullWidth
+                          defaultValue={item.position || ''}
+                          onBlur={e => handleItemChange(index, 'position', e.target.value)}
+                          label={messages.card.position}
+                          variant='filled'
+                        >
+                          <MenuItem value='none'>{messages.card.positionNone}</MenuItem>
+                          <MenuItem value='top'>{messages.card.positionTop}</MenuItem>
+                          <MenuItem value='center'>{messages.card.positionCenter}</MenuItem>
+                          <MenuItem value='bottom'>{messages.card.positionBottom}</MenuItem>
+                          <MenuItem value='topLeft'>{messages.card.positionTopLeft}</MenuItem>
+                          <MenuItem value='topRight'>{messages.card.positionTopRight}</MenuItem>
+                          <MenuItem value='bottomLeft'>{messages.card.positionBottomLeft}</MenuItem>
+                          <MenuItem value='bottomRight'>{messages.card.positionBottomRight}</MenuItem>
+                        </TextField>
+
+                        <TextField
+                          fullWidth
+                          type='number'
+                          defaultValue={item.zIndex || ''}
+                          onBlur={e => handleItemChange(index, 'zIndex', e.target.value)}
+                          label={messages.card.zIndex}
+                          variant='filled'
+                        />
+
+                        <TextField
+                          select
+                          fullWidth
+                          defaultValue={item.display || ''}
+                          onBlur={e => handleItemChange(index, 'display', e.target.value)}
+                          label={messages.card.display}
+                          variant='filled'
+                        >
+                          <MenuItem value='block'>{messages.card.displayBlock}</MenuItem>
+                          <MenuItem value='none'>{messages.card.displayNone}</MenuItem>
+                        </TextField>
+                      </div>
+                    ))}
+                  </div>
+                </Collapse>
+              </div>
+            </>
+          )}
         </>
       )}
     </div>

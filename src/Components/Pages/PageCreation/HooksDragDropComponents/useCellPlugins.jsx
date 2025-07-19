@@ -22,18 +22,17 @@ import useHeader from './useHeader'
 import useSection from './UseSection'
 import useDynamicTable from './useDynamicTable'
 import useGoogleMap from './useMap'
-import useAnalitac from './useAnalitac'
-import useAnalytics from './useAnalitac'
 import useChart from './useChart'
-import useCartProgress from './useCartProgress'
+
+// import useCartProgress from './useCartProgress'
 
 export default function useCellPlugins({ advancedEdit, locale, readOnly, buttonRef, workflowId }) {
   // Hooks Drag Drop Components
   const { collection } = useCollection({ advancedEdit, locale, readOnly, buttonRef, workflowId })
   const { order } = useOrder({ advancedEdit, locale, readOnly, buttonRef })
-  const { analytics } = useAnalytics({ advancedEdit, locale, readOnly, buttonRef })
-  const { chart } = useChart({ advancedEdit, locale, readOnly, buttonRef })
 
+  // const { analytics } = useAnalytics({ advancedEdit, locale, readOnly, buttonRef })
+  const { chart } = useChart({ advancedEdit, locale, readOnly, buttonRef })
   const { backgroundPlugin } = useBackground({ locale, buttonRef })
   const { table } = useTable({ advancedEdit, locale, buttonRef })
   const { ContainerPlugin } = useContainer({ locale, buttonRef })
@@ -47,7 +46,8 @@ export default function useCellPlugins({ advancedEdit, locale, readOnly, buttonR
   const { FlexControlCell } = useFlexControl({ locale, buttonRef })
   const { ButtonCell } = useButton({ locale, buttonRef })
   const { cartCell } = useCart({ locale, readOnly, buttonRef })
-  const { cartProgress } = useCartProgress({ locale, readOnly, buttonRef })
+
+  // const { cartProgress } = useCartProgress({ locale, readOnly, buttonRef })
   const { IconView } = useIconView({ locale, buttonRef })
   const { SectionControl } = useSection({ locale, buttonRef })
   const { dynamicTable } = useDynamicTable({ locale, buttonRef, advancedEdit })
@@ -70,11 +70,9 @@ export default function useCellPlugins({ advancedEdit, locale, readOnly, buttonR
       ButtonCell,
       FlexControlCell,
       order,
-      cartProgress,
-      analytics,
+      chart,
       cartCell,
       IconView,
-      chart,
       Header,
       SectionControl,
       dynamicTable,
@@ -84,13 +82,11 @@ export default function useCellPlugins({ advancedEdit, locale, readOnly, buttonR
       backgroundPlugin,
       ContainerPlugin,
       BoxControl,
-      analytics,
       UploadImage,
-      chart,
       UploadVideo,
       collection,
+      chart,
       order,
-      cartProgress,
       table,
       RichText,
       ProgressBar,
@@ -106,15 +102,15 @@ export default function useCellPlugins({ advancedEdit, locale, readOnly, buttonR
     ]
   )
 
-  console.log(
-    cellPlugins.map(item => {
-      return { title: item.title }
-    })
-  )
+  // console.log(
+  //   cellPlugins.map(item => {
+  //     return { title: item.title }
+  //   })
+  // )
 
   // cellPlugins: cellPlugins.sort((a, b) => a.title.toLocaleLowerCase().trim().localeCompare(b.title.toLocaleLowerCase().trim()))
 
   return {
-    cellPlugins: cellPlugins
+    cellPlugins: cellPlugins.sort((a, b) => a.title.toLocaleLowerCase().trim().localeCompare(b.title.toLocaleLowerCase().trim()))
   }
 }
