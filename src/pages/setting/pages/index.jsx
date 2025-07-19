@@ -11,6 +11,7 @@ import AddPage from 'src/Components/Pages/AddPage'
 import Link from 'next/link'
 import { Icon } from '@iconify/react'
 import DeletePopUp from 'src/Components/DeletePopUp'
+import Breadcrumbs from 'src/Components/breadcrumbs'
 
 export default function Index() {
   const { locale, messages } = useIntl()
@@ -134,6 +135,7 @@ export default function Index() {
 
   return (
     <div>
+      <Breadcrumbs routers={[{ name: locale === 'ar' ? 'الصفحات' : 'Pages' }]} isDashboard />
       <DeletePopUp
         open={deletePage}
         setOpen={setDeletePage}
@@ -145,7 +147,7 @@ export default function Index() {
 
       <Card className='w-[100%]  mb-5 py-4 '>
         <CardContent
-          className='h-full flex-col  md:flex-row gap-2'
+          className='flex-col gap-2 h-full md:flex-row'
           sx={{
             display: 'flex',
             textAlign: 'center',

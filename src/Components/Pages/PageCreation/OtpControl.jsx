@@ -37,23 +37,6 @@ export default function OtpControl({ data, onChange, locale, type, buttonRef }) 
     )
   }
 
-  const renderSelect = (label, valueKey, optionsList, additionalProps = {}) => (
-    <TextField
-      select
-      fullWidth
-      value={data[valueKey] || optionsList[0].value}
-      onChange={e => onChange({ ...data, [valueKey]: e.target.value })}
-      label={locale === 'ar' ? additionalProps.labelAr || label : label}
-      variant='filled'
-    >
-      {optionsList.map(({ value, label }) => (
-        <MenuItem key={value} value={value}>
-          {label}
-        </MenuItem>
-      ))}
-    </TextField>
-  )
-
   useEffect(() => {
     if (data.api_url) {
       const items = getApiData.find(item => item.link === data.api_url)?.data

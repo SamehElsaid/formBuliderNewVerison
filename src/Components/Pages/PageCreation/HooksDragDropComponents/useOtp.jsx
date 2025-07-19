@@ -143,7 +143,7 @@ export default function useOtp({ locale, buttonRef }) {
                 <div className='flex gap-1 justify-center items-center'>
                   {resendOtp === 0 && messages.useOtp.ifYouDidNotReceive}
                   <button
-                    disabled={loading}
+                    disabled={loading || resendOtp !== 0}
                     type='button'
                     onClick={() => {
                       setLoading(true)

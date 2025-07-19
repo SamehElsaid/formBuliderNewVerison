@@ -9,6 +9,7 @@ import { toast } from 'react-toastify'
 import CustomTextField from 'src/@core/components/mui/text-field'
 import { getTypeFromCollection } from 'src/Components/_Shared'
 import { axiosDelete, axiosGet } from 'src/Components/axiosCall'
+import Breadcrumbs from 'src/Components/breadcrumbs'
 import FormBuilder from 'src/Components/Collection/FormBuilder'
 import FormEdit from 'src/Components/FormEdit'
 import GetCollectionName from 'src/Components/GetCollectionName'
@@ -243,12 +244,23 @@ function AddField() {
 
   return (
     <div>
+      <Breadcrumbs
+        loading={loading}
+        routers={[
+          { name: messages.collection.collectionName, link: `/${locale}/setting/data-source/collaction` },
+          {
+            name: locale === 'ar' ? data?.collection?.nameAr : data?.collection?.nameEn,
+            link: `/${locale}/setting/data-source/collaction/${addFiles}`
+          }
+        ]}
+        isDashboard
+      />
       <FormBuilder open={open} setOpen={setOpen} setRefresh={setRefresh} />
       <FormEdit open={edit} setOpen={setEdit} setData={setData} />
       <ViewField open={view} setOpen={setView} />
       <Card className='w-[100%]  mb-5 py-4 '>
         <CardContent
-          className='h-full flex-col  md:flex-row gap-2'
+          className='flex-col gap-2 h-full md:flex-row'
           sx={{
             display: 'flex',
             textAlign: 'center',
@@ -257,7 +269,7 @@ function AddField() {
             py: '0 !important'
           }}
         >
-          <div className='flex gap-2 justify-center items-center  '>
+          <div className='flex gap-2 justify-center items-center'>
             <Typography
               variant='h5'
               sx={{ color: 'primary.main', fontWeight: 'bold' }}

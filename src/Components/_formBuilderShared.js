@@ -5,19 +5,18 @@ export const fieldTypes = [
   "date",
   "email",
   "file",
-  "multiple_select",
   "number",
   "password",
-  "tel",
   "radio",
   "rate",
   "select",
+  "multiple_select",
   "tel",
   "text",
   "textarea",
   "time",
   "url"
-]
+];
 
 export const fileTypes = [
   // Images

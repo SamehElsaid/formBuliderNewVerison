@@ -165,9 +165,12 @@ function Trigger({
                     setTypeOfValidation(e.target.value)
                   }}
                 >
-                  {(open.fieldCategory !== 'Basic' || open.key !== 'tabs') && (
-                    <MenuItem value={'filter'}>{messages.filter}</MenuItem>
-                  )}
+                  <MenuItem
+                    value={'filter'}
+                    disabled={open.fieldCategory !== 'Basic' || open.key !== 'tabs' || open.type === 'new_element'}
+                  >
+                    {messages.filter}
+                  </MenuItem>
                   <MenuItem value={'enable'} disabled={open.type === 'new_element'}>
                     {messages.enable}
                   </MenuItem>

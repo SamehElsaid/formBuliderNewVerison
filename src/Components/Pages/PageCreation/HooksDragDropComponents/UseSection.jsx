@@ -11,8 +11,8 @@ export default function useSection({ locale, buttonRef }) {
           style={{
             height: data.sectionHeight ? `${data.sectionHeight}${data.sectionHeightUnit || 'px'}` : 'auto',
             width: data.sectionWidth ? `${data.sectionWidth}${data.sectionWidthUnit || 'px'}` : '100%',
-            padding: data.sectionPadding || '20px',
-            margin: data.sectionMargin || '0',
+            padding: data.sectionPadding + "px" || '20px',
+            margin: data.sectionMargin + "px" || '0',
             backgroundColor: data.sectionBackground || 'transparent',
             border: data.sectionBorder || 'none',
             borderRadius: data.sectionBorderRadius || '0',
@@ -21,12 +21,12 @@ export default function useSection({ locale, buttonRef }) {
           }}
         >
           {data.sectionTitle && (
-            <h2 
+            <h2
               style={{
-                fontSize: data.titleSize || '1.5em',
+                fontSize: data.titleSize + "px" || '1.5em',
                 fontWeight: data.titleWeight || 'bold',
-                margin: data.titleMargin || '0 0 16px 0',
-                textAlign: data.titleAlign || 'left',
+                margin: data.titleMargin + "px" || '0 0 16px 0',
+                textAlign: data.titleAlign  || 'left',
                 color: data.titleColor || 'inherit'
               }}
             >
@@ -38,8 +38,8 @@ export default function useSection({ locale, buttonRef }) {
       ),
       id: 'sectionControl',
       title: locale === 'ar' ? 'قسم' : 'Section',
-      description: locale === 'ar' ? 
-        'قسم منظم يمكن أن يحتوي على عنوان ومحتوى متعدد' : 
+      description: locale === 'ar' ?
+        'قسم منظم يمكن أن يحتوي على عنوان ومحتوى متعدد' :
         'A structured section that can contain a title and multiple content elements',
       version: 1,
       icon: <IoMdResize className='text-2xl' />,
@@ -142,6 +142,7 @@ function SectionControls({ data, onChange, buttonRef }) {
         value={data.sectionBackground || ''}
         onChange={(e) => handleChange('sectionBackground', e.target.value)}
         variant='filled'
+        type='color'
         label={locale === 'ar' ? 'لون الخلفية' : 'Background Color'}
         margin='normal'
       />
@@ -151,6 +152,7 @@ function SectionControls({ data, onChange, buttonRef }) {
         value={data.sectionPadding || ''}
         onChange={(e) => handleChange('sectionPadding', e.target.value)}
         variant='filled'
+        type='number'
         label={locale === 'ar' ? 'الحشو الداخلي' : 'Padding'}
         margin='normal'
       />
@@ -160,6 +162,7 @@ function SectionControls({ data, onChange, buttonRef }) {
         value={data.sectionMargin || ''}
         onChange={(e) => handleChange('sectionMargin', e.target.value)}
         variant='filled'
+        type='number'
         label={locale === 'ar' ? 'الهامش الخارجي' : 'Margin'}
         margin='normal'
       />

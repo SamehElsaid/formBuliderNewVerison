@@ -1834,20 +1834,6 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                                   </div>
                                 </>
                               )}
-
-                              <div className=''>
-                                <div className='flex flex-col gap-2 justify-center items-center py-2'>
-                                  <Button
-                                    onClick={() => {
-                                      setOpenTrigger(true)
-                                    }}
-                                    variant='contained'
-                                    color='primary'
-                                  >
-                                    {locale === 'ar' ? 'اضافة متابعة' : 'Add Trigger'}
-                                  </Button>
-                                </div>
-                              </div>
                             </>
                           ) : (
                             <div className='px-4'>

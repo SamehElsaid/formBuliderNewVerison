@@ -112,7 +112,6 @@ export default function DisplayField({
       }
     }
 
-
     // ! Start enable Control
     if (roles?.trigger?.typeOfValidation == 'enable' && roles?.trigger?.mainValue && !loading) {
       if (input.fieldCategory == 'Basic') {
@@ -616,7 +615,10 @@ export default function DisplayField({
 
     // ! Start hidden Control
     if (roles?.trigger?.typeOfValidation == 'hidden' && roles?.trigger?.mainValue && !loading) {
-      if (input.fieldCategory == 'Basic') {
+      console.log(input)
+      console.log('hiddessn')
+
+      if (input.fieldCategory == 'Basic' || input.type == 'new_element') {
         if (roles?.trigger?.parentKey) {
           if (dataRef?.current?.[roles?.trigger?.selectedField]) {
             axiosGet(
@@ -643,6 +645,8 @@ export default function DisplayField({
             })
           } else {
             if (roles?.trigger?.isEqual != 'equal') {
+              console.log('he')
+
               setIsDisable('hidden')
             }
           }
@@ -654,10 +658,12 @@ export default function DisplayField({
               setIsDisable('hidden')
             }
           } else {
+            console.log(dataRef?.current?.[roles?.trigger?.selectedField], roles?.trigger?.mainValue)
+
             if (dataRef?.current?.[roles?.trigger?.selectedField] == roles?.trigger?.mainValue) {
-              setIsDisable(null)
-            } else {
               setIsDisable('hidden')
+            } else {
+              setIsDisable(null)
             }
           }
         }
@@ -705,6 +711,8 @@ export default function DisplayField({
       }
     }
     if (roles?.trigger?.typeOfValidation == 'hidden' && !roles?.trigger?.mainValue && !loading) {
+      console.log('hidden')
+
       if (dataRef?.current?.[roles?.trigger?.selectedField]?.length != 0) {
         setIsDisable('hidden')
       } else {
@@ -1225,7 +1233,7 @@ export default function DisplayField({
         ${design}
       }`}</style>
       {hoverText && (
-        <div className='absolute w-full glass-effect z-10 start-0 border border-main-color border-dashed top-[calc(100%+5px)] invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-all duration-300'>
+        <div className='absolute bg-white w-full glass-effect z-10 start-0 border border-main-color border-dashed top-[calc(100%+5px)] invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-all duration-300'>
           <div className='arrow-up w-fit absolute top-[-8px] '></div>
           {hoverText}
         </div>

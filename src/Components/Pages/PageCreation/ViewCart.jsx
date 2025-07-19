@@ -59,7 +59,7 @@ export default function ViewCart({ data, locale, onChange, readOnly }) {
       ) : (
         <div className='relative ||  h-full'>
           <CardAppleWatch />
-          {/* <Link
+          <Link
             href={`${locale}/${data.href ?? ''}`}
             className='border h-full relative  || border-gray-200 || rounded-md || overflow-hidden || flex || flex-col || hover:shadow-lg || hover:cursor-pointer || transition-all || hover:translate-y-[-5px] || duration-300'
           >
@@ -261,7 +261,7 @@ export default function ViewCart({ data, locale, onChange, readOnly }) {
                 )
               )}
             </div>
-          </Link> */}
+          </Link>
         </div>
       )}
     </div>

@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useEffect, useState } from 'react'
+import { useSelector } from 'react-redux'
 import { useRouter } from 'next/router'
 import { usePathname } from 'next/navigation'
 import LoadingMain from './LoadingMain'
@@ -8,7 +8,6 @@ import useInitialization from 'src/@core/hooks/useInitialization'
 import useTriggerError from 'src/@core/hooks/useTriggerError'
 
 function HomeApp({ children }) {
-  const dispatch = useDispatch()
   const router = useRouter()
   const { locale } = useRouter()
   const patch = usePathname()
@@ -16,6 +15,13 @@ function HomeApp({ children }) {
 
   // Hooks
   const { login } = useInitialization()
+  const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    setLoading(true)
+
+  }, [])
+
   useTriggerError()
 
   useEffect(() => {
@@ -27,11 +33,13 @@ function HomeApp({ children }) {
     return <LoadingMain login={true} />
   }
 
+  console.log('ok')
+
   return (
     <>
       <LoadingMain login={login} />
 
-      {patch ? <>{'/' + patch.split('/')[1] === '/setting' && login ? null : children}</> : null}
+      {patch ? <>{'/' + patch.split('/')[1] === '/setting' && login ? null : loading ? children : null}</> : null}
     </>
   )
 }

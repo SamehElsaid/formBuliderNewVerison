@@ -10,7 +10,7 @@ import InputControlDesign from './InputControlDesign'
 import GridLayout, { WidthProvider } from 'react-grid-layout'
 import 'react-grid-layout/css/styles.css'
 import 'react-resizable/css/styles.css'
-import { DefaultStyle, getTypeFromCollection, VaildId } from 'src/Components/_Shared'
+import { DefaultStyle, getTypeFromCollection, getZIndex, VaildId } from 'src/Components/_Shared'
 import { IoMdSettings } from 'react-icons/io'
 import { Elements } from '@stripe/react-stripe-js'
 import { loadStripe } from '@stripe/stripe-js'
@@ -304,95 +304,99 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
             isDraggable={!readOnly}
             margin={[10, 10]} // هامش بين العناصر
           >
-            {sortedLoop.map(filed => (
-              <div
-                key={filed.id}
-                className={`relative w-full ${
-                  filed.type === 'new_element' ? `s${filed.id}` : 'ss' + filed.id
-                } drag-handle ${!readOnly ? 'px-2' : ''}`}
-              >
-                {!readOnly && (
-                  <div className='absolute inset-0 z-20 flex || justify-end border-main-color border-dashed border rounded-md'>
-                    <button
-                      type='button'
-                      title={locale !== 'ar' ? 'Setting' : 'التحكم'}
-                      onMouseDown={e => {
-                        e.stopPropagation()
-                      }}
-                      onClick={e => {
-                        e.stopPropagation()
-                        setOpen(filed)
-                      }}
-                      className='w-[30px] || h-[30px] hover:bg-main-color hover:text-white duration-200 || rounded-lg || shadow-2xl text-xl flex || items-center justify-center bg-white border-main-color border'
-                    >
-                      <IoMdSettings />
-                    </button>
-                  </div>
-                )}
-                <DisplayField
-                  input={filed}
-                  setRedirect={setRedirect}
-                  isRedirect={data.redirect === '{{redirect}}'}
-                  design={getDesign(filed.id, filed)}
-                  readOnly={disabled}
-                  disabledBtn={!data.type_of_sumbit || (data.type_of_sumbit === 'api' && !data.submitApi)}
-                  refError={refError}
-                  setLayout={setLayout}
-                  triggerData={triggerData}
-                  data={data}
-                  layout={layout}
-                  onChangeData={onChange}
-                  dataRef={dataRef}
-                  setTriggerData={setTriggerData}
-                  roles={
-                    data?.additional_fields?.find(ele => ele.key === filed.id)?.roles ?? {
-                      onMount: { type: '', value: '' },
-                      placeholder: {
-                        placeholder_ar: '',
-                        placeholder_en: ''
-                      },
-                      hover: {
-                        hover_ar: '',
-                        hover_en: ''
-                      },
-                      hint: {
-                        hint_ar: '',
-                        hint_en: ''
-                      },
-                      trigger: {
-                        selectedField: null,
-                        triggerKey: null,
-                        typeOfValidation: null,
-                        isEqual: 'equal',
-                        currentField: 'Id',
-                        mainValue: '',
-                        parentKey: ''
-                      },
-                      event: {
-                        onChange: '',
-                        onBlur: '',
-                        onUnmount: ''
-                      },
-                      afterDateType: '',
-                      afterDateValue: '',
-                      beforeDateType: '',
-                      beforeDateValue: '',
-                      regex: {
-                        regex: '',
-                        message_ar: '',
-                        message_en: ''
-                      },
-                      size: ''
+            {sortedLoop.map((filed, i) => {
+              const roles = data?.additional_fields?.find(ele => ele.key === filed.id)?.roles ?? {
+                onMount: { type: '', value: '' },
+                placeholder: {
+                  placeholder_ar: '',
+                  placeholder_en: ''
+                },
+                hover: {
+                  hover_ar: '',
+                  hover_en: ''
+                },
+                hint: {
+                  hint_ar: '',
+                  hint_en: ''
+                },
+                trigger: {
+                  selectedField: null,
+                  triggerKey: null,
+                  typeOfValidation: null,
+                  isEqual: 'equal',
+                  currentField: 'Id',
+                  mainValue: '',
+                  parentKey: ''
+                },
+                event: {
+                  onChange: '',
+                  onBlur: '',
+                  onUnmount: ''
+                },
+                afterDateType: '',
+                afterDateValue: '',
+                beforeDateType: '',
+                beforeDateValue: '',
+                regex: {
+                  regex: '',
+                  message_ar: '',
+                  message_en: ''
+                },
+                size: ''
+              }
+              const hoverText = roles?.hover?.hover_ar || roles?.hover?.hover_en
+              const hintText = roles?.hint?.hint_ar || roles?.hint?.hint_en
+
+              return (
+                <div
+                  key={filed.id}
+                  className={`relative w-full ${
+                    filed.type === 'new_element' ? `s${filed.id}` : 'ss' + filed.id
+                  } drag-handle  ${!readOnly ? 'px-2' : ''} ${hoverText || hintText ? '!z-[5555555]' : ''}`}
+                >
+                  {!readOnly && (
+                    <div className='absolute inset-0 z-20 flex || justify-end border-main-color border-dashed border rounded-md'>
+                      <button
+                        type='button'
+                        title={locale !== 'ar' ? 'Setting' : 'التحكم'}
+                        onMouseDown={e => {
+                          e.stopPropagation()
+                        }}
+                        onClick={e => {
+                          e.stopPropagation()
+                          setOpen(filed)
+                        }}
+                        className='w-[30px] || h-[30px] hover:bg-main-color hover:text-white duration-200 || rounded-lg || shadow-2xl text-xl flex || items-center justify-center bg-white border-main-color border'
+                      >
+                        <IoMdSettings />
+                      </button>
+                    </div>
+                  )}
+                  <DisplayField
+                    input={filed}
+                    setRedirect={setRedirect}
+                    isRedirect={data.redirect === '{{redirect}}'}
+                    design={getDesign(filed.id, filed)}
+                    readOnly={disabled}
+                    disabledBtn={!data.type_of_sumbit || (data.type_of_sumbit === 'api' && !data.submitApi)}
+                    refError={refError}
+                    setLayout={setLayout}
+                    triggerData={triggerData}
+                    data={data}
+                    layout={layout}
+                    onChangeData={onChange}
+                    dataRef={dataRef}
+                    setTriggerData={setTriggerData}
+                    roles={roles}
+                    reload={reload}
+                    errorView={errors?.[filed.type === 'new_element' ? filed.id : filed.key]?.[0]}
+                    findError={
+                      errors && typeof errors?.[filed.type === 'new_element' ? filed.id : filed.key] === 'object'
                     }
-                  }
-                  reload={reload}
-                  errorView={errors?.[filed.type === 'new_element' ? filed.id : filed.key]?.[0]}
-                  findError={
-                    errors && typeof errors?.[filed.type === 'new_element' ? filed.id : filed.key] === 'object'
-                  }
-                />
-              </div>
-            ))}
+                  />
+                </div>
+              )
+            })}
           </ResponsiveGridLayout>
         </form>
       )}

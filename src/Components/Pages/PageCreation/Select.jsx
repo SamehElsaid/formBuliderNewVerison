@@ -393,7 +393,7 @@ function Select({ onChange, data, type, buttonRef, title }) {
                                 {
                                   addMoreElement.find(ele => ele.key.toLowerCase() === item.key.toLowerCase())?.[
                                     `name_${locale}`
-                                  ]
+                                  ] || messages.text
                                 }
                                 )
                               </span>

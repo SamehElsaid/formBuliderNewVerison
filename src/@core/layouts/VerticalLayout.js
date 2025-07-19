@@ -102,7 +102,7 @@ const VerticalLayout = props => {
           className='layout-content-wrapper'
           sx={{ ...(contentHeightFixed && { maxHeight: '100vh' }) }}
         >
-          <BreadcrumbComponent />
+          {/* <BreadcrumbComponent /> */}
           {/* AppBar Component */}
           <AppBar
             toggleNavVisibility={toggleNavVisibility}

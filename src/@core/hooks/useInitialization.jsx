@@ -11,7 +11,7 @@ import { REMOVE_USER, SET_ACTIVE_USER } from 'src/store/apps/authSlice/authSlice
 function useInitialization() {
   const theme = useTheme()
   const { settings, saveSettings } = useSettings()
-  const [cookies] = useCookies(['sub'])
+  const [cookies, _, removeCookie] = useCookies(['sub'])
   const dispatch = useDispatch()
   const [login, setLogin] = useState(true)
   const { locale } = useIntl()
@@ -66,7 +66,10 @@ function useInitialization() {
   }, [cookies.mode])
 
   useEffect(() => {
-    localStorage.clear()
+    localStorage.removeItem('settings')
+    removeCookie('sub', { path: '/' })
+    dispatch(REMOVE_USER())
+    setLogin(false)
   }, [])
 
   return { login }

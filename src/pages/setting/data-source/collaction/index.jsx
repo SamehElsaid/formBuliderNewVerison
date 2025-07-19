@@ -22,6 +22,7 @@ import TableEdit from 'src/Components/TableEdit/TableEdit'
 import IconifyIcon from 'src/Components/icon'
 import AddCollection from 'src/Components/Collection/AddCollection'
 import { useRouter } from 'next/router'
+import Breadcrumbs from 'src/Components/breadcrumbs'
 
 export default function Index() {
   const { locale, messages } = useIntl()
@@ -58,7 +59,6 @@ export default function Index() {
         }
       })
       .finally(() => {
-        setLoading(false)
         toast.dismiss(loadingToast)
       })
   }, [locale, refresh])
@@ -242,6 +242,7 @@ export default function Index() {
 
   return (
     <div>
+      <Breadcrumbs loading={loading} routers={[{ name: messages.collection.collectionName, link: '' }]} isDashboard />
       <AddCollection open={open} toggle={handleClose} setRefresh={setRefresh} selectedDataSource={selectedDataSource} />
       <Card className='w-[100%] mb-5 py-4'>
         <CardContent
@@ -270,49 +271,44 @@ export default function Index() {
       <Box sx={{ mb: 4 }}>
         <Card className='flex gap-3 flex-wrap md:px-[36px] px-0' sx={{ mb: 6, width: '100%', py: '3.5rem' }}>
           <div className='w-full'>
-            <div className='flex flex-col gap-4 justify-between items-center px-5 mb-5 w-full md:flex-row'>
-              {/* Data Source Dropdown */}
-              <FormControl sx={{ minWidth: 200 }}>
-                <InputLabel id='data-source-select-label'>
-                  {messages.collection.dataSource}
-                </InputLabel>
-                <Select
-                  labelId='data-source-select-label'
-                  id='data-source-select'
-                  value={selectedDataSource}
-                  label={messages.collection.dataSource}
-                  onChange={handleDataSourceChange}
-                >
-                  {dataSources.map(source => (
-                    <MenuItem key={source.id} value={source.id}>
-                      {source.name}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-
-              {/* Search and Reset */}
-              <div className='flex gap-2 items-end'>
-                <CustomTextField
-                  id='input'
-                  label={messages.search}
-                  value={startSearch}
-                  onChange={e => {
-                    setStartSearch(e.target.value)
-                  }}
-                />
-                {startSearch && (
-                  <Button
-                    variant='contained'
-                    color='error'
-                    onClick={() => {
-                      setStartSearch('')
-                    }}
-                  >
-                    {messages.reset}
-                  </Button>
-                )}
-              </div>
+            <div className='grid gap-4 justify-between items-center px-5 mb-5 w-full md:grid-cols-3 md:flex-row'>
+              <CustomTextField
+                id='input'
+                fullWidth
+                value={selectedDataSource}
+                label={messages.collection.dataSource}
+                onChange={handleDataSourceChange}
+                select
+              >
+                {' '}
+                {dataSources.map(source => (
+                  <MenuItem key={source.id} value={source.id}>
+                    {source.name}
+                  </MenuItem>
+                ))}
+              </CustomTextField>
+              <CustomTextField
+                id='input'
+                fullWidth
+                label={messages.search}
+                value={startSearch}
+                onChange={e => {
+                  setStartSearch(e.target.value)
+                }}
+              />
+            </div>
+            <div className='flex gap-2 justify-end mb-5'>
+              <Button
+                variant='contained'
+                color='error'
+                disabled={!startSearch}
+                className={`${!startSearch ? '!opacity-50':''}`}
+                onClick={() => {
+                  setStartSearch('')
+                }}
+              >
+                {messages.reset}
+              </Button>
             </div>
 
             <TableEdit

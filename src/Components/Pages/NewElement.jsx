@@ -6,6 +6,7 @@ import { Button, Dialog, DialogContent, Typography } from '@mui/material'
 import { LoadingButton } from '@mui/lab'
 
 function NewElement({ input, onBlur, value, setValue, roles, onChangeEvent, disabledBtn, isDisable, readOnly }) {
+  console.log(input)
   const [open, setOpen] = useState(false)
   const { locale } = useIntl()
   const [loadingButton, setLoadingButton] = useState(false)
@@ -152,7 +153,7 @@ function NewElement({ input, onBlur, value, setValue, roles, onChangeEvent, disa
       </div>
     )
   }
-  if (input.key === 'text') {
+  if (input.key === 'text_content') {
     return <div className='text-element'>{locale === 'ar' ? input.name_ar : input.name_en}</div>
   }
   if (input.key === 'button') {

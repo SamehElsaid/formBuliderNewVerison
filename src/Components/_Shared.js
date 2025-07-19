@@ -202,3 +202,12 @@ export const formatDate = (value, format) => {
 
   return `${year}-${month}-${day}${time}`
 }
+
+export const getDomain = () => {
+  return process.env.DEV_MODE ? 'http://localhost:3000/' : process.env.DOMAIN
+}
+
+
+export const getZIndex = (value) => {
+  return `!z-[${value}]`
+}

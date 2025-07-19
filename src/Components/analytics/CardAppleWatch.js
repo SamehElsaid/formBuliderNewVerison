@@ -15,12 +15,16 @@ const CardAppleWatch = () => {
     <Card>
       <CardContent sx={{ p: 5 }}>
         <Box display='flex' justifyContent='space-between' alignItems='center' mb={1}>
-          <Typography variant='h5' className='!font-bold'>Customer Onboarding</Typography>
-          <CustomChip  label='Active' skin='light' color='success' size='small' />
+          <Typography variant='h5' className='!font-bold'>
+            Customer Onboarding
+          </Typography>
+          <CustomChip label='Active' skin='light' color='success' size='small' />
         </Box>
 
         <Box display='flex' justifyContent='space-between' alignItems='center' className='!mt-4'>
-          <Typography variant='body2' className='!font-bold'>Progress</Typography>
+          <Typography variant='body2' className='!font-bold'>
+            Progress
+          </Typography>
           <Typography variant='body2' color='primary' className='!font-bold'>
             {progress}%
           </Typography>
@@ -28,16 +32,13 @@ const CardAppleWatch = () => {
 
         <LinearProgress variant='determinate' value={progress} sx={{ height: 8, borderRadius: 4, my: 1.5 }} />
 
-        <Box display='flex' alignItems='center'  className='!mt-4'>
+        <Box display='flex' alignItems='center' className='!mt-4'>
           <AssignmentIcon sx={{ fontSize: 18, mr: 1, color: 'text.secondary' }} />
           <Typography variant='body2' color='text.secondary' className='!font-bold'>
             {tasksRemaining} tasks remaining
           </Typography>
         </Box>
       </CardContent>
-      <Button variant='contained' sx={{ py: 2.5, width: '100%', borderTopLeftRadius: 0, borderTopRightRadius: 0 }}>
-        View Details
-      </Button>
     </Card>
   )
 }

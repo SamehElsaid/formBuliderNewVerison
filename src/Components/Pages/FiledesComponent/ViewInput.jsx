@@ -8,19 +8,17 @@ import en from 'date-fns/locale/en-US'
 import { Autocomplete, Button, Dialog, IconButton, InputAdornment, Rating, TextField } from '@mui/material'
 import { Icon } from '@iconify/react'
 
-
 function convertMomentToDateFnsFormat(format) {
-  if (!format || typeof format !== 'string') return 'yyyy-MM-dd';
+  if (!format || typeof format !== 'string') return 'yyyy-MM-dd'
 
   return format
-    .replace(/DD/g, 'dd')   // Day
+    .replace(/DD/g, 'dd') // Day
     .replace(/YYYY/g, 'yyyy') // Year full
-    .replace(/YY/g, 'yy')   // Year short
-    .replace(/HH/g, 'HH')   // 24-hour format (unchanged)
-    .replace(/mm/g, 'mm')   // minutes (unchanged)
-    .replace(/ss/g, 'ss');  // seconds (unchanged)
+    .replace(/YY/g, 'yy') // Year short
+    .replace(/HH/g, 'HH') // 24-hour format (unchanged)
+    .replace(/mm/g, 'mm') // minutes (unchanged)
+    .replace(/ss/g, 'ss') // seconds (unchanged)
 }
-
 
 const ViewInput = ({
   input,
@@ -389,6 +387,7 @@ const ViewInput = ({
     ) : (
       <DatePicker
         selected={value}
+        open={false}
         locale={locale == 'ar' ? ar : en}
         popperPlacement='bottom-start'
         onChange={date => onChange(date)}
@@ -408,14 +407,14 @@ const ViewInput = ({
   }
 
   if (input.type == 'Date') {
-    const raw = JSON.parse(input?.descriptionEn ?? '{}');
+    const raw = JSON.parse(input?.descriptionEn ?? '{}')
 
-    const format = convertMomentToDateFnsFormat(raw.format);
+    const format = convertMomentToDateFnsFormat(raw.format)
 
     const label = {
       format,
-      showTime: raw.showTime === 'true',
-    };
+      showTime: raw.showTime === 'true'
+    }
 
     console.log(label)
     const today = new Date()
@@ -522,6 +521,7 @@ const ViewInput = ({
     ) : (
       <DatePicker
         selected={value}
+        open={false}
         locale={locale == 'ar' ? ar : en}
         popperPlacement='bottom-start'
         onChange={date => onChange(date)}

@@ -3,7 +3,6 @@ import { useState, Fragment, useEffect } from 'react'
 
 // ** Next Import
 import { useRouter } from 'next/router'
-import Spinner from 'src/@core/components/spinner'
 
 // ** MUI Imports
 import Box from '@mui/material/Box'
@@ -14,11 +13,16 @@ import Divider from '@mui/material/Divider'
 import { styled } from '@mui/material/styles'
 import Typography from '@mui/material/Typography'
 import MenuItem from '@mui/material/MenuItem'
+
+// ** Icon Imports
 import Icon from 'src/@core/components/icon'
+
+// ** Context
 import { useDispatch, useSelector } from 'react-redux'
 import { useCookies } from 'react-cookie'
 import { REMOVE_USER } from 'src/store/apps/authSlice/authSlice'
 import Link from 'next/link'
+
 import { axiosPost } from 'src/Components/axiosCall'
 import Cookies from 'js-cookie'
 import { decryptData } from 'src/Components/encryption'
@@ -27,6 +31,8 @@ import { useIntl } from 'react-intl'
 import { Skeleton } from '@mui/material'
 import { usePathname } from 'next/navigation'
 import ImageLoad from 'src/Components/ImageLoad'
+import { SET_ACTIVE_LOADING, SET_STOP_LOADING } from 'src/store/apps/LoadingMainSlice/LoadingMainSlice'
+import { logout } from 'src/services/AuthService'
 
 // ** Styled Components
 const BadgeContentSpan = styled('span')(({ theme }) => ({
@@ -85,10 +91,10 @@ const UserDropdown = props => {
   }
   const [_, __, removeCookie] = useCookies(['sub'])
   const dispatch = useDispatch()
-  const [loading, setLoading] = useState(false)
 
   const handleLogout = () => {
-    setLoading(true)
+    dispatch(SET_ACTIVE_LOADING())
+
     handleDropdownClose('/')
     const authToken = Cookies.get('sub')
     axiosPost('auth/logout/', locale, { token: decryptData(authToken).token })
@@ -99,7 +105,7 @@ const UserDropdown = props => {
         }
       })
       .finally(_ => {
-        setLoading(false)
+        dispatch(SET_STOP_LOADING())
       })
   }
 
@@ -112,14 +118,6 @@ const UserDropdown = props => {
 
   return (
     <>
-      {loading && (
-        <div
-          style={{ zIndex: 222222, background: theme.palette.background.default }}
-          className={`fixed inset-0 h-screen duration-500`}
-        >
-          <Spinner />
-        </div>
-      )}
       {profile ? (
         <Fragment>
           <Badge
@@ -138,7 +136,7 @@ const UserDropdown = props => {
               </div>
 
               <Avatar
-                alt={profile?.first_name}
+                alt={profile?.name}
                 className='capitalize'
                 onClick={handleDropdownOpen}
                 sx={{ width: 38, height: 38 }}
@@ -151,7 +149,7 @@ const UserDropdown = props => {
                   <></>
                 ) : (
                   <>
-                    {profile?.first_name[0]} {profile?.last_name[0]}
+                    {profile?.name?.charAt(0)} {profile?.name?.charAt(1)}
                   </>
                 )}
               </Avatar>
@@ -176,7 +174,7 @@ const UserDropdown = props => {
                   }}
                 >
                   <Avatar
-                    alt={profile?.first_name}
+                    alt={profile?.name}
                     className='capitalize'
                     onClick={handleDropdownOpen}
                     sx={{ width: 38, height: 38 }}
@@ -184,19 +182,19 @@ const UserDropdown = props => {
                     {profile?.image_url && profile?.image_url !== '' ? (
                       <ImageLoad
                         src={profile?.image_url}
-                        alt={profile?.first_name}
+                        alt={profile?.name}
                         className='!w-full object-cover rounded-full'
                       />
                     ) : (
                       <>
-                        {profile?.first_name[0]} {profile?.last_name[0]}
+                        {profile?.name?.charAt(0)} {profile?.name?.charAt(1)}
                       </>
                     )}
                   </Avatar>
                 </Badge>
                 <Box sx={{ display: 'flex', ml: 2.5, alignItems: 'flex-start', flexDirection: 'column' }}>
                   <Typography className='uppercase' sx={{ fontWeight: 500 }}>
-                    {profile?.first_name} {profile?.last_name}
+                    {profile?.name}
                   </Typography>
                   <Typography className='capitalize' variant='body2'>
                     {profile?.kind && profile?.kind}
@@ -214,7 +212,7 @@ const UserDropdown = props => {
 
 
             <Divider sx={{ my: theme => `${theme.spacing(2)} !important` }} />
-            <MenuItemStyled sx={{ p: 0 }} onClick={handleLogout}>
+            <MenuItemStyled sx={{ p: 0 }} onClick={logout}>
               <Box sx={styles}>
                 <Icon icon='tabler:logout' />
                 {messages.signOut}
@@ -224,7 +222,6 @@ const UserDropdown = props => {
         </Fragment>
       ) : (
         <div className='flex || items-center || gap-1'>
-
           <Typography
             variant='h6'
             noWrap
@@ -240,22 +237,6 @@ const UserDropdown = props => {
           >
             {messages.login}
           </Typography>
-          <Typography
-            variant='h6'
-            noWrap
-            component={Link}
-            href={`/${locale}/register`}
-            sx={{
-              mr: 2,
-              display: { xs: 'none', md: 'flex' },
-              color: 'inherit',
-              textDecoration: 'none'
-            }}
-            className='hover:!text-main-color duration-300'
-          >
-            {messages.register}
-          </Typography>
-
         </div>
       )}
     </>
