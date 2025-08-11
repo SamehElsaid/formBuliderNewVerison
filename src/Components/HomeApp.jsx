@@ -33,7 +33,6 @@ function HomeApp({ children }) {
     return <LoadingMain login={true} />
   }
 
-  console.log('ok')
 
   return (
     <>

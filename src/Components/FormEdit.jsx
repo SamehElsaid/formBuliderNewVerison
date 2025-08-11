@@ -21,7 +21,6 @@ function FormEdit({ open, setOpen, setData }) {
   const [fieldLabelEn, setFieldLabelEn] = useState('')
   const [loading, setLoading] = useState(false)
 
-
   useEffect(() => {
     if (open) {
       setFieldLabel(open.nameAr)
@@ -31,8 +30,8 @@ function FormEdit({ open, setOpen, setData }) {
 
   const updateField = () => {
     if (!fieldLabel || !fieldLabelEn) {
-      toast.error(locale === 'ar' ? 'يجب إدخال الحقلين' : 'Please enter the fields')
-      
+      toast.error(messages.errors.PleaseEnterTheFields)
+
       return
     }
 
@@ -41,25 +40,27 @@ function FormEdit({ open, setOpen, setData }) {
       id: open.id,
       nameAr: fieldLabel,
       nameEn: fieldLabelEn
-    }).then(res => {
-      if (res.status) {
-        toast.success(locale === 'ar' ? 'تم التعديل' : 'Field updated')
-        setOpen(null)
-        setData(prev => ({
-          ...prev,
-          fields: prev.fields.map(field =>
-            field.id === open.id ? { ...field, nameAr: fieldLabel, nameEn: fieldLabelEn } : field
-          )
-        }))
-      }
-    }).finally(() => {
-      setLoading(false)
     })
+      .then(res => {
+        if (res.status) {
+          toast.success(messages.success.updated)
+          setOpen(null)
+          setData(prev => ({
+            ...prev,
+            fields: prev.fields.map(field =>
+              field.id === open.id ? { ...field, nameAr: fieldLabel, nameEn: fieldLabelEn } : field
+            )
+          }))
+        }
+      })
+      .finally(() => {
+        setLoading(false)
+      })
   }
 
   return (
     <Dialog open={open} onClose={() => setOpen(null)} fullWidth>
-      <DialogTitle>{locale === 'ar' ? 'تعديل الحقل' : 'Edit Field'}</DialogTitle>
+      <DialogTitle>{messages.field.edit}</DialogTitle>
       <DialogContent>
         <TextField
           label={messages.filed_name_ar}
@@ -72,7 +73,7 @@ function FormEdit({ open, setOpen, setData }) {
               <InputAdornment
                 position='end'
                 onClick={async () => {
-                  const loading = toast.loading(locale === 'ar' ? 'يتم الترجمه' : 'Translating')
+                  const loading = toast.loading(messages.translating)
                   const res = await UrlTranAr(fieldLabel)
                   setFieldLabelEn(res)
                   toast.dismiss(loading)
@@ -96,7 +97,7 @@ function FormEdit({ open, setOpen, setData }) {
               <InputAdornment
                 position='end'
                 onClick={async () => {
-                  const loading = toast.loading(locale === 'ar' ? 'يتم الترجمه' : 'Translating')
+                  const loading = toast.loading(messages.translating)
                   const res = await UrlTranEn(fieldLabelEn)
                   setFieldLabel(res)
                   toast.dismiss(loading)
@@ -112,10 +113,10 @@ function FormEdit({ open, setOpen, setData }) {
       </DialogContent>
       <DialogActions>
         <LoadingButton variant='contained' loading={loading} onClick={() => updateField()}>
-          {locale === 'ar' ? 'حفظ' : 'Save'}
+          {messages.save}
         </LoadingButton>
         <Button variant='contained' color='secondary' onClick={() => setOpen(null)}>
-          {locale === 'ar' ? 'إلغاء' : 'Cancel'}
+          {messages.cancel}
         </Button>
       </DialogActions>
     </Dialog>

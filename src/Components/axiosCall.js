@@ -183,16 +183,12 @@ export const uploadImage = async (file, onProgress, locale, mult, index) => {
         data: `${decryptData(authToken).username}/` + fileNew.name + '.' + fileNew.type.split('/')[1]
       }
     } catch (error) {
-      toast.error(locale === 'ar' ? 'حدث خطأ في رفع الصورة' : 'Error uploading file: ' + error.message)
-
       return {
         status: false,
         data: null
       }
     }
   } catch (err) {
-    toast.error(locale === 'ar' ? 'حدث خطأ في رفع الصورة' : 'Error uploading file: ' + err.message)
-
     return {
       status: false,
       data: null
@@ -200,19 +196,16 @@ export const uploadImage = async (file, onProgress, locale, mult, index) => {
   }
 }
 
-export const validateImageFile = (file, locale) => {
+export const validateImageFile = (file, locale, messages) => {
   if (!file) {
-    return { isValid: false, error: locale === 'ar' ? 'لا يوجد ملف' : 'No file provided' }
+    return { isValid: false, error: messages.errors.noFile }
   }
 
   const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/webp']
   if (!allowedTypes.includes(file.type)) {
     return {
       isValid: false,
-      error:
-        locale === 'ar'
-          ? 'يجب أن يكون الصورة في الصيغة JPEG أو PNG أو JPG أو WEBP'
-          : 'Only JPEG, PNG, JPG, and WEBP images are allowed'
+      error: messages.errors.invalidImage
     }
   }
 

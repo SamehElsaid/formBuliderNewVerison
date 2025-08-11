@@ -228,30 +228,19 @@ const ReactPageEditor = ({ pageName, initialData, initialDataApi, workflowId }) 
             )}
             <div className='flex gap-2 ms-auto'>
               <Button
-                variant='contained'
-                color={'success'}
-                onClick={() => {
-                  setSaveData(true)
-                }}
-              >
-                <MdOutlineSaveAs className='text-xl me-1' />
-                {messages.saveChanges}
-              </Button>
-              <button
-                className={`w-[50px] h-[50px] flex items-center justify-center rounded-full bg-[#dfdfdf] hover:!bg-white duration-300 shadow-main ${
-                  openApiData ? '!bg-[#9f29b4] !text-white hover:!text-[#9f29b4]' : ''
-                }`}
+                variant='outlined'
+                color={"primary"}
+               
                 title={messages.ApiControl}
                 onClick={() => {
                   setOpenApiData(!openApiData)
                 }}
               >
                 <TbApi className='text-2xl' />
-              </button>
-              <button
-                className={`w-[50px] h-[50px] flex items-center justify-center rounded-full bg-[#dfdfdf] hover:!bg-white duration-300 shadow-main ${
-                  readOnly ? '!bg-[#9f29b4] !text-white hover:!text-[#9f29b4]' : ''
-                }`}
+              </Button>
+              <Button
+                variant={readOnly ? 'contained' : 'outlined'}
+                color={"primary"}
                 title={messages.viewMode}
                 onClick={() => {
                   setReadOnly(!readOnly)
@@ -259,11 +248,10 @@ const ReactPageEditor = ({ pageName, initialData, initialDataApi, workflowId }) 
                 }}
               >
                 <FaEye className='text-xl' />
-              </button>
-              <button
-                className={`w-[50px] h-[50px] flex items-center justify-center rounded-full bg-[#dfdfdf] hover:!bg-white duration-300 shadow-main ${
-                  advancedEdit ? '!bg-[#9f29b4] !text-white hover:!text-[#9f29b4]' : ''
-                }`}
+              </Button>
+              <Button
+                variant={advancedEdit ? 'contained' : 'outlined'}
+                color={"warning"}
                 title={messages.editMode}
                 onClick={() => {
                   setAdvancedEdit(!advancedEdit)
@@ -277,18 +265,28 @@ const ReactPageEditor = ({ pageName, initialData, initialDataApi, workflowId }) 
                 }}
               >
                 <IoSettingsOutline className='text-xl' />
-              </button>
-              <button
-                className={`w-[50px] h-[50px] flex items-center justify-center rounded-full text-white bg-red-500 hover:bg-red-600 duration-300 shadow-main ${
-                  openBack ? 'text-white bg-red-700 hover:text-red-700' : ''}`}
+              </Button>
+          
+              <Button
+                variant='outlined'
+                color={'error'}
                 onClick={() => {
                   JSON.stringify(editorValue) === JSON.stringify(newData)
                     ? push(`/${locale}/setting/pages`)
                     : setOpenBack(true)
                 }}
               >
-                <RiArrowGoBackFill className='text-xl' />
-              </button>
+                {messages.exit}
+              </Button>
+              <Button
+                variant='contained'
+                color={'success'}
+                onClick={() => {
+                  setSaveData(true)
+                }}
+              >
+                {messages.saveChanges}
+              </Button>
             </div>
           </div>
         </div>

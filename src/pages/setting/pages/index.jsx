@@ -9,7 +9,6 @@ import TableEdit from 'src/Components/TableEdit/TableEdit'
 import IconifyIcon from 'src/Components/icon'
 import AddPage from 'src/Components/Pages/AddPage'
 import Link from 'next/link'
-import { Icon } from '@iconify/react'
 import DeletePopUp from 'src/Components/DeletePopUp'
 import Breadcrumbs from 'src/Components/breadcrumbs'
 

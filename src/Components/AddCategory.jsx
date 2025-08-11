@@ -41,16 +41,9 @@ export default function AddCategory({ open, setOpen, setRefresh }) {
   const [loadingBtn, setLoadingBtn] = useState(false)
 
   const schema = yup.object().shape({
-    nameEn: yup
-      .string()
-      .required(messages.required)
-      .min(3, locale === 'ar' ? 'يجب ان يكون الاسم اكثر من 3 احرف' : 'Name must be more than 3 characters'),
-    nameAr: yup
-      .string()
-      .required(messages.required)
-      .min(3, locale === 'ar' ? 'يجب ان يكون الاسم اكثر من 3 احرف' : 'Name must be more than 3 characters')
+    nameEn: yup.string().required(messages.errors.required).min(3, messages.errors.min),
+    nameAr: yup.string().required(messages.errors.required).min(3, messages.errors.min)
   })
-
 
   const defaultValues = {
     nameAr: '',
@@ -72,10 +65,13 @@ export default function AddCategory({ open, setOpen, setRefresh }) {
     mode: 'onChange'
   })
 
-  const setValueWithTrigger = useCallback((name, value) => {
-    setValue(name, value)
-    trigger(name)
-  }, [setValue, trigger])
+  const setValueWithTrigger = useCallback(
+    (name, value) => {
+      setValue(name, value)
+      trigger(name)
+    },
+    [setValue, trigger]
+  )
 
   useEffect(() => {
     if (typeof open !== 'boolean') {
@@ -92,25 +88,29 @@ export default function AddCategory({ open, setOpen, setRefresh }) {
   const onSubmit = data => {
     setLoadingBtn(true)
     if (typeof open !== 'boolean') {
-      axiosPatch(`Category`, locale, { ...data, id: open.id }).then(res => {
-        if (res.status) {
-          toast.success(locale === 'ar' ? 'تم تعديل الفئة بنجاح' : 'Category updated successfully')
-          close()
-          setRefresh(prev => prev + 1)
-        }
-      }).finally(() => {
-        setLoadingBtn(false)
-      })
+      axiosPatch(`Category`, locale, { ...data, id: open.id })
+        .then(res => {
+          if (res.status) {
+            toast.success(messages.success.updated)
+            close()
+            setRefresh(prev => prev + 1)
+          }
+        })
+        .finally(() => {
+          setLoadingBtn(false)
+        })
     } else {
-      axiosPost('Category', locale, data).then(res => {
-        if (res.status) {
-          toast.success(locale === 'ar' ? 'تم اضافة الفئة بنجاح' : 'Category added successfully')
-          close()
-          setRefresh(prev => prev + 1)
-        }
-      }).finally(() => {
-        setLoadingBtn(false)
-      })
+      axiosPost('Category', locale, data)
+        .then(res => {
+          if (res.status) {
+            toast.success(messages.success.added)
+            close()
+            setRefresh(prev => prev + 1)
+          }
+        })
+        .finally(() => {
+          setLoadingBtn(false)
+        })
     }
   }
 
@@ -133,13 +133,7 @@ export default function AddCategory({ open, setOpen, setRefresh }) {
           }}
         >
           <Typography variant='h3' sx={{ mb: 2 }}>
-            {typeof open !== 'boolean'
-              ? locale === 'ar'
-                ? 'تعديل قسم'
-                : 'Edit Category'
-              : locale === 'ar'
-              ? 'اضف قسم'
-              : 'Add Category'}
+            {typeof open !== 'boolean' ? messages.category.edit : messages.category.add}
           </Typography>
         </DialogTitle>
         <DialogContent>
@@ -164,7 +158,7 @@ export default function AddCategory({ open, setOpen, setRefresh }) {
                     }}
                     error={Boolean(errors.nameAr)}
                     {...(errors.nameAr && { helperText: errors.nameAr.message })}
-                    label={locale === 'ar' ? 'الاسم بالعربية' : 'Name in Arabic'}
+                    label={messages.nameAr}
                   />
                 </Box>
               )}
@@ -185,7 +179,7 @@ export default function AddCategory({ open, setOpen, setRefresh }) {
                     }}
                     error={Boolean(errors.nameEn)}
                     {...(errors.nameEn && { helperText: errors.nameEn.message })}
-                    label={locale === 'ar' ? 'الاسم بالانجليزية' : 'Name in English'}
+                    label={messages.nameEn}
                   />
                 </Box>
               )}
@@ -201,10 +195,10 @@ export default function AddCategory({ open, setOpen, setRefresh }) {
           }}
         >
           <LoadingButton loading={loadingBtn} variant='contained' type='submit'>
-            {locale === 'ar' ? ' ارسال' : 'Send'}
+            {messages.send}
           </LoadingButton>
           <Button variant='tonal' color='secondary' onClick={close}>
-            {locale === 'ar' ? 'الغاء' : 'Cancel'}
+            {messages.cancel}
           </Button>
         </DialogActions>
       </form>

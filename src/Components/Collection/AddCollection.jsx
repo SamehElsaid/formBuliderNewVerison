@@ -37,12 +37,7 @@ const AddCollection = props => {
     key: yup
       .string()
       .required(messages['required'])
-      .matches(
-        /^[A-Za-z]+$/,
-        locale === 'ar'
-          ? 'يجب ان يحتوي المفتاح على حروف فقط ولا يحتوي على ارقام او مسافات'
-          : 'Key must be a string without Special characters or spaces'
-      )
+      .matches(/^[A-Za-z]+$/, messages.errors.keyMustBeString)
       .trim()
   })
 
@@ -91,7 +86,7 @@ const AddCollection = props => {
         open.descriptionAr === sendData.descriptionAr &&
         open.descriptionEn === sendData.descriptionEn
       ) {
-        return toast.info(locale === 'ar' ? 'لا يوجد تغييرات' : 'No changes')
+        return toast.info(messages.collections['noChanges'])
       }
       setLoading(true)
 
@@ -113,13 +108,10 @@ const AddCollection = props => {
       axiosPut('collections/update', locale, sendData)
         .then(res => {
           if (res.status) {
-            toast.success(locale === 'ar' ? 'تم إضافة نموذج البيانات بنجاح' : 'Data Model added successfully')
+            toast.success(messages.collections.DataModelAddedSuccessfully)
             handleClose()
             setRefresh(prev => prev + 1)
           }
-        })
-        .catch(err => {
-          toast.error(locale === 'ar' ? 'حدث خطأ' : 'An error occurred')
         })
         .finally(_ => {
           setLoading(false)
@@ -129,14 +121,12 @@ const AddCollection = props => {
       axiosPost('collections/add', locale, sendData)
         .then(res => {
           if (res.status) {
-            toast.success(locale === 'ar' ? 'تم إضافة نموذج البيانات بنجاح' : 'Data Model added successfully')
+            toast.success(messages.collections.DataModelAddedSuccessfully)
             handleClose()
             setRefresh(prev => prev + 1)
           }
         })
-        .catch(err => {
-          toast.error(locale === 'ar' ? 'حدث خطأ' : 'An error occurred')
-        })
+
         .finally(_ => {
           setLoading(false)
         })
@@ -174,13 +164,7 @@ const AddCollection = props => {
       >
         <Header>
           <Typography variant='h5'>
-            {typeof open === 'boolean'
-              ? locale === 'ar'
-                ? 'إضافة نموذج البيانات'
-                : 'Add Data Model'
-              : locale === 'ar'
-              ? open.nameAr
-              : open.nameEn}
+            {typeof open === 'boolean' ? messages.collections.AddDataModel : open.nameAr}
           </Typography>
           <IconButton
             size='small'
@@ -248,7 +232,7 @@ const AddCollection = props => {
                       <InputAdornment
                         position='end'
                         onClick={async () => {
-                          const loading = toast.loading(locale === 'ar' ? 'يتم الترجمه' : 'Translating')
+                          const loading = toast.loading(messages.translate)
                           const res = await UrlTranAr(value)
                           setValue('name_en', res)
                           trigger('name_en')
@@ -288,7 +272,7 @@ const AddCollection = props => {
                       <InputAdornment
                         position='end'
                         onClick={async () => {
-                          const loading = toast.loading(locale === 'ar' ? 'يتم الترجمه' : 'Translating')
+                          const loading = toast.loading(messages.translate)
                           const res = await UrlTranEn(value)
                           setValue('name_ar', res)
                           trigger('name_ar')
@@ -312,21 +296,21 @@ const AddCollection = props => {
                 <CustomTextField
                   fullWidth
                   type='text'
-                  label={locale === 'ar' ? 'وصف التجميعة بالعربية' : 'Description in Arabic'}
+                  label={messages.card.description_ar}
                   value={value}
                   sx={{ mb: 4 }}
                   multiline
                   rows={4}
                   onChange={onChange}
                   error={Boolean(errors.description_ar)}
-                  placeholder={locale === 'ar' ? 'وصف التجميعة بالعربية' : 'Description in Arabic'}
+                  placeholder={messages.card.description_ar}
                   {...(errors.description_ar && { helperText: errors.description_ar.message })}
                   InputProps={{
                     endAdornment: (
                       <InputAdornment
                         position='end'
                         onClick={async () => {
-                          const loading = toast.loading(locale === 'ar' ? 'يتم الترجمه' : 'Translating')
+                          const loading = toast.loading(messages.translate)
                           const res = await UrlTranAr(value)
                           setValue('description_en', res)
                           trigger('description_en')
@@ -349,20 +333,20 @@ const AddCollection = props => {
                 <CustomTextField
                   fullWidth
                   type='text'
-                  label={locale === 'ar' ? 'وصف التجميعة بالانجليزية' : 'Description in English'}
+                  label={messages.card.description_en}
                   value={value}
                   sx={{ mb: 4 }}
                   multiline
                   rows={4}
                   onChange={onChange}
                   error={Boolean(errors.description_en)}
-                  placeholder={locale === 'ar' ? 'وصف التجميعة بالانجليزية' : 'Description in English'}
+                  placeholder={messages.card.description_en}
                   InputProps={{
                     endAdornment: (
                       <InputAdornment
                         position='end'
                         onClick={async () => {
-                          const loading = toast.loading(locale === 'ar' ? 'يتم الترجمه' : 'Translating')
+                          const loading = toast.loading(messages.translate)
                           const res = await UrlTranEn(value)
                           setValue('description_ar', res)
                           trigger('description_ar')

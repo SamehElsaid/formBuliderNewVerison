@@ -1520,3 +1520,7 @@ li:contains("Add blocks to page") {
 .react-grid-layout{
   z-index: 1;
 }
+
+input:focus-visible ,textarea:focus-visible{
+  outline: none !important;
+}

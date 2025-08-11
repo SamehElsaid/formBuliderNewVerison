@@ -71,6 +71,12 @@
   "createInput": "Add Field",
   "Select_Collection": "Select Collection",
   "View_Value": "View Field",
+  "collections": {
+    "noChanges": "No changes",
+    "DataModelAddedSuccessfully": "Data Model added successfully",
+    "DataModelUpdatedSuccessfully": "Data Model updated successfully",
+    "AddDataModel": "Add Data Model"
+  },
   "key": "Key",
   "filter": "Filter",
   "enable": "Enable",
@@ -125,7 +131,8 @@
   "ReturnToPrevious": "Return to previous page without saving changes",
   "AreYouSureYouWantToSaveTheChanges": "Are you sure you want to save the changes? Please confirm before proceeding",
   "ChangesSaved": "Changes saved",
-  "saveChanges": "Save Changes",
+  "saveChanges": "Save",
+  "exit": "Exit",
   "ApiControl": "API Data Control",
   "viewMode": "View Page",
   "editMode": "Edit Page",
@@ -346,5 +353,57 @@
     "label": "Label",
     "color": "Color",
     "total": "Total"
-  }
+  },
+  "breadcrumbs": {
+    "home": "Home",
+    "dashboard": "Dashboard",
+    "setting": "Setting",
+    "noOptionsText": "No options"
+  },
+  "errors": {
+    "required": "This field is required",
+    "min": "This field must be at least 3 characters",
+    "invalidImage": "Only JPEG, PNG, JPG, and WEBP images are allowed",
+    "noFile": "No file provided",
+    "PleaseEnterTheFields": "Please enter the fields",
+    "keyMustBeString": "Key must be a string without Special characters or spaces"
+  },
+  "success": {
+    "updated": "Updated successfully",
+    "added": "Added successfully"
+  },
+  "category": {
+    "edit": "Edit Category",
+    "add": "Add Category"
+  },
+  "field": {
+    "edit": "Edit Field",
+    "add": "Add Field",
+    "view": "View Field",
+    "maxLength": "Max Length",
+    "minLength": "Min Length",
+    "required": "Required",
+    "unique": "Unique",
+    "showTime": "Show Time",
+    "relation": "Relation",
+    "format": "Format"
+  },
+  "dataSource": {
+    "edit": "Edit Data Source",
+    "add": "Add Data Source",
+    "view": "View Data Source",
+    "maxLength": "Max Length",
+    "minLength": "Min Length",
+    "required": "Required",
+    "unique": "Unique",
+    "showTime": "Show Time",
+    "relation": "Relation",
+    "format": "Format",
+    "DataSourceAddedSuccessfully": "Data Source added successfully"
+  },
+  "translating": "Translating",
+  "type": "Type",
+  "nameAr": "Name (Ar)",
+  "nameEn": "Name (En)",
+  "send": "Send"
 }

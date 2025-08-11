@@ -66,10 +66,10 @@ function useInitialization() {
   }, [cookies.mode])
 
   useEffect(() => {
-    localStorage.removeItem('settings')
-    removeCookie('sub', { path: '/' })
-    dispatch(REMOVE_USER())
-    setLogin(false)
+    // localStorage.removeItem('settings')
+    // removeCookie('sub', { path: '/' })
+    // dispatch(REMOVE_USER())
+    // setLogin(false)
   }, [])
 
   return { login }

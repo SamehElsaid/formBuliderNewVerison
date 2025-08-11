@@ -30,8 +30,7 @@ const AddDataSource = props => {
   const { messages, locale } = useIntl()
 
   const schema = yup.object().shape({
-    name: yup.string().required(messages['required']),
-
+    name: yup.string().required(messages['required'])
   })
 
   const defaultValues = {
@@ -59,13 +58,13 @@ const AddDataSource = props => {
 
     const sendData = {
       name: data.name,
-      isActive: data.isActive,
+      isActive: data.isActive
     }
 
     axiosPost('data-source/add', locale, sendData)
       .then(res => {
         if (res.status) {
-          toast.success(locale === 'ar' ? 'تم إضافة المصدر بنجاح' : 'Data Source added successfully')
+          toast.success(messages.dataSource.DataSourceAddedSuccessfully)
           handleClose()
           setRefresh(prev => prev + 1)
         }
@@ -101,13 +100,7 @@ const AddDataSource = props => {
       >
         <Header>
           <Typography variant='h5'>
-            {typeof open === 'boolean'
-              ? locale === 'ar'
-                ? 'إضافة المصدر'
-                : 'Add Data Source'
-              : locale === 'ar'
-              ? open.name
-              : open.name}
+            {typeof open === 'boolean' ? messages.dataSource.add : open.name}
           </Typography>
           <IconButton
             size='small'
@@ -146,13 +139,12 @@ const AddDataSource = props => {
               )}
             />
 
-
             <Box sx={{ display: 'flex', alignItems: 'center' }} className='gap-4 justify-end py-4 mt-auto'>
               <LoadingButton type='submit' variant='contained' loading={loading}>
-                {locale === 'ar' ? 'ارسال' : 'Submit'}
+                {messages.send}
               </LoadingButton>
               <Button variant='tonal' color='secondary' onClick={handleClose}>
-                {locale === 'ar' ? 'إلغاء' : 'Cancel'}
+                {messages.cancel}
               </Button>
             </Box>
           </form>
