@@ -84,7 +84,7 @@ export default function ViewCart({ data, locale, onChange, readOnly }) {
           {data.cart_type === 'analytic' ? (
             <CardAppleWatch
               data={{
-                title: locale === 'ar' ? data.title_ar : data.title_en,
+                title: data?.[`title_${locale}`] ?? 'title',
                 progress: data.progress,
                 tasksRemaining: data.tasksRemaining,
                 status: data.status
@@ -93,10 +93,10 @@ export default function ViewCart({ data, locale, onChange, readOnly }) {
           ) : data.cart_type === 'statistic' ? (
             <EcommerceStatistics
               data={{
-                title: locale === 'ar' ? data.title_ar : data.title_en || "title",
-                value: data.value || "125k",
-                color: data.color || "primary",
-                icon: data.icon || "tabler:chart-pie-2"
+                title: data?.[`title_${locale}`] ?? 'title',
+                value: data.value || '125k',
+                color: data.color || 'primary',
+                icon: data.icon || 'tabler:chart-pie-2'
               }}
             />
           ) : (

@@ -1,9 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { CircularProgress } from '@mui/material'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { axiosGet, axiosPost } from 'src/Components/axiosCall'
 import DisplayField from './DisplayField'
-import { LoadingButton } from '@mui/lab'
 import { toast } from 'react-toastify'
 import { useRouter } from 'next/router'
 import InputControlDesign from './InputControlDesign'
@@ -15,13 +13,13 @@ import { IoMdSettings } from 'react-icons/io'
 import { Elements } from '@stripe/react-stripe-js'
 import { loadStripe } from '@stripe/stripe-js'
 import SimpleStripeForm from './SimpleStripeForm'
+import { useIntl } from 'react-intl'
 
 const ResponsiveGridLayout = WidthProvider(GridLayout)
 
 export default function ViewCollection({ data, locale, onChange, readOnly, disabled, workflowId }) {
   const [getFields, setGetFields] = useState([])
   const [loading, setLoading] = useState(true)
-  const [loadingSubmit, setLoadingSubmit] = useState(false)
   const [redirect, setRedirect] = useState(false)
   const [reload, setReload] = useState(0)
   const [errors, setErrors] = useState(false)
@@ -31,7 +29,7 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
   const [pay, updatePay] = useState(false)
   const { push } = useRouter()
   const stripePromise = loadStripe('pk_test_12345...')
-  console.log(workflowId)
+  const { messages } = useIntl()
 
   const [layout, setLayout] = useState()
   const addMoreElement = data.addMoreElement ?? []
@@ -135,8 +133,6 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
       return setErrors(refError.current)
     }
 
-    setLoadingSubmit(true)
-
     axiosPost(
       data.type_of_sumbit === 'collection' ? `generic-entities/${data.collectionName}` : data.submitApi,
       locale,
@@ -144,28 +140,24 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
       false,
       false,
       data.type_of_sumbit !== 'collection' ? true : false
-    )
-      .then(res => {
-        if (res.status) {
-          setReload(prev => prev + 1)
-          toast.success(locale === 'ar' ? 'تم إرسال البيانات بنجاح' : 'Data sent successfully')
-          updatePay(true)
-          console.log(redirect)
-          if (data.redirect === '{{redirect}}') {
-            if (redirect) {
-              push(`/${locale}/${redirect}`)
-            }
+    ).then(res => {
+      if (res.status) {
+        setReload(prev => prev + 1)
+        toast.success(messages.dialogs.dataSentSuccessfully)
+        updatePay(true)
+        console.log(redirect)
+        if (data.redirect === '{{redirect}}') {
+          if (redirect) {
+            push(`/${locale}/${redirect}`)
+          }
 
-            return
-          }
-          if (data?.redirect) {
-            push(`/${locale}/${finalUrl}`)
-          }
+          return
         }
-      })
-      .finally(() => {
-        setLoadingSubmit(false)
-      })
+        if (data?.redirect) {
+          push(`/${locale}/${finalUrl}`)
+        }
+      }
+    })
   }
 
   const [open, setOpen] = useState(false)
@@ -285,7 +277,7 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
       />
       {loading ? (
         <div className='h-[300px]  flex justify-center items-center text-2xl font-bold border-2 border-dashed border-main rounded-md'>
-          {locale === 'ar' ? 'يرجى تحديد نموذج البيانات' : 'Please Select Data Model'}
+          {messages.pleaseSelectDataModel}
         </div>
       ) : (
         <form className={'w-[calc(100%)]'} onClick={() => setErrors(false)} onSubmit={handleSubmit}>

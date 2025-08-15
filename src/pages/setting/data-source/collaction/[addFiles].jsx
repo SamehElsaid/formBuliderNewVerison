@@ -74,7 +74,7 @@ function AddField() {
       minWidth: 200,
       field: 'name_en',
       disableColumnMenu: true,
-      headerName: locale === 'ar' ? 'الحقل بالانجليزية' : 'Field in English',
+      headerName: messages.dialogs.fieldInEnglish,
       renderCell: ({ row }) => (
         <Typography
           variant='subtitle2'
@@ -91,7 +91,7 @@ function AddField() {
       minWidth: 200,
       field: 'name_ar',
       disableColumnMenu: true,
-      headerName: locale === 'ar' ? 'الحقل بالعربية' : 'Field in Arabic',
+      headerName: messages.dialogs.fieldInArabic,
       renderCell: ({ row }) => (
         <Typography
           variant='subtitle2'
@@ -107,7 +107,7 @@ function AddField() {
       minWidth: 200,
       field: 'type',
       disableColumnMenu: true,
-      headerName: locale === 'ar' ? 'النوع' : 'Type',
+      headerName: messages.dialogs.type,
       renderCell: ({ row }) => (
         <Typography
           variant='subtitle2'
@@ -123,7 +123,7 @@ function AddField() {
       minWidth: 200,
       field: 'relation',
       disableColumnMenu: true,
-      headerName: locale === 'ar' ? 'العلاقة' : 'Relation',
+      headerName: messages.dialogs.relation,
       renderCell: ({ row }) => (
         <Typography
           variant='subtitle2'
@@ -137,7 +137,7 @@ function AddField() {
               <GetCollectionName name={row.options.target} />
             )
           ) : (
-            <Chip label={locale === 'ar' ? 'لا يوجد' : 'Not Found'} />
+            <Chip label={messages.dialogs.notFound} />
           )}
         </Typography>
       )
@@ -147,10 +147,10 @@ function AddField() {
       minWidth: 130,
       field: 'action',
       sortable: false,
-      headerName: messages.actions,
+      headerName: messages.dialogs.actions,
       renderCell: params => (
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <Tooltip title={locale === 'ar' ? 'عرض الحقل' : 'View Field'}>
+          <Tooltip title={messages.dialogs.viewField}>
             <IconButton
               size='small'
               onClick={e => {
@@ -160,7 +160,7 @@ function AddField() {
               <IconifyIcon icon='tabler:eye' />
             </IconButton>
           </Tooltip>
-          <Tooltip title={locale === 'ar' ? 'تعديل الحقل' : 'Edit Field'}>
+          <Tooltip title={messages.dialogs.editField}>
             <IconButton
               size='small'
               onClick={e => {
@@ -170,13 +170,13 @@ function AddField() {
               <IconifyIcon icon='tabler:edit' />
             </IconButton>
           </Tooltip>
-          <Tooltip title={messages.delete}>
+          <Tooltip title={messages.dialogs.delete}>
             <IconButton
               size='small'
               onClick={e => {
                 setDeletePage(params.row.id)
                 if (deletePage !== params.row.id) {
-                  toast.info(locale === 'ar' ? 'هل أنت متأكد ؟' : 'Are you sure you want to delete this item?', {
+                  toast.info(messages.dialogs.areYouSureYouWantToDeleteThisItem, {
                     position: 'bottom-right',
                     autoClose: 4000,
                     hideProgressBar: false,
@@ -190,11 +190,11 @@ function AddField() {
                     iconSize: 20,
                     iconPosition: 'left',
                     onClick: () => {
-                      const loadingToast = toast.loading(locale === 'ar' ? 'جاري حذف الحقل...' : 'Deleting field...')
+                      const loadingToast = toast.loading(messages.dialogs.deletingField)
                       axiosDelete(`collection-fields/delete?collectionFieldId=${params.row.id}`, locale)
                         .then(res => {
                           if (res.status) {
-                            toast.success(locale === 'ar' ? 'تم حذف الحقل بنجاح' : 'Field deleted successfully')
+                            toast.success(messages.dialogs.fieldDeletedSuccessfully)
                             setData(prev => ({ ...prev, fields: prev.fields.filter(ele => ele.id !== params.row.id) }))
                             setRefresh(prev => prev + 1)
                           }
@@ -282,7 +282,7 @@ function AddField() {
             </Avatar>
           </div>
           <Button variant='contained' color='primary' onClick={() => setOpen(data.collection)}>
-            {locale === 'ar' ? 'إضافة حقل' : 'Add Field'}
+            {messages.dialogs.addField}
           </Button>
         </CardContent>
       </Card>
@@ -297,7 +297,7 @@ function AddField() {
             >
               <CustomTextField
                 id='input'
-                label={locale === 'ar' ? 'البحث' : 'Search'}
+                label={messages.dialogs.search}
                 value={startSearch}
                 onChange={e => {
                   setStartSearch(e.target.value)
@@ -311,7 +311,7 @@ function AddField() {
                     setStartSearch('')
                   }}
                 >
-                  {locale === 'ar' ? 'اعادة التعيين' : 'Reset'}
+                  {messages.dialogs.reset}
                 </Button>
               )}
             </form>
@@ -327,7 +327,7 @@ function AddField() {
               getRowId={row => row.index}
               loading={loading}
               locale={locale}
-              noRow={locale === 'ar' ? 'لا يوجد' : 'Not Found'}
+              noRow={messages.dialogs.noRow}
               paginationModel={paginationModel}
               setPaginationModel={setPaginationModel}
             />

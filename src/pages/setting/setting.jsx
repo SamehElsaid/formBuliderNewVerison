@@ -2,11 +2,11 @@ import Breadcrumbs from "src/Components/breadcrumbs"
 import { useIntl } from "react-intl"
 
 function Setting() {
-  const { locale } = useIntl()
+  const { messages } = useIntl()
 
   return (
     <div>
-      <Breadcrumbs routers={[{ name: locale === 'ar' ? 'الإعدادات' : 'Settings' }]} isDashboard />
+      <Breadcrumbs routers={[{ name: messages.dialogs.settings }]} isDashboard />
 
     </div>
   )

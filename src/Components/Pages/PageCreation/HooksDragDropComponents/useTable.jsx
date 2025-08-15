@@ -2,8 +2,11 @@ import { useMemo } from 'react'
 import { FaTableCells } from 'react-icons/fa6'
 import TableView from '../TableView'
 import Select from '../Select'
+import { useIntl } from 'react-intl'
 
 export default function useTable({ advancedEdit, locale, readOnly, buttonRef }) {
+  const { messages } = useIntl()
+  
   const table = useMemo(() => {
     return {
       Renderer: ({ data, onChange }) => {
@@ -18,13 +21,13 @@ export default function useTable({ advancedEdit, locale, readOnly, buttonRef }) 
           />
         )
       },
-      id: locale === 'ar' ? 'جدول' : 'Table',
-      title: locale === 'ar' ? 'جدول' : 'Table',
-      description: locale === 'ar' ? 'يمكن عرض البيانات بشكل منظم في صفوف وأعمدة' : 'Displays structured data in rows and columns.',
+      id: 'table',
+      title: messages.dialogs.table,
+      description: messages.dialogs.tableDescription,
       version: 1,
       controls: {
         type: 'custom',
-        Component: ({ data, onChange }) => <Select title={locale === 'ar' ? 'جدول' : 'Table'} type='table' onChange={onChange} data={data} buttonRef={buttonRef} />
+        Component: ({ data, onChange }) => <Select title={messages.dialogs.table} type='table' onChange={onChange} data={data} buttonRef={buttonRef} />
       },
       icon: <FaTableCells className='text-2xl' />
     }

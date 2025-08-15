@@ -26,8 +26,10 @@ import {
 } from '@mui/material';
 import { HexColorPicker } from 'react-colorful';
 import IconifyIcon from 'src/Components/icon';
+import { useIntl } from 'react-intl';
 
-const DynamicTableControl = ({ data, onChange, title, locale, buttonRef }) => {
+const DynamicTableControl = ({ data, onChange, title, locale }) => {
+  const { messages } = useIntl()
   const [expanded, setExpanded] = useState(false);
   const [showColorPicker, setShowColorPicker] = useState(false);
   const [columnsInput, setColumnsInput] = useState(data?.columns?.join(', ') || '');
@@ -179,7 +181,7 @@ const DynamicTableControl = ({ data, onChange, title, locale, buttonRef }) => {
   return (
     <div className="p-4">
       <Typography className='text-black' variant="h6" gutterBottom>
-        {title} {locale === 'ar' ? 'الإعدادات' : 'Settings'}
+        {title} {messages.dialogs.settings}
       </Typography>
 
       <Accordion
@@ -191,12 +193,12 @@ const DynamicTableControl = ({ data, onChange, title, locale, buttonRef }) => {
           aria-controls="panel1a-content"
           id="panel1a-header"
         >
-          <Typography>{locale === 'ar' ? 'الإعدادات العامة' : 'General Settings'}</Typography>
+          <Typography>{messages.dialogs.generalSettings}</Typography>
         </AccordionSummary>
         <AccordionDetails>
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
             <TextField
-              label={locale === 'ar' ? 'عنوان الجدول (عربي)' : 'Table Title (Arabic)'}
+              label={messages.dialogs.tableTitle}
               variant="outlined"
               fullWidth
               value={data?.title_ar || ''}
@@ -204,7 +206,7 @@ const DynamicTableControl = ({ data, onChange, title, locale, buttonRef }) => {
             />
 
             <TextField
-              label={locale === 'ar' ? 'عنوان الجدول (إنجليزي)' : 'Table Title (English)'}
+              label={messages.dialogs.tableTitle}
               variant="outlined"
               fullWidth
               value={data?.title_en || ''}
@@ -212,7 +214,7 @@ const DynamicTableControl = ({ data, onChange, title, locale, buttonRef }) => {
             />
 
             <TextField
-              label={locale === 'ar' ? 'تسمية الزاوية' : 'Corner Label'}
+              label={messages.dialogs.cornerLabel}
               variant="outlined"
               fullWidth
               value={data?.cornerLabel || ''}
@@ -226,13 +228,13 @@ const DynamicTableControl = ({ data, onChange, title, locale, buttonRef }) => {
                   onChange={handleBooleanChange('showSummary')}
                 />
               }
-              label={locale === 'ar' ? 'إظهار الملخص' : 'Show Summary'}
+              label={messages.dialogs.showSummary}
             />
 
             {data?.showSummary && (
               <>
                 <TextField
-                  label={locale === 'ar' ? 'عنوان الملخص (عربي)' : 'Summary Title (Arabic)'}
+                  label={messages.dialogs.summaryTitle}
                   variant="outlined"
                   fullWidth
                   value={data?.summaryTitle_ar || ''}
@@ -240,7 +242,7 @@ const DynamicTableControl = ({ data, onChange, title, locale, buttonRef }) => {
                 />
 
                 <TextField
-                  label={locale === 'ar' ? 'عنوان الملخص (إنجليزي)' : 'Summary Title (English)'}
+                  label={messages.dialogs.summaryTitle}
                   variant="outlined"
                   fullWidth
                   value={data?.summaryTitle_en || ''}
@@ -261,12 +263,12 @@ const DynamicTableControl = ({ data, onChange, title, locale, buttonRef }) => {
           aria-controls="panel2a-content"
           id="panel2a-header"
         >
-          <Typography>{locale === 'ar' ? 'تخصيص المظهر' : 'Appearance'}</Typography>
+          <Typography>{messages.dialogs.appearance}</Typography>
         </AccordionSummary>
         <AccordionDetails>
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
             <TextField
-              label={locale === 'ar' ? 'لون علامة الصح' : 'Check Color'}
+              label={messages.dialogs.checkColor}
               variant="outlined"
               fullWidth
               value={data?.checkColor || '#10B981'}
@@ -316,18 +318,16 @@ const DynamicTableControl = ({ data, onChange, title, locale, buttonRef }) => {
           aria-controls="panel3a-content"
           id="panel3a-header"
         >
-          <Typography>{locale === 'ar' ? 'ضبط الأعمدة المسبق' : 'Preset Columns'}</Typography>
+          <Typography>{messages.dialogs.presetColumns}</Typography>
         </AccordionSummary>
         <AccordionDetails>
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
             <Typography variant="body2" color="text.secondary">
-              {locale === 'ar'
-                ? 'أدخل الأعمدة المسبقة مفصولة بفواصل (،)'
-                : 'Enter preset columns separated by commas'}
+              { messages.dialogs.enterPresetColumns}
             </Typography>
 
             <TextField
-              label={locale === 'ar' ? 'الأعمدة المسبقة' : 'Preset Columns'}
+              label={messages.dialogs.presetColumns}
               variant="outlined"
               fullWidth
               multiline
@@ -348,18 +348,16 @@ const DynamicTableControl = ({ data, onChange, title, locale, buttonRef }) => {
           aria-controls="panel4a-content"
           id="panel4a-header"
         >
-          <Typography>{locale === 'ar' ? 'ضبط الصفوف المسبق' : 'Preset Rows'}</Typography>
+            <Typography>{messages.dialogs.presetRows}</Typography>
         </AccordionSummary>
         <AccordionDetails>
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
             <Typography variant="body2" color="text.secondary">
-              {locale === 'ar'
-                ? 'أدخل الصفوف المسبقة مفصولة بفواصل (،)'
-                : 'Enter preset rows separated by commas'}
+                {messages.dialogs.enterPresetRows}
             </Typography>
 
             <TextField
-              label={locale === 'ar' ? 'الصفوف المسبقة' : 'Preset Rows'}
+              label={messages.dialogs.presetRows}
               variant="outlined"
               fullWidth
               multiline
@@ -380,18 +378,18 @@ const DynamicTableControl = ({ data, onChange, title, locale, buttonRef }) => {
           aria-controls="panel5a-content"
           id="panel5a-header"
         >
-          <Typography>{locale === 'ar' ? 'تحديد الخانات' : 'Select Cells'}</Typography>
+          <Typography>{messages.dialogs.selectCells}</Typography>
         </AccordionSummary>
         <AccordionDetails>
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
             {selectionStep === 1 && (
               <>
                 <Typography variant="subtitle1">
-                  {locale === 'ar' ? 'الخطوة 1: اختر الأعمدة' : 'Step 1: Select Columns'}
+                  {messages.dialogs.step1}
                 </Typography>
                 {data?.columns?.length > 0 ? (
                   <FormControl fullWidth>
-                    <InputLabel>{locale === 'ar' ? 'اختر الأعمدة' : 'Select Columns'}</InputLabel>
+                    <InputLabel>{messages.dialogs.selectColumns}</InputLabel>
                     <Select
                       multiple
                       value={selectedColumns}
@@ -406,16 +404,12 @@ const DynamicTableControl = ({ data, onChange, title, locale, buttonRef }) => {
                       ))}
                     </Select>
                     <FormHelperText>
-                      {locale === 'ar'
-                        ? 'اختر الأعمدة التي تريد تحديد الخانات فيها'
-                        : 'Select columns where you want to check cells'}
+                      {messages.dialogs.selectColumnsHelperText}
                     </FormHelperText>
                   </FormControl>
                 ) : (
                   <Typography color="text.secondary">
-                    {locale === 'ar'
-                      ? 'لا توجد أعمدة محددة بعد'
-                      : 'No columns defined yet'}
+                    {messages.dialogs.noColumnsDefined}
                   </Typography>
                 )}
                 <Button
@@ -424,7 +418,7 @@ const DynamicTableControl = ({ data, onChange, title, locale, buttonRef }) => {
                   disabled={selectedColumns.length === 0}
                   sx={{ mt: 2 }}
                 >
-                  {locale === 'ar' ? 'التالي' : 'Next'}
+                  {messages.dialogs.next}
                 </Button>
               </>
             )}
@@ -432,13 +426,11 @@ const DynamicTableControl = ({ data, onChange, title, locale, buttonRef }) => {
             {selectionStep === 2 && (
               <>
                 <Typography className='text-black' variant="subtitle1">
-                  {locale === 'ar'
-                    ? `الخطوة 2: اختر الصفوف في الأعمدة المحددة (${selectedColumns.join(', ')})`
-                    : `Step 2: Select Rows in chosen columns (${selectedColumns.join(', ')})`}
+                  {messages.dialogs.step2} (${selectedColumns.join(', ')})
                 </Typography>
                 {data?.rows?.length > 0 ? (
                   <FormControl fullWidth>
-                    <InputLabel>{locale === 'ar' ? 'اختر الصفوف' : 'Select Rows'}</InputLabel>
+                    <InputLabel>{messages.dialogs.selectRows}</InputLabel>
                     <Select
                       multiple
                       value={selectableRows}
@@ -453,16 +445,12 @@ const DynamicTableControl = ({ data, onChange, title, locale, buttonRef }) => {
                       ))}
                     </Select>
                     <FormHelperText>
-                      {locale === 'ar'
-                        ? 'اختر الصفوف التي تريد تحديدها في الأعمدة المختارة'
-                        : 'Select rows to check in the chosen columns'}
+                      {messages.dialogs.selectRowsHelperText}
                     </FormHelperText>
                   </FormControl>
                 ) : (
                   <Typography className='text-black'>
-                    {locale === 'ar'
-                      ? 'لا توجد صفوف محددة بعد'
-                      : 'No rows defined yet'}
+                    {messages.dialogs.noRowsDefined}
                   </Typography>
                 )}
                 <Grid container spacing={2} sx={{ mt: 2 }}>
@@ -471,7 +459,7 @@ const DynamicTableControl = ({ data, onChange, title, locale, buttonRef }) => {
                       variant="outlined"
                       onClick={() => setSelectionStep(1)}
                     >
-                      {locale === 'ar' ? 'رجوع' : 'Back'}
+                      {messages.dialogs.back}
                     </Button>
                   </Grid>
                   <Grid item>
@@ -480,7 +468,7 @@ const DynamicTableControl = ({ data, onChange, title, locale, buttonRef }) => {
                       onClick={() => handleRowSelection(selectableRows)}
                       disabled={selectableRows.length === 0}
                     >
-                      {locale === 'ar' ? 'تأكيد' : 'Confirm'}
+                      {messages.dialogs.confirm}
                     </Button>
                   </Grid>
                 </Grid>
@@ -491,7 +479,7 @@ const DynamicTableControl = ({ data, onChange, title, locale, buttonRef }) => {
               <>
                 <Divider sx={{ my: 2 }} />
                 <Typography className='text-black' variant="subtitle1">
-                  {locale === 'ar' ? 'الخانات المحددة' : 'Selected Cells'}
+                  {messages.dialogs.selectedCells}
                 </Typography>
                 <List dense>
                   {selectedCells.map((cell, index) => (
@@ -519,7 +507,7 @@ const DynamicTableControl = ({ data, onChange, title, locale, buttonRef }) => {
                   onClick={clearSelections}
                   startIcon={<IconifyIcon icon="mdi:delete" />}
                 >
-                  {locale === 'ar' ? 'مسح الكل' : 'Clear All'}
+                  {messages.dialogs.clearAll}
                 </Button>
               </>
             )}

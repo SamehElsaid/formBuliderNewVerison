@@ -63,7 +63,7 @@ const Index = ({ pageName, initialData, initialDataApi, workflowId }) => {
               </div>
             </div>
             <div className='mt-4 text-2xl font-bold animate-pulse'>
-              {locale === 'ar' ? 'جاري تحميل البيانات...' : 'Loading...'}
+              {messages.dialogs.loading}
             </div>
           </div>
         )}

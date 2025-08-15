@@ -2,8 +2,11 @@
 import { CiGrid42 } from 'react-icons/ci'
 import FlexControl from '../FlexControl'
 import { useEffect, useMemo, useRef } from 'react'
+import { useIntl } from 'react-intl'
 
 export default function useFlexControl({ locale, buttonRef }) {
+  const { messages } = useIntl()
+  
   const FlexControlCell = useMemo(() => {
     return {
       Renderer: ({ data, children }) => {
@@ -60,11 +63,8 @@ export default function useFlexControl({ locale, buttonRef }) {
       },
       className: 'flex-control',
       id: 'flexControl',
-      title: locale === 'ar' ? 'التحكم المرن' : 'Flex Control',
-      description:
-        locale === 'ar'
-          ? 'أداة تخطيط لترتيب العناصر باستخدام المواضع المرنة.'
-          : 'A layout tool for arranging elements using flexible positioning.',
+      title: messages.dialogs.flexControl,
+      description: messages.dialogs.flexControlDescription,
       version: 1,
       icon: <CiGrid42 className='text-2xl' />,
       controls: {

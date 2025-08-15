@@ -18,26 +18,22 @@ import { useIntl } from 'react-intl'
 import Collapse from '@kunukn/react-collapse'
 import { axiosGet } from 'src/Components/axiosCall'
 import { toast } from 'react-toastify'
-
 import CloseNav from './CloseNav'
 import IconifyIcon from 'src/Components/icon'
 
 function Select({ onChange, data, type, buttonRef, title }) {
-  const { locale } = useIntl()
+  const { locale, messages } = useIntl()
   const [collection, setCollection] = useState('')
   const [optionsCollection, setOptionsCollection] = useState([])
   const [loadingCollection, setLoadingCollection] = useState(false)
   const [selectedOptions, setSelectedOptions] = useState([])
-  const { messages } = useIntl()
   const [getFields, setGetFields] = useState([])
-  const [dataSources, setDataSources] = useState([])
 
   useEffect(() => {
     setLoadingCollection(true)
     axiosGet(`data-source/get`, locale)
       .then(res => {
         if (res.status) {
-          setDataSources(res.data)
           onChange({
             ...data,
             data_source_id: res.data[0].id
@@ -72,7 +68,7 @@ function Select({ onChange, data, type, buttonRef, title }) {
       axiosGet(`collections/get-by-id?id=${data.collectionId}`, locale).then(res => {
         if (res.status) {
           if (res.data?.id) {
-            const loadingToast = toast.loading(locale === 'ar' ? 'يتم التحميل' : 'Loading')
+            const loadingToast = toast.loading(messages.dialogs.loading)
             axiosGet(`collection-fields/get?CollectionId=${res.data.id}`, locale)
               .then(res => {
                 if (res.status) {
@@ -170,7 +166,7 @@ function Select({ onChange, data, type, buttonRef, title }) {
           renderInput={params => (
             <TextField
               {...params}
-              label={locale === 'ar' ? 'نموذج البيانات' : 'Select Data Model'}
+              label={messages.dialogs.selectDataModel}
               variant='outlined'
               InputProps={{
                 ...params.InputProps,
@@ -225,7 +221,7 @@ function Select({ onChange, data, type, buttonRef, title }) {
                 onChange={e => {
                   if (e.target.value === 'collection') {
                     if (selectedOptions.length !== getFields.length) {
-                      toast.error(locale === 'ar' ? 'يجب اختيار كل الحقول' : 'You must select the All fields')
+                      toast.error(messages.dialogs.youMustSelectTheAllFields)
 
                       return
                     }
@@ -233,17 +229,17 @@ function Select({ onChange, data, type, buttonRef, title }) {
 
                   onChange({ ...data, type_of_sumbit: e.target.value })
                 }}
-                label={locale === 'ar' ? 'نوع الارسال' : 'Type Of Submit'}
+                label={messages.dialogs.typeOfSubmit}
                 variant='filled'
               >
-                <MenuItem value={'collection'}>{locale === 'ar' ? 'هذه النموذج' : 'This Data model'}</MenuItem>
-                <MenuItem value={'api'}>{locale === 'ar' ? 'الي Api اخر' : 'Other API'}</MenuItem>
+                <MenuItem value={'collection'}>{messages.dialogs.thisDataModel}</MenuItem>
+                <MenuItem value={'api'}>{messages.dialogs.otherApi}</MenuItem>
               </TextField>
               <TextField
                 fullWidth
                 value={data.redirect || ''}
                 onChange={e => onChange({ ...data, redirect: e.target.value })}
-                label={locale === 'ar' ? 'الذهاب الي' : 'Redirect to'}
+                label={messages.dialogs.redirectTo}
                 variant='filled'
               />
 
@@ -255,19 +251,19 @@ function Select({ onChange, data, type, buttonRef, title }) {
                   fullWidth
                   value={data.submitApi || ''}
                   onChange={e => onChange({ ...data, submitApi: e.target.value })}
-                  label={locale === 'ar' ? 'ارسال البيانات الي الAPI' : 'Submit To API'}
+                  label={messages.dialogs.submitToApi}
                   variant='filled'
                 />
               </Collapse>
 
               <div className='p-2 mt-4 rounded-md border-2 border-gray-300'>
-                <div className='text-lg font-bold'>{locale === 'ar' ? 'اضافة عناصر' : 'Add More Element'}</div>
+                <div className='text-lg font-bold'>{messages.dialogs.addMoreElement}</div>
 
                 <TextField
                   select
                   fullWidth
                   value={moreElement}
-                  label={locale === 'ar' ? 'اضافة عناصر' : 'Add More Element'}
+                  label={messages.dialogs.addMoreElement}
                   id='select-helper'
                   variant='filled'
                   onChange={e => {
@@ -276,7 +272,7 @@ function Select({ onChange, data, type, buttonRef, title }) {
                 >
                   {addMoreElement.map((item, i) => (
                     <MenuItem value={item.key} key={i}>
-                      {locale === 'ar' ? item.name_ar : item.name_en}
+                      {item?.[`name_${locale}`]}
                     </MenuItem>
                   ))}
                 </TextField>
@@ -367,13 +363,13 @@ function Select({ onChange, data, type, buttonRef, title }) {
                             })
                             setMoreElement('')
                           }
-                          toast.success(locale === 'ar' ? 'تم اضافة العنصر' : 'Element Added')
+                          toast.success(messages.dialogs.elementAdded)
                         }
                       }}
                       variant='contained'
                       color='primary'
                     >
-                      {locale === 'ar' ? 'اضافة' : 'Add'}
+                      {messages.dialogs.add}
                     </Button>
                   </div>
                 </Collapse>
@@ -397,7 +393,7 @@ function Select({ onChange, data, type, buttonRef, title }) {
                                 }
                                 )
                               </span>
-                              {locale === 'ar' ? item.name_ar : item.name_en}{' '}
+                              {item?.[`name_${locale}`]}{' '}
                             </div>
                             <Tooltip title={messages.delete}>
                               <IconButton
@@ -433,11 +429,11 @@ function Select({ onChange, data, type, buttonRef, title }) {
                     kind: e.target.value
                   })
                 }}
-                label={locale === 'ar' ? 'نوع الجدول' : 'Type Of table'}
+                label={messages.dialogs.typeOfTable}
                 variant='filled'
               >
-                <MenuItem value={'view-data'}>{locale === 'ar' ? 'عرض البيانات' : 'View Data'}</MenuItem>
-                <MenuItem value={'form-table'}>{locale === 'ar' ? 'ارسال البيانات' : 'Submit Data '}</MenuItem>
+                <MenuItem value={'view-data'}>{messages.dialogs.viewData}</MenuItem>
+                <MenuItem value={'form-table'}>{messages.dialogs.submitData}</MenuItem>
               </TextField>
               <Collapse
                 transition={`height 300ms cubic-bezier(.4, 0, .2, 1)`}
@@ -450,7 +446,7 @@ function Select({ onChange, data, type, buttonRef, title }) {
                   onChange={e => {
                     if (e.target.value === 'collection') {
                       if (selectedOptions.length !== getFields.length) {
-                        toast.error(locale === 'ar' ? 'يجب اختيار كل الحقول' : 'You must select the All fields')
+                        toast.error(messages.dialogs.youMustSelectTheAllFields)
 
                         return
                       }
@@ -458,17 +454,17 @@ function Select({ onChange, data, type, buttonRef, title }) {
 
                     onChange({ ...data, type_of_sumbit: e.target.value })
                   }}
-                  label={locale === 'ar' ? 'نوع الارسال' : 'Type Of Submit'}
+                  label={messages.dialogs.typeOfSubmit}
                   variant='filled'
                 >
-                  <MenuItem value={'collection'}>{locale === 'ar' ? 'هذه التجميعة' : 'This Collection'}</MenuItem>
-                  <MenuItem value={'api'}>{locale === 'ar' ? 'الي Api اخر' : 'Other API'}</MenuItem>
+                  <MenuItem value={'collection'}>{messages.dialogs.thisCollection}</MenuItem>
+                  <MenuItem value={'api'}>{messages.dialogs.otherApi}</MenuItem>
                 </TextField>
                 <TextField
                   fullWidth
                   value={data.redirect || ''}
                   onChange={e => onChange({ ...data, redirect: e.target.value })}
-                  label={locale === 'ar' ? 'الذهاب الي' : 'Redirect to'}
+                  label={messages.dialogs.redirectTo}
                   variant='filled'
                 />
 
@@ -480,19 +476,19 @@ function Select({ onChange, data, type, buttonRef, title }) {
                     fullWidth
                     value={data.submitApi || ''}
                     onChange={e => onChange({ ...data, submitApi: e.target.value })}
-                    label={locale === 'ar' ? 'ارسال البيانات الي الAPI' : 'Submit To API'}
+                    label={messages.dialogs.submitToApi}
                     variant='filled'
                   />
                 </Collapse>
 
                 <div className='p-2 mt-4 rounded-md border-2 border-gray-300'>
-                  <div className='text-lg font-bold'>{locale === 'ar' ? 'اضافة عناصر' : 'Add More Element'}</div>
+                  <div className='text-lg font-bold'>{messages.dialogs.addMoreElement}</div>
 
                   <TextField
                     select
                     fullWidth
                     value={moreElement}
-                    label={locale === 'ar' ? 'اضافة عناصر' : 'Add More Element'}
+                    label={messages.dialogs.addMoreElement}
                     id='select-helper'
                     variant='filled'
                     onChange={e => {
@@ -501,7 +497,7 @@ function Select({ onChange, data, type, buttonRef, title }) {
                   >
                     {addMoreElement.map((item, i) => (
                       <MenuItem value={item.key} key={i}>
-                        {locale === 'ar' ? item.name_ar : item.name_en}
+                        {item?.[`name_${locale}`]}
                       </MenuItem>
                     ))}
                   </TextField>
@@ -592,13 +588,13 @@ function Select({ onChange, data, type, buttonRef, title }) {
                               })
                               setMoreElement('')
                             }
-                            toast.success(locale === 'ar' ? 'تم اضافة العنصر' : 'Element Added')
+                            toast.success(messages.dialogs.elementAdded)
                           }
                         }}
                         variant='contained'
                         color='primary'
                       >
-                        {locale === 'ar' ? 'اضافة' : 'Add'}
+                        {messages.dialogs.add}
                       </Button>
                     </div>
                   </Collapse>
@@ -610,7 +606,7 @@ function Select({ onChange, data, type, buttonRef, title }) {
                       {data?.addMoreElement?.map(item => (
                         <div key={item.id}>
                           <div className='flex justify-between items-center'>
-                            <div className='text-sm'>{locale === 'ar' ? item.name_ar : item.name_en}</div>
+                            <div className='text-sm'>{item?.[`name_${locale}`]}</div>
                             <Button
                               variant='outlined'
                               color='error'
@@ -622,7 +618,7 @@ function Select({ onChange, data, type, buttonRef, title }) {
                                 })
                               }}
                             >
-                              {locale === 'ar' ? 'حذف' : 'Delete'}
+                              {messages.dialogs.delete}
                             </Button>
                           </div>
                         </div>
@@ -632,7 +628,7 @@ function Select({ onChange, data, type, buttonRef, title }) {
                 </div>
               </Collapse>
 
-              <h2 className='text-lg font-bold'>{locale === 'ar' ? 'الاجراءات' : 'Actions'}</h2>
+              <h2 className='text-lg font-bold'>{messages.dialogs.actions}</h2>
               <FormControlLabel
                 key={data.edit}
                 className='!w-fit capitalize'
@@ -645,7 +641,7 @@ function Select({ onChange, data, type, buttonRef, title }) {
                     }}
                   />
                 }
-                label={locale === 'ar' ? 'تعديل البيانات' : 'Edit Data'}
+                label={messages.dialogs.editData}
               />
               <FormControlLabel
                 key={data.delete}
@@ -659,7 +655,7 @@ function Select({ onChange, data, type, buttonRef, title }) {
                     }}
                   />
                 }
-                label={locale === 'ar' ? 'حذف البيانات' : 'Delete Data'}
+                label={messages.dialogs.deleteData}
               />
             </>
           )}

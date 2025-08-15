@@ -29,7 +29,7 @@ function EditListItem({ open, handleClose, locale, setDataView, dataView }) {
     >
       <Header>
         <Typography className='capitalize text-[#555] !font-bold' variant='h4'>
-          {locale === 'ar' ? open?.text_ar : open?.text_en}
+          {open?.[`text_${locale}`]}
         </Typography>
         <IconButton
           size='small'
@@ -65,7 +65,7 @@ function EditListItem({ open, handleClose, locale, setDataView, dataView }) {
                 setDataView(newDataView)
               }}
               variant='filled'
-              label={locale === 'ar' ? 'النص باللغة الإنجليزية' : 'Text in English'}
+              label={messages.dialogs.textInEnglish}
             />
             <TextField
               fullWidth
@@ -84,7 +84,7 @@ function EditListItem({ open, handleClose, locale, setDataView, dataView }) {
                 setDataView(newDataView)
               }}
               variant='filled'
-              label={locale === 'ar' ? 'النص باللغة العربية' : 'Text in Arabic'}
+              label={messages.dialogs.textInArabic}
             />
             <TextField
               fullWidth
@@ -103,7 +103,7 @@ function EditListItem({ open, handleClose, locale, setDataView, dataView }) {
                 setDataView(newDataView)
               }}
               variant='filled'
-              label={locale === 'ar' ? 'المساحة الداخلية الطويلة' : 'Padding Block'}
+              label={messages.dialogs.paddingBlock}
             />
             <TextField
               fullWidth
@@ -122,7 +122,7 @@ function EditListItem({ open, handleClose, locale, setDataView, dataView }) {
                 setDataView(newDataView)
               }}
               variant='filled'
-              label={locale === 'ar' ? 'المساحة  الداخلية العرضية' : 'Padding Inline'}
+              label={messages.dialogs.paddingInline}
             />
             <TextField
               fullWidth
@@ -141,7 +141,7 @@ function EditListItem({ open, handleClose, locale, setDataView, dataView }) {
                 setDataView(newDataView)
               }}
               variant='filled'
-              label={locale === 'ar' ? 'نصف القطر' : 'Border Radius'}
+              label={messages.dialogs.borderRadius}
             />
             <TextField
               fullWidth
@@ -160,7 +160,7 @@ function EditListItem({ open, handleClose, locale, setDataView, dataView }) {
                 setDataView(newDataView)
               }}
               variant='filled'
-              label={locale === 'ar' ? 'عرض الحد' : 'Border Width'}
+              label={messages.dialogs.borderWidth}
             />
             <TextField
               fullWidth
@@ -179,7 +179,7 @@ function EditListItem({ open, handleClose, locale, setDataView, dataView }) {
                 setDataView(newDataView)
               }}
               variant='filled'
-              label={locale === 'ar' ? 'لون الخلفية' : 'Background Color'}
+              label={messages.dialogs.backgroundColor}
             />
             <TextField
               fullWidth
@@ -198,7 +198,7 @@ function EditListItem({ open, handleClose, locale, setDataView, dataView }) {
                 setDataView(newDataView)
               }}
               variant='filled'
-              label={locale === 'ar' ? 'لون الخط' : 'Color'}
+              label={messages.dialogs.color}
             />
             <TextField
               fullWidth
@@ -217,7 +217,7 @@ function EditListItem({ open, handleClose, locale, setDataView, dataView }) {
                 setDataView(newDataView)
               }}
               variant='filled'
-              label={locale === 'ar' ? 'لون الحد' : 'Border Color'}
+              label={messages.dialogs.borderColor}
             />
 
             <TextField
@@ -237,7 +237,7 @@ function EditListItem({ open, handleClose, locale, setDataView, dataView }) {
                 setDataView(newDataView)
               }}
               variant='filled'
-              label={locale === 'ar' ? 'حجم الخط' : 'Font Size'}
+              label={messages.dialogs.fontSize}
             />
 
             <TextField
@@ -257,7 +257,7 @@ function EditListItem({ open, handleClose, locale, setDataView, dataView }) {
                 setDataView(newDataView)
               }}
               variant='filled'
-              label={locale === 'ar' ? 'الوزن الخط' : 'Font Weight'}
+              label={messages.dialogs.fontWeight}
             />
             <TextField
               fullWidth
@@ -276,7 +276,7 @@ function EditListItem({ open, handleClose, locale, setDataView, dataView }) {
                 setDataView(newDataView)
               }}
               variant='filled'
-              label={locale === 'ar' ? 'نوع الخط' : 'Font Family'}
+              label={messages.dialogs.fontFamily}
               select
             >
               <MenuItem value='solid'>Solid</MenuItem>
@@ -302,7 +302,7 @@ function EditListItem({ open, handleClose, locale, setDataView, dataView }) {
                 setDataView(newDataView)
               }}
               variant='filled'
-              label={locale === 'ar' ? 'لون الخلفية عند التحديد' : 'hover BackgroundColor'}
+              label={messages.dialogs.hoverBackgroundColor}
             />
 
             <TextField
@@ -322,7 +322,7 @@ function EditListItem({ open, handleClose, locale, setDataView, dataView }) {
                 setDataView(newDataView)
               }}
               variant='filled'
-              label={locale === 'ar' ? 'لون الخط عند التحديد' : 'hover Color'}
+              label={messages.dialogs.hoverColor}
             />
             <TextField
               fullWidth
@@ -341,7 +341,7 @@ function EditListItem({ open, handleClose, locale, setDataView, dataView }) {
                 setDataView(newDataView)
               }}
               variant='filled'
-              label={locale === 'ar' ? 'لون الحد عند التحديد' : 'hover Border Color'}
+              label={messages.dialogs.hoverBorderColor}
             />
             <TextField
               fullWidth
@@ -360,7 +360,7 @@ function EditListItem({ open, handleClose, locale, setDataView, dataView }) {
                 setDataView(newDataView)
               }}
               variant='filled'
-              label={locale === 'ar' ? 'لون الحد عند التحديد' : 'hover Border Color'}
+              label={messages.dialogs.hoverBorderColor}
             />
           </div>
         </Box>

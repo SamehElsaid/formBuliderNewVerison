@@ -21,11 +21,11 @@ export default function Index() {
   const [loading, setLoading] = useState(false)
   const inputRef = useRef(null)
   const [refresh, setRefresh] = useState(0)
-  const [data, setData] = useState([])
+  const [data, setData] = useState([])  
 
   useEffect(() => {
     setLoading(true)
-    const loadingToast = toast.loading(locale === 'ar' ? 'جاري التحميل...' : 'Loading...')
+    const loadingToast = toast.loading(messages.dialogs.loading)
     axiosGet(`page/get-pages`, locale)
       .then(res => {
         if (res.status) {
@@ -36,7 +36,7 @@ export default function Index() {
         setLoading(false)
         toast.dismiss(loadingToast)
       })
-  }, [locale, paginationModel.page, paginationModel.pageSize, startSearch, refresh])
+  }, [locale, paginationModel.page, paginationModel.pageSize, startSearch, refresh, messages])
 
   const [deletePage, setDeletePage] = useState(false)
 
@@ -64,7 +64,7 @@ export default function Index() {
       minWidth: 200,
       field: 'name',
       disableColumnMenu: true,
-      headerName: messages.name,
+      headerName: messages.dialogs.name,
       renderCell: ({ row }) => (
         <Typography
           component={Link}
@@ -82,7 +82,7 @@ export default function Index() {
       minWidth: 200,
       field: 'description',
       disableColumnMenu: true,
-      headerName: messages.description,
+      headerName: messages.dialogs.description,
       renderCell: ({ row }) => (
         <Typography variant='subtitle2' className='text-overflow' sx={{ fontWeight: 500, color: 'text.secondary' }}>
           {row.description}
@@ -94,10 +94,10 @@ export default function Index() {
       minWidth: 80,
       field: 'action',
       sortable: false,
-      headerName: messages.actions,
+      headerName: messages.dialogs.actions,
       renderCell: params => (
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <Tooltip title={messages.delete}>
+          <Tooltip title={messages.dialogs.delete}>
             <IconButton
               size='small'
               onClick={e => {
@@ -116,11 +116,11 @@ export default function Index() {
 
   const handleDelete = () => {
     setDeleteLoading(true)
-    const loadingToast = toast.loading(locale === 'ar' ? 'جاري حذف الصفحة...' : 'Deleting page...')
+    const loadingToast = toast.loading(messages.dialogs.deletingPage)
     axiosDelete(`page/${deletePage}/`, locale)
       .then(res => {
         if (res.status) {
-          toast.success(locale === 'ar' ? 'تم حذف الصفحة بنجاح' : 'Page deleted successfully')
+          toast.success(messages.dialogs.pageDeletedSuccessfully)
           setData(data.filter(ele => ele.name !== deletePage))
           setRefresh(prev => prev + 1)
         }
@@ -134,7 +134,7 @@ export default function Index() {
 
   return (
     <div>
-      <Breadcrumbs routers={[{ name: locale === 'ar' ? 'الصفحات' : 'Pages' }]} isDashboard />
+      <Breadcrumbs routers={[{ name: messages.dialogs.pages }]} isDashboard />
       <DeletePopUp
         open={deletePage}
         setOpen={setDeletePage}
@@ -157,14 +157,14 @@ export default function Index() {
         >
           <div className='flex gap-2 justify-center items-center'>
             <Typography variant='h5' sx={{ color: 'primary.main', fontWeight: 'bold' }}>
-              {locale === 'ar' ? 'الصفحات' : 'Pages'}
+              {messages.dialogs.pages}
             </Typography>
             <Avatar skin='light' sx={{ width: 30, height: 30 }}>
               {data?.length}
             </Avatar>
           </div>
           <Button variant='contained' color='primary' onClick={() => setOpen(true)}>
-            {locale === 'ar' ? 'إضافة صفحة' : 'Add Page'}
+            {messages.dialogs.addPage}
           </Button>
         </CardContent>
       </Card>
@@ -181,7 +181,7 @@ export default function Index() {
             >
               <CustomTextField
                 id='input'
-                label={locale === 'ar' ? 'البحث' : 'Search'}
+                label={messages.dialogs.search}
                 value={search}
                 ref={inputRef}
                 onChange={e => {
@@ -203,7 +203,7 @@ export default function Index() {
               getRowId={row => row.index}
               loading={loading}
               locale={locale}
-              noRow={locale === 'ar' ? 'لا يوجد' : 'Not Found'}
+              noRow={messages.dialogs.noRow}
               paginationModel={paginationModel}
               setPaginationModel={setPaginationModel}
             />

@@ -7,7 +7,6 @@ import CustomTextField from 'src/@core/components/mui/text-field'
 import { useIntl } from 'react-intl'
 import { LoadingButton } from '@mui/lab'
 import PagnationTable from 'src/Components/TableEdit/PagnationTable'
-import GetTimeinTable from 'src/Components/GetTimeinTable'
 import IconifyIcon from 'src/Components/icon'
 import AddCategory from 'src/Components/AddCategory'
 import DeletePopUp from 'src/Components/DeletePopUp'
@@ -42,7 +41,7 @@ function Category() {
       minWidth: 200,
       field: 'nameAr',
       disableColumnMenu: true,
-      headerName: locale === 'ar' ? 'الاسم بالعربية' : 'Arabic Name',
+      headerName: messages.dialogs.nameAr,
       renderCell: ({ row }) => (
         <Typography variant='subtitle2' sx={{ fontWeight: 500, color: 'text.secondary' }}>
           {row.nameAr}
@@ -54,7 +53,7 @@ function Category() {
       minWidth: 200,
       field: 'nameEn',
       disableColumnMenu: true,
-      headerName: locale === 'ar' ? 'الاسم بالانجليزية' : 'English Name',
+      headerName: messages.dialogs.nameEn,
       renderCell: ({ row }) => (
         <Typography variant='subtitle2' sx={{ fontWeight: 500, color: 'text.secondary' }}>
           {row.nameEn}
@@ -98,7 +97,7 @@ function Category() {
 
   useEffect(() => {
     setLoading(true)
-    const loadingToast = toast.loading(locale === 'ar' ? 'جاري التحميل...' : 'Loading...')
+    const loadingToast = toast.loading(messages.loading)
     axiosGet(`Category/?PageNumber=${paginationModel.page + 1}&page_size=${paginationModel.pageSize}&Name=${startSearch}`, locale)
       .then(res => {
         if (res.status) {
@@ -110,7 +109,7 @@ function Category() {
         setLoading(false)
         toast.dismiss(loadingToast)
       })
-  }, [locale, paginationModel.page, paginationModel.pageSize, startSearch, refresh])
+  }, [locale, paginationModel.page, paginationModel.pageSize, startSearch, refresh, messages])
 
   const inputRef = useRef(null)
   const [addCategoryOpen, setAddCategoryOpen] = useState(false)
@@ -122,7 +121,7 @@ function Category() {
       if (res.status) {
         setDeleteOpen(false)
         setRefresh(prev => prev + 1)
-        toast.success(locale === 'ar' ? 'تم حذف الفئة بنجاح' : 'Category deleted successfully')
+        toast.success(messages.categoryDeletedSuccessfully)
       }
     }).finally(() => {
       setDeleteLoading(false)
@@ -146,14 +145,14 @@ function Category() {
         >
           <div className='flex gap-2 justify-center items-center'>
             <Typography variant='h5' sx={{ color: 'primary.main', fontWeight: 'bold' }}>
-              {locale === 'ar' ? 'الفئات' : 'Category'}
+              {messages.dialogs.category}
             </Typography>
             <Avatar skin='light' sx={{ width: 30, height: 30 }}>
               {totalRows}
             </Avatar>
           </div>
           <Button variant='contained' color='primary' onClick={() => setAddCategoryOpen(true)}>
-            {locale === 'ar' ? 'إضافة فئة' : 'Add Category'}
+            {messages.dialogs.addCategory}
           </Button>
         </CardContent>
       </Card>
@@ -170,7 +169,7 @@ function Category() {
             >
               <CustomTextField
                 id='input'
-                label={locale === 'ar' ? 'البحث' : 'Search'}
+                label={messages.dialogs.search}
                 defaultValue={search}
                 ref={inputRef}
                 onBlur={e => {
@@ -194,11 +193,11 @@ function Category() {
                     inputRef.current.value = ''
                   }}
                 >
-                  {locale === 'ar' ? 'إعادة تعين' : 'Reset'}
+                  {messages.dialogs.reset}
                 </LoadingButton>
               ) : (
                 <LoadingButton loading={loading} variant='contained' type='submit' color='primary'>
-                  {locale === 'ar' ? 'بحث' : 'Search'}
+                  {messages.dialogs.search}
                 </LoadingButton>
               )}
             </form>
@@ -215,7 +214,7 @@ function Category() {
               getRowId={row => row.id}
               loading={loading}
               locale={locale}
-              noRow={locale === 'ar' ? 'لا يوجد' : 'Not Found'}
+              noRow={messages.dialogs.noRow}
               paginationModel={paginationModel}
               setPaginationModel={setPaginationModel}
             />

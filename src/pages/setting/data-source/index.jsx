@@ -23,7 +23,7 @@ export default function Index() {
 
   useEffect(() => {
     setLoading(true)
-    const loadingToast = toast.loading(locale === 'ar' ? 'جاري التحميل...' : 'Loading...')
+    const loadingToast = toast.loading(messages.loading)
     axiosGet(`data-source/get`, locale)
       .then(res => {
         if (res.status) {
@@ -34,7 +34,7 @@ export default function Index() {
         setLoading(false)
         toast.dismiss(loadingToast)
       })
-  }, [locale, paginationModel.page, paginationModel.pageSize, startSearch, refresh])
+  }, [locale, paginationModel.page, paginationModel.pageSize, startSearch, refresh, messages])
 
   const handleClose = () => {
     setOpen(false)
@@ -60,7 +60,7 @@ export default function Index() {
       minWidth: 200,
       field: 'name',
       disableColumnMenu: true,
-      headerName: messages.name,
+      headerName: messages.dialogs.name,
       renderCell: ({ row }) => (
         <Typography
           component={Link}
@@ -79,10 +79,10 @@ export default function Index() {
       minWidth: 200,
       field: 'action',
       sortable: false,
-      headerName: messages.actions,
+      headerName: messages.dialogs.actions,
       renderCell: params => (
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <Tooltip title={messages.edit}>
+          <Tooltip title={messages.dialogs.edit}>
             <IconButton
               disabled
               size='small'
@@ -93,7 +93,7 @@ export default function Index() {
               <IconifyIcon icon='tabler:edit' />
             </IconButton>
           </Tooltip>
-          <Tooltip title={messages.delete}>
+          <Tooltip title={messages.dialogs.delete}>
             <IconButton
               disabled
               size='small'
@@ -126,15 +126,13 @@ export default function Index() {
         >
           <div className='flex gap-2 justify-center items-center'>
             <Typography variant='h5' sx={{ color: 'primary.main', fontWeight: 'bold' }}>
-              {locale === 'ar' ? 'المصادر' : 'Data Source'}
+              {messages.dialogs.dataSource}
             </Typography>
             <Avatar skin='light' sx={{ width: 30, height: 30 }}>
               {data?.length}
             </Avatar>
           </div>
-          {/* <Button variant='contained' color='primary' onClick={() => setOpen(true)}>
-            {locale === 'ar' ? 'إضافة مصدر' : 'Add Data Source'}
-          </Button> */}
+          
         </CardContent>
       </Card>
       <Box sx={{ mb: 4 }}>
@@ -150,7 +148,7 @@ export default function Index() {
             >
               <CustomTextField
                 id='input'
-                label={locale === 'ar' ? 'البحث' : 'Search'}
+                label={messages.dialogs.search}
                 defaultValue={search}
                 ref={inputRef}
                 onBlur={e => {
@@ -170,7 +168,7 @@ export default function Index() {
               getRowId={row => row.index}
               loading={loading}
               locale={locale}
-              noRow={locale === 'ar' ? 'لا يوجد' : 'Not Found'}
+              noRow={messages.dialogs.noRow}
               paginationModel={paginationModel}
               setPaginationModel={setPaginationModel}
             />

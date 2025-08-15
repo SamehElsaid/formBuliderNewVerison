@@ -48,7 +48,6 @@ const Header = styled(Box)(() => ({
 }))
 
 export default function InputControlDesign({ open, handleClose, design, locale, data, onChange, roles, fields }) {
-  console.log(fields)
   const Css = cssToObject(design)
   const getApiData = useSelector(rx => rx.api.data)
   const { messages } = useIntl()
@@ -251,7 +250,7 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                     setSelect('style')
                   }}
                 >
-                  {locale === 'ar' ? 'التنسيق' : 'Style'}
+                  {messages.dialogs.style}
                 </Button>
                 <Button
                   onClick={() => {
@@ -259,7 +258,7 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                   }}
                   variant={selected === 'roles' ? 'contained' : 'outlined'}
                 >
-                  {locale === 'ar' ? 'الصلاحيات' : 'Rules'}
+                  {messages.dialogs.rules}
                 </Button>
                 {open.data && (
                   <Button
@@ -268,7 +267,7 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                     }}
                     variant={selected === 'tabs' ? 'contained' : 'outlined'}
                   >
-                    {locale === 'ar' ? 'التبويبات' : 'Tabs'}
+                    {messages.dialogs.tabs}
                   </Button>
                 )}
               </ButtonGroup>
@@ -289,7 +288,7 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                             onChange({ ...data, addMoreElement: newAddMoreElement })
                           }}
                           variant='filled'
-                          label={locale === 'ar' ? 'الاسم باللغة الانجليزية' : 'Name in English'}
+                          label={messages.dialogs.nameInEnglish}
                         />{' '}
                         <TextField
                           fullWidth
@@ -301,7 +300,7 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                             onChange({ ...data, addMoreElement: newAddMoreElement })
                           }}
                           variant='filled'
-                          label={locale === 'ar' ? 'الاسم باللغة العربية' : 'Name in Arabic'}
+                          label={messages.dialogs.nameInArabic}
                         />
                         {open.kind === 'submit' && (
                           <>
@@ -319,9 +318,7 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                                 onChange({ ...data, addMoreElement: newAddMoreElement })
                               }}
                               variant='filled'
-                              label={
-                                locale === 'ar' ? 'رسالة التحذير باللغة الانجليزية' : 'Warning Message In Popup English'
-                              }
+                              label={messages.dialogs.warningMessageInPopupEnglish}
                             />{' '}
                             <TextField
                               fullWidth
@@ -336,9 +333,7 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                                 onChange({ ...data, addMoreElement: newAddMoreElement })
                               }}
                               variant='filled'
-                              label={
-                                locale === 'ar' ? 'رسالة التحذير باللغة العربية' : 'Warning Message In Popup Arabic'
-                              }
+                              label={messages.dialogs.warningMessageInPopupArabic}
                             />
                           </>
                         )}
@@ -372,7 +367,7 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                           }}
                           type='number'
                           variant='filled'
-                          label={locale === 'ar' ? 'القيمة العظمى' : 'Max Value'}
+                          label={messages.dialogs.maxValue}
                         />
                       </>
                     ) : (
@@ -413,7 +408,7 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                               onChange({ ...data, additional_fields: additional_fields })
                             }}
                             variant='filled'
-                            label={locale === 'ar' ? 'Placeholder باللغة الانجليزية' : 'Placeholder in English'}
+                            label={messages.dialogs.placeholderInEnglish}
                           />
                           <TextField
                             fullWidth
@@ -441,7 +436,7 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                               onChange({ ...data, additional_fields: additional_fields })
                             }}
                             variant='filled'
-                            label={locale === 'ar' ? 'Placeholder باللغة العربية' : 'Placeholder in Arabic'}
+                            label={messages.dialogs.placeholderInArabic}
                           />
                         </>
                       )
@@ -472,7 +467,7 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                         onChange({ ...data, additional_fields: additional_fields })
                       }}
                       variant='filled'
-                      label={locale === 'ar' ? 'التأشيرة عند التمرير باللغة العربية' : 'Hover Text in Arabic'}
+                      label={messages.dialogs.hoverTextInArabic}
                     />
                     <TextField
                       fullWidth
@@ -500,7 +495,7 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                         onChange({ ...data, additional_fields: additional_fields })
                       }}
                       variant='filled'
-                      label={locale === 'ar' ? 'التأشيرة عند التمرير باللغة الانجليزية' : 'Hover Text in English'}
+                      label={messages.dialogs.hoverTextInEnglish}
                     />
                     <TextField
                       fullWidth
@@ -528,7 +523,7 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                         onChange({ ...data, additional_fields: additional_fields })
                       }}
                       variant='filled'
-                      label={locale === 'ar' ? 'التوضيح باللغة العربية' : 'Hint in Arabic'}
+                      label={messages.dialogs.hintInArabic}
                     />
                     <TextField
                       fullWidth
@@ -556,7 +551,7 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                         onChange({ ...data, additional_fields: additional_fields })
                       }}
                       variant='filled'
-                      label={locale === 'ar' ? 'التوضيح باللغة الانجليزية' : 'Hint in English'}
+                      label={messages.dialogs.hintInEnglish}
                     />
 
                     {open.type === 'File' && (
@@ -586,7 +581,7 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                           onChange({ ...data, additional_fields: additional_fields })
                         }}
                         variant='filled'
-                        label={locale === 'ar' ? 'الحد الأقصى لحجم الملف' : 'Max File Size'}
+                        label={messages.dialogs.maxFileSize}
                       />
                     )}
                     {open.type === 'Date' && (
@@ -594,7 +589,7 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                         <FormControl fullWidth margin='normal'>
                           <InputLabel>
                             {' '}
-                            {locale === 'ar' ? 'نوع التحكم في التاريخ السابق' : 'Before Date Type'}
+                            {messages.dialogs.beforeDateType}
                           </InputLabel>
                           <Select
                             variant='filled'
@@ -618,9 +613,9 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                               onChange({ ...data, additional_fields: additional_fields })
                             }}
                           >
-                            <MenuItem value=''>{locale === 'ar' ? 'اختيار  ' : 'Select  '}</MenuItem>
-                            <MenuItem value='date'>{locale === 'ar' ? 'ادراج تاريخ ' : 'Insert Date '}</MenuItem>
-                            <MenuItem value='days'>{locale === 'ar' ? 'ادراج ايام' : 'Insert Days'}</MenuItem>
+                            <MenuItem value=''>{messages.dialogs.select}</MenuItem>
+                            <MenuItem value='date'>{messages.dialogs.insertDate}</MenuItem>
+                            <MenuItem value='days'>{messages.dialogs.insertDays}</MenuItem>
                           </Select>
 
                           <Collapse
@@ -679,7 +674,7 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                         <FormControl fullWidth margin='normal'>
                           <InputLabel>
                             {' '}
-                            {locale === 'ar' ? 'نوع التحكم في التاريخ التالي' : 'After Date Type'}
+                            {messages.dialogs.afterDateType}
                           </InputLabel>
                           <Select
                             variant='filled'
@@ -703,9 +698,9 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                               onChange({ ...data, additional_fields: additional_fields })
                             }}
                           >
-                            <MenuItem value=''>{locale === 'ar' ? 'اختيار  ' : 'Select  '}</MenuItem>
-                            <MenuItem value='date'>{locale === 'ar' ? 'ادراج تاريخ ' : 'Insert Date '}</MenuItem>
-                            <MenuItem value='days'>{locale === 'ar' ? 'ادراج ايام' : 'Insert Days'}</MenuItem>
+                            <MenuItem value=''>{messages.dialogs.select}</MenuItem>
+                            <MenuItem value='date'>{messages.dialogs.insertDate}</MenuItem>
+                            <MenuItem value='days'>{messages.dialogs.insertDays}</MenuItem>
                           </Select>
 
                           <Collapse
@@ -784,7 +779,7 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                                 )
                               }
                               variant='filled'
-                              label={locale === 'ar' ? 'العرض' : 'Width'}
+                              label={messages.dialogs.width}
                               disabled={
                                 extractValueAndUnit(getDataInObject(Css, '#parent-input.width')).unit ===
                                   'max-content' ||
@@ -855,7 +850,7 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                                 )
                               }
                               variant='filled'
-                              label={locale === 'ar' ? 'الطول' : 'Height'}
+                              label={messages.dialogs.height}
                               disabled={
                                 extractValueAndUnit(
                                   getDataInObject(Css, open.type === 'LongText' ? 'textarea.height' : 'input.height')
@@ -938,7 +933,7 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                             )
                           }
                           variant='filled'
-                          label={locale === 'ar' ? 'المسافة العلوية' : 'Margin Top'}
+                          label={messages.dialogs.marginTop}
                           disabled={
                             extractValueAndUnit(getDataInObject(Css, '#parent-input.margin-top')).unit ===
                               'max-content' ||
@@ -1000,7 +995,7 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                             )
                           }
                           variant='filled'
-                          label={locale === 'ar' ? 'المسافة السفلية' : 'Margin Bottom'}
+                          label={messages.dialogs.marginBottom}
                           disabled={
                             extractValueAndUnit(getDataInObject(Css, '#parent-input.margin-bottom')).unit ===
                               'max-content' ||
@@ -1064,7 +1059,7 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                             )
                           }
                           variant='filled'
-                          label={locale === 'ar' ? 'المسافة اليسرى' : 'Margin Left'}
+                          label={messages.dialogs.marginLeft}
                           disabled={
                             extractValueAndUnit(getDataInObject(Css, '#parent-input.margin-inline-start')).unit ===
                               'max-content' ||
@@ -1130,7 +1125,7 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                             )
                           }
                           variant='filled'
-                          label={locale === 'ar' ? 'المسافة اليمنى' : 'Margin Right'}
+                          label={messages.dialogs.marginRight}
                           disabled={
                             extractValueAndUnit(getDataInObject(Css, '#parent-input.margin-inline-end')).unit ===
                               'max-content' ||
@@ -1205,7 +1200,7 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                                   e.target.value
                                 )
                               }
-                              label={locale === 'ar' ? 'اللون الخلفي' : 'Background Color'}
+                              label={messages.dialogs.backgroundColor}
                               variant='filled'
                             />
                             <TextField
@@ -1222,7 +1217,7 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                               onBlur={e =>
                                 UpdateData(open.type === 'LongText' ? 'textarea.color' : 'input.color', e.target.value)
                               }
-                              label={locale === 'ar' ? 'اللون' : 'Color'}
+                              label={messages.dialogs.color}
                               variant='filled'
                             />
                           </>
@@ -1252,7 +1247,7 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                                 }
                                 onChange({ ...data, additional_fields: additional_fields })
                               }}
-                              label={locale === 'ar' ? 'لون النجوم' : 'Star Color'}
+                              label={messages.dialogs.starColor}
                               variant='filled'
                             />
                           </>
@@ -1263,7 +1258,7 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                           defaultChecked={getDataInObject(Css, 'label.color') || '#575757'}
                           defaultValue={getDataInObject(Css, 'label.color') || '#575757'}
                           onBlur={e => UpdateData('label.color', e.target.value)}
-                          label={locale === 'ar' ? 'لون التسمية' : 'Label Color'}
+                          label={messages.dialogs.labelColor}
                           variant='filled'
                         />
                       </>
@@ -1271,7 +1266,7 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
 
                     <div className='w-full'>
                       <h2 className='mt-5 text-[#555] mb-3 font-bold'>
-                        {locale === 'ar' ? 'محرر CSS للحقل' : 'CSS Editor For Input'}
+                        {messages.dialogs.cssEditorForInput}
                       </h2>
                       <CssEditor data={data} onChange={onChange} Css={design} open={open} roles={roles} />
                     </div>
@@ -1641,7 +1636,7 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                               icon={controlTrigger ? 'mdi:chevron-up' : 'mdi:chevron-down'}
                             />
                           </IconButton>
-                          {locale === 'ar' ? 'التحكم' : 'Controls'}
+                          {messages.dialogs.controls}
                           <IconButton>
                             <IconifyIcon
                               className='text-white'
@@ -1652,7 +1647,7 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                         <UnmountClosed isOpened={Boolean(controlTrigger)}>
                           <div className='px-4'>
                             <FormControl fullWidth margin='normal'>
-                              <InputLabel>{locale === 'ar' ? 'اخباري' : 'Required'}</InputLabel>
+                              <InputLabel>{messages.dialogs.required}</InputLabel>
                               <Select
                                 variant='filled'
                                 value={roles?.onMount?.isRequired ? 'required' : 'optional'}
@@ -1678,9 +1673,9 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                                   onChange({ ...data, additional_fields: additional_fields })
                                 }}
                               >
-                                <MenuItem value={'required'}>{locale === 'ar' ? 'مطلوب' : 'Required'}</MenuItem>
+                                <MenuItem value={'required'}>{messages.dialogs.required}</MenuItem>
                                 <MenuItem value={'optional'} selected>
-                                  {locale === 'ar' ? 'اختياري' : 'Optional'}
+                                  {messages.dialogs.optional}
                                 </MenuItem>
                               </Select>
                             </FormControl>
@@ -1713,7 +1708,7 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                                     }
                                     onChange({ ...data, additional_fields: additional_fields })
                                   }}
-                                  label={locale === 'ar' ? 'الرابط' : 'Href'}
+                                  label={messages.dialogs.href}
                                   variant='filled'
                                 />
                                 {open.key !== 'check_box' && (
@@ -1744,7 +1739,7 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                                         }}
                                       />
                                     }
-                                    label={locale === 'ar' ? 'طباعة' : 'Print'}
+                                    label={messages.dialogs.print}
                                   />
                                 )}
                               </div>
@@ -1767,7 +1762,7 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                                         onChange({ ...data, additional_fields: additional_fields })
                                       }}
                                     >
-                                      {locale === 'ar' ? 'حذف' : 'Delete'}
+                                      {messages.dialogs.delete}
                                     </Button>
                                   </div>
                                 </div>
@@ -1789,7 +1784,7 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                                         name='json'
                                         onChange={event => {
                                           const file = event.target.files[0]
-                                          const loading = toast.loading(locale === 'ar' ? 'جاري الرفع' : 'Uploading...')
+                                          const loading = toast.loading(messages.dialogs.uploading)
                                           if (file) {
                                             axiosPost(
                                               'file/upload',
@@ -1829,7 +1824,7 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                                           }
                                         }}
                                       />
-                                      {locale === 'ar' ? 'رفع ملف' : 'upload File'}
+                                      {messages.dialogs.uploadFile}
                                     </Button>
                                   </div>
                                 </>
@@ -1855,7 +1850,7 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                                         onChange({ ...data, additional_fields: additional_fields })
                                       }}
                                     >
-                                      {locale === 'ar' ? 'حذف' : 'Delete'}
+                                      {messages.dialogs.delete}
                                     </Button>
                                   </div>
                                 </div>
@@ -1875,7 +1870,7 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                                       name='json'
                                       onChange={event => {
                                         const file = event.target.files[0]
-                                        const loading = toast.loading(locale === 'ar' ? 'جاري الرفع' : 'Uploading...')
+                                        const loading = toast.loading(messages.dialogs.uploading)
                                         if (file) {
                                           axiosPost(
                                             'file/upload',
@@ -1915,7 +1910,7 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                                         }
                                       }}
                                     />
-                                    {locale === 'ar' ? 'رفع ملف' : 'upload File'}
+                                    {messages.dialogs.uploadFile}
                                   </Button>
                                 </>
                               )}
