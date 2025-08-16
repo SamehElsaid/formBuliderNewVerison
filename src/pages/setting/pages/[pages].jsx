@@ -23,7 +23,7 @@ let ReactPageEditor = dynamic(
 const Index = ({ pageName, initialData, initialDataApi, workflowId }) => {
   const loading = useSelector(rx => rx.LoadingPages.loading)
 
-  const { locale } = useIntl()
+  const { messages } = useIntl()
 
   useEffect(() => {
 

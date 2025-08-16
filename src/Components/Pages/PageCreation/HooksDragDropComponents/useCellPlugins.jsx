@@ -31,7 +31,6 @@ export default function useCellPlugins({ advancedEdit, locale, readOnly, buttonR
   const { collection } = useCollection({ advancedEdit, locale, readOnly, buttonRef, workflowId })
   const { order } = useOrder({ advancedEdit, locale, readOnly, buttonRef })
 
-  // const { analytics } = useAnalytics({ advancedEdit, locale, readOnly, buttonRef })
   const { chart } = useChart({ advancedEdit, locale, readOnly, buttonRef })
   const { backgroundPlugin } = useBackground({ locale, buttonRef })
   const { table } = useTable({ advancedEdit, locale, buttonRef })
@@ -46,8 +45,6 @@ export default function useCellPlugins({ advancedEdit, locale, readOnly, buttonR
   const { FlexControlCell } = useFlexControl({ locale, buttonRef })
   const { ButtonCell } = useButton({ locale, buttonRef })
   const { cartCell } = useCart({ locale, readOnly, buttonRef })
-
-  // const { cartProgress } = useCartProgress({ locale, readOnly, buttonRef })
   const { IconView } = useIconView({ locale, buttonRef })
   const { SectionControl } = useSection({ locale, buttonRef })
   const { dynamicTable } = useDynamicTable({ locale, buttonRef, advancedEdit })

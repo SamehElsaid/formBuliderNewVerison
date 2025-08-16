@@ -305,7 +305,6 @@ function TableView({ data, locale, onChange, readOnly, disabled }) {
 
   const dispatch = useDispatch()
 
-  console.log(getFields)
 
   return (
     <div>
