@@ -6,7 +6,7 @@ import { useIntl } from 'react-intl'
 
 export default function useFlexControl({ locale, buttonRef }) {
   const { messages } = useIntl()
-  
+
   const FlexControlCell = useMemo(() => {
     return {
       Renderer: ({ data, children }) => {
@@ -22,27 +22,26 @@ export default function useFlexControl({ locale, buttonRef }) {
                 div.classList.remove('react-page-cell-sm-6')
                 div.classList.remove('react-page-cell-xs-12')
                 div.classList.remove('react-page-cell-md-6')
-
               })
-              console.log(divContainer.querySelectorAll('.react-page-cell'));
 
-              divContainer.querySelectorAll('.react-page-row').forEach(div => {
+              divContainer.querySelectorAll('.react-page-row').forEach((div, index) => {
                 // div.style.flex = 'inherit'
                 // div.style.flexWrap = 'inherit'
-                div.style.cssText = `
-                display: ${childrenView === 'auto' ? 'flex' : 'grid'};
-                grid-template-columns: ${
-                  childrenView === 'auto' ? 'auto' : `repeat(${data.childrenView || 1}, minmax(0, 1fr))`
-                };
-                flex-direction: ${data.flexDirection || 'row'};
-                // height: ${data.height + data.heightUnit || 'auto'};
-                gap: ${data.gap + 'px' || '10px'};
-                flex-wrap: ${data.flexWrap || 'nowrap'};
-                justify-content: ${data.justifyContent || 'center'};
-                align-items: ${data.alignItems || 'center'};
-                `
+                // if (index === 0) {
+                //   div.style.cssText = `
+                //   display: ${childrenView === 'auto' ? 'flex' : 'grid'};
+                //   grid-template-columns: ${
+                //     childrenView === 'auto' ? 'auto' : `repeat(${data.childrenView || 1}, minmax(0, 1fr))`
+                //   };
+                //   flex-direction: ${data.flexDirection || 'row'};
+                //   // height: ${data.height + data.heightUnit || 'auto'};
+                //   gap: ${data.gap + 'px' || '10px'};
+                //   flex-wrap: ${data.flexWrap || 'nowrap'};
+                //   justify-content: ${data.justifyContent || 'center'};
+                //   align-items: ${data.alignItems || 'center'};
+                //   `
+                // }
               })
-
               divContainer.style.cssText = `
               display: ${childrenView === 'auto' ? 'flex' : 'grid'};
               grid-template-columns: ${

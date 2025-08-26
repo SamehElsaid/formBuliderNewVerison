@@ -53,9 +53,10 @@ export default function useCellPlugins({ advancedEdit, locale, readOnly, buttonR
   const cellPlugins = useMemo(
     () => [
       slate(),
-      backgroundPlugin,
       ContainerPlugin,
       BoxControl,
+      backgroundPlugin,
+      backgroundPlugin,
       UploadImage,
       UploadVideo,
       spacer,
@@ -107,7 +108,8 @@ export default function useCellPlugins({ advancedEdit, locale, readOnly, buttonR
 
   // cellPlugins: cellPlugins.sort((a, b) => a.title.toLocaleLowerCase().trim().localeCompare(b.title.toLocaleLowerCase().trim()))
 
+
   return {
-    cellPlugins: cellPlugins.sort((a, b) => a.title.toLocaleLowerCase().trim().localeCompare(b.title.toLocaleLowerCase().trim()))
+    cellPlugins: cellPlugins.sort((a, b) => a.title.toLocaleLowerCase().localeCompare(b.title.toLocaleLowerCase()))
   }
 }

@@ -80,7 +80,7 @@ export default function ViewCart({ data, locale, onChange, readOnly }) {
           )}
         </div>
       ) : (
-        <div className='relative ||  h-full'>
+        <div className='relative ||  h-full w-full '>
           {data.cart_type === 'analytic' ? (
             <CardAppleWatch
               data={{
