@@ -10,9 +10,8 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import { useForm, Controller } from 'react-hook-form'
 import Icon from 'src/@core/components/icon'
 import { useIntl } from 'react-intl'
-import { InputAdornment } from '@mui/material'
+import { Checkbox, FormControlLabel, InputAdornment } from '@mui/material'
 import { useEffect, useState } from 'react'
-import axios from 'axios'
 import { toast } from 'react-toastify'
 import { LoadingButton } from '@mui/lab'
 import { UrlTranEn, UrlTranAr, axiosPost, axiosPut } from '../axiosCall'
@@ -34,10 +33,11 @@ const AddCollection = props => {
     name_en: yup.string().required(messages['required']).trim(),
     description_ar: yup.string().trim(),
     description_en: yup.string().trim(),
+    isReadOnly: yup.boolean(),
     key: yup
       .string()
       .required(messages['required'])
-      .matches(/^[A-Za-z]+$/, messages.errors.keyMustBeString)
+      .matches(/^[A-Za-z]+$/, locale === 'ar' ? 'يجب أن يكون المفتاح عبارة عن أحرف' : 'Key must be a string')
       .trim()
   })
 
@@ -46,6 +46,7 @@ const AddCollection = props => {
     name_en: '',
     description_ar: '',
     description_en: '',
+    isReadOnly: false,
     key: ''
   }
 
@@ -53,7 +54,7 @@ const AddCollection = props => {
     reset,
     control,
     setValue,
-    setError,
+    getValues,
     handleSubmit,
     trigger,
     formState: { errors }
@@ -63,6 +64,7 @@ const AddCollection = props => {
     resolver: yupResolver(schema)
   })
   const [loading, setLoading] = useState(false)
+  console.log(getValues())
 
   const onSubmit = data => {
     const sendData = {
@@ -71,11 +73,13 @@ const AddCollection = props => {
       descriptionAr: data.description_ar,
       descriptionEn: data.description_en,
       key: data.key.toLowerCase().trim(),
+      isLookup: true,
       options: {
         createdAt: true,
         createdBy: true,
         updatedAt: true,
-        updatedBy: true
+        updatedBy: true,
+        isReadOnly: data.isReadOnly
       }
     }
 
@@ -86,7 +90,7 @@ const AddCollection = props => {
         open.descriptionAr === sendData.descriptionAr &&
         open.descriptionEn === sendData.descriptionEn
       ) {
-        return toast.info(messages.collections['noChanges'])
+        return toast.info(locale === 'ar' ? 'لا يوجد تغييرات' : 'No changes')
       }
       setLoading(true)
 
@@ -108,10 +112,13 @@ const AddCollection = props => {
       axiosPut('collections/update', locale, sendData)
         .then(res => {
           if (res.status) {
-            toast.success(messages.collections.DataModelAddedSuccessfully)
+            toast.success(locale === 'ar' ? 'تم إضافة نموذج البيانات بنجاح' : 'Data Model added successfully')
             handleClose()
             setRefresh(prev => prev + 1)
           }
+        })
+        .catch(err => {
+          toast.error(locale === 'ar' ? 'حدث خطأ' : 'An error occurred')
         })
         .finally(_ => {
           setLoading(false)
@@ -121,12 +128,14 @@ const AddCollection = props => {
       axiosPost('collections/add', locale, sendData)
         .then(res => {
           if (res.status) {
-            toast.success(messages.collections.DataModelAddedSuccessfully)
+            toast.success(locale === 'ar' ? 'تم إضافة نموذج البيانات بنجاح' : 'Data Model added successfully')
             handleClose()
             setRefresh(prev => prev + 1)
           }
         })
-
+        .catch(err => {
+          toast.error(locale === 'ar' ? 'حدث خطأ' : 'An error occurred')
+        })
         .finally(_ => {
           setLoading(false)
         })
@@ -164,7 +173,13 @@ const AddCollection = props => {
       >
         <Header>
           <Typography variant='h5'>
-            {typeof open === 'boolean' ? messages.collections.AddDataModel : open.nameAr}
+            {typeof open === 'boolean'
+              ? locale === 'ar'
+                ? 'إضافة نموذج البيانات'
+                : 'Add Data Model'
+              : locale === 'ar'
+              ? open.nameAr
+              : open.nameEn}
           </Typography>
           <IconButton
             size='small'
@@ -232,7 +247,7 @@ const AddCollection = props => {
                       <InputAdornment
                         position='end'
                         onClick={async () => {
-                          const loading = toast.loading(messages.translate)
+                          const loading = toast.loading(locale === 'ar' ? 'يتم الترجمه' : 'Translating')
                           const res = await UrlTranAr(value)
                           setValue('name_en', res)
                           trigger('name_en')
@@ -272,7 +287,7 @@ const AddCollection = props => {
                       <InputAdornment
                         position='end'
                         onClick={async () => {
-                          const loading = toast.loading(messages.translate)
+                          const loading = toast.loading(locale === 'ar' ? 'يتم الترجمه' : 'Translating')
                           const res = await UrlTranEn(value)
                           setValue('name_ar', res)
                           trigger('name_ar')
@@ -296,21 +311,21 @@ const AddCollection = props => {
                 <CustomTextField
                   fullWidth
                   type='text'
-                  label={messages.card.description_ar}
+                  label={locale === 'ar' ? 'وصف التجميعة بالعربية' : 'Description in Arabic'}
                   value={value}
                   sx={{ mb: 4 }}
                   multiline
                   rows={4}
                   onChange={onChange}
                   error={Boolean(errors.description_ar)}
-                  placeholder={messages.card.description_ar}
+                  placeholder={locale === 'ar' ? 'وصف التجميعة بالعربية' : 'Description in Arabic'}
                   {...(errors.description_ar && { helperText: errors.description_ar.message })}
                   InputProps={{
                     endAdornment: (
                       <InputAdornment
                         position='end'
                         onClick={async () => {
-                          const loading = toast.loading(messages.translate)
+                          const loading = toast.loading(locale === 'ar' ? 'يتم الترجمه' : 'Translating')
                           const res = await UrlTranAr(value)
                           setValue('description_en', res)
                           trigger('description_en')
@@ -333,20 +348,20 @@ const AddCollection = props => {
                 <CustomTextField
                   fullWidth
                   type='text'
-                  label={messages.card.description_en}
+                  label={locale === 'ar' ? 'وصف التجميعة بالانجليزية' : 'Description in English'}
                   value={value}
                   sx={{ mb: 4 }}
                   multiline
                   rows={4}
                   onChange={onChange}
                   error={Boolean(errors.description_en)}
-                  placeholder={messages.card.description_en}
+                  placeholder={locale === 'ar' ? 'وصف التجميعة بالانجليزية' : 'Description in English'}
                   InputProps={{
                     endAdornment: (
                       <InputAdornment
                         position='end'
                         onClick={async () => {
-                          const loading = toast.loading(messages.translate)
+                          const loading = toast.loading(locale === 'ar' ? 'يتم الترجمه' : 'Translating')
                           const res = await UrlTranEn(value)
                           setValue('description_ar', res)
                           trigger('description_ar')
@@ -360,6 +375,24 @@ const AddCollection = props => {
                     )
                   }}
                   {...(errors.description_en && { helperText: errors.description_en.message })}
+                />
+              )}
+            />
+            <Controller
+              name='isReadOnly'
+              control={control}
+              render={({ field: { value, onChange } }) => (
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={value}
+                      onChange={e => {
+                        setValue('isReadOnly', e.target.checked)
+                        trigger('isReadOnly')
+                      }}
+                    />
+                  }
+                  label={locale === 'ar' ? 'للقراءة فقط' : 'Read Only'}
                 />
               )}
             />

@@ -12,15 +12,14 @@ export default function useTable({ advancedEdit, locale, readOnly, buttonRef }) 
     return {
       Renderer: ({ data, onChange }) => {
         return (
-          <TableControl data={data} onChange={onChange} />
           
-          // <TableView
-          //   readOnly={!advancedEdit}
-          //   selectCollection={data.selectCollection}
-          //   onChange={onChange}
-          //   disabled={!readOnly}
-          //   data={data}
-          // />
+          <TableView
+            readOnly={!advancedEdit}
+            selectCollection={data.selectCollection}
+            onChange={onChange}
+            disabled={!readOnly}
+            data={data}
+          />
         )
       },
       id: 'table',

@@ -1,31 +1,32 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 
-import { Box, Button, CircularProgress, Dialog, DialogContent, IconButton, Tooltip, Typography } from '@mui/material'
+import { Button, Dialog, DialogContent, Typography } from '@mui/material'
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { axiosDelete, axiosGet } from 'src/Components/axiosCall'
-import PagnationTable from 'src/Components/TableEdit/PagnationTable'
+import { axiosDelete, axiosGet, axiosPost } from 'src/Components/axiosCall'
 import { SortableContainer, SortableElement, arrayMove } from 'react-sortable-hoc'
-import ViewValueInTable from './ViewValueInTable'
-import IconifyIcon from 'src/Components/icon'
 import { useIntl } from 'react-intl'
 import { LoadingButton } from '@mui/lab'
 import OpenEditDialog from './OpenEditDialog'
-import GetTimeinTable from 'src/Components/GetTimeinTable'
 import { DefaultStyle } from 'src/Components/_Shared'
 import InputControlDesign from './InputControlDesign'
-import ViewInputInTable from '../ViewInputinTable'
 import { removeerrorInAllRowData } from 'src/store/apps/errorInAllRow/errorInAllRow'
 import { useDispatch } from 'react-redux'
+import TableComponent from './TableComponent'
+import { useSelector } from 'react-redux'
 
 function TableView({ data, locale, onChange, readOnly, disabled }) {
   const [getFields, setGetFields] = useState([])
+  const [changedValue, setChangedValue] = useState([])
   const [loading, setLoading] = useState(true)
-  const [columns, setColumns] = useState([])
   const [collectionFields, setCollectionFields] = useState([])
   const [deleteOpen, setDeleteOpen] = useState(false)
   const [editOpen, setEditOpen] = useState(false)
   const { messages } = useIntl()
   const errorAllRef = useRef([])
+  console.log(changedValue)
+
+  const user = useSelector(rx => rx.auth)
+  console.log(user)
 
   const [open, setOpen] = useState(false)
 
@@ -35,12 +36,13 @@ function TableView({ data, locale, onChange, readOnly, disabled }) {
 
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
-    pageSize: 10
+    pageSize: 1
   })
   const [totalCount, setTotalCount] = useState(0)
 
   useEffect(() => {
     setLoading(true)
+    console.log('here')
     if (data.collectionId) {
       axiosGet(
         `generic-entities/${data.collectionName}?pageNumber=${paginationModel.page + 1}&pageSize=${
@@ -50,26 +52,50 @@ function TableView({ data, locale, onChange, readOnly, disabled }) {
       )
         .then(res => {
           if (res.status) {
-            setGetFields(res.entities)
+            let newEntities = [...res.entities]
+            const newChangedValue = changedValue.filter(ele => ele.Id?.includes('front'))
+            if (changedValue.length !== 0) {
+              newEntities = newEntities.map(ele => {
+                let newEle = { ...ele }
+                const findWithId = changedValue.find(e => e.Id === newEle.Id)
+                console.log(findWithId, 'findWithId')
+                if (findWithId) {
+                  newEle = findWithId
+                }
+
+                return newEle
+              })
+            }
+            if (paginationModel.page === 0) {
+              newEntities = [...newChangedValue, ...newEntities]
+            }
+            console.log(newEntities, 'newEntities')
+
+            setGetFields(newEntities)
             setTotalCount(res.totalCount)
           }
         })
         .finally(() => setLoading(false))
     } else {
       setGetFields([])
-      setLoading(true)
+      setLoading(false)
     }
   }, [locale, data.collectionId, paginationModel])
 
+  const [loadingHeader, setLoadingHeader] = useState(true)
   useEffect(() => {
+    setLoadingHeader(true)
     if (data.collectionId) {
-      axiosGet(`collection-fields/get?CollectionId=${data.collectionId}`, locale).then(res => {
-        if (res.status) {
-          setCollectionFields(res.data)
-        }
-      })
+      axiosGet(`collection-fields/get?CollectionId=${data.collectionId}`, locale)
+        .then(res => {
+          if (res.status) {
+            setCollectionFields(res.data)
+          }
+        })
+        .finally(() => setLoadingHeader(false))
     } else {
       setCollectionFields([])
+      setLoadingHeader(false)
     }
   }, [locale, data.collectionId])
 
@@ -107,121 +133,7 @@ function TableView({ data, locale, onChange, readOnly, disabled }) {
       filteredFields = data.sortWithId.map(ele => filteredFields.find(e => e?.id === ele))
     }
     setFilterWithSelect(filteredFields)
-
-    setColumns([
-      {
-        flex: 0.05,
-        minWidth: 60,
-        field: 'index',
-        disableColumnMenu: true,
-        headerName: '#',
-        renderCell: ({ row }) => (
-          <Typography variant='subtitle2' sx={{ fontWeight: 500, color: 'text.secondary' }}>
-            {`${row.index + 1}`}
-          </Typography>
-        )
-      },
-      ...filteredFields.map(ele => {
-        const mainTable = {
-          flex: 1,
-          minWidth: 200,
-          disableColumnMenu: true,
-          field: ele.key,
-          headerName: locale === 'ar' ? ele.nameAr.toUpperCase() : ele.nameEn.toUpperCase(),
-          renderCell: ({ row }) =>
-            data.kind === 'form-table' ? (
-              <ViewInputInTable
-                ele={ele}
-                row={row}
-                readOnly={readOnly}
-                disabled={disabled}
-                data={data}
-                onChange={onChange}
-                setTriggerData={setTriggerData}
-                getDesign={getDesign}
-                triggerData={triggerData}
-                errorAllRef={errorAllRef}
-                notFound={Object.keys(row?.[ele?.key]).length !== 0}
-              />
-            ) : (
-              <>
-                <Typography variant='subtitle2' sx={{ fontWeight: 500, color: 'text.secondary' }}>
-                  {ele?.fieldCategory === 'Associations' ? (
-                    <ViewValueInTable data={ele} value={row?.[ele?.key] ?? ''} />
-                  ) : ele?.type === 'Date' ? (
-                    <>{Object.keys(row?.[ele?.key]).length !== 0 ? <GetTimeinTable data={row[ele.key]} /> : '-'}</>
-                  ) : (
-                    <>
-                      {Object.keys(row?.[ele?.key]).length !== 0 ? (
-                        row?.[ele?.key].includes('/Uploads/') ? (
-                          <a
-                            href={process.env.API_URL + '/file/download/' + row?.[ele?.key].replaceAll('/Uploads/', '')}
-                            target='_blank'
-                            rel='noreferrer'
-                          >
-                            {row?.[ele?.key].split('/Uploads/')[1].slice(0, 30) +
-                              '.' +
-                              row?.[ele?.key].split('/Uploads/')[1].split('.').pop()}
-                          </a>
-                        ) : (
-                          row?.[ele?.key]
-                        )
-                      ) : (
-                        <>{row?.[ele?.key] ?? '-'}</>
-                      )}
-                    </>
-                  )}
-                </Typography>
-              </>
-            )
-        }
-
-        return mainTable
-      })
-    ])
   }, [collectionFields.length, data?.selected?.length, data.sortWithId, data.edit, data.delete])
-  const [actions, setAction] = useState([])
-  useEffect(() => {
-    if (data.edit || data.delete) {
-      setAction([
-        {
-          flex: 0.1,
-          minWidth: 120,
-          field: 'action',
-          sortable: false,
-          headerName: messages.actions.toUpperCase(),
-          renderCell: params => (
-            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              {data.edit && (
-                <Tooltip title={messages.edit}>
-                  <IconButton
-                    size='small'
-                    onClick={e => {
-                      setEditOpen(params.row)
-                    }}
-                  >
-                    <IconifyIcon icon='tabler:edit' />
-                  </IconButton>
-                </Tooltip>
-              )}
-              {data.delete && (
-                <Tooltip title={messages.delete}>
-                  <IconButton
-                    size='small'
-                    onClick={e => {
-                      setDeleteOpen(params.row)
-                    }}
-                  >
-                    <IconifyIcon icon='tabler:trash' />
-                  </IconButton>
-                </Tooltip>
-              )}
-            </Box>
-          )
-        }
-      ])
-    }
-  }, [data.edit, data.delete])
 
   const SortableButton = SortableElement(({ value }) => (
     <div className='flex gap-2 items-center p-2 text-white rounded-md cursor-pointer select-none text-nowrap bg-main-color'>
@@ -305,7 +217,6 @@ function TableView({ data, locale, onChange, readOnly, disabled }) {
 
   const dispatch = useDispatch()
 
-
   return (
     <div>
       <InputControlDesign
@@ -368,19 +279,16 @@ function TableView({ data, locale, onChange, readOnly, disabled }) {
           </div>
         </DialogContent>
       </Dialog>
-      {loading ? (
-        <div className='h-[300px]   flex justify-center items-center text-2xl font-bold border-2 border-dashed border-main rounded-md'>
-          {messages.pleaseSelectDataModel}
-        </div>
-      ) : (
-        <>
-          {!readOnly && <SortableList items={filterWithSelect} onSortEnd={onSortEnd} axis='xy' />}
-          <div className='flex justify-end px-5 mb-3'>
+
+      <>
+        {!readOnly && <SortableList items={filterWithSelect} onSortEnd={onSortEnd} axis='xy' />}
+        <div className='flex justify-end px-5 mb-3'>
+          {data.kind === 'form-table' && paginationModel.page === 0 && (
             <Button
               variant='contained'
               color='success'
               onClick={() => {
-                const newData = {}
+                const newData = { Id: 'front' + new Date().getTime() }
                 filterWithSelect.forEach(ele => {
                   newData[ele.key] =
                     ele.fieldCategory === 'Associations'
@@ -396,32 +304,63 @@ function TableView({ data, locale, onChange, readOnly, disabled }) {
             >
               {messages.add}
             </Button>
-          </div>
-          <div
-            id=''
-            onClick={() => {
-              dispatch(removeerrorInAllRowData())
-            }}
-          >
-            <PagnationTable
-              Invitationscolumns={[...columns, ...actions]}
-              data={getFields?.map((ele, i) => {
-                const fData = { ...ele }
-                fData.index = i + paginationModel.page * paginationModel.pageSize
+          )}
+        </div>
+        <div
+          id=''
+          onClick={() => {
+            dispatch(removeerrorInAllRowData())
+          }}
+        >
+          <TableComponent
+            filterWithSelect={filterWithSelect}
+            columns={getFields}
+            paginationModel={paginationModel}
+            setPaginationModel={setPaginationModel}
+            totalCount={totalCount / Number(paginationModel.pageSize)}
+            loadingEntity={loading}
+            loadingHeader={loadingHeader}
+            data={data}
+            readOnly={readOnly}
+            disabled={disabled}
+            onChange={onChange}
+            setTriggerData={setTriggerData}
+            getDesign={getDesign}
+            triggerData={triggerData}
+            errorAllRef={errorAllRef}
+            setGetFields={setGetFields}
+            editAction={data.edit}
+            deleteAction={data.delete}
+            setEditOpen={setEditOpen}
+            setDeleteOpen={setDeleteOpen}
+            setChangedValue={setChangedValue}
+          />
+          <div className='flex justify-end px-5 mt-3'>
+            {data.kind === 'form-table' && paginationModel.page === 0 && (
+              <Button
+                variant='contained'
+                color='success'
+                onClick={() => {
+                  console.log(changedValue, 'changedValue')
 
-                return fData
-              })}
-              totalRows={totalCount}
-              getRowId={row => row.index}
-              loading={loading}
-              locale={locale}
-              noRow={messages.noRow}
-              paginationModel={paginationModel}
-              setPaginationModel={setPaginationModel}
-            />
+                  axiosPost(`generic-entities/${data.collectionName}`, locale,  changedValue.map(ele => {
+                    return {
+                      ...ele,
+                      Id: ele.Id.includes('front') ? undefined : ele.Id 
+                    }
+                  })).then(res => {
+                    if (res.status) {
+                      toast.success(messages.savedSuccessfully)
+                    }
+                  })
+                }}
+              >
+                {messages.save}
+              </Button>
+            )}
           </div>
-        </>
-      )}
+        </div>
+      </>
     </div>
   )
 }

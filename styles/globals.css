@@ -1524,3 +1524,6 @@ li:contains("Add blocks to page") {
 input:focus-visible ,textarea:focus-visible{
   outline: none !important;
 }
+.react-page-row{
+  justify-content: center;
+}

@@ -7,6 +7,7 @@ import { useDispatch } from 'react-redux'
 import { useIntl } from 'react-intl'
 import { SET_ACTIVE_LOADING } from 'src/store/apps/LoadingMainSlice/LoadingMainSlice'
 import { REMOVE_USER, SET_ACTIVE_USER } from 'src/store/apps/authSlice/authSlice'
+import { getUser } from 'src/services/AuthService'
 
 function useInitialization() {
   const theme = useTheme()
@@ -17,29 +18,25 @@ function useInitialization() {
   const { locale } = useIntl()
 
   useEffect(() => {
-    if (cookies.sub) {
-      const userData = {
-        image_url: 'https://via.placeholder.com/150',
-        first_name: 'John',
-        last_name: 'Doe'
+    const userFind = async () => {
+      const user = await getUser()
+      console.log(user)
+      if (!user) {
+        removeCookie('sub', { path: '/' })
+        dispatch(REMOVE_USER())
+        setLogin(false)
+
+        return
       }
-      dispatch(SET_ACTIVE_USER(userData))
+
+      dispatch(SET_ACTIVE_USER(user.profile))
       setTimeout(() => {
-        setLogin(false)
         dispatch(SET_ACTIVE_LOADING())
-      }, 2000)
-    } else {
-      dispatch(REMOVE_USER())
-
-      const time = setTimeout(() => {
         setLogin(false)
-        dispatch(SET_ACTIVE_LOADING())
       }, 2000)
-
-      return () => clearTimeout(time)
     }
+    userFind()
   }, [])
-
   useEffect(() => {
     document.body.classList.toggle('rtl', locale === 'ar')
   }, [])

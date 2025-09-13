@@ -33,7 +33,8 @@ export default function DisplayField({
   triggerData,
   isRedirect,
   setRedirect,
-  isDisabled
+  isDisabled,
+  hiddenLabel
 }) {
   const [value, setValue] = useState('')
   const [error, setError] = useState(false)
@@ -1215,7 +1216,7 @@ export default function DisplayField({
     }
   }
 
-  const label = (
+  const label = hiddenLabel ? null : (
     <label htmlFor={input.key} style={{ textTransform: 'capitalize' }}>
       {locale == 'ar' ? input.nameAr : input.nameEn}
     </label>

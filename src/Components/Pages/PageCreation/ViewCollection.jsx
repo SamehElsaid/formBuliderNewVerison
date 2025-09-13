@@ -10,9 +10,7 @@ import 'react-grid-layout/css/styles.css'
 import 'react-resizable/css/styles.css'
 import { DefaultStyle, getTypeFromCollection, getZIndex, VaildId } from 'src/Components/_Shared'
 import { IoMdSettings } from 'react-icons/io'
-import { Elements } from '@stripe/react-stripe-js'
 import { loadStripe } from '@stripe/stripe-js'
-import SimpleStripeForm from './SimpleStripeForm'
 import { useIntl } from 'react-intl'
 
 const ResponsiveGridLayout = WidthProvider(GridLayout)
@@ -26,10 +24,13 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
   const refError = useRef({})
   const dataRef = useRef({})
   const [triggerData, setTriggerData] = useState(0)
-  const [pay, updatePay] = useState(false)
-  const { push } = useRouter()
-  const stripePromise = loadStripe('pk_test_12345...')
+  
+  const {
+    query: { entityid },
+    push
+  } = useRouter()
   const { messages } = useIntl()
+  console.log(entityid)
 
   const [layout, setLayout] = useState()
   const addMoreElement = data.addMoreElement ?? []
@@ -82,7 +83,7 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
   const handleSubmit = e => {
     e.preventDefault()
 
-    const initialSendData = { ...dataRef.current, pageWorkflows: [{ workflowId, order: 0 }] }
+    const initialSendData = { ...dataRef.current }
     if (data.submitApi?.includes('/api/Account/Register')) {
       delete initialSendData.pageWorkflows
       initialSendData.createdBy = 'system'
@@ -144,7 +145,6 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
       if (res.status) {
         setReload(prev => prev + 1)
         toast.success(messages.dialogs.dataSentSuccessfully)
-        updatePay(true)
         console.log(redirect)
         if (data.redirect === '{{redirect}}') {
           if (redirect) {
@@ -263,7 +263,7 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
 
   console.log({ getFields, filterSelect })
 
-  return !pay ? (
+  return (
     <div className={`${disabled ? 'text-main' : ''}`}>
       <InputControlDesign
         open={open}
@@ -393,9 +393,5 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
         </form>
       )}
     </div>
-  ) : (
-    <Elements stripe={stripePromise}>
-      <SimpleStripeForm updatePay={updatePay} />
-    </Elements>
   )
 }
