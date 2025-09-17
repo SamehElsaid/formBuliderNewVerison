@@ -392,6 +392,7 @@ const DynamicTableControl = ({ data, onChange, title, locale }) => {
                     <InputLabel>{messages.dialogs.selectColumns}</InputLabel>
                     <Select
                       multiple
+                      variant='filled'
                       value={selectedColumns}
                       onChange={(e) => setSelectedColumns(e.target.value)}
                       renderValue={(selected) => selected.join(', ')}
@@ -399,7 +400,7 @@ const DynamicTableControl = ({ data, onChange, title, locale }) => {
                       {data.columns.map((column) => (
                         <MenuItem key={column} value={column}>
                           <Checkbox checked={selectedColumns.includes(column)} />
-                          <ListItemText primary={column} />
+                          <ListItemText primary={column} className='!text-black' />
                         </MenuItem>
                       ))}
                     </Select>

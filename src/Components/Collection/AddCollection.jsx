@@ -37,7 +37,10 @@ const AddCollection = props => {
     key: yup
       .string()
       .required(messages['required'])
-      .matches(/^[A-Za-z]+$/, locale === 'ar' ? 'يجب أن يكون المفتاح عبارة عن أحرف' : 'Key must be a string')
+      .matches(
+        /^[A-Za-z]+$/,
+        locale === 'ar' ? 'يجب أن يكون المفتاح عبارة عن أحرف ولا يحتوي على مسافات' : 'Key must be a string and not contain spaces'
+      )
       .trim()
   })
 

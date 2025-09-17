@@ -1,3 +1,4 @@
+import { InputAdornment, TextField } from '@mui/material'
 import React, { useState, useRef } from 'react'
 import { ChromePicker } from 'react-color'
 import { FaPlus, FaMinus, FaTimes, FaUpload } from 'react-icons/fa'
@@ -13,8 +14,8 @@ const HeaderControl = ({ data = {}, onChange, locale, buttonRef }) => {
   const headerData = {
     backgroundColor: '#ffffff',
     borderColor: '#e5e7eb',
-    paddingX: '16px',
-    paddingY: '12px',
+    paddingX: '16',
+    paddingY: '12',
     showShadow: false,
     showSelector: false,
     selectorBgColor: '#f3f4f6',
@@ -242,23 +243,33 @@ const HeaderControl = ({ data = {}, onChange, locale, buttonRef }) => {
         <ColorPickerControl label={messages.dialogs.borderColor} field='borderColor' />
 
         <div className='mb-3'>
-          <label className='block mb-1 text-sm font-medium'>{messages.dialogs.paddingX}</label>
-          <input
+          <TextField
+            fullWidth
             type='text'
-            value={headerData.paddingX}
+            value={data.paddingX}
             onChange={e => handleChange('paddingX', e.target.value)}
-            className='p-1 w-full border border-gray-300'
+            variant='filled'
+            label={messages.dialogs.paddingX}
+            InputProps={{
+              endAdornment: <InputAdornment position='end'>px</InputAdornment>
+            }}
           />
+      
         </div>
 
         <div className='mb-3'>
-          <label className='block mb-1 text-sm font-medium'>{messages.dialogs.paddingY}</label>
-          <input
+          <TextField
+            fullWidth
             type='text'
-            value={headerData.paddingY}
+            value={data.paddingY}
             onChange={e => handleChange('paddingY', e.target.value)}
-            className='p-1 w-full border border-gray-300'
+            variant='filled'
+            label={messages.dialogs.paddingY}
+            InputProps={{
+              endAdornment: <InputAdornment position='end'>px</InputAdornment>
+            }}
           />
+          
         </div>
 
         <div className='mb-3'>

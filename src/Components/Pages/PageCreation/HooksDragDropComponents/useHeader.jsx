@@ -56,7 +56,7 @@ export default function useHeader({ locale, buttonRef }) {
             style={{
               backgroundColor: data?.backgroundColor || '#ffffff',
               borderBottom: `1px solid ${data?.borderColor || '#e5e7eb'}`,
-              padding: `${data?.paddingY || '12px'} ${data?.paddingX || '16px'}`,
+              padding: `${data?.paddingY + 'px' || '12px'} ${data?.paddingX + 'px' || '16px'}`,
               boxShadow: data?.showShadow ? '0 2px 4px rgba(0,0,0,0.1)' : 'none'
             }}
           >
