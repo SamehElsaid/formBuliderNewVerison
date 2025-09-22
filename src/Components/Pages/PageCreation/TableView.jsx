@@ -36,7 +36,7 @@ function TableView({ data, locale, onChange, readOnly, disabled }) {
 
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
-    pageSize: 1
+    pageSize: 10
   })
   const [totalCount, setTotalCount] = useState(0)
 

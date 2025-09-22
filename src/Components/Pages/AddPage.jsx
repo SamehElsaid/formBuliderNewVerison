@@ -10,7 +10,6 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import { useForm, Controller } from 'react-hook-form'
 import Icon from 'src/@core/components/icon'
 import { useIntl } from 'react-intl'
-import { MenuItem } from '@mui/material'
 import { useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
 import { LoadingButton } from '@mui/lab'
@@ -217,11 +216,12 @@ const AddPage = props => {
                 <CustomAutocomplete
                   multiple
                   options={workflows}
+                  key={open}
                   filterSelectedOptions
                   id='autocomplete-multiple-outlined'
                   getOptionLabel={option => option.name || ''}
                   renderInput={params => (
-                    <CustomTextField {...params} label='filterSelectedOptions' placeholder='Favorites' />
+                    <CustomTextField {...params} label={messages['workflow']} placeholder={messages['workflow']} />
                   )}
                   onChange={(event, newValue) => {
                     onChange(newValue)

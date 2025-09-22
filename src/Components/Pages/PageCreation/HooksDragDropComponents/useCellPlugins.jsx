@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import { useMemo } from 'react'
 import useCollection from './useCollection'
 import useBackground from './useBackground'
 import useTable from './useTable'
@@ -56,7 +56,6 @@ export default function useCellPlugins({ advancedEdit, locale, readOnly, buttonR
       ContainerPlugin,
       BoxControl,
       backgroundPlugin,
-      backgroundPlugin,
       UploadImage,
       UploadVideo,
       spacer,
@@ -99,17 +98,11 @@ export default function useCellPlugins({ advancedEdit, locale, readOnly, buttonR
       GoogleMap
     ]
   )
-
-  // console.log(
-  //   cellPlugins.map(item => {
-  //     return { title: item.title }
-  //   })
-  // )
-
-  // cellPlugins: cellPlugins.sort((a, b) => a.title.toLocaleLowerCase().trim().localeCompare(b.title.toLocaleLowerCase().trim()))
-
+  console.log(cellPlugins.sort((a, b) => a.title.toLocaleLowerCase().localeCompare(b.title.toLocaleLowerCase())))
 
   return {
-    cellPlugins: cellPlugins.sort((a, b) => a.title.toLocaleLowerCase().localeCompare(b.title.toLocaleLowerCase()))
+    cellPlugins: cellPlugins
+      .filter(item => item.id !== 'ory/editor/core/content/slate')
+      .sort((a, b) => a.title.toLocaleLowerCase().localeCompare(b.title.toLocaleLowerCase()))
   }
 }

@@ -21,7 +21,7 @@ export default function Index() {
   const [loading, setLoading] = useState(false)
   const inputRef = useRef(null)
   const [refresh, setRefresh] = useState(0)
-  const [data, setData] = useState([])  
+  const [data, setData] = useState([])
 
   useEffect(() => {
     setLoading(true)
@@ -91,8 +91,9 @@ export default function Index() {
     },
     {
       flex: 0.1,
-      minWidth: 80,
+      minWidth: 120,
       field: 'action',
+      hideable: false,
       sortable: false,
       headerName: messages.dialogs.actions,
       renderCell: params => (
@@ -185,18 +186,32 @@ export default function Index() {
                 value={search}
                 ref={inputRef}
                 onChange={e => {
-                  setSearch(e.target.value)
+                  setSearch(e.target.value.replace(/\s+/g, ''))
+
                 }}
               />
             </form>
+            <div className='flex gap-2 justify-end mb-5'>
+              <Button
+                variant='contained'
+                color='error'
+                disabled={!search}
+                className={`${!startSearch ? '!opacity-50' : ''}`}
+                onClick={() => {
+                  setSearch('')
+                }}
+              >
+                {messages.reset}
+              </Button>
+            </div>
 
             <TableEdit
               InvitationsColumns={columns}
               data={data
                 ?.filter(ele => ele.name.toLowerCase().includes(search.toLowerCase()))
-                .map((ele, i) => {
+                .map((ele, indexOfPage) => {
                   const fData = { ...ele }
-                  fData.index = i + paginationModel.page * paginationModel.pageSize
+                  fData.index = indexOfPage
 
                   return fData
                 })}

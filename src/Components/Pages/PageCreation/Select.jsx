@@ -193,20 +193,30 @@ function Select({ onChange, data, type, buttonRef, title }) {
             <FormControl component='fieldset' fullWidth>
               <FormLabel component='legend'>{messages.View_Value}</FormLabel>
               <div className='!flex !flex-row !flex-wrap gap-2'>
-                {getFields?.map(value => (
-                  <FormControlLabel
-                    key={value.key}
-                    className='!w-fit capitalize'
-                    control={
-                      <Checkbox
-                        value={value.key}
-                        checked={selectedOptions.includes(value.key)}
-                        onChange={handleChange}
-                      />
-                    }
-                    label={value.key}
-                  />
-                ))}
+                {getFields?.map(value => {
+                  const dataValidations = {}
+                  value.validationData.forEach(item => {
+                    dataValidations[item.ruleType] = item.parameters
+                  })
+
+
+                  return (
+                    <FormControlLabel
+                      key={value.key}
+                      className='!w-fit capitalize'
+                      control={
+                        <>
+                          <Checkbox
+                            value={value.key}
+                            checked={selectedOptions.includes(value.key)}
+                            onChange={handleChange}
+                          />
+                        </>
+                      }
+                      label={<>{value.key} {dataValidations?.Required ? <span className='text-red-500'>*</span> : ''}</>}
+                    />
+                  )
+                })}
               </div>
             </FormControl>
           </div>
@@ -219,14 +229,7 @@ function Select({ onChange, data, type, buttonRef, title }) {
                 fullWidth
                 value={data.type_of_sumbit || ''}
                 onChange={e => {
-                  if (e.target.value === 'collection') {
-                    if (selectedOptions.length !== getFields.length) {
-                      toast.error(messages.dialogs.youMustSelectTheAllFields)
-
-                      return
-                    }
-                  }
-
+              
                   onChange({ ...data, type_of_sumbit: e.target.value })
                 }}
                 label={messages.dialogs.typeOfSubmit}
@@ -386,11 +389,9 @@ function Select({ onChange, data, type, buttonRef, title }) {
                             <div className='text-sm'>
                               <span className='text-main-color me-2'>
                                 (
-                                {
-                                  addMoreElement.find(ele => ele.key.toLowerCase() === item.key.toLowerCase())?.[
-                                    `name_${locale}`
-                                  ] || messages.text
-                                }
+                                {addMoreElement.find(ele => ele.key.toLowerCase() === item.key.toLowerCase())?.[
+                                  `name_${locale}`
+                                ] || messages.text}
                                 )
                               </span>
                               {item?.[`name_${locale}`]}{' '}
@@ -444,13 +445,7 @@ function Select({ onChange, data, type, buttonRef, title }) {
                   fullWidth
                   value={data.type_of_sumbit || ''}
                   onChange={e => {
-                    if (e.target.value === 'collection') {
-                      if (selectedOptions.length !== getFields.length) {
-                        toast.error(messages.dialogs.youMustSelectTheAllFields)
-
-                        return
-                      }
-                    }
+                   
 
                     onChange({ ...data, type_of_sumbit: e.target.value })
                   }}

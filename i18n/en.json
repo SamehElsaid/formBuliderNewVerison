@@ -715,5 +715,11 @@
   "type": "Type",
   "nameAr": "Name (Ar)",
   "nameEn": "Name (En)",
-  "send": "Send"
+  "send": "Send",
+  "workflow": "Workflow",
+  "description": "Description",
+  "versionReason": "Version Reason",
+  "href": "Href",
+  "tableTitleInArabic": "Table Title (Ar)",
+  "tableTitleInEnglish": "Table Title (En)"
 }

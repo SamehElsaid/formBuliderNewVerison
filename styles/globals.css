@@ -904,9 +904,6 @@ sortable-list {
 .sortable-button:hover {
   background-color: #303f9f;
 }
-.react-page-toolbar-draggable:nth-child(1) {
-  display: none !important;
-}
 
 .MuiPaper-root.MuiPaper-elevation.MuiPaper-elevation0.MuiDrawer-paper.MuiDrawer-paperAnchorBottom.MuiDrawer-paperAnchorDockedBottom {
   top: auto !important;
@@ -1479,9 +1476,9 @@ sortable-list {
   background-color: gray !important;
 }
 
-input[placeholder='Search for blocks'] {
+/* input[placeholder='Search for blocks'] {
   display: none;
-}
+} */
 li:has(:contains("Add blocks to page")), /* Modern browsers */
 li:contains("Add blocks to page") {
   /* jQuery pseudo-selector */
@@ -1526,4 +1523,10 @@ input:focus-visible ,textarea:focus-visible{
 }
 .react-page-row{
   justify-content: center;
+}
+.MuiDataGrid-panelFooter{
+  justify-content: end !important;
+}
+.MuiDataGrid-panelFooter button:first-of-type {
+  display: none; 
 }

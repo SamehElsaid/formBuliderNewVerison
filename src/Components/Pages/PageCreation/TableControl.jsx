@@ -4,7 +4,6 @@ import { axiosGet } from 'src/Components/axiosCall'
 
 function TableControl({ data, onChange }) {
   const { locale } = useIntl()
-  const [totalCount, setTotalCount] = useState(0)
   const [loading, setLoading] = useState(false)
   const [getFields, setGetFields] = useState([])
 
@@ -28,7 +27,6 @@ function TableControl({ data, onChange }) {
         .then(res => {
           if (res.status) {
             setGetFields(res.entities)
-            setTotalCount(res.totalCount)
           }
         })
         .finally(() => setLoading(false))

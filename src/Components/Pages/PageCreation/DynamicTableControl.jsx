@@ -115,11 +115,7 @@ const DynamicTableControl = ({ data, onChange, title, locale }) => {
     });
   };
 
-  // Handle column selection for step 1
-  const handleColumnSelection = (selected) => {
-    setSelectedColumns(selected);
-    setSelectionStep(2);
-  };
+  
 
   // Handle row selection for step 2
   const handleRowSelection = (selected) => {
@@ -198,7 +194,7 @@ const DynamicTableControl = ({ data, onChange, title, locale }) => {
         <AccordionDetails>
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
             <TextField
-              label={messages.dialogs.tableTitle}
+              label={messages.tableTitleInArabic}
               variant="outlined"
               fullWidth
               value={data?.title_ar || ''}
@@ -206,7 +202,7 @@ const DynamicTableControl = ({ data, onChange, title, locale }) => {
             />
 
             <TextField
-              label={messages.dialogs.tableTitle}
+              label={messages.tableTitleInEnglish}
               variant="outlined"
               fullWidth
               value={data?.title_en || ''}
@@ -419,7 +415,7 @@ const DynamicTableControl = ({ data, onChange, title, locale }) => {
                   disabled={selectedColumns.length === 0}
                   sx={{ mt: 2 }}
                 >
-                  {messages.dialogs.next}
+                  {messages.next}
                 </Button>
               </>
             )}
@@ -437,11 +433,12 @@ const DynamicTableControl = ({ data, onChange, title, locale }) => {
                       value={selectableRows}
                       onChange={(e) => setSelectableRows(e.target.value)}
                       renderValue={(selected) => selected.join(', ')}
+                      variant='filled'
                     >
                       {data.rows.map((row) => (
                         <MenuItem key={row} value={row}>
                           <Checkbox checked={selectableRows.includes(row)} />
-                          <ListItemText primary={row} />
+                          <ListItemText primary={row} className='!text-black' />
                         </MenuItem>
                       ))}
                     </Select>
@@ -486,6 +483,7 @@ const DynamicTableControl = ({ data, onChange, title, locale }) => {
                   {selectedCells.map((cell, index) => (
                     <ListItem key={index}>
                       <ListItemText
+                      className='!text-black'
                         primary={`${cell.column} - ${cell.row}`}
                         primaryTypographyProps={{
                           style: locale === 'ar' ? { textAlign: 'right' } : {}

@@ -228,9 +228,8 @@ const ReactPageEditor = ({ pageName, initialData, initialDataApi, workflowId }) 
             )}
             <div className='flex gap-2 ms-auto'>
               <Button
-                variant='outlined'
-                color={"primary"}
-               
+                variant={advancedEdit ? 'contained' : 'outlined'}
+                color={'primary'}
                 title={messages.ApiControl}
                 onClick={() => {
                   setOpenApiData(!openApiData)
@@ -239,8 +238,8 @@ const ReactPageEditor = ({ pageName, initialData, initialDataApi, workflowId }) 
                 <TbApi className='text-2xl' />
               </Button>
               <Button
-                variant={readOnly ? 'contained' : 'outlined'}
-                color={"primary"}
+                variant={readOnly || advancedEdit ? 'contained' : 'outlined'}
+                color={'primary'}
                 title={messages.viewMode}
                 onClick={() => {
                   setReadOnly(!readOnly)
@@ -251,7 +250,7 @@ const ReactPageEditor = ({ pageName, initialData, initialDataApi, workflowId }) 
               </Button>
               <Button
                 variant={advancedEdit ? 'contained' : 'outlined'}
-                color={"warning"}
+                color={'warning'}
                 title={messages.editMode}
                 onClick={() => {
                   setAdvancedEdit(!advancedEdit)
@@ -266,9 +265,9 @@ const ReactPageEditor = ({ pageName, initialData, initialDataApi, workflowId }) 
               >
                 <IoSettingsOutline className='text-xl' />
               </Button>
-          
+
               <Button
-                variant='outlined'
+                variant={advancedEdit ? 'contained' : 'outlined'}
                 color={'error'}
                 onClick={() => {
                   JSON.stringify(editorValue) === JSON.stringify(newData)

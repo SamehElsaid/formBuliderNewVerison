@@ -1675,7 +1675,7 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                               >
                                 <MenuItem value={'required'}>{messages.dialogs.required}</MenuItem>
                                 <MenuItem value={'optional'} selected>
-                                  {messages.dialogs.optional}
+                                  {messages.optional}
                                 </MenuItem>
                               </Select>
                             </FormControl>
@@ -1708,7 +1708,7 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                                     }
                                     onChange({ ...data, additional_fields: additional_fields })
                                   }}
-                                  label={messages.dialogs.href}
+                                  label={messages.href}
                                   variant='filled'
                                 />
                                 {open.key !== 'check_box' && (
