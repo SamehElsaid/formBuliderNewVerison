@@ -1,17 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import {
-  Avatar,
-  Button,
-  Card,
-  CardContent,
-  IconButton,
-  Tooltip,
-  Typography,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem
-} from '@mui/material'
+import { Avatar, Button, Card, CardContent, IconButton, Tooltip, Typography, MenuItem } from '@mui/material'
 import { Box } from '@mui/system'
 import React, { useEffect, useState } from 'react'
 import CustomTextField from 'src/@core/components/mui/text-field'
@@ -23,6 +11,9 @@ import IconifyIcon from 'src/Components/icon'
 import AddCollection from 'src/Components/Collection/AddCollection'
 import { useRouter } from 'next/router'
 import Breadcrumbs from 'src/Components/breadcrumbs'
+import { useTheme } from '@mui/material/styles'
+import useMediaQuery from '@mui/material/useMediaQuery'
+import GetTimeinTable from 'src/Components/GetTimeinTable'
 
 export default function Index() {
   const { locale, messages } = useIntl()
@@ -34,6 +25,9 @@ export default function Index() {
   const [data, setData] = useState([])
   const [dataSources, setDataSources] = useState([])
   const [selectedDataSource, setSelectedDataSource] = useState('')
+
+  const theme = useTheme()
+  const fullScreen = useMediaQuery(theme.breakpoints.down('sm'))
 
   const router = useRouter()
 
@@ -81,6 +75,8 @@ export default function Index() {
         toast.dismiss(loadingToast)
       })
   }, [locale, paginationModel.page, paginationModel.pageSize, refresh, selectedDataSource])
+
+  // Fetch fields for selected collection in Setup step
 
   const handleClose = () => {
     setOpen(false)
@@ -160,6 +156,22 @@ export default function Index() {
           sx={{ fontWeight: 500, color: 'text.secondary' }}
         >
           {row.nameAr}
+        </Typography>
+      )
+    },
+    {
+      flex: 0.05,
+      minWidth: 150,
+      field: 'createdAt',
+      disableColumnMenu: true,
+      headerName: messages.createdAt,
+      renderCell: ({ row }) => (
+        <Typography
+          variant='subtitle2'
+          className='capitalize text-overflow'
+          sx={{ fontWeight: 500, color: 'text.secondary' }}
+        >
+          {row.createdAt ? <GetTimeinTable data={row.createdAt} /> : '-'}
         </Typography>
       )
     },
@@ -263,9 +275,11 @@ export default function Index() {
               {dataFilter?.length}
             </Avatar>
           </div>
-          <Button variant='contained' color='primary' onClick={() => setOpen(true)} disabled={!selectedDataSource}>
-            {messages.collection.addCollection}
-          </Button>
+          <div className='flex gap-2'>
+            <Button variant='contained' color='primary' onClick={() => setOpen(true)} disabled={!selectedDataSource}>
+              {messages.collection.addCollection}
+            </Button>
+          </div>
         </CardContent>
       </Card>
       <Box sx={{ mb: 4 }}>
@@ -302,7 +316,7 @@ export default function Index() {
                 variant='contained'
                 color='error'
                 disabled={!startSearch}
-                className={`${!startSearch ? '!opacity-50':''}`}
+                className={`${!startSearch ? '!opacity-50' : ''}`}
                 onClick={() => {
                   setStartSearch('')
                 }}
@@ -329,6 +343,8 @@ export default function Index() {
           </div>
         </Card>
       </Box>
+
+      {/* Add Relation Modal */}
     </div>
   )
 }

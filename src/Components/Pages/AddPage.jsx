@@ -60,12 +60,7 @@ const AddPage = props => {
   })
   const [loading, setLoading] = useState(false)
 
-  const [workflows, setWorkflows] = useState([
-    { id: '4d731e3e20364b89', name: 'MedicalMember' },
-    { id: '6bacd960b225b6f', name: 'Payment' },
-    { id: '73a8202ca9d1ab64', name: 'FacilityRegistration' },
-    { id: 'DocumentApprovalWorkflow:1.0', name: 'DocumentApprovalWorkflow' }
-  ])
+const [workflows, setWorkflows] = useState([])
 
   const onSubmit = data => {
     setLoading(true)
@@ -113,7 +108,7 @@ const AddPage = props => {
   useEffect(() => {
     axiosGet('Workflow/get-workflows', locale).then(res => {
       if (res.status) {
-        // setWorkflows(res.data)
+        setWorkflows(res.data || [])
       }
     })
   }, [locale])
@@ -161,7 +156,11 @@ const AddPage = props => {
                 <CustomTextField
                   fullWidth
                   type='text'
-                  label={<span>{messages['name']} <span style={{ color: 'red' }}>*</span></span>}
+                  label={
+                    <span>
+                      {messages['name']} <span style={{ color: 'red' }}>*</span>
+                    </span>
+                  }
                   value={value}
                   sx={{ mb: 4 }}
                   onChange={onChange}
@@ -179,7 +178,11 @@ const AddPage = props => {
                 <CustomTextField
                   fullWidth
                   type='text'
-                  label={<span>{messages['description']} <span style={{ color: 'red' }}>*</span></span>}
+                  label={
+                    <span>
+                      {messages['description']} <span style={{ color: 'red' }}>*</span>
+                    </span>
+                  }
                   value={value}
                   multiline
                   rows={4}
@@ -220,9 +223,7 @@ const AddPage = props => {
                   filterSelectedOptions
                   id='autocomplete-multiple-outlined'
                   getOptionLabel={option => option.name || ''}
-                  renderInput={params => (
-                    <CustomTextField {...params} label={messages['workflow']} placeholder={messages['workflow']} />
-                  )}
+                  renderInput={params => <CustomTextField {...params} label={messages['workflow']} />}
                   onChange={(event, newValue) => {
                     onChange(newValue)
                   }}

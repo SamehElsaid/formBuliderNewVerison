@@ -14,6 +14,7 @@ import FormBuilder from 'src/Components/Collection/FormBuilder'
 import FormEdit from 'src/Components/FormEdit'
 import GetCollectionName from 'src/Components/GetCollectionName'
 import IconifyIcon from 'src/Components/icon'
+import AddRelation from 'src/Components/Popup/AddRelation'
 import TableEdit from 'src/Components/TableEdit/TableEdit'
 import ViewField from 'src/Components/ViewFiled'
 
@@ -27,6 +28,7 @@ function AddField() {
   const [startSearch, setStartSearch] = useState('')
   const [edit, setEdit] = useState(null)
   const [view, setView] = useState(null)
+  const [relationOpen, setRelationOpen] = useState(false)
 
   const {
     query: { addFiles }
@@ -258,6 +260,8 @@ function AddField() {
       <FormBuilder open={open} setOpen={setOpen} setRefresh={setRefresh} />
       <FormEdit open={edit} setOpen={setEdit} setData={setData} />
       <ViewField open={view} setOpen={setView} />
+      <AddRelation setRefresh={setRefresh} dataParent={data?.collection} relationOpen={relationOpen} setRelationOpen={setRelationOpen} />
+
       <Card className='w-[100%]  mb-5 py-4 '>
         <CardContent
           className='flex-col gap-2 h-full md:flex-row'
@@ -281,9 +285,14 @@ function AddField() {
               {data?.fields?.length}
             </Avatar>
           </div>
-          <Button variant='contained' color='primary' onClick={() => setOpen(data.collection)}>
-            {messages.dialogs.addField}
-          </Button>
+          <div className='flex gap-2'>
+            <Button variant='contained' color='primary' onClick={() => setRelationOpen(true)}>
+              Add Relation
+            </Button>
+            <Button variant='contained' color='primary' onClick={() => setOpen(data.collection)}>
+              {messages.dialogs.addField}
+            </Button>
+          </div>
         </CardContent>
       </Card>
       <Box sx={{ mb: 4 }}>

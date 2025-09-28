@@ -164,5 +164,30 @@
     "addApiData": "إضافة API",
     "link": "الرابط",
     "invalidLink": "الرابط غير صالح"
+  },
+  "addRelation": {
+    "title": "إضافة علاقة",
+    "subtitle": "تكوين نوع العلاقة والتسميات والإعداد.",
+    "steps": {
+      "type": "النوع",
+      "details": "التفاصيل",
+      "setup": "الإعداد"
+    },
+    "relationTypes": {
+      "oneToOne": "واحد لواحد",
+      "oneToMany": "واحد لكثير",
+      "manyToMany": "كثير لكثير"
+    },
+    "selectRelationType": "اختر نوع العلاقة",
+    "chooseRelationDescription": "اختر كيف ترتبط الكيانات ببعضها البعض.",
+    "nameEn": "الاسم بالإنجليزية",
+    "nameAr": "الاسم بالعربية",
+    "key": "المفتاح",
+    "nameEnPlaceholder": "مثال: Customer",
+    "nameArPlaceholder": "مثال: عميل",
+    "keyPlaceholder": "مثال: customer",
+    "required": "مطلوب",
+    "stepIndicator": "خطوة",
+    "relationConfigured": "تم تكوين العلاقة"
   }
 }

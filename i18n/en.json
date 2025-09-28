@@ -721,5 +721,34 @@
   "versionReason": "Version Reason",
   "href": "Href",
   "tableTitleInArabic": "Table Title (Ar)",
-  "tableTitleInEnglish": "Table Title (En)"
+  "tableTitleInEnglish": "Table Title (En)",
+  "addRelation": {
+    "oneToOne": "One To One",
+    "oneToMany": "One To Many",
+    "manyToMany": "Many To Many",
+    "title": "Add Relation",
+    "subtitle": "Configure relation type, labels and setup.",
+    "steps": {
+      "type": "Type",
+      "details": "Details",
+      "setup": "Setup"
+    },
+    "relationTypes": {
+      "oneToOne": "One To One",
+      "oneToMany": "One To Many",
+      "manyToMany": "Many To Many"
+    },
+    "selectRelationType": "Select relation type",
+    "chooseRelationDescription": "Choose how entities relate to each other.",
+    "nameEn": "Name EN",
+    "nameAr": "Name AR",
+    "key": "Key",
+    "nameEnPlaceholder": "e.g. Customer",
+    "nameArPlaceholder": "مثال: عميل",
+    "keyPlaceholder": "e.g. customer",
+    "required": "Required",
+    "stepIndicator": "Step",
+    "relationConfigured": "Relation configured"
+  },
+  "createdAt": "Created At"
 }
