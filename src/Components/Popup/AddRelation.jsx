@@ -19,7 +19,6 @@ import { useTheme } from '@mui/material/styles'
 import useMediaQuery from '@mui/material/useMediaQuery'
 import { Box, Button, Typography, IconButton, Divider } from '@mui/material'
 import PropTypes from 'prop-types'
-import CustomTextField from 'src/@core/components/mui/text-field'
 import { toast } from 'react-toastify'
 import { useIntl } from 'react-intl'
 import IconifyIcon from 'src/@core/components/icon'
@@ -40,7 +39,6 @@ function AddRelation({ dataParent, relationOpen, setRelationOpen, setRefresh }) 
   const [relationType, setRelationType] = useState('OneToOne')
   const [loading, setLoading] = useState(false)
   const [relationForm, setRelationForm] = useState({ name_en: '', name_ar: '', key: '' })
-  const [relationTouched, setRelationTouched] = useState({ name_en: false, name_ar: false, key: false })
 
   // removed unused: relationNumber, setupFields, selectedOptions, valueCollection, collection
   // use selectedCollection.first as the chosen collection
@@ -62,13 +60,8 @@ function AddRelation({ dataParent, relationOpen, setRelationOpen, setRefresh }) 
     setRelationStep(0)
     setRelationType('oneToOne')
     setRelationForm({ name_en: '', name_ar: '', key: '' })
-    setRelationTouched({ name_en: false, name_ar: false, key: false })
     setSelectedCollection({ first: '', second: '' })
   }, [])
-
-  const isDetailsStepValid = useMemo(() => {
-    return Boolean(relationForm.name_en && relationForm.name_ar && relationForm.key)
-  }, [relationForm])
 
   const selectedCollectionId = selectedCollection?.first?.id || ''
 
@@ -104,9 +97,9 @@ function AddRelation({ dataParent, relationOpen, setRelationOpen, setRefresh }) 
     console.log('handleSave')
 
     const sendData = {
-      nameEn: relationForm.name_en,
-      nameAr: relationForm.name_ar,
-      key: relationForm.key,
+      nameEn: selectedCollection.first.key,
+      nameAr: selectedCollection.first.key,
+      key: `${new Date().getTime()}`,
       FieldCategory: 'Associations',
       collectionId: dataParent.id,
       type: relationType,
@@ -115,9 +108,9 @@ function AddRelation({ dataParent, relationOpen, setRelationOpen, setRefresh }) 
         sourceKey: 'id',
         target: dataParent.key,
         targetKey: dataParent.key + 'Id',
-        foreignKey: relationForm.key + 'Id'
+        foreignKey: 'Id'
       },
-      validationData:[]
+      validationData: []
     }
 
     setLoading(true)
@@ -154,7 +147,6 @@ function AddRelation({ dataParent, relationOpen, setRelationOpen, setRefresh }) 
         <Stepper alternativeLabel>
           {[
             { key: 'type', label: messages['addRelation.steps.type'] || 'Type', icon: 'tabler:git-branch' },
-            { key: 'details', label: messages['addRelation.steps.details'] || 'Details', icon: 'tabler:forms' },
             { key: 'setup', label: messages['addRelation.steps.setup'] || 'Setup', icon: 'tabler:settings' }
           ].map((s, i) => (
             <Step key={s.key}>
@@ -210,51 +202,8 @@ function AddRelation({ dataParent, relationOpen, setRelationOpen, setRefresh }) 
             </Typography>
           </Box>
         )}
-        {relationStep === 1 && (
-          <Box className='grid md:grid-cols-2 gap-4' sx={{ mt: 1 }}>
-            <CustomTextField
-              fullWidth
-              required
-              placeholder={messages['addRelation.nameEnPlaceholder'] || 'e.g. Customer'}
-              label={messages['addRelation.nameEn'] || 'Name EN'}
-              value={relationForm.name_en}
-              error={relationTouched.name_en && !relationForm.name_en}
-              helperText={
-                relationTouched.name_en && !relationForm.name_en ? messages['addRelation.required'] || 'Required' : ' '
-              }
-              onBlur={() => setRelationTouched(prev => ({ ...prev, name_en: true }))}
-              onChange={e => setRelationForm(prev => ({ ...prev, name_en: e.target.value }))}
-            />
-            <CustomTextField
-              fullWidth
-              required
-              placeholder={messages['addRelation.nameArPlaceholder'] || 'مثال: عميل'}
-              label={messages['addRelation.nameAr'] || 'Name AR'}
-              value={relationForm.name_ar}
-              error={relationTouched.name_ar && !relationForm.name_ar}
-              helperText={
-                relationTouched.name_ar && !relationForm.name_ar ? messages['addRelation.required'] || 'Required' : ' '
-              }
-              onBlur={() => setRelationTouched(prev => ({ ...prev, name_ar: true }))}
-              onChange={e => setRelationForm(prev => ({ ...prev, name_ar: e.target.value }))}
-            />
-            <CustomTextField
-              fullWidth
-              required
-              placeholder={messages['addRelation.keyPlaceholder'] || 'e.g. customer'}
-              label={messages['addRelation.key'] || 'Key'}
-              value={relationForm.key}
-              error={relationTouched.key && !relationForm.key}
-              helperText={
-                relationTouched.key && !relationForm.key ? messages['addRelation.required'] || 'Required' : ' '
-              }
-              onBlur={() => setRelationTouched(prev => ({ ...prev, key: true }))}
-              onChange={e => setRelationForm(prev => ({ ...prev, key: e.target.value }))}
-            />
-          </Box>
-        )}
         {/* collections debug log removed */}
-        {relationStep === 2 && (
+        {relationStep === 1 && (
           <Box className='grid md:grid-cols-2 gap-4' sx={{ mt: 1 }}>
             <Autocomplete
               options={loadingCollections ? [] : filteredCollections}
@@ -292,7 +241,7 @@ function AddRelation({ dataParent, relationOpen, setRelationOpen, setRefresh }) 
           <Chip
             size='small'
             variant='outlined'
-            label={`${messages['addRelation.stepIndicator'] || 'Step'} ${relationStep + 1} / 3`}
+            label={`${messages['addRelation.stepIndicator'] || 'Step'} ${relationStep + 1} / 2`}
           />
           <Typography variant='body2' sx={{ color: 'text.secondary' }}>
             {messages['addRelation'][typeLabelMap[relationType]]}
@@ -314,12 +263,8 @@ function AddRelation({ dataParent, relationOpen, setRelationOpen, setRefresh }) 
               {messages.back || 'Back'}
             </Button>
           )}
-          {relationStep < 2 ? (
-            <Button
-              variant='contained'
-              onClick={() => setRelationStep(prev => prev + 1)}
-              disabled={relationStep === 1 && !isDetailsStepValid}
-            >
+          {relationStep < 1 ? (
+            <Button variant='contained' onClick={() => setRelationStep(prev => prev + 1)} disabled={false}>
               {messages.next || 'Next'}
             </Button>
           ) : (
