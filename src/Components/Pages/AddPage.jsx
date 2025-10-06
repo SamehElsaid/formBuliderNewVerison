@@ -70,7 +70,6 @@ const [workflows, setWorkflows] = useState([])
       description: data.description,
       versionReason: data.versionReason
     }
-    console.log(data)
     if (data.workflow?.length > 0) {
       sendData.pageWorkflows = data.workflow.map((workflow, index) => ({
         workflowId: workflow.id,

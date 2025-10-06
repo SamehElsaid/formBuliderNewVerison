@@ -20,6 +20,7 @@ import { axiosGet } from 'src/Components/axiosCall'
 import { toast } from 'react-toastify'
 import CloseNav from './CloseNav'
 import IconifyIcon from 'src/Components/icon'
+import { MdDeleteOutline } from 'react-icons/md'
 
 function Select({ onChange, data, type, buttonRef, title }) {
   const { locale, messages } = useIntl()
@@ -28,6 +29,7 @@ function Select({ onChange, data, type, buttonRef, title }) {
   const [loadingCollection, setLoadingCollection] = useState(false)
   const [selectedOptions, setSelectedOptions] = useState([])
   const [getFields, setGetFields] = useState([])
+  const [SelectedRelatedCollectionsFields, setSelectedRelatedCollectionsFields] = useState([])
 
   useEffect(() => {
     setLoadingCollection(true)
@@ -140,6 +142,49 @@ function Select({ onChange, data, type, buttonRef, title }) {
     }
   }, [addMoreData.length])
 
+  const [relatedCollections, setRelatedCollections] = useState([])
+
+  useEffect(() => {
+    if (collection?.id) {
+
+      axiosGet(`collections/get-related-collections?id=${collection.id}`, locale).then(res => {
+        if (res.status) {
+          setRelatedCollections(res.data ?? [])
+        }
+      })
+    }
+  }, [locale, collection?.id])
+
+  const [relatedCollectionsFields, setRelatedCollectionsFields] = useState([])
+
+  useEffect(() => {
+    if (data?.relatedCollections?.length > 0) {
+      const loadingToast = toast.loading(messages.dialogs.loading)
+      Promise.all(
+        data.relatedCollections.map(async item => {
+          const res = await axiosGet(`collection-fields/get?CollectionId=${item.id}`, locale)
+          if (res.status) {
+            return { collection: item, fields: res.data }
+          }
+
+          return null
+        })
+      )
+        .then(results => {
+          const validResults = results.filter(Boolean)
+          setRelatedCollectionsFields(validResults)
+        })
+        .finally(() => {
+          toast.dismiss(loadingToast)
+        })
+    }
+  }, [data?.relatedCollections?.length])
+
+  useEffect(() => {
+    setSelectedRelatedCollectionsFields(data.SelectedRelatedCollectionsFields ?? [])
+
+  }, [data.SelectedRelatedCollectionsFields])
+
   return (
     <div>
       <div className=''>
@@ -199,7 +244,6 @@ function Select({ onChange, data, type, buttonRef, title }) {
                     dataValidations[item.ruleType] = item.parameters
                   })
 
-
                   return (
                     <FormControlLabel
                       key={value.key}
@@ -213,12 +257,156 @@ function Select({ onChange, data, type, buttonRef, title }) {
                           />
                         </>
                       }
-                      label={<>{value.key} {dataValidations?.Required ? <span className='text-red-500'>*</span> : ''}</>}
+                      label={
+                        <>
+                          {value.key} {dataValidations?.Required ? <span className='text-red-500'>*</span> : ''}
+                        </>
+                      }
                     />
                   )
                 })}
               </div>
             </FormControl>
+          </div>
+
+          <div className='mt-4 border-2 border-main-color border-dashed p-2 rounded-md'>
+            <TextField
+              select
+              fullWidth
+              value={null}
+              label={messages.dialogs.addSuBForm}
+              id='select-helper'
+              variant='filled'
+              onChange={e => {
+                const oldRelatedCollections = data?.relatedCollections ?? []
+                const foundRelatedCollections = relatedCollections.find(item => item.key === e.target.value)
+                const findOldRelatedCollections = oldRelatedCollections.find(item => item.key === e.target.value)
+                if (findOldRelatedCollections) {
+                  toast.error(messages.dialogs.relatedCollectionAlreadyExists)
+
+                  return
+                }
+                onChange({ ...data, relatedCollections: [...oldRelatedCollections, foundRelatedCollections] })
+              }}
+            >
+              {relatedCollections.map((item, i) => (
+                <MenuItem value={item.key} key={i}>
+                  {item?.key}
+                </MenuItem>
+              ))}
+            </TextField>
+
+            <Collapse
+              transition={`height 300ms cubic-bezier(.4, 0, .2, 1)`}
+              isOpen={Boolean(data.relatedCollections?.length > 0)}
+            >
+              <div className='flex flex-col gap-2 my-3 '>
+                {relatedCollectionsFields?.map((item, i) => (
+                  <div key={i} className='border-2 border-main-color border-dashed p-2 rounded-md'>
+                    <div className='flex justify-between items-center gap-5'>
+                      <div className=''>{item.collection.key}</div>
+                      <IconButton
+                        size='small'
+                        color='error'
+                        onClick={() => {
+                          onChange({
+                            ...data,
+                            relatedCollections: data.relatedCollections.filter(
+                              items => items.key !== item?.collection?.key
+                            ),
+                            SelectedRelatedCollectionsFields: SelectedRelatedCollectionsFields.filter(
+                              items => items.collection.key !== item?.collection?.key
+                            )
+                          })
+                        }}
+                      >
+                        <MdDeleteOutline />
+                      </IconButton>
+                    </div>
+                    <div className=''>
+                      <FormControl component='fieldset' fullWidth>
+                        <FormLabel component='legend'>{messages.View_Value}</FormLabel>
+                        <div className='!flex !flex-row !flex-wrap gap-2'>
+                          {item.fields?.map(value => {
+                            const dataValidations = {}
+                            value.validationData.forEach(item => {
+                              dataValidations[item.ruleType] = item.parameters
+                            })
+
+                            const fieldSelected = SelectedRelatedCollectionsFields?.find(
+                              s => s.collection.key === item.collection.key
+                            )
+
+                            return (
+                              <FormControlLabel
+                                key={value.key}
+                                className='!w-fit capitalize'
+                                control={
+                                  <>
+                                    <Checkbox
+                                      value={value.key}
+                                      checked={fieldSelected?.selected?.includes(value.key)}
+                                      onChange={e => {
+
+                                        setSelectedRelatedCollectionsFields(prev => {
+                                          const fieldSelected = prev.find(
+                                            itemS => itemS.collection.key === item.collection.key
+                                          )
+
+                                          // ✅ لو الـ collection موجودة
+                                          if (fieldSelected) {
+                                            const isAlreadySelected = fieldSelected.selected.includes(value.key)
+
+                                            // تحديث الـ selected داخل الـ collection المحددة
+                                            const updated = prev.map(itemS => {
+                                              if (itemS.collection.key === item.collection.key) {
+                                                return {
+                                                  ...itemS,
+                                                  selected: isAlreadySelected
+                                                    ? itemS.selected.filter(k => k !== value.key) // شيل القيمة لو موجودة
+                                                    : [...itemS.selected, value.key] // ضيف القيمة لو مش موجودة
+                                                }
+                                              }
+
+                                              return itemS
+                                            })
+
+                                            onChange({ ...data, SelectedRelatedCollectionsFields: updated })
+
+                                            return updated
+                                          }
+
+                                          // ✅ لو الـ collection مش موجودة، أضفها جديدة
+                                          onChange({
+                                            ...data,
+                                            SelectedRelatedCollectionsFields: [
+                                              ...prev,
+                                              { collection: item.collection, selected: [value.key] }
+                                            ]
+                                          })
+
+                                          return [...prev, { collection: item.collection, selected: [value.key] }]
+                                        })
+                                      }}
+                                    />
+                                  </>
+                                }
+                                label={
+                                  <>
+                                    {value.key}{' '}
+                                    {dataValidations?.Required ? <span className='text-red-500'>*</span> : ''}
+                                  </>
+                                }
+                              />
+                            )
+                          })}
+                        </div>
+                      </FormControl>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </Collapse>
           </div>
 
           <div className='mt-4'></div>
@@ -229,7 +417,6 @@ function Select({ onChange, data, type, buttonRef, title }) {
                 fullWidth
                 value={data.type_of_sumbit || ''}
                 onChange={e => {
-              
                   onChange({ ...data, type_of_sumbit: e.target.value })
                 }}
                 label={messages.dialogs.typeOfSubmit}
@@ -283,7 +470,6 @@ function Select({ onChange, data, type, buttonRef, title }) {
                   <div className='flex justify-center my-3'>
                     <Button
                       onClick={() => {
-                        console.log(moreElement)
                         if (moreElement) {
                           if (moreElement === 'check_box') {
                             const oldAddMoreElement = data?.addMoreElement ?? []
@@ -445,8 +631,6 @@ function Select({ onChange, data, type, buttonRef, title }) {
                   fullWidth
                   value={data.type_of_sumbit || ''}
                   onChange={e => {
-                   
-
                     onChange({ ...data, type_of_sumbit: e.target.value })
                   }}
                   label={messages.dialogs.typeOfSubmit}
@@ -565,7 +749,6 @@ function Select({ onChange, data, type, buttonRef, title }) {
                               })
                               setMoreElement('')
                             }
-                            console.log(moreElement)
                             if (moreElement === 'text') {
                               const oldAddMoreElement = data?.addMoreElement ?? []
                               onChange({

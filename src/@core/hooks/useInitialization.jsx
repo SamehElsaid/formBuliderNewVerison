@@ -20,7 +20,6 @@ function useInitialization() {
   useEffect(() => {
     const userFind = async () => {
       const user = await getUser()
-      console.log(user)
       if (!user) {
         removeCookie('sub', { path: '/' })
         dispatch(REMOVE_USER())

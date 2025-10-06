@@ -16,7 +16,6 @@ import {
 
 function Setting() {
   const { messages } = useIntl()
-  console.log("sss");
   
 
   return (

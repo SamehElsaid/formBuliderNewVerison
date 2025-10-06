@@ -6,7 +6,6 @@ import { sendOAuthRequest } from 'src/services/AuthService'
 
 const LoginPage = () => {
 
-  console.log("here");
 
   useEffect(()=>{
     sendOAuthRequest()

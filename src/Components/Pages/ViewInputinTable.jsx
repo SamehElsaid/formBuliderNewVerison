@@ -43,11 +43,9 @@ function ViewInputInTable({
         setGetFields(prev => {
           const findWithId = prev.find(e => e.Id === row.Id)
           findWithId[ele.key] = dataRef.current[ele.key]
-          console.log(prev, findWithId)
 
           return prev
         })
-        console.log(row, 'row')
 
         setChangedValue(prev => {
           const newPrev = [...prev]

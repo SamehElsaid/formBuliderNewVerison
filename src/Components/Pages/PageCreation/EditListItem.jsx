@@ -16,7 +16,6 @@ const Header = styled(Box)(() => ({
   top: 0
 }))
 function EditListItem({ open, handleClose, locale, setDataView, dataView }) {
-  console.log(open)
 
   return (
     <Drawer
@@ -53,7 +52,6 @@ function EditListItem({ open, handleClose, locale, setDataView, dataView }) {
               type='text'
               defaultValue={open?.text_en}
               onBlur={e => {
-                console.log(e.target.value)
 
                 const newDataView = dataView.map(item => {
                   if (item.id === open.id) {
@@ -72,7 +70,6 @@ function EditListItem({ open, handleClose, locale, setDataView, dataView }) {
               type='text'
               defaultValue={open?.text_ar}
               onBlur={e => {
-                console.log(e.target.value)
 
                 const newDataView = dataView.map(item => {
                   if (item.id === open.id) {
@@ -91,7 +88,6 @@ function EditListItem({ open, handleClose, locale, setDataView, dataView }) {
               type='number'
               defaultValue={open.paddingBlock}
               onBlur={e => {
-                console.log(e.target.value)
 
                 const newDataView = dataView.map(item => {
                   if (item.id === open.id) {
@@ -110,7 +106,6 @@ function EditListItem({ open, handleClose, locale, setDataView, dataView }) {
               type='number'
               defaultValue={open.paddingInline}
               onBlur={e => {
-                console.log(e.target.value)
 
                 const newDataView = dataView.map(item => {
                   if (item.id === open.id) {
@@ -129,7 +124,6 @@ function EditListItem({ open, handleClose, locale, setDataView, dataView }) {
               type='number'
               defaultValue={open.borderRadius}
               onBlur={e => {
-                console.log(e.target.value)
 
                 const newDataView = dataView.map(item => {
                   if (item.id === open.id) {
@@ -148,7 +142,6 @@ function EditListItem({ open, handleClose, locale, setDataView, dataView }) {
               type='number'
               defaultValue={open.borderWidth}
               onBlur={e => {
-                console.log(e.target.value)
 
                 const newDataView = dataView.map(item => {
                   if (item.id === open.id) {
@@ -167,7 +160,6 @@ function EditListItem({ open, handleClose, locale, setDataView, dataView }) {
               type='color'
               defaultValue={open.backgroundColor}
               onBlur={e => {
-                console.log(e.target.value)
 
                 const newDataView = dataView.map(item => {
                   if (item.id === open.id) {
@@ -186,7 +178,6 @@ function EditListItem({ open, handleClose, locale, setDataView, dataView }) {
               type='color'
               defaultValue={open.color}
               onBlur={e => {
-                console.log(e.target.value)
 
                 const newDataView = dataView.map(item => {
                   if (item.id === open.id) {
@@ -205,7 +196,6 @@ function EditListItem({ open, handleClose, locale, setDataView, dataView }) {
               type='color'
               defaultValue={open.borderColor}
               onBlur={e => {
-                console.log(e.target.value)
 
                 const newDataView = dataView.map(item => {
                   if (item.id === open.id) {
@@ -225,7 +215,6 @@ function EditListItem({ open, handleClose, locale, setDataView, dataView }) {
               type='number'
               defaultValue={open.fontSize}
               onBlur={e => {
-                console.log(e.target.value)
 
                 const newDataView = dataView.map(item => {
                   if (item.id === open.id) {
@@ -245,7 +234,6 @@ function EditListItem({ open, handleClose, locale, setDataView, dataView }) {
               type='number'
               defaultValue={open.fontWeight}
               onBlur={e => {
-                console.log(e.target.value)
 
                 const newDataView = dataView.map(item => {
                   if (item.id === open.id) {
@@ -264,7 +252,6 @@ function EditListItem({ open, handleClose, locale, setDataView, dataView }) {
               type='text'
               value={open.borderStyle}
               onChange={e => {
-                console.log(e.target.value)
 
                 const newDataView = dataView.map(item => {
                   if (item.id === open.id) {
@@ -290,7 +277,6 @@ function EditListItem({ open, handleClose, locale, setDataView, dataView }) {
               type='color'
               defaultValue={open.hoverBackgroundColor}
               onBlur={e => {
-                console.log(e.target.value)
 
                 const newDataView = dataView.map(item => {
                   if (item.id === open.id) {
@@ -310,7 +296,6 @@ function EditListItem({ open, handleClose, locale, setDataView, dataView }) {
               type='color'
               defaultValue={open.hoverColor}
               onBlur={e => {
-                console.log(e.target.value)
 
                 const newDataView = dataView.map(item => {
                   if (item.id === open.id) {
@@ -329,7 +314,6 @@ function EditListItem({ open, handleClose, locale, setDataView, dataView }) {
               type='color'
               defaultValue={open.hoverBorderColor}
               onBlur={e => {
-                console.log(e.target.value)
 
                 const newDataView = dataView.map(item => {
                   if (item.id === open.id) {
@@ -348,7 +332,6 @@ function EditListItem({ open, handleClose, locale, setDataView, dataView }) {
               type='color'
               defaultValue={open.hoverBorderColor}
               onBlur={e => {
-                console.log(e.target.value)
 
                 const newDataView = dataView.map(item => {
                   if (item.id === open.id) {

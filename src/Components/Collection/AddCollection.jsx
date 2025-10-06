@@ -67,7 +67,6 @@ const AddCollection = props => {
     resolver: yupResolver(schema)
   })
   const [loading, setLoading] = useState(false)
-  console.log(getValues())
 
   const onSubmit = data => {
     const sendData = {
@@ -314,14 +313,14 @@ const AddCollection = props => {
                 <CustomTextField
                   fullWidth
                   type='text'
-                  label={locale === 'ar' ? 'وصف التجميعة بالعربية' : 'Description in Arabic'}
+                  label={messages.card['description_ar']}
                   value={value}
                   sx={{ mb: 4 }}
                   multiline
                   rows={4}
                   onChange={onChange}
                   error={Boolean(errors.description_ar)}
-                  placeholder={locale === 'ar' ? 'وصف التجميعة بالعربية' : 'Description in Arabic'}
+                  placeholder={messages.card['description_ar']}
                   {...(errors.description_ar && { helperText: errors.description_ar.message })}
                   InputProps={{
                     endAdornment: (
@@ -351,14 +350,14 @@ const AddCollection = props => {
                 <CustomTextField
                   fullWidth
                   type='text'
-                  label={locale === 'ar' ? 'وصف التجميعة بالانجليزية' : 'Description in English'}
+                  label={messages.card['description_en']}
                   value={value}
                   sx={{ mb: 4 }}
                   multiline
                   rows={4}
                   onChange={onChange}
                   error={Boolean(errors.description_en)}
-                  placeholder={locale === 'ar' ? 'وصف التجميعة بالانجليزية' : 'Description in English'}
+                  placeholder={messages.card['description_en']}
                   InputProps={{
                     endAdornment: (
                       <InputAdornment

@@ -53,7 +53,6 @@ const HeaderControl = ({ data = {}, onChange, locale, buttonRef }) => {
     mobileMenuItemFontWeight: 'normal',
     ...data
   }
-  console.log(headerData.logoFilePreview)
 
   // Helper function to handle inputs
 

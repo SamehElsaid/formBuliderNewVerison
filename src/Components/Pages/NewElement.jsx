@@ -6,7 +6,6 @@ import { Button, Dialog, DialogContent, Typography } from '@mui/material'
 import { LoadingButton } from '@mui/lab'
 
 function NewElement({ input, onBlur, value, setValue, roles, onChangeEvent, disabledBtn, isDisable, readOnly }) {
-  console.log(input)
   const [open, setOpen] = useState(false)
   const { locale, messages } = useIntl()
   const [loadingButton, setLoadingButton] = useState(false)
@@ -15,7 +14,6 @@ function NewElement({ input, onBlur, value, setValue, roles, onChangeEvent, disa
   const handleValidationChanges = e => {
     setValue('checked')
   }
-  console.log(onChangeEvent, input.name_en)
 
   const handleCheckboxChange = e => {
     if (roles?.onMount?.href) {
@@ -214,7 +212,6 @@ function NewElement({ input, onBlur, value, setValue, roles, onChangeEvent, disa
                       onClick={e => {
                         handleClick(e)
                         buttonRef.current.type = 'submit'
-                        console.log('dsa')
                         setTimeout(() => {
                           buttonRef.current.click()
                           buttonRef.current.type = 'button'

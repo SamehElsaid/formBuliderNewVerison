@@ -13,7 +13,6 @@ function TableControl({ data, onChange }) {
   })
 
 
-  console.log(getFields)
   
   useEffect(() => {
     setLoading(true)

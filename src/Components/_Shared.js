@@ -82,6 +82,36 @@ export const getTypeFromCollection = (type, description) => {
   return type.charAt(0).toUpperCase() + type.slice(1)
 }
 
+export const getTypeFromCollectionTarget = (type, description) => {
+  const baseTypes = {
+    SingleText: 'text',
+    URL: 'url',
+    Phone: 'tel',
+    Email: 'email',
+    Number: 'number',
+    Date: 'date',
+    Password: 'password',
+    File: 'file',
+    LongText: 'textarea'
+  }
+
+  if (baseTypes[type]) return baseTypes[type]
+
+  if (type === 'OneToOne') {
+    return "OneToOne"
+  }
+
+  if (type === 'ManyToMany') {
+    return "ManyToMany"
+  }
+
+  if (type === 'OneToMany') {
+    return "OneToMany"
+  }
+
+  return type.charAt(0).toUpperCase() + type.slice(1)
+}
+
 const styleMap = {
   textarea,
   checkbox,

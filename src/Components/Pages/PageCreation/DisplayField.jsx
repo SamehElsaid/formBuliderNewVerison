@@ -261,7 +261,6 @@ export default function DisplayField({
       }
     }
     if (roles?.trigger?.typeOfValidation == 'optional' && roles?.trigger?.mainValue && !loading) {
-      console.log('optional')
 
       if (input.fieldCategory == 'Basic') {
         if (roles?.trigger?.parentKey) {
@@ -273,8 +272,6 @@ export default function DisplayField({
                 const data = res.entities?.[0] ?? false
                 if (data) {
                   if (roles?.trigger.isEqual == 'equal') {
-                    console.log(1)
-                    console.log(data?.[roles?.trigger?.triggerKey], roles?.trigger?.mainValue)
                     if (data?.[roles?.trigger?.triggerKey] != roles?.trigger?.mainValue) {
                       if (!validations?.Required) {
                         setValidations(prev => ({ ...prev, Required: true }))
@@ -310,17 +307,14 @@ export default function DisplayField({
             })
           }
         } else {
-          console.log('s')
 
           if (roles?.trigger.isEqual == 'equal') {
-            console.log(dataRef?.current?.[roles?.trigger?.selectedField], roles?.trigger?.mainValue)
 
             if (dataRef?.current?.[roles?.trigger?.selectedField] != roles?.trigger?.mainValue) {
               if (!validations?.Required) {
                 setValidations(prev => ({ ...prev, Required: true }))
               }
             } else {
-              console.log('1')
 
               if (validations?.Required) {
                 setValidations(prev => {
@@ -349,7 +343,6 @@ export default function DisplayField({
           }
         }
       } else {
-        console.log('sa')
         if (roles?.trigger?.parentKey) {
           if (dataRef?.current?.[roles?.trigger?.selectedField]) {
             axiosGet(
@@ -427,9 +420,6 @@ export default function DisplayField({
       }
     }
     if (roles?.trigger?.typeOfValidation == 'optional' && !roles?.trigger?.mainValue && !loading) {
-      console.log('sam')
-
-      // console.log("here");
 
       if (dataRef?.current?.[roles?.trigger?.selectedField]?.length != 0) {
         setValidations(prev => {
@@ -616,8 +606,6 @@ export default function DisplayField({
 
     // ! Start hidden Control
     if (roles?.trigger?.typeOfValidation == 'hidden' && roles?.trigger?.mainValue && !loading) {
-      console.log(input)
-      console.log('hiddessn')
 
       if (input.fieldCategory == 'Basic' || input.type == 'new_element') {
         if (roles?.trigger?.parentKey) {
@@ -646,7 +634,6 @@ export default function DisplayField({
             })
           } else {
             if (roles?.trigger?.isEqual != 'equal') {
-              console.log('he')
 
               setIsDisable('hidden')
             }
@@ -659,7 +646,6 @@ export default function DisplayField({
               setIsDisable('hidden')
             }
           } else {
-            console.log(dataRef?.current?.[roles?.trigger?.selectedField], roles?.trigger?.mainValue)
 
             if (dataRef?.current?.[roles?.trigger?.selectedField] == roles?.trigger?.mainValue) {
               setIsDisable('hidden')
@@ -712,7 +698,6 @@ export default function DisplayField({
       }
     }
     if (roles?.trigger?.typeOfValidation == 'hidden' && !roles?.trigger?.mainValue && !loading) {
-      console.log('hidden')
 
       if (dataRef?.current?.[roles?.trigger?.selectedField]?.length != 0) {
         setIsDisable('hidden')
@@ -871,7 +856,6 @@ export default function DisplayField({
     }
   }, [input, findValue])
 
-  console.log(validations, input.key)
 
   useEffect(() => {
     if (reload != 0) {
@@ -887,14 +871,12 @@ export default function DisplayField({
     }
   }, [reload, input])
   useEffect(() => {
-    console.log(roles?.onMount.type)
 
     if (!loading) {
       setTimeout(() => {
         if (roles?.onMount?.type == 'disable') {
           setIsDisable('disabled')
         }
-        console.log({ here: roles?.onMount?.type, filed: input?.key })
         if (roles?.onMount?.type == 'required') {
           setValidations(prev => ({ ...prev, Required: true }))
         }

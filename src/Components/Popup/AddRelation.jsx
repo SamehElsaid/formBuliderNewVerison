@@ -94,7 +94,6 @@ function AddRelation({ dataParent, relationOpen, setRelationOpen, setRefresh }) 
   }, [])
 
   const handleSave = () => {
-    console.log('handleSave')
 
     const sendData = {
       nameEn: selectedCollection.first.key,
@@ -103,6 +102,7 @@ function AddRelation({ dataParent, relationOpen, setRelationOpen, setRefresh }) 
       FieldCategory: 'Associations',
       collectionId: dataParent.id,
       type: relationType,
+      ParentCollectionId: selectedCollection.first.id,
       options: {
         source: selectedCollection.first.key,
         sourceKey: 'id',
@@ -127,7 +127,6 @@ function AddRelation({ dataParent, relationOpen, setRelationOpen, setRefresh }) 
         setLoading(false)
       })
 
-    console.log(sendData, dataParent)
   }
 
   return (

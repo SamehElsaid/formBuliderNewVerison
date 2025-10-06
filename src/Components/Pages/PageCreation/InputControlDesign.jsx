@@ -1307,7 +1307,6 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                                   const additional_fields = data.additional_fields ?? []
                                   const findMyInput = additional_fields.find(inp => inp.key === open.id)
                                   if (findMyInput) {
-                                    console.log(e.target.value)
                                     findMyInput.roles.onMount.type = e.target.value
                                   } else {
                                     const myEdit = {

@@ -76,7 +76,6 @@ function Trigger({
     if (findMyInput) {
       findMyInput.roles.trigger = sendData
     } else {
-      console.log(Css, objectToCss(Css))
 
       const myEdit = {
         key: open.id,
@@ -126,7 +125,6 @@ function Trigger({
                   variant='filled'
                   value={selectedField}
                   onChange={e => {
-                    console.log(e.target.value)
 
                     const field = fields.find(field => field.key === e.target.value)
                     if (field.fieldCategory !== 'Basic') {
@@ -160,7 +158,6 @@ function Trigger({
                   variant='filled'
                   value={typeOfValidation}
                   onChange={e => {
-                    console.log(e.target.value)
 
                     setTypeOfValidation(e.target.value)
                   }}

@@ -123,7 +123,7 @@ export const axiosPut = async (url, locale, data, file, close) => {
   }
 }
 
-export const axiosDelete = async (url, locale) => {
+export const axiosDelete = async (url, locale, token) => {
   const authToken = Cookies.get('sub')
 
   try {
