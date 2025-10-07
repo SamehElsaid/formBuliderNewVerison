@@ -7,13 +7,14 @@ import React, { useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { toast } from 'react-toastify'
 import CustomTextField from 'src/@core/components/mui/text-field'
-import { getTypeFromCollection } from 'src/Components/_Shared'
+import { getTypeFromCollection, getTypeFromCollectionTarget } from 'src/Components/_Shared'
 import { axiosDelete, axiosGet } from 'src/Components/axiosCall'
 import Breadcrumbs from 'src/Components/breadcrumbs'
 import FormBuilder from 'src/Components/Collection/FormBuilder'
 import FormEdit from 'src/Components/FormEdit'
 import GetCollectionName from 'src/Components/GetCollectionName'
 import IconifyIcon from 'src/Components/icon'
+import DeletePopUp from 'src/Components/DeletePopUp'
 import AddRelation from 'src/Components/Popup/AddRelation'
 import TableEdit from 'src/Components/TableEdit/TableEdit'
 import ViewField from 'src/Components/ViewFiled'
@@ -29,6 +30,8 @@ function AddField() {
   const [edit, setEdit] = useState(null)
   const [view, setView] = useState(null)
   const [relationOpen, setRelationOpen] = useState(false)
+  const [deleteItem, setDeleteItem] = useState(null)
+  const [deleteLoading, setDeleteLoading] = useState(false)
 
   const {
     query: { addFiles }
@@ -53,8 +56,6 @@ function AddField() {
         })
     }
   }, [addFiles])
-
-  const [deletePage, setDeletePage] = useState(false)
 
   const columns = [
     {
@@ -116,7 +117,7 @@ function AddField() {
           className='capitalize text-overflow'
           sx={{ fontWeight: 500, color: 'text.secondary' }}
         >
-          {messages[getTypeFromCollection(row.type, row.descriptionAr)]}
+          {messages[getTypeFromCollectionTarget(row.type, row.descriptionAr)]}
         </Typography>
       )
     },
@@ -133,11 +134,7 @@ function AddField() {
           sx={{ fontWeight: 500, color: 'text.secondary' }}
         >
           {true && (row.type === 'OneToOne' || row.type === 'ManyToMany') ? (
-            row.type === 'OneToOne' ? (
-              <GetCollectionName name={row.options.source} />
-            ) : (
-              <GetCollectionName name={row.options.target} />
-            )
+            <GetCollectionName name={row.options.source} />
           ) : (
             <Chip label={messages.dialogs.notFound} />
           )}
@@ -176,41 +173,7 @@ function AddField() {
             <IconButton
               size='small'
               onClick={e => {
-                setDeletePage(params.row.id)
-                if (deletePage !== params.row.id) {
-                  toast.info(messages.dialogs.areYouSureYouWantToDeleteThisItem, {
-                    position: 'bottom-right',
-                    autoClose: 4000,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    progress: undefined,
-                    theme: 'colored',
-                    icon: <IconifyIcon icon='tabler:trash' />,
-                    iconColor: 'red',
-                    iconSize: 20,
-                    iconPosition: 'left',
-                    onClick: () => {
-                      const loadingToast = toast.loading(messages.dialogs.deletingField)
-                      axiosDelete(`collection-fields/delete?collectionFieldId=${params.row.id}`, locale)
-                        .then(res => {
-                          if (res.status) {
-                            toast.success(messages.dialogs.fieldDeletedSuccessfully)
-                            setData(prev => ({ ...prev, fields: prev.fields.filter(ele => ele.id !== params.row.id) }))
-                            setRefresh(prev => prev + 1)
-                          }
-                        })
-                        .finally(() => {
-                          toast.dismiss(loadingToast)
-                          setDeletePage(false)
-                        })
-                    },
-                    onClose: () => {
-                      setDeletePage(false)
-                    }
-                  })
-                }
+                setDeleteItem(params.row)
               }}
             >
               <IconifyIcon icon='tabler:trash' />
@@ -220,6 +183,23 @@ function AddField() {
       )
     }
   ]
+
+  const handleDelete = () => {
+    if (deleteItem) {
+      setDeleteLoading(true)
+      axiosDelete(`collection-fields/delete?collectionFieldId=${deleteItem.id}`, locale)
+        .then(res => {
+          if (res.status) {
+            toast.success(messages.dialogs.fieldDeletedSuccessfully)
+            setRefresh(prev => prev + 1)
+          }
+        })
+        .finally(() => {
+          setDeleteLoading(false)
+          setDeleteItem(null)
+        })
+    }
+  }
 
   const dataFilter = data?.fields.filter(
     ele =>
@@ -242,7 +222,6 @@ function AddField() {
     }
   }, [refresh, addFiles])
 
-  console.log(edit)
 
   return (
     <div>
@@ -260,7 +239,18 @@ function AddField() {
       <FormBuilder open={open} setOpen={setOpen} setRefresh={setRefresh} />
       <FormEdit open={edit} setOpen={setEdit} setData={setData} />
       <ViewField open={view} setOpen={setView} />
-      <AddRelation setRefresh={setRefresh} dataParent={data?.collection} relationOpen={relationOpen} setRelationOpen={setRelationOpen} />
+      <AddRelation
+        setRefresh={setRefresh}
+        dataParent={data?.collection}
+        relationOpen={relationOpen}
+        setRelationOpen={setRelationOpen}
+      />
+      <DeletePopUp
+        open={deleteItem}
+        setOpen={setDeleteItem}
+        handleDelete={handleDelete}
+        loadingButton={deleteLoading}
+      />
 
       <Card className='w-[100%]  mb-5 py-4 '>
         <CardContent

@@ -66,8 +66,10 @@
   "Select_Allowed_File_Types": "Select allowed file types",
   "tel": "Telephone",
   "addFiled": "Add Field",
-  "collectionNameAR": "Data Model (Arabic)",
-  "collectionNameEN": "Data Model (English)",
+  "collectionNameAR": "Name (AR)",
+  "collectionNameEN": "Name (EN)",
+  "description_ar": "Description (AR)",
+  "description_en": "Description (EN)",
   "createInput": "Add Field",
   "Select_Collection": "Select Collection",
   "View_Value": "View Field",
@@ -402,6 +404,8 @@
     "DataSourceAddedSuccessfully": "Data Source added successfully"
   },
   "dialogs": {
+    "addSuBForm": "Add Sub Form",
+    "relatedCollectionAlreadyExists": "Related collection already exists",
     "returnToPreviousPageWithoutSaveChanges": "Return to Previous Page Without Save Changes",
     "yes": "Yes",
     "no": "No",
@@ -423,6 +427,7 @@
     "show": "Show",
     "hide": "Hide",
     "key": "Key",
+    "areYouSureYouWantToDeleteThisItem": "Are you sure you want to delete this item?",
     "labelAr": "Label (Ar)",
     "labelEn": "Label (En)",
     "translating": "Translating",
@@ -750,5 +755,11 @@
     "stepIndicator": "Step",
     "relationConfigured": "Relation configured"
   },
-  "createdAt": "Created At"
+  "createdAt": "Created At",
+  "OneToOne": "One To One",
+  "OneToMany": "One To Many",
+  "ManyToMany": "Many To Many",
+  "areYouSureYouWantToDeleteThisItem": "Are you sure you want to delete this item?",
+  "maxLengthMustBeGreaterThanMinLength": "Max Length must be greater than Min Length",
+  "maxLengthMustBe512": "Max Length must be less than 512 characters"
 }

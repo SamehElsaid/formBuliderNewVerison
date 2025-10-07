@@ -125,9 +125,7 @@ const ReactPageEditor = ({ pageName, initialData, initialDataApi, workflowId }) 
 
   useEffect(() => {
     const handleClickEvent = e => {
-      console.log(e.target, e.target.closest('.react-page-cell-insert-new'))
       if (e.target.closest('.react-page-cell-insert-new')) {
-        console.log('clicked')
         handleClick()
       }
     }

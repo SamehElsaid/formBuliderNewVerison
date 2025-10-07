@@ -351,7 +351,6 @@ const ViewInput = ({
                 {locale == 'ar' ? 'اغلاق' : 'Close'}
               </Button>
             </div>
-            {console.log(value)}
             <DatePickerWrapper className='w-full'>
               <DatePicker
                 selected={value}
@@ -416,7 +415,6 @@ const ViewInput = ({
       showTime: raw.showTime === 'true'
     }
 
-    console.log(label)
     const today = new Date()
     let minDate = null
     let maxDate = null

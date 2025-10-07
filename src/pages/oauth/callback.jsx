@@ -28,12 +28,10 @@ function OAuthCallback() {
             try {
                 const currentUrl = window.location.href;
                 await handleOAuthCallback(currentUrl);
-                console.log(currentUrl);
 
 
                 const data = await isAuthenticated()
                 const dataUser = await getUser()
-                console.log(dataUser);
 
                 //s
                 if (data) {

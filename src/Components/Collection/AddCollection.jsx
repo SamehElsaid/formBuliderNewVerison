@@ -67,7 +67,6 @@ const AddCollection = props => {
     resolver: yupResolver(schema)
   })
   const [loading, setLoading] = useState(false)
-  console.log(getValues())
 
   const onSubmit = data => {
     const sendData = {
@@ -98,18 +97,6 @@ const AddCollection = props => {
       setLoading(true)
 
       delete sendData.key
-      if (open.nameAr === sendData.nameAr) {
-        delete sendData.nameAr
-      }
-      if (open.nameEn === sendData.nameEn) {
-        delete sendData.nameEn
-      }
-      if (open.descriptionAr === sendData.descriptionAr) {
-        delete sendData.descriptionAr
-      }
-      if (open.descriptionEn === sendData.descriptionEn) {
-        delete sendData.descriptionEn
-      }
       sendData.id = open.id
 
       axiosPut('collections/update', locale, sendData)
@@ -209,6 +196,7 @@ const AddCollection = props => {
               render={({ field: { value, onChange } }) => (
                 <CustomTextField
                   fullWidth
+                  disabled={typeof open !== 'boolean'}
                   type='text'
                   label={
                     <span>
@@ -314,14 +302,14 @@ const AddCollection = props => {
                 <CustomTextField
                   fullWidth
                   type='text'
-                  label={locale === 'ar' ? 'وصف التجميعة بالعربية' : 'Description in Arabic'}
+                  label={messages.card['description_ar']}
                   value={value}
                   sx={{ mb: 4 }}
                   multiline
                   rows={4}
                   onChange={onChange}
                   error={Boolean(errors.description_ar)}
-                  placeholder={locale === 'ar' ? 'وصف التجميعة بالعربية' : 'Description in Arabic'}
+                  placeholder={messages.card['description_ar']}
                   {...(errors.description_ar && { helperText: errors.description_ar.message })}
                   InputProps={{
                     endAdornment: (
@@ -351,14 +339,14 @@ const AddCollection = props => {
                 <CustomTextField
                   fullWidth
                   type='text'
-                  label={locale === 'ar' ? 'وصف التجميعة بالانجليزية' : 'Description in English'}
+                  label={messages.card['description_en']}
                   value={value}
                   sx={{ mb: 4 }}
                   multiline
                   rows={4}
                   onChange={onChange}
                   error={Boolean(errors.description_en)}
-                  placeholder={locale === 'ar' ? 'وصف التجميعة بالانجليزية' : 'Description in English'}
+                  placeholder={messages.card['description_en']}
                   InputProps={{
                     endAdornment: (
                       <InputAdornment

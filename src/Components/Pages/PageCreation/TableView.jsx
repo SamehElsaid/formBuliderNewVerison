@@ -23,10 +23,8 @@ function TableView({ data, locale, onChange, readOnly, disabled }) {
   const [editOpen, setEditOpen] = useState(false)
   const { messages } = useIntl()
   const errorAllRef = useRef([])
-  console.log(changedValue)
 
   const user = useSelector(rx => rx.auth)
-  console.log(user)
 
   const [open, setOpen] = useState(false)
 
@@ -42,7 +40,6 @@ function TableView({ data, locale, onChange, readOnly, disabled }) {
 
   useEffect(() => {
     setLoading(true)
-    console.log('here')
     if (data.collectionId) {
       axiosGet(
         `generic-entities/${data.collectionName}?pageNumber=${paginationModel.page + 1}&pageSize=${
@@ -58,7 +55,6 @@ function TableView({ data, locale, onChange, readOnly, disabled }) {
               newEntities = newEntities.map(ele => {
                 let newEle = { ...ele }
                 const findWithId = changedValue.find(e => e.Id === newEle.Id)
-                console.log(findWithId, 'findWithId')
                 if (findWithId) {
                   newEle = findWithId
                 }
@@ -69,7 +65,6 @@ function TableView({ data, locale, onChange, readOnly, disabled }) {
             if (paginationModel.page === 0) {
               newEntities = [...newChangedValue, ...newEntities]
             }
-            console.log(newEntities, 'newEntities')
 
             setGetFields(newEntities)
             setTotalCount(res.totalCount)
@@ -341,7 +336,6 @@ function TableView({ data, locale, onChange, readOnly, disabled }) {
                 variant='contained'
                 color='success'
                 onClick={() => {
-                  console.log(changedValue, 'changedValue')
 
                   axiosPost(`generic-entities/${data.collectionName}`, locale,  changedValue.map(ele => {
                     return {

@@ -14,6 +14,7 @@ import Breadcrumbs from 'src/Components/breadcrumbs'
 import { useTheme } from '@mui/material/styles'
 import useMediaQuery from '@mui/material/useMediaQuery'
 import GetTimeinTable from 'src/Components/GetTimeinTable'
+import DeletePopUp from 'src/Components/DeletePopUp'
 
 export default function Index() {
   const { locale, messages } = useIntl()
@@ -83,7 +84,26 @@ export default function Index() {
   }
 
   const [deletePage, setDeletePage] = useState(false)
+  const [deleteLoading, setDeleteLoading] = useState(false)
   const { push } = useRouter()
+
+  const handleDelete = () => {
+    if (!deletePage) return
+    setDeleteLoading(true)
+    const loadingToast = toast.loading(messages.delete)
+    axiosDelete(`collections/delete?collectionId=${deletePage}`, locale)
+      .then(res => {
+        if (res.status) {
+          toast.success(messages.deleteSuccess)
+          setRefresh(prev => prev + 1)
+        }
+      })
+      .finally(() => {
+        toast.dismiss(loadingToast)
+        setDeleteLoading(false)
+        setDeletePage(false)
+      })
+  }
 
   const handleDataSourceChange = event => {
     const dataSourceId = event.target.value
@@ -208,40 +228,6 @@ export default function Index() {
               size='small'
               onClick={() => {
                 setDeletePage(params.row.id)
-                if (deletePage !== params.row.id) {
-                  toast.info(messages.areYouSure, {
-                    position: 'bottom-right',
-                    autoClose: 4000,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    progress: undefined,
-                    theme: 'colored',
-                    icon: <IconifyIcon icon='tabler:trash' />,
-                    iconColor: 'red',
-                    iconSize: 20,
-                    iconPosition: 'left',
-                    onClick: () => {
-                      const loadingToast = toast.loading(messages.delete)
-                      axiosDelete(`collections/delete?collectionId=${params.row.id}`, locale)
-                        .then(res => {
-                          if (res.status) {
-                            toast.success(messages.deleteSuccess)
-                            setData(data.filter((item, i) => i !== params.row.index))
-                            setRefresh(prev => prev + 1)
-                          }
-                        })
-                        .finally(() => {
-                          toast.dismiss(loadingToast)
-                          setDeletePage(false)
-                        })
-                    },
-                    onClose: () => {
-                      setDeletePage(false)
-                    }
-                  })
-                }
               }}
             >
               <IconifyIcon icon='tabler:trash' />
@@ -254,6 +240,12 @@ export default function Index() {
 
   return (
     <div>
+      <DeletePopUp
+        open={deletePage}
+        setOpen={setDeletePage}
+        handleDelete={handleDelete}
+        loadingButton={deleteLoading}
+      />
       <Breadcrumbs loading={loading} routers={[{ name: messages.collection.collectionName, link: '' }]} isDashboard />
       <AddCollection open={open} toggle={handleClose} setRefresh={setRefresh} selectedDataSource={selectedDataSource} />
       <Card className='w-[100%] mb-5 py-4'>
@@ -329,7 +321,7 @@ export default function Index() {
               InvitationsColumns={columns}
               data={dataFilter?.map((ele, i) => {
                 const fData = { ...ele }
-                fData.index = i + paginationModel.page * paginationModel.pageSize
+                fData.index = i 
 
                 return fData
               })}

@@ -98,7 +98,6 @@ export default function useCellPlugins({ advancedEdit, locale, readOnly, buttonR
       GoogleMap
     ]
   )
-  console.log(cellPlugins.sort((a, b) => a.title.toLocaleLowerCase().localeCompare(b.title.toLocaleLowerCase())))
 
   return {
     cellPlugins: cellPlugins

@@ -16,7 +16,6 @@ import {
 
 function Setting() {
   const { messages } = useIntl()
-  console.log("sss");
   
 
   return (
@@ -39,13 +38,7 @@ function UsersTable() {
 
   // Fake API (jsonplaceholder users)
   useEffect(() => {
-    setLoading(true)
-    fetch('https://jsonplaceholder.typicode.com/users')
-      .then(res => res.json())
-      .then(data => {
-        setUsers(data)
-        setLoading(false)
-      })
+  
   }, [])
 
   // Pagination handlers

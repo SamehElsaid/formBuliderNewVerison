@@ -24,13 +24,12 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
   const refError = useRef({})
   const dataRef = useRef({})
   const [triggerData, setTriggerData] = useState(0)
-  
+
   const {
     query: { entityid },
     push
   } = useRouter()
   const { messages } = useIntl()
-  console.log(entityid)
 
   const [layout, setLayout] = useState()
   const addMoreElement = data.addMoreElement ?? []
@@ -43,7 +42,7 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
     : []
   const SortWithXInGroup = convertTheTheSameYToGroup.map(group => group.sort((a, b) => a.x - b.x))
   const sortedData = SortWithXInGroup.flat()
-  const filterSelect = getFields.filter(filed => data?.selected?.includes(filed?.key))
+  const filterSelect = getFields
 
   useEffect(() => {
     if (!loading) {
@@ -67,18 +66,41 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
 
   useEffect(() => {
     if (data.collectionId) {
-      axiosGet(`collection-fields/get?CollectionId=${data.collectionId}`, locale)
-        .then(res => {
+      Promise.all([
+        ...(data?.SelectedRelatedCollectionsFields?.map(async item => {
+          const res = await axiosGet(`collection-fields/get?CollectionId=${item.collection.id}`, locale)
           if (res.status) {
-            setGetFields(res.data)
+            const selectedFields = res.data.filter(field => item.selected.includes(field.key))
+            console.log(selectedFields, 'itemitemitemitemitem', item)
+
+            return selectedFields.map(field => ({ ...field, key: field.key + '[' + item.collection.key + ']' }))
           }
+
+          return []
+        }) || []),
+
+        axiosGet(`collection-fields/get?CollectionId=${data.collectionId}`, locale).then(res => {
+          if (res.status) {
+            return res.data.filter(field => data?.selected?.includes(field?.key))
+          }
+
+          return []
+        })
+      ])
+        .then(results => {
+          const validResults = results.filter(Boolean)
+          const flatResults = validResults.flat()
+          console.log(flatResults)
+
+          console.log(validResults, ':validResults')
+          setGetFields(flatResults)
         })
         .finally(() => setLoading(false))
     } else {
       setGetFields([])
       setLoading(true)
     }
-  }, [locale, data.collectionId])
+  }, [locale, data.collectionId, data.SelectedRelatedCollectionsFields, data.selected])
 
   const handleSubmit = e => {
     e.preventDefault()
@@ -134,10 +156,32 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
       return setErrors(refError.current)
     }
 
+    console.log(sendData, 'sendData')
+
+    const splitSendDataKey = Object.keys(sendData).map(key => {
+      return key.split('[')[0]
+    })
+    console.log(splitSendDataKey, 'splitSendDataKey')
+
+    const output = {}
+
+    Object.entries(sendData).forEach(([key, value]) => {
+      const match = key.match(/^(.+)\[(.+)\]$/)
+      if (match) {
+        const [, mainKey, subKey] = match
+        output[subKey] = output[subKey] || {}
+        output[subKey][mainKey] = value
+      } else {
+        output[key] = value
+      }
+    })
+    
+    console.log(output, 'output')
+
     axiosPost(
       data.type_of_sumbit === 'collection' ? `generic-entities/${data.collectionName}` : data.submitApi,
       locale,
-      sendData,
+      output,
       false,
       false,
       data.type_of_sumbit !== 'collection' ? true : false
@@ -145,7 +189,6 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
       if (res.status) {
         setReload(prev => prev + 1)
         toast.success(messages.dialogs.dataSentSuccessfully)
-        console.log(redirect)
         if (data.redirect === '{{redirect}}') {
           if (redirect) {
             push(`/${locale}/${redirect}`)
@@ -161,6 +204,7 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
   }
 
   const [open, setOpen] = useState(false)
+  console.log(filterSelect)
 
   const handleClose = () => {
     setOpen(false)
@@ -260,8 +304,6 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
       (sortedData.findIndex(f => f.i === a.id) === -1 ? Infinity : sortedData.findIndex(f => f.i === a.id)) -
       (sortedData.findIndex(f => f.i === b.id) === -1 ? Infinity : sortedData.findIndex(f => f.i === b.id))
   )
-
-  console.log({ getFields, filterSelect })
 
   return (
     <div className={`${disabled ? 'text-main' : ''}`}>
