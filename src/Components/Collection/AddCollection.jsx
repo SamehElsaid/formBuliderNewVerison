@@ -97,18 +97,6 @@ const AddCollection = props => {
       setLoading(true)
 
       delete sendData.key
-      if (open.nameAr === sendData.nameAr) {
-        delete sendData.nameAr
-      }
-      if (open.nameEn === sendData.nameEn) {
-        delete sendData.nameEn
-      }
-      if (open.descriptionAr === sendData.descriptionAr) {
-        delete sendData.descriptionAr
-      }
-      if (open.descriptionEn === sendData.descriptionEn) {
-        delete sendData.descriptionEn
-      }
       sendData.id = open.id
 
       axiosPut('collections/update', locale, sendData)
@@ -208,6 +196,7 @@ const AddCollection = props => {
               render={({ field: { value, onChange } }) => (
                 <CustomTextField
                   fullWidth
+                  disabled={typeof open !== 'boolean'}
                   type='text'
                   label={
                     <span>

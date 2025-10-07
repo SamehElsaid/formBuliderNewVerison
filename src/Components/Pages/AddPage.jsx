@@ -34,7 +34,7 @@ const AddPage = props => {
       .required(messages['required'])
       .trim()
       .matches(/^(?!-)([A-Za-z0-9]+-?)*[A-Za-z0-9]+$/, messages.nameNotValid),
-    description: yup.string().required(messages['required']).trim()
+    description: yup.string().required(messages['required']).trim().max(512, messages.maxLengthMustBe512)
   })
 
   const defaultValues = {
@@ -60,7 +60,7 @@ const AddPage = props => {
   })
   const [loading, setLoading] = useState(false)
 
-const [workflows, setWorkflows] = useState([])
+  const [workflows, setWorkflows] = useState([])
 
   const onSubmit = data => {
     setLoading(true)
