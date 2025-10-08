@@ -404,6 +404,7 @@
     "DataSourceAddedSuccessfully": "Data Source added successfully"
   },
   "dialogs": {
+    "getRelatedCollections": "Get Related Collections",
     "addSuBForm": "Add Sub Form",
     "relatedCollectionAlreadyExists": "Related collection already exists",
     "returnToPreviousPageWithoutSaveChanges": "Return to Previous Page Without Save Changes",
