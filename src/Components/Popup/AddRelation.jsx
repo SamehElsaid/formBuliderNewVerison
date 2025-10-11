@@ -75,13 +75,14 @@ function AddRelation({ dataParent, relationOpen, setRelationOpen, setRefresh }) 
     axiosGet(`collections/get/?dataSourceId=${dataSourceId}`, locale)
       .then(res => {
         if (res.status) {
-          setCollections(res.data)
+
+          setCollections(res.data.filter(item => item.id !== dataParent?.id))
         }
       })
       .finally(() => {
         setLoadingCollections(false)
       })
-  }, [locale, dataSourceId, relationOpen])
+  }, [locale, dataSourceId, relationOpen, dataParent])
 
   const filteredCollections = useMemo(() => {
     return (collections || []).filter(item => item.id !== selectedCollectionId)
@@ -94,7 +95,6 @@ function AddRelation({ dataParent, relationOpen, setRelationOpen, setRefresh }) 
   }, [])
 
   const handleSave = () => {
-
     const sendData = {
       nameEn: selectedCollection.first.key,
       nameAr: selectedCollection.first.key,
@@ -126,7 +126,6 @@ function AddRelation({ dataParent, relationOpen, setRelationOpen, setRefresh }) 
       .finally(_ => {
         setLoading(false)
       })
-
   }
 
   return (

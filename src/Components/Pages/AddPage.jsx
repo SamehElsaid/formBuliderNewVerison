@@ -13,8 +13,9 @@ import { useIntl } from 'react-intl'
 import { useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
 import { LoadingButton } from '@mui/lab'
-import { axiosPost, axiosGet } from '../axiosCall'
+import { axiosPost, axiosGet, axiosPatch } from '../axiosCall'
 import CustomAutocomplete from 'src/@core/components/mui/autocomplete'
+import { CircularProgress } from '@mui/material'
 
 const Header = styled(Box)(({ theme }) => ({
   display: 'flex',
@@ -77,44 +78,85 @@ const AddPage = props => {
       }))
     }
 
-    axiosPost('page', locale, sendData)
-      .then(res => {
-        if (res.status) {
-          toast.success(messages.pageAddedSuccessfully)
-          handleClose()
-          setRefresh(prev => prev + 1)
-        }
-      })
-      .catch(err => {
-        toast.error(messages.ErrorOccurred)
-      })
-      .finally(_ => {
-        setLoading(false)
-      })
+    if (typeof open !== 'boolean') {
+      axiosPatch(`page/update/${open.name}`, locale, sendData)
+        .then(res => {
+          if (res.status) {
+            toast.success(messages.pageUpdatedSuccessfully)
+            handleClose()
+            setRefresh(prev => prev + 1)
+          }
+        })
+        .catch(err => {
+          toast.error(messages.ErrorOccurred)
+        })
+        .finally(_ => {
+          setLoading(false)
+        })
+    } else {
+      axiosPost('page', locale, sendData)
+        .then(res => {
+          if (res.status) {
+            toast.success(messages.pageAddedSuccessfully)
+            handleClose()
+            setRefresh(prev => prev + 1)
+          }
+        })
+        .catch(err => {
+          toast.error(messages.ErrorOccurred)
+        })
+        .finally(_ => {
+          setLoading(false)
+        })
+    }
   }
+
+  const [loadingWorkflow, setLoadingWorkflow] = useState(true)
 
   useEffect(() => {
     if (typeof open !== 'boolean') {
-      setValue('name', open.nameAr)
-      setValue('description', open.descriptionAr)
+      setValue('name', open.name)
+      setValue('description', open.description)
       setValue('versionReason', open.versionReason)
+      const workflowArray = []
+
+      open.pageWorkflowNames.forEach(workflow => {
+        const workflowData = workflows.find(workflowData => workflowData.name === workflow)
+        if (workflowData) {
+          workflowArray.push(workflowData)
+        }
+      })
+
+      console.log(workflowArray)
+      setValue('workflow', workflowArray)
+
+      // setValue(
+      //   'workflow',
+      //   open.pageWorkflows.map(workflow => workflow.workflowId)
+      // )
       trigger('name')
       trigger('description')
       trigger('versionReason')
     }
-  }, [open, setValue, trigger])
+  }, [open, setValue, trigger, loadingWorkflow, workflows])
 
   useEffect(() => {
-    axiosGet('Workflow/get-workflows', locale).then(res => {
-      if (res.status) {
-        setWorkflows(res.data || [])
-      }
-    })
-  }, [locale])
+    setLoadingWorkflow(true)
+    axiosGet('Workflow/get-workflows', locale)
+      .then(res => {
+        if (res.status) {
+          setWorkflows(res.data || [])
+        }
+      })
+      .finally(() => {
+        setLoadingWorkflow(false)
+      })
+  }, [locale, open])
 
   const handleClose = () => {
     toggle()
     reset()
+    setLoadingWorkflow(true)
   }
 
   return (
@@ -153,6 +195,7 @@ const AddPage = props => {
               rules={{ required: true }}
               render={({ field: { value, onChange } }) => (
                 <CustomTextField
+                  disabled={typeof open !== 'boolean'}
                   fullWidth
                   type='text'
                   label={
@@ -211,24 +254,37 @@ const AddPage = props => {
                 />
               )}
             />
-            <Controller
-              name='workflow'
-              control={control}
-              render={({ field: { value, onChange } }) => (
-                <CustomAutocomplete
-                  multiple
-                  options={workflows}
-                  key={open}
-                  filterSelectedOptions
-                  id='autocomplete-multiple-outlined'
-                  getOptionLabel={option => option.name || ''}
-                  renderInput={params => <CustomTextField {...params} label={messages['workflow']} />}
-                  onChange={(event, newValue) => {
-                    onChange(newValue)
-                  }}
-                />
+
+            <div className='relative'>
+              {loadingWorkflow && (
+                <div className='absolute top-[10px] left-0 w-full h-full flex justify-end px-3 items-center'>
+                  <CircularProgress size={20} />
+                </div>
               )}
-            />
+
+              {console.log(getValues('workflow'))}
+              <Controller
+                name='workflow'
+                control={control}
+                render={({ field: { value, onChange } }) => (
+                  <CustomAutocomplete
+                    multiple
+                    disabled={loadingWorkflow}
+                    value={value}
+                    options={workflows}
+                    key={open}
+                    filterSelectedOptions
+                    id='autocomplete-multiple-outlined'
+                    getOptionLabel={option => option.name || ''}
+                    renderInput={params => <CustomTextField {...params} label={messages['workflow']} />}
+                    onChange={(event, newValue) => {
+                      onChange(newValue)
+                    }}
+                  />
+                )}
+              />
+            </div>
+
             <Box sx={{ display: 'flex', alignItems: 'center' }} className='gap-4 justify-end py-4 mt-auto'>
               <LoadingButton type='submit' variant='contained' loading={loading}>
                 {messages.submit}

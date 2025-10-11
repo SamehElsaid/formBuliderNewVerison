@@ -22,8 +22,6 @@ function convertMomentToDateFnsFormat(format) {
 
 const ViewInput = ({
   input,
-  isOpen,
-  setIsOpen,
   value,
   onChangeFile,
   from,
@@ -156,9 +154,10 @@ const ViewInput = ({
           onChange(e)
         }}
         rows={4}
+        
         placeholder={placeholder}
         disabled={isDisable == 'disabled'}
-        className={`${errorView || error ? 'error' : ''} `}
+        className={`${errorView || error ? 'error' : ''} resize-none`}
         style={{ transition: '0.3s' }}
         onBlur={e => {
           if (onBlur) {
@@ -302,19 +301,17 @@ const ViewInput = ({
     return !readOnly ? (
       <>
         <div className='relative w-full'>
-          <div
-            className='absolute top-0 z-10 w-full h-full cursor-pointer start-0'
-            onClick={() => setIsOpen(true)}
-          ></div>
+          <div className='absolute top-0 z-10 w-full h-full cursor-pointer start-0'></div>
           <DatePickerWrapper className='w-full'>
             <DatePicker
               selected={value}
-              onChange={date => onChange(date)}
-              showTimeSelectOnly
+              onChange={date => {
+                onChange(date)
+              }}
               dateFormat='h:mm aa'
-              showMonthDropdown
+              showTimeSelect
+              showTimeSelectOnly
               locale={locale == 'ar' ? ar : en}
-              showYearDropdown
               onBlur={e => {
                 if (onBlur) {
                   const evaluatedFn = eval('(' + onBlur + ')')
@@ -322,66 +319,15 @@ const ViewInput = ({
                   evaluatedFn(e)
                 }
               }}
-              customInput={<ExampleCustomInput type='time' className='example-custom-input' />}
+              customInput={
+                <ExampleCustomInput value={value?.toString()} type='time' className='example-custom-input' />
+              }
               disabled={isDisable == 'disabled'}
               minDate={minDate}
               maxDate={maxDate}
             />
           </DatePickerWrapper>
         </div>
-        <Dialog
-          open={isOpen}
-          onClose={() => setIsOpen(false)}
-          aria-labelledby='alert-dialog-title'
-          aria-describedby='alert-dialog-description'
-        >
-          <div className='min-h-[80vh] flex flex-col  control-date py-5'>
-            <div className='flex gap-2 justify-end px-5'>
-              <Button
-                type='button'
-                variant='contained'
-                color='error'
-                onClick={() => {
-                  setValue(null)
-                }}
-              >
-                {locale == 'ar' ? 'اعادة تعيين' : 'Reset'}
-              </Button>
-              <Button type='button' variant='contained' color='secondary' onClick={() => setIsOpen(false)}>
-                {locale == 'ar' ? 'اغلاق' : 'Close'}
-              </Button>
-            </div>
-            <DatePickerWrapper className='w-full'>
-              <DatePicker
-                selected={value}
-                open={isOpen}
-                onOpen={() => setIsOpen(true)}
-                onClose={() => setIsOpen(false)}
-                onChange={date => {
-                  onChange(date)
-                  setIsOpen(false)
-                }}
-                dateFormat='h:mm aa'
-                showTimeSelect
-                showTimeSelectOnly
-                locale={locale == 'ar' ? ar : en}
-                onBlur={e => {
-                  if (onBlur) {
-                    const evaluatedFn = eval('(' + onBlur + ')')
-
-                    evaluatedFn(e)
-                  }
-                }}
-                customInput={
-                  <ExampleCustomInput value={value?.toString()} type='time' className='example-custom-input' />
-                }
-                disabled={isDisable == 'disabled'}
-                minDate={minDate}
-                maxDate={maxDate}
-              />
-            </DatePickerWrapper>
-          </div>
-        </Dialog>
       </>
     ) : (
       <DatePicker
@@ -434,65 +380,13 @@ const ViewInput = ({
     return !readOnly ? (
       <>
         <div className='relative w-full'>
-          <div
-            className='absolute top-0 z-10 w-full h-full cursor-pointer start-0'
-            onClick={() => setIsOpen(true)}
-          ></div>
-          <DatePickerWrapper className='w-full'>
-            <DatePicker
-              selected={value}
-              onChange={date => onChange(date)}
-              timeInputLabel='Time:'
-              dateFormat={`${label.format ? label.format : 'MM/dd/yyyy'}`}
-              showMonthDropdown
-              locale={locale == 'ar' ? ar : en}
-              showYearDropdown
-              onBlur={e => {
-                if (onBlur) {
-                  const evaluatedFn = eval('(' + onBlur + ')')
-
-                  evaluatedFn(e)
-                }
-              }}
-              showTimeInput={label.showTime == 'true'}
-              customInput={<ExampleCustomInput className='example-custom-input' />}
-              disabled={isDisable == 'disabled'}
-              minDate={minDate}
-              maxDate={maxDate}
-            />
-          </DatePickerWrapper>
-        </div>
-        <Dialog
-          open={isOpen}
-          onClose={() => setIsOpen(false)}
-          aria-labelledby='alert-dialog-title'
-          aria-describedby='alert-dialog-description'
-        >
-          <div className='min-h-[80vh] flex flex-col  control-date py-5'>
-            <div className='flex gap-2 justify-end px-5'>
-              <Button
-                type='button'
-                variant='contained'
-                color='error'
-                onClick={() => {
-                  setValue(null)
-                }}
-              >
-                {locale == 'ar' ? 'اعادة تعيين' : 'Reset'}
-              </Button>
-              <Button type='button' variant='contained' color='secondary' onClick={() => setIsOpen(false)}>
-                {locale == 'ar' ? 'اغلاق' : 'Close'}
-              </Button>
-            </div>
+          <div className='absolute top-0 z-10 w-full h-full cursor-pointer start-0'>
+            
             <DatePickerWrapper className='w-full'>
               <DatePicker
                 selected={value}
-                open={isOpen}
-                onOpen={() => setIsOpen(true)}
-                onClose={() => setIsOpen(false)}
                 onChange={date => {
                   onChange(date)
-                  setIsOpen(false)
                 }}
                 timeInputLabel={label.showTime == 'true' ? (locale == 'ar' ? 'الوقت:' : 'Time:') : ''}
                 dateFormat={`${label.format ? label.format : 'MM/dd/yyyy'}`}
@@ -514,7 +408,7 @@ const ViewInput = ({
               />
             </DatePickerWrapper>
           </div>
-        </Dialog>
+        </div>
       </>
     ) : (
       <DatePicker

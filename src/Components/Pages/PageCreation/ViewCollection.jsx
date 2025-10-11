@@ -175,7 +175,7 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
         output[key] = value
       }
     })
-    
+
     console.log(output, 'output')
 
     axiosPost(
@@ -380,6 +380,9 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
               }
               const hoverText = roles?.hover?.hover_ar || roles?.hover?.hover_en
               const hintText = roles?.hint?.hint_ar || roles?.hint?.hint_en
+
+              // console.log(roles);
+              console.log(getDesign(filed.id, filed), filed.key)
 
               return (
                 <div

@@ -1,4 +1,4 @@
-import { Avatar, Button, Card, CardContent, IconButton, Tooltip, Typography } from '@mui/material'
+import { Avatar, Button, Card, CardContent, Chip, IconButton, Tooltip, Typography } from '@mui/material'
 import { Box } from '@mui/system'
 import React, { useEffect, useRef, useState } from 'react'
 import CustomTextField from 'src/@core/components/mui/text-field'
@@ -90,6 +90,20 @@ export default function Index() {
       )
     },
     {
+      flex: 0.5,
+      minWidth: 200,
+      field: 'pageWorkflowNames',
+      disableColumnMenu: true,
+      headerName: messages.dialogs.workflow,
+      renderCell: ({ row }) => (
+        <div className='flex gap-2 flex-wrap'>
+          {row.pageWorkflowNames.map(workflow => (
+            <Chip variant='subtitle2' key={workflow} label={workflow} />
+          ))}
+        </div>
+      )
+    },
+    {
       flex: 0.1,
       minWidth: 120,
       field: 'action',
@@ -98,6 +112,18 @@ export default function Index() {
       headerName: messages.dialogs.actions,
       renderCell: params => (
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
+
+          <Tooltip title={messages.dialogs.edit}>
+            <IconButton
+              size='small'
+              onClick={e => {
+                setOpen(params.row)
+              }}
+            >
+              <IconifyIcon icon='tabler:edit' />
+            </IconButton>
+          </Tooltip>
+          
           <Tooltip title={messages.dialogs.delete}>
             <IconButton
               size='small'
@@ -187,7 +213,6 @@ export default function Index() {
                 ref={inputRef}
                 onChange={e => {
                   setSearch(e.target.value.replace(/\s+/g, ''))
-
                 }}
               />
             </form>

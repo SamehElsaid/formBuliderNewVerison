@@ -715,7 +715,8 @@
     "addPage": "Add Page",
     "deletingPage": "Deleting page...",
     "pageDeletedSuccessfully": "Page deleted successfully",
-    "description": "Description"
+    "description": "Description",
+    "workflow": "Workflow"
   },
   "translating": "Translating",
   "type": "Type",
@@ -762,5 +763,6 @@
   "ManyToMany": "Many To Many",
   "areYouSureYouWantToDeleteThisItem": "Are you sure you want to delete this item?",
   "maxLengthMustBeGreaterThanMinLength": "Max Length must be greater than Min Length",
-  "maxLengthMustBe512": "Max Length must be less than 512 characters"
+  "maxLengthMustBe512": "Max Length must be less than 512 characters",
+  "pageUpdatedSuccessfully": "Page updated successfully"
 }
