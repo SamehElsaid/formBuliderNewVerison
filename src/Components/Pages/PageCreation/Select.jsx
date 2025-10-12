@@ -210,7 +210,6 @@ function Select({ onChange, data, type, buttonRef, title }) {
               relatedCollections: [],
               SelectedRelatedCollectionsFields: []
             })
-            // onChange({ ...data, relatedCollections: [], SelectedRelatedCollectionsFields: [] })
           }}
           renderInput={params => (
             <TextField
