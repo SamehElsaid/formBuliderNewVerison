@@ -10,7 +10,7 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import { useForm, Controller } from 'react-hook-form'
 import Icon from 'src/@core/components/icon'
 import { useIntl } from 'react-intl'
-import { Checkbox, FormControlLabel, InputAdornment } from '@mui/material'
+import { Checkbox, FormControlLabel, InputAdornment, Card, CardContent, Grid } from '@mui/material'
 import { useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
 import { LoadingButton } from '@mui/lab'
@@ -33,7 +33,14 @@ const AddCollection = props => {
     name_en: yup.string().required(messages['required']).trim(),
     description_ar: yup.string().trim(),
     description_en: yup.string().trim(),
-    isReadOnly: yup.boolean(),
+    isLookup: yup.boolean(),
+    options: yup.object().shape({
+      createdAt: yup.boolean(),
+      createdBy: yup.boolean(),
+      updatedAt: yup.boolean(),
+      updatedBy: yup.boolean(),
+      isReadOnly: yup.boolean()
+    }),
     key: yup
       .string()
       .required(messages['required'])
@@ -49,7 +56,14 @@ const AddCollection = props => {
     name_en: '',
     description_ar: '',
     description_en: '',
-    isReadOnly: false,
+    isLookup: false,
+    options: {
+      createdAt: true,
+      createdBy: true,
+      updatedAt: true,
+      updatedBy: true,
+      isReadOnly: false
+    },
     key: ''
   }
 
@@ -75,13 +89,13 @@ const AddCollection = props => {
       descriptionAr: data.description_ar,
       descriptionEn: data.description_en,
       key: data.key.toLowerCase().trim(),
-      isLookup: true,
+      isLookup: data.isLookup,
       options: {
-        createdAt: true,
-        createdBy: true,
-        updatedAt: true,
-        updatedBy: true,
-        isReadOnly: data.isReadOnly
+        createdAt: data.options.createdAt,
+        createdBy: data.options.createdBy,
+        updatedAt: data.options.updatedAt,
+        updatedBy: data.options.updatedBy,
+        isReadOnly: data.options.isReadOnly
       }
     }
 
@@ -139,10 +153,22 @@ const AddCollection = props => {
       setValue('description_ar', open.descriptionAr ?? '')
       setValue('key', open.key.trim())
       setValue('description_en', open.descriptionEn ?? '')
+      setValue('isLookup', open.isLookup ?? false)
+      setValue('options.isReadOnly', open.options?.isReadOnly ?? false)
+      setValue('options.createdAt', open.options?.createdAt ?? true)
+      setValue('options.createdBy', open.options?.createdBy ?? true)
+      setValue('options.updatedAt', open.options?.updatedAt ?? true)
+      setValue('options.updatedBy', open.options?.updatedBy ?? true)
       trigger('name_ar')
       trigger('name_en')
       trigger('description_ar')
       trigger('description_en')
+      trigger('isLookup')
+      trigger('options.isReadOnly')
+      trigger('options.createdAt')
+      trigger('options.createdBy')
+      trigger('options.updatedAt')
+      trigger('options.updatedBy')
     }
   }, [open, setValue, trigger])
 
@@ -187,8 +213,8 @@ const AddCollection = props => {
             <Icon icon='tabler:x' fontSize='1.125rem' />
           </IconButton>
         </Header>
-        <Box sx={{ p: theme => theme.spacing(0, 6, 6) }} className='h-full'>
-          <form onSubmit={handleSubmit(onSubmit)} className='flex flex-col p-4 h-full'>
+        <Box sx={{ p: theme => theme.spacing(0, 6, 6), height: '100%', overflow: 'auto' }}>
+          <form onSubmit={handleSubmit(onSubmit)} className='flex flex-col p-4 min-h-full'>
             <Controller
               name='key'
               control={control}
@@ -370,7 +396,7 @@ const AddCollection = props => {
               )}
             />
             <Controller
-              name='isReadOnly'
+              name='isLookup'
               control={control}
               render={({ field: { value, onChange } }) => (
                 <FormControlLabel
@@ -378,17 +404,137 @@ const AddCollection = props => {
                     <Checkbox
                       checked={value}
                       onChange={e => {
-                        setValue('isReadOnly', e.target.checked)
-                        trigger('isReadOnly')
+                        setValue('isLookup', e.target.checked)
+                        trigger('isLookup')
                       }}
                     />
                   }
-                  label={locale === 'ar' ? 'للقراءة فقط' : 'Read Only'}
+                  label={locale === 'ar' ? 'جدول مرجعى' : 'Lookup Table'}
                 />
               )}
             />
 
-            <Box sx={{ display: 'flex', alignItems: 'center' }} className='gap-4 justify-end py-4 mt-auto'>
+            {/* Options Section */}
+            <Card sx={{ 
+              mt: 4, 
+              mb: 2, 
+              border: '2px solid', 
+              borderColor: 'primary.main',
+              backgroundColor: 'background.paper',
+              boxShadow: 2
+            }}>
+              <CardContent sx={{ p: 3 }}>
+                <Typography variant='h6' sx={{ mb: 3, fontWeight: 600, color: 'primary.main' }}>
+                  {locale === 'ar' ? 'الخيارات' : 'Options'}
+                </Typography>
+                
+                
+                <Grid container spacing={2}>
+                  <Grid item xs={12} sm={6}>
+                    <Controller
+                      name='options.isReadOnly'
+                      control={control}
+                      render={({ field: { value, onChange } }) => (
+                        <FormControlLabel
+                          control={
+                            <Checkbox
+                              checked={value}
+                              onChange={e => {
+                                setValue('options.isReadOnly', e.target.checked)
+                                trigger('options.isReadOnly')
+                              }}
+                            />
+                          }
+                          label={locale === 'ar' ? 'للقراءة فقط' : 'Read Only'}
+                        />
+                      )}
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <Controller
+                      name='options.createdAt'
+                      control={control}
+                      render={({ field: { value, onChange } }) => (
+                        <FormControlLabel
+                          control={
+                            <Checkbox
+                              checked={value}
+                              onChange={e => {
+                                setValue('options.createdAt', e.target.checked)
+                                trigger('options.createdAt')
+                              }}
+                            />
+                          }
+                          label={locale === 'ar' ? 'تاريخ الإنشاء' : 'Created At'}
+                        />
+                      )}
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <Controller
+                      name='options.createdBy'
+                      control={control}
+                      render={({ field: { value, onChange } }) => (
+                        <FormControlLabel
+                          control={
+                            <Checkbox
+                              checked={value}
+                              onChange={e => {
+                                setValue('options.createdBy', e.target.checked)
+                                trigger('options.createdBy')
+                              }}
+                            />
+                          }
+                          label={locale === 'ar' ? 'أنشئ بواسطة' : 'Created By'}
+                        />
+                      )}
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <Controller
+                      name='options.updatedAt'
+                      control={control}
+                      render={({ field: { value, onChange } }) => (
+                        <FormControlLabel
+                          control={
+                            <Checkbox
+                              checked={value}
+                              onChange={e => {
+                                setValue('options.updatedAt', e.target.checked)
+                                trigger('options.updatedAt')
+                              }}
+                            />
+                          }
+                          label={locale === 'ar' ? 'تاريخ التحديث' : 'Updated At'}
+                        />
+                      )}
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <Controller
+                      name='options.updatedBy'
+                      control={control}
+                      render={({ field: { value, onChange } }) => (
+                        <FormControlLabel
+                          control={
+                            <Checkbox
+                              checked={value}
+                              onChange={e => {
+                                setValue('options.updatedBy', e.target.checked)
+                                trigger('options.updatedBy')
+                              }}
+                            />
+                          }
+                          label={locale === 'ar' ? 'حدث بواسطة' : 'Updated By'}
+                        />
+                      )}
+                    />
+                  </Grid>
+                </Grid>
+              </CardContent>
+            </Card>
+
+            <Box sx={{ display: 'flex', alignItems: 'center', mt: 4 }} className='gap-4 justify-end py-4'>
               <LoadingButton type='submit' variant='contained' loading={loading}>
                 {typeof open === 'boolean' ? messages.submit : messages.Update}
               </LoadingButton>
