@@ -48,6 +48,7 @@
   "filed_name_en": "Field Name (English)",
   "keyName": "Key",
   "text": "Text",
+  "boolean": "Boolean",
   "textarea": "Textarea",
   "checkbox": "Checkbox",
   "radio": "Radio",

@@ -92,7 +92,8 @@ export const getTypeFromCollectionTarget = (type, description) => {
     Date: 'date',
     Password: 'password',
     File: 'file',
-    LongText: 'textarea'
+    LongText: 'textarea',
+    Boolean: 'boolean'
   }
 
   if (baseTypes[type]) return baseTypes[type]
