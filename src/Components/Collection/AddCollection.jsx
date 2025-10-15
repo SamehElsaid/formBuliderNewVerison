@@ -100,14 +100,7 @@ const AddCollection = props => {
     }
 
     if (typeof open !== 'boolean') {
-      if (
-        open.nameAr === sendData.nameAr &&
-        open.nameEn === sendData.nameEn &&
-        open.descriptionAr === sendData.descriptionAr &&
-        open.descriptionEn === sendData.descriptionEn
-      ) {
-        return toast.info(locale === 'ar' ? 'لا يوجد تغييرات' : 'No changes')
-      }
+    
       setLoading(true)
 
       delete sendData.key
