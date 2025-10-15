@@ -127,7 +127,6 @@ const AddPage = props => {
         }
       })
 
-      console.log(workflowArray)
       setValue('workflow', workflowArray)
 
       // setValue(

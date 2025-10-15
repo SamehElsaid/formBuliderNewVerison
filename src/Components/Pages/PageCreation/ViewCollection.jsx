@@ -10,7 +10,6 @@ import 'react-grid-layout/css/styles.css'
 import 'react-resizable/css/styles.css'
 import { DefaultStyle, getTypeFromCollection, getZIndex, VaildId } from 'src/Components/_Shared'
 import { IoMdSettings } from 'react-icons/io'
-import { loadStripe } from '@stripe/stripe-js'
 import { useIntl } from 'react-intl'
 
 const ResponsiveGridLayout = WidthProvider(GridLayout)
@@ -71,7 +70,6 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
           const res = await axiosGet(`collection-fields/get?CollectionId=${item.collection.id}`, locale)
           if (res.status) {
             const selectedFields = res.data.filter(field => item.selected.includes(field.key))
-            console.log(selectedFields, 'itemitemitemitemitem', item)
 
             return selectedFields.map(field => ({ ...field, key: field.key + '[' + item.collection.key + ']' }))
           }
@@ -81,7 +79,26 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
 
         axiosGet(`collection-fields/get?CollectionId=${data.collectionId}`, locale).then(res => {
           if (res.status) {
-            return res.data.filter(field => data?.selected?.includes(field?.key))
+            const associationsConfig = data.associationsConfig || []
+
+            const filterData = res.data
+              .filter(field => data?.selected?.includes(field?.key))
+              .map(field => {
+                const find = associationsConfig.find(item => item?.key === field?.key)
+                const filedData = { ...field }
+                if (find) {
+                  filedData.kind = find.viewType
+                  filedData.descriptionEn = JSON.stringify(find.selectedOptions)
+                  filedData.getDataForm = find.dataSourceType
+                  filedData.externalApi = find.externalApi
+                  filedData.staticData = find.staticData
+                  filedData.selectedValueSend = JSON.stringify(find.selectedValueSend)
+                }
+
+                return filedData
+              })
+
+            return filterData
           }
 
           return []
@@ -90,9 +107,6 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
         .then(results => {
           const validResults = results.filter(Boolean)
           const flatResults = validResults.flat()
-          console.log(flatResults)
-
-          console.log(validResults, ':validResults')
           setGetFields(flatResults)
         })
         .finally(() => setLoading(false))
@@ -156,13 +170,6 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
       return setErrors(refError.current)
     }
 
-    console.log(sendData, 'sendData')
-
-    const splitSendDataKey = Object.keys(sendData).map(key => {
-      return key.split('[')[0]
-    })
-    console.log(splitSendDataKey, 'splitSendDataKey')
-
     const output = {}
 
     Object.entries(sendData).forEach(([key, value]) => {
@@ -175,8 +182,6 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
         output[key] = value
       }
     })
-
-    console.log(output, 'output')
 
     axiosPost(
       data.type_of_sumbit === 'collection' ? `generic-entities/${data.collectionName}` : data.submitApi,
@@ -204,7 +209,6 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
   }
 
   const [open, setOpen] = useState(false)
-  console.log(filterSelect)
 
   const handleClose = () => {
     setOpen(false)
@@ -213,6 +217,8 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
   const defaultDesign =
     open?.type === 'new_element'
       ? DefaultStyle(open?.key)
+      : open?.kind
+      ? DefaultStyle(getTypeFromCollection(open?.type ?? 'SingleText', open?.kind))
       : open?.options?.uiSchema?.xComponentProps?.cssClass ??
         DefaultStyle(getTypeFromCollection(open?.type ?? 'SingleText'))
   let additionalField = null
@@ -264,11 +270,20 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
 
   const getDesign = useCallback(
     (key, field) => {
-      const defaultDesign =
-        field?.type === 'new_element'
-          ? DefaultStyle(field?.key)
-          : field?.options?.uiSchema?.xComponentProps?.cssClass ?? DefaultStyle(getTypeFromCollection(field.type))
-
+      let defaultDesign = null
+      if (field?.type === 'new_element') {
+        defaultDesign = DefaultStyle(field?.key)
+      } else {
+        if (field?.kind) {
+          defaultDesign = DefaultStyle(getTypeFromCollection(field.type, field.kind || field.descriptionAr))
+        } else {
+          if (field?.options?.uiSchema?.xComponentProps?.cssClass) {
+            defaultDesign = field?.options?.uiSchema?.xComponentProps?.cssClass
+          } else {
+            defaultDesign = DefaultStyle(getTypeFromCollection(field.type, field.kind || field.descriptionAr))
+          }
+        }
+      }
       let additionalField = null
       const additionalFieldDesign = data?.additional_fields?.find(ele => ele.key === key)?.design
       if (additionalFieldDesign) {
@@ -381,9 +396,6 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
               const hoverText = roles?.hover?.hover_ar || roles?.hover?.hover_en
               const hintText = roles?.hint?.hint_ar || roles?.hint?.hint_en
 
-              // console.log(roles);
-              console.log(getDesign(filed.id, filed), filed.key)
-
               return (
                 <div
                   key={filed.id}
@@ -409,6 +421,7 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
                       </button>
                     </div>
                   )}
+
                   <DisplayField
                     input={filed}
                     setRedirect={setRedirect}

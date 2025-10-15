@@ -11,6 +11,7 @@ import { VaildId } from 'src/Components/_Shared'
 import { IoMdInformationCircleOutline } from 'react-icons/io'
 import { formatDate } from '@fullcalendar/core'
 import ViewInput from '../FiledesComponent/ViewInput'
+import axios from 'axios'
 
 export default function DisplayField({
   from,
@@ -82,7 +83,7 @@ export default function DisplayField({
     if (roles?.trigger?.typeOfValidation == 'filter' && !loading) {
       if (dataRef?.current?.[roles?.trigger?.selectedField] != undefined) {
         const FilterWithKey = roles?.trigger?.currentField == 'id' ? 'Id' : roles?.trigger?.currentField
-        if (input?.type == 'ManyToMany') {
+        if (input?.kind == 'search' || input?.kind == 'checkbox') {
           setValue([])
         }
         setSelectedOptions(
@@ -261,7 +262,6 @@ export default function DisplayField({
       }
     }
     if (roles?.trigger?.typeOfValidation == 'optional' && roles?.trigger?.mainValue && !loading) {
-
       if (input.fieldCategory == 'Basic') {
         if (roles?.trigger?.parentKey) {
           if (dataRef?.current?.[roles?.trigger?.selectedField]) {
@@ -307,15 +307,12 @@ export default function DisplayField({
             })
           }
         } else {
-
           if (roles?.trigger.isEqual == 'equal') {
-
             if (dataRef?.current?.[roles?.trigger?.selectedField] != roles?.trigger?.mainValue) {
               if (!validations?.Required) {
                 setValidations(prev => ({ ...prev, Required: true }))
               }
             } else {
-
               if (validations?.Required) {
                 setValidations(prev => {
                   const newPrev = { ...prev }
@@ -420,7 +417,6 @@ export default function DisplayField({
       }
     }
     if (roles?.trigger?.typeOfValidation == 'optional' && !roles?.trigger?.mainValue && !loading) {
-
       if (dataRef?.current?.[roles?.trigger?.selectedField]?.length != 0) {
         setValidations(prev => {
           delete prev.Required
@@ -606,7 +602,6 @@ export default function DisplayField({
 
     // ! Start hidden Control
     if (roles?.trigger?.typeOfValidation == 'hidden' && roles?.trigger?.mainValue && !loading) {
-
       if (input.fieldCategory == 'Basic' || input.type == 'new_element') {
         if (roles?.trigger?.parentKey) {
           if (dataRef?.current?.[roles?.trigger?.selectedField]) {
@@ -634,7 +629,6 @@ export default function DisplayField({
             })
           } else {
             if (roles?.trigger?.isEqual != 'equal') {
-
               setIsDisable('hidden')
             }
           }
@@ -646,7 +640,6 @@ export default function DisplayField({
               setIsDisable('hidden')
             }
           } else {
-
             if (dataRef?.current?.[roles?.trigger?.selectedField] == roles?.trigger?.mainValue) {
               setIsDisable('hidden')
             } else {
@@ -698,7 +691,6 @@ export default function DisplayField({
       }
     }
     if (roles?.trigger?.typeOfValidation == 'hidden' && !roles?.trigger?.mainValue && !loading) {
-
       if (dataRef?.current?.[roles?.trigger?.selectedField]?.length != 0) {
         setIsDisable('hidden')
       } else {
@@ -847,7 +839,7 @@ export default function DisplayField({
         setValue(new Date(findValue))
       }
     } else {
-      if (input?.type == 'ManyToMany') {
+      if (input?.kind == 'search' || input?.kind == 'checkbox') {
         setValue([])
       }
       if (input?.type == 'date') {
@@ -856,11 +848,10 @@ export default function DisplayField({
     }
   }, [input, findValue])
 
-
   useEffect(() => {
     if (reload != 0) {
       setValue('')
-      if (input?.type == 'ManyToMany') {
+      if (input?.kind == 'search' || input?.kind == 'checkbox') {
         setValue([])
       }
       setRegex('')
@@ -871,7 +862,6 @@ export default function DisplayField({
     }
   }, [reload, input])
   useEffect(() => {
-
     if (!loading) {
       setTimeout(() => {
         if (roles?.onMount?.type == 'disable') {
@@ -912,7 +902,9 @@ export default function DisplayField({
 
     setDirty(true)
     let isTypeNew = true
-    if (input?.type == 'ManyToMany') {
+    console.log('here')
+
+    if (input?.kind == 'search' || input?.kind == 'checkbox') {
       isTypeNew = false
     }
     if (input?.type == 'date') {
@@ -920,8 +912,8 @@ export default function DisplayField({
     }
 
     let newData = value
-    if (input?.type == 'ManyToMany') {
-      if (input.descriptionAr == 'multiple_select') {
+    if (input?.kind == 'search' || input?.kind == 'checkbox') {
+      if (input.kind == 'search') {
         const maxLength = validations?.MaxLength?.maxLength ?? 9999999999
         if (newValue.length > +maxLength) {
           const newSelection = [...newValue.slice(0, maxLength - 1), newValue.at(-1)]
@@ -1087,7 +1079,7 @@ export default function DisplayField({
   }, [refError, input, value, dataRef, validations, setTriggerData])
 
   useEffect(() => {
-    if (input.type == 'OneToOne') {
+    if (input?.getDataForm === 'collection') {
       axiosGet(`generic-entities/${input?.options?.source}?isLookup=true`)
         .then(res => {
           if (res.status) {
@@ -1098,20 +1090,47 @@ export default function DisplayField({
         .finally(() => {
           setLoading(false)
         })
-    } else if (input.type == 'ManyToMany') {
-      axiosGet(`generic-entities/${input?.options?.target}?isLookup=true`)
+    }
+
+    if (input?.getDataForm === 'api') {
+      console.log(input?.externalApi)
+      axios
+        .get(input?.externalApi)
         .then(res => {
-          if (res.status) {
-            setSelectedOptions(res.entities)
-            setOldSelectedOptions(res.entities)
+          const selectData = res?.data?.data
+          if (Array.isArray(selectData)) {
+            setSelectedOptions(selectData)
+            setOldSelectedOptions(selectData)
           }
+        })
+        .catch(err => {
+          console.log(err)
         })
         .finally(() => {
           setLoading(false)
         })
-    } else {
-      setLoading(false)
     }
+    if (input?.getDataForm === 'static') {
+      console.log(input?.staticData)
+      setSelectedOptions(input?.staticData)
+      setOldSelectedOptions(input?.staticData)
+    }
+
+    // if (input.type == 'OneToOne') {
+    // } else if (input.type == 'ManyToMany') {
+    //   axiosGet(`generic-entities/${input?.options?.target}?isLookup=true`)
+    //     .then(res => {
+    //       if (res.status) {
+    //         setSelectedOptions(res.entities)
+    //         setOldSelectedOptions(res.entities)
+    //       }
+    //     })
+    //     .finally(() => {
+    //       setLoading(false)
+    //     })
+    // } else {
+    //   setLoading(false)
+    // }
   }, [input])
 
   useEffect(() => {
@@ -1213,7 +1232,7 @@ export default function DisplayField({
       id={input.type == 'new_element' ? `s${input.id}` : VaildId(input.key.trim() + input.nameEn.trim())}
     >
       <style>{`#${input.type == 'new_element' ? `s${input.id}` : VaildId(input.key.trim() + input.nameEn.trim())} {
-        ${design}
+        ${input.kind == 'search' ? '' : design}
       }`}</style>
       {hoverText && (
         <div className='absolute bg-white w-full glass-effect z-10 start-0 border border-main-color border-dashed top-[calc(100%+5px)] invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-all duration-300'>

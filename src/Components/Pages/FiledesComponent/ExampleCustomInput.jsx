@@ -13,7 +13,6 @@ const ExampleCustomInput = forwardRef(({ value, onClick, input }, ref) => {
     label = { format: 'mm-dd-yyyy', showTime: 'false' }
   }
 
-  console.log(label, "label")
 
   return (
     <div className='relative w-full'>

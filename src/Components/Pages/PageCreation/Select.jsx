@@ -10,9 +10,14 @@ import {
   IconButton,
   MenuItem,
   TextField,
-  Tooltip
+  Tooltip,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions
 } from '@mui/material'
 import { Box } from '@mui/system'
+import AssociationsSetup from 'src/Components/Popup/AssociationsSetup'
 import React, { useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import Collapse from '@kunukn/react-collapse'
@@ -106,13 +111,57 @@ function Select({ onChange, data, type, buttonRef, title }) {
     }
   }
 
-  const handleChange = event => {
+  const [associationsOpen, setAssociationsOpen] = useState(false)
+  const [associationsConfig, setAssociationsConfig] = useState(data?.associationsConfig || [])
+
+  const [singleTextChoice, setSingleTextChoice] = useState(null)
+
+  const handleChange = (event, fieldCategory, skipCheck, field) => {
+    // const
     const { value, checked } = event.target
+    const isChecked = skipCheck || checked
+
+    console.log(isChecked && fieldCategory === 'Associations')
+    if (fieldCategory === 'Associations' && isChecked) {
+      setAssociationsOpen({ key: event.target.value, source: field?.options?.source, field })
+
+      return
+    }
+
+    // if(filed)
+    console.log(field)
+    if (field?.type === 'SingleText' && isChecked) {
+      setSingleTextChoice({ value, field, fieldCategory })
+      return
+    }
+
+    console.log(isChecked, value)
     setSelectedOptions(prevSelected =>
-      checked ? [...prevSelected, value] : prevSelected.filter(item => item !== value)
+      isChecked ? [...prevSelected, value] : prevSelected.filter(item => item !== value)
     )
-    const selected = checked ? [...selectedOptions, value] : selectedOptions.filter(item => item !== value)
-    onChange({ ...data, selected, type_of_sumbit: data.type_of_sumbit === 'collection' ? '' : data.type_of_sumbit })
+    const selected = isChecked ? [...selectedOptions, value] : selectedOptions.filter(item => item !== value)
+
+    const oldAdditionalFields = data?.additional_fields ?? []
+    const filteredAdditionalFields = oldAdditionalFields.filter(inp => inp.key !== field?.id)
+
+    console.log(filteredAdditionalFields, field)
+    if (skipCheck) {
+      console.log(skipCheck)
+      onChange({
+        ...data,
+        selected,
+        associationsConfig: skipCheck,
+        additional_fields: filteredAdditionalFields,
+        type_of_sumbit: data.type_of_sumbit === 'collection' ? '' : data.type_of_sumbit
+      })
+    } else {
+      onChange({
+        ...data,
+        selected,
+        additional_fields: filteredAdditionalFields,
+        type_of_sumbit: data.type_of_sumbit === 'collection' ? '' : data.type_of_sumbit
+      })
+    }
   }
 
   const [addMoreElement] = useState([
@@ -184,6 +233,71 @@ function Select({ onChange, data, type, buttonRef, title }) {
       <div className=''>
         <CloseNav text={title} buttonRef={buttonRef} />
       </div>
+      <AssociationsSetup
+        open={associationsOpen}
+        onClose={() => {
+          setAssociationsOpen(false)
+        }}
+        initialConfig={associationsConfig}
+        onSave={config => {
+          console.log(config)
+          let newConfig = []
+
+          const found = associationsConfig.find(item => item.key === config.key)
+          if (found) {
+            newConfig = associationsConfig.map(item => (item.key === config.key ? config : item))
+          } else {
+            newConfig = [...associationsConfig, config]
+          }
+
+          setSelectedOptions(prevSelected => [...prevSelected, config.key])
+
+          handleChange({ target: { value: config.key } }, '', newConfig)
+
+          // onChange({ ...data, associationsConfig: associationsConfig })
+        }}
+      />
+
+      <Dialog open={Boolean(singleTextChoice)} onClose={() => setSingleTextChoice(null)} fullWidth maxWidth='xs'>
+        <DialogTitle>{messages?.dialogs?.chooseAction || 'Choose action'}</DialogTitle>
+        <DialogContent>
+          {messages?.dialogs?.singleTextChoice || 'How do you want to use this SingleText?'}
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={() => {
+              const value = singleTextChoice.value
+
+              // proceed normally as checked
+              const newSelected = selectedOptions.includes(value) ? selectedOptions : [...selectedOptions, value]
+
+              setSelectedOptions(newSelected)
+              const associationsConfig = data?.associationsConfig ?? []
+              const filteredAssociationsConfig = associationsConfig.filter(item => item.key !== value)
+              onChange({
+                ...data,
+                selected: newSelected,
+                associationsConfig: filteredAssociationsConfig,
+                type_of_sumbit: data.type_of_sumbit === 'collection' ? '' : data.type_of_sumbit
+              })
+              setSingleTextChoice(null)
+            }}
+          >
+            {messages?.dialogs?.normalbtn || 'Normal'}
+          </Button>
+          <Button
+            variant='contained'
+            onClick={() => {
+              const { value, field } = singleTextChoice
+              setAssociationsOpen({ key: value, source: field?.options?.source, field, type: 'normal' })
+              setSingleTextChoice(null)
+            }}
+          >
+            {messages?.dialogs?.convertToAssociations || 'Convert to Associations'}
+          </Button>
+        </DialogActions>
+      </Dialog>
+
       <form
         className='flex flex-col p-4 h-full'
         onSubmit={e => {
@@ -256,7 +370,9 @@ function Select({ onChange, data, type, buttonRef, title }) {
                           <Checkbox
                             value={value.key}
                             checked={selectedOptions.includes(value.key)}
-                            onChange={handleChange}
+                            onChange={e => {
+                              handleChange(e, value.fieldCategory, false, value)
+                            }}
                           />
                         </>
                       }
