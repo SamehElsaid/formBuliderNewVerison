@@ -132,7 +132,7 @@ function Select({ onChange, data, type, buttonRef, title }) {
     console.log(field)
     if (field?.type === 'SingleText' && isChecked) {
       setSingleTextChoice({ value, field, fieldCategory })
-      
+
       return
     }
 
@@ -242,13 +242,14 @@ function Select({ onChange, data, type, buttonRef, title }) {
         initialConfig={associationsConfig}
         onSave={config => {
           console.log(config)
-          let newConfig = []
+          let newConfig = data?.associationsConfig ?? []
+          console.log(newConfig, 'newConfig')
 
-          const found = associationsConfig.find(item => item.key === config.key)
+          const found = newConfig.find(item => item.key === config.key)
           if (found) {
-            newConfig = associationsConfig.map(item => (item.key === config.key ? config : item))
+            newConfig = newConfig.map(item => (item.key === config.key ? config : item))
           } else {
-            newConfig = [...associationsConfig, config]
+            newConfig = [...newConfig, config]
           }
 
           setSelectedOptions(prevSelected => [...prevSelected, config.key])

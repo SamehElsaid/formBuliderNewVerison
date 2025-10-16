@@ -81,6 +81,8 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
           if (res.status) {
             const associationsConfig = data.associationsConfig || []
 
+            console.log(associationsConfig,"associationsConfig");
+
             const filterData = res.data
               .filter(field => data?.selected?.includes(field?.key))
               .map(field => {
