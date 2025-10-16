@@ -132,6 +132,7 @@ function Select({ onChange, data, type, buttonRef, title }) {
     console.log(field)
     if (field?.type === 'SingleText' && isChecked) {
       setSingleTextChoice({ value, field, fieldCategory })
+      
       return
     }
 
