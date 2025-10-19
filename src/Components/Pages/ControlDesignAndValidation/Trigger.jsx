@@ -76,7 +76,6 @@ function Trigger({
     if (findMyInput) {
       findMyInput.roles.trigger = sendData
     } else {
-
       const myEdit = {
         key: open.id,
         design: objectToCss(Css).replaceAll('NaN', ''),
@@ -125,7 +124,6 @@ function Trigger({
                   variant='filled'
                   value={selectedField}
                   onChange={e => {
-
                     const field = fields.find(field => field.key === e.target.value)
                     if (field.fieldCategory !== 'Basic') {
                       setTriggerKey(field.key)
@@ -158,15 +156,10 @@ function Trigger({
                   variant='filled'
                   value={typeOfValidation}
                   onChange={e => {
-
                     setTypeOfValidation(e.target.value)
                   }}
                 >
-                  <MenuItem
-                    value={'filter'}
-                  >
-                    {messages.filter}
-                  </MenuItem>
+                  <MenuItem value={'filter'}>{messages.filter}</MenuItem>
                   <MenuItem value={'enable'} disabled={open.type === 'new_element'}>
                     {messages.enable}
                   </MenuItem>
