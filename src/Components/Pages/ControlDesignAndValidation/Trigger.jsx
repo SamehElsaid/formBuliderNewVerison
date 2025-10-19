@@ -164,7 +164,7 @@ function Trigger({
                 >
                   <MenuItem
                     value={'filter'}
-                    disabled={open.fieldCategory !== 'Basic' || open.key !== 'tabs' || open.type === 'new_element'}
+                    // disabled={open.fieldCategory !== 'Basic' || open.key !== 'tabs' || open.type === 'new_element'}
                   >
                     {messages.filter}
                   </MenuItem>
