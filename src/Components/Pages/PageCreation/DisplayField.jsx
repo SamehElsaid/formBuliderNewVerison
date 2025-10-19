@@ -1080,7 +1080,7 @@ export default function DisplayField({
 
   useEffect(() => {
     if (input?.getDataForm === 'collection') {
-      axiosGet(`generic-entities/${input?.options?.source}?isLookup=true`)
+      axiosGet(`generic-entities/${input?.options?.source}`)
         .then(res => {
           if (res.status) {
             setSelectedOptions(res.entities)
@@ -1093,11 +1093,16 @@ export default function DisplayField({
     }
 
     if (input?.getDataForm === 'api') {
-      console.log(input?.externalApi)
+      console.log(input?.externalApi, input.apiHeaders)
+      const apiHeaders = input.apiHeaders ?? {}
       axios
-        .get(input?.externalApi)
+        .get(input?.externalApi, {
+          headers: input.apiHeaders
+        })
+
         .then(res => {
-          const selectData = res?.data?.data
+          console.log(res?.data, 'res')
+          const selectData = res?.data?.data || res?.data
           if (Array.isArray(selectData)) {
             setSelectedOptions(selectData)
             setOldSelectedOptions(selectData)
@@ -1115,22 +1120,6 @@ export default function DisplayField({
       setSelectedOptions(input?.staticData)
       setOldSelectedOptions(input?.staticData)
     }
-
-    // if (input.type == 'OneToOne') {
-    // } else if (input.type == 'ManyToMany') {
-    //   axiosGet(`generic-entities/${input?.options?.target}?isLookup=true`)
-    //     .then(res => {
-    //       if (res.status) {
-    //         setSelectedOptions(res.entities)
-    //         setOldSelectedOptions(res.entities)
-    //       }
-    //     })
-    //     .finally(() => {
-    //       setLoading(false)
-    //     })
-    // } else {
-    //   setLoading(false)
-    // }
   }, [input])
 
   useEffect(() => {

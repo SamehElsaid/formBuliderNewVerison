@@ -26,6 +26,7 @@ import { toast } from 'react-toastify'
 import CloseNav from './CloseNav'
 import IconifyIcon from 'src/Components/icon'
 import { MdDeleteOutline } from 'react-icons/md'
+import JsEditorOnSubmit from 'src/Components/FormCreation/PageCreation/jsEditorOnSubmit'
 
 function Select({ onChange, data, type, buttonRef, title }) {
   const { locale, messages } = useIntl()
@@ -567,14 +568,6 @@ function Select({ onChange, data, type, buttonRef, title }) {
                 <MenuItem value={'collection'}>{messages.dialogs.thisDataModel}</MenuItem>
                 <MenuItem value={'api'}>{messages.dialogs.otherApi}</MenuItem>
               </TextField>
-              <TextField
-                fullWidth
-                value={data.redirect || ''}
-                onChange={e => onChange({ ...data, redirect: e.target.value })}
-                label={messages.dialogs.redirectTo}
-                variant='filled'
-              />
-
               <Collapse
                 transition={`height 300ms cubic-bezier(.4, 0, .2, 1)`}
                 isOpen={Boolean(data.type_of_sumbit === 'api')}
@@ -587,6 +580,19 @@ function Select({ onChange, data, type, buttonRef, title }) {
                   variant='filled'
                 />
               </Collapse>
+
+              <div className='pt-2 border-2 rounded-md mt-5 p-2 border-dashed border-main-color'>
+                <h2 className='mt-2 text-lg font-bold text-main-color'>{messages.onSubmit}</h2>
+                <TextField
+                  fullWidth
+                  value={data.redirect || ''}
+                  onChange={e => onChange({ ...data, redirect: e.target.value })}
+                  label={messages.dialogs.redirectTo}
+                  variant='filled'
+                />
+                <div className="mt-2"></div>
+                <JsEditorOnSubmit jsCode={data.onSubmit ?? ''} onChange={onChange} data={data} />
+              </div>
 
               <div className='p-2 mt-4 rounded-md border-2 border-gray-300'>
                 <div className='text-lg font-bold'>{messages.dialogs.addMoreElement}</div>

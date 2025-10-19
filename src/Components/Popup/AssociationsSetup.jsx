@@ -21,6 +21,7 @@ import { LoadingButton } from '@mui/lab'
 import { useIntl } from 'react-intl'
 import { axiosGet } from '../axiosCall'
 import toast from 'react-hot-toast'
+import JsonEditor from '../JsonEditor'
 
 function AssociationsSetup({ open, onClose, onSave, initialConfig }) {
   const { messages, locale } = useIntl()
@@ -42,6 +43,7 @@ function AssociationsSetup({ open, onClose, onSave, initialConfig }) {
   const [dataSourceType, setDataSourceType] = useState(initialConfig?.dataSourceType || 'collection') // collection | api | static
   const [externalApi, setExternalApi] = useState(initialConfig?.externalApi || '')
   const [staticData, setStaticData] = useState(initialConfig?.staticData || '[]')
+  const [apiHeaders, setApiHeaders] = useState(initialConfig?.apiHeaders || '{}')
   const [apiKeyInput, setApiKeyInput] = useState('')
   const [valueSendInput, setValueSendInput] = useState('')
   const [selectedValueSend, setSelectedValueSend] = useState([])
@@ -54,6 +56,14 @@ function AssociationsSetup({ open, onClose, onSave, initialConfig }) {
     }
   }, [staticData])
 
+  const headersParsed = useMemo(() => {
+    try {
+      return JSON.parse(apiHeaders)
+    } catch (e) {
+      return null
+    }
+  }, [apiHeaders])
+
   // no step 3
 
   const handleNext = () => setActiveStep(prev => Math.min(prev + 1, steps.length - 1))
@@ -65,6 +75,7 @@ function AssociationsSetup({ open, onClose, onSave, initialConfig }) {
     setDataSourceType('collection')
     setExternalApi('')
     setStaticData('[]')
+    setApiHeaders('{}')
     setGetFields([])
     setSelectedOptions([])
     setSelectedValueSend([])
@@ -102,10 +113,30 @@ function AssociationsSetup({ open, onClose, onSave, initialConfig }) {
         }
       }
 
+      if (dataSourceType === 'api') {
+        try {
+          JSON.parse(apiHeaders)
+        } catch (e) {
+          toast.error(messages?.dialogs?.invalidJson || 'Invalid JSON in API headers')
+          setSaving(false)
+
+          return
+        }
+      }
+
       const config = {
         viewType,
         dataSourceType,
         externalApi,
+        apiHeaders: (() => {
+          try {
+            const parsed = JSON.parse(apiHeaders)
+
+            return parsed
+          } catch (e) {
+            return apiHeaders
+          }
+        })(),
         staticData: (() => {
           try {
             const parsed = JSON.parse(staticData)
@@ -173,16 +204,16 @@ function AssociationsSetup({ open, onClose, onSave, initialConfig }) {
             {console.log(open)}
 
             <ToggleButtonGroup value={viewType} exclusive onChange={(e, value) => value && setViewType(value)}>
-              {(open?.field?.type === 'OneToOne'  || open.type === 'normal') && (
+              {(open?.field?.type !== 'ManyToMany'  || open.type === 'normal') && (
                 <ToggleButton value='select'>select</ToggleButton>
               )}
-              {(open?.field?.type !== 'OneToOne' && open.type !== 'normal') && (
+              {(open?.field?.type === 'ManyToMany' && open.type !== 'normal') && (
                 <ToggleButton value='search'>search</ToggleButton>
               )}
-              {(open?.field?.type !== 'OneToOne' && open.type !== 'normal') && (
+              {(open?.field?.type === 'ManyToMany' && open.type !== 'normal') && (
                 <ToggleButton value='checkbox'>checkbox</ToggleButton>
               )}
-              {(open?.field?.type === 'OneToOne' || open.type === 'normal') && (
+              {(open?.field?.type !== 'ManyToMany' || open.type === 'normal') && (
                 <ToggleButton value='radio'>radio</ToggleButton>
               )}
             </ToggleButtonGroup>
@@ -246,20 +277,35 @@ function AssociationsSetup({ open, onClose, onSave, initialConfig }) {
                   value={externalApi}
                   onChange={e => setExternalApi(e.target.value)}
                 />
+                <Box>
+                  <Typography variant='subtitle2' sx={{ mb: 1 }}>
+                    {messages?.dialogs?.apiHeaders || 'API Headers'}
+                  </Typography>
+                  <JsonEditor
+                    value={apiHeaders}
+                    onChange={setApiHeaders}
+                    height='150px'
+                    isError={headersParsed === null}
+                    helperText={headersParsed === null ? (messages?.dialogs?.invalidJson || 'Invalid JSON format') : ''}
+                  />
+                </Box>
               </Stack>
             )}
 
             {dataSourceType === 'static' && (
               <Stack spacing={2}>
-                <TextField
-                  fullWidth
-                  variant='filled'
-                  label={messages?.dialogs?.staticData || 'Static Data'}
-                  value={staticData}
-                  onChange={e => setStaticData(e.target.value)}
-                  multiline
-                  rows={10}
-                />
+                <Box>
+                  <Typography variant='subtitle2' sx={{ mb: 1 }}>
+                    {messages?.dialogs?.staticData || 'Static Data'}
+                  </Typography>
+                  <JsonEditor
+                    value={staticData}
+                    onChange={setStaticData}
+                    height='200px'
+                    isError={staticParsed === null}
+                    helperText={staticParsed === null ? (messages?.dialogs?.invalidJson || 'Invalid JSON format') : ''}
+                  />
+                </Box>
               </Stack>
             )}
             {(dataSourceType === 'api' || dataSourceType === 'static') && (

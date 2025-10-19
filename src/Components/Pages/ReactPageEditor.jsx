@@ -4,15 +4,13 @@ import Editor from '@react-page/editor'
 import '@react-page/editor/lib/index.css'
 import { useIntl } from 'react-intl'
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, IconButton } from '@mui/material'
-import { MdOutlineSaveAs } from 'react-icons/md'
-import { RiArrowGoBackFill } from 'react-icons/ri'
 import { Icon } from '@iconify/react'
 import ApiData from './PageCreation/ApiData'
 import { useTheme } from '@emotion/react'
 import { FaEye } from 'react-icons/fa'
 import { IoSettingsOutline } from 'react-icons/io5'
 import { TbApi } from 'react-icons/tb'
-import { axiosPatch, axiosPost } from '../axiosCall'
+import { axiosPatch } from '../axiosCall'
 import { toast } from 'react-toastify'
 import { useRouter } from 'next/router'
 import { LoadingButton } from '@mui/lab'
@@ -307,6 +305,7 @@ const ReactPageEditor = ({ pageName, initialData, initialDataApi, workflowId }) 
         )}
 
         <Editor
+          blurGateDisabled={true}
           cellPlugins={cellPlugins}
           theme={theme}
           value={editorValue}

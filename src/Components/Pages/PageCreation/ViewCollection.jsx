@@ -24,6 +24,8 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
   const dataRef = useRef({})
   const [triggerData, setTriggerData] = useState(0)
 
+  console.log(data, 'data')
+
   const {
     query: { entityid },
     push
@@ -81,7 +83,7 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
           if (res.status) {
             const associationsConfig = data.associationsConfig || []
 
-            console.log(associationsConfig,"associationsConfig");
+            console.log(associationsConfig, 'associationsConfig')
 
             const filterData = res.data
               .filter(field => data?.selected?.includes(field?.key))
@@ -95,6 +97,7 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
                   filedData.externalApi = find.externalApi
                   filedData.staticData = find.staticData
                   filedData.selectedValueSend = JSON.stringify(find.selectedValueSend)
+                  filedData.apiHeaders = find.apiHeaders
                 }
 
                 return filedData
@@ -131,6 +134,9 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
       const keyData = key
       if (initialSendData[keyData] !== null) {
         sendData[keyData] = initialSendData[keyData]
+      }
+      if (Array.isArray(initialSendData[keyData])) {
+        sendData[keyData] = initialSendData[keyData].map(item => item.Id || item)
       }
     })
     if (data.type_of_sumbit === '' || (data.type_of_sumbit === 'api' && !data.submitApi)) {
@@ -185,6 +191,8 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
       }
     })
 
+    console.log(output, 'output')
+
     axiosPost(
       data.type_of_sumbit === 'collection' ? `generic-entities/${data.collectionName}` : data.submitApi,
       locale,
@@ -196,6 +204,11 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
       if (res.status) {
         setReload(prev => prev + 1)
         toast.success(messages.dialogs.dataSentSuccessfully)
+        if (data.onSubmit) {
+          const evaluatedFn = eval('(' + data.onSubmit + ')')
+
+          evaluatedFn()
+        }
         if (data.redirect === '{{redirect}}') {
           if (redirect) {
             push(`/${locale}/${redirect}`)

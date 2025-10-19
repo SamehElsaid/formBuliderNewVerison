@@ -765,5 +765,8 @@
   "areYouSureYouWantToDeleteThisItem": "Are you sure you want to delete this item?",
   "maxLengthMustBeGreaterThanMinLength": "Max Length must be greater than Min Length",
   "maxLengthMustBe512": "Max Length must be less than 512 characters",
-  "pageUpdatedSuccessfully": "Page updated successfully"
+  "pageUpdatedSuccessfully": "Page updated successfully",
+  "onSubmit": "On Submit"
 }
+
+
