@@ -107,8 +107,8 @@ function AddRelation({ dataParent, relationOpen, setRelationOpen, setRefresh }) 
         source: selectedCollection.first.key,
         sourceKey: 'id',
         target: dataParent.key,
-        targetKey: dataParent.key + 'Id',
-        foreignKey: 'Id'
+        targetKey: selectedCollection.first.key + 'Id',
+        foreignKey: selectedCollection.first.key + 'Id'
       },
       validationData: []
     }

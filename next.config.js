@@ -48,14 +48,14 @@ module.exports = withTM({
     locales: ['ar', 'en'],
     defaultLocale: 'en',
     localeDetection: true
-  },
-  env: {
-    // API_URL: 'https://localhost:7101/api',
-    API_URL: 'https://lowcodetest-ayeuaucehyerfves.uaenorth-01.azurewebsites.net/api',
-    IDENTITY_URL: 'https://identityserver-afbzgwf7eva5gdhe.uaenorth-01.azurewebsites.net/',
-    DEV_MODE: false,
-    DOMAIN: 'https://form-bulider-seven.vercel.app/'
-  },
+  },    // API_URL: 'https://localhost:7101/api',
+    env: {
+      // API_URL: 'https://localhost:7101/api',
+      API_URL: 'https://lowcodetest-ayeuaucehyerfves.uaenorth-01.azurewebsites.net/api',
+      IDENTITY_URL: 'https://identityserver-afbzgwf7eva5gdhe.uaenorth-01.azurewebsites.net/',
+      DEV_MODE: false,
+      DOMAIN: 'https://form-bulider-seven.vercel.app/'
+    },
   images: {
     domains: []
   },
