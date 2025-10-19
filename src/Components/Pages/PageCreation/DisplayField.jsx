@@ -1101,8 +1101,10 @@ export default function DisplayField({
         })
 
         .then(res => {
-          console.log(res?.data, 'res')
-          const selectData = res?.data?.data || res?.data || res.result || res.data.result
+          console.log(res.data.result, 'res')
+          const selectData = res?.data?.data || res.result || res.data.result || res.data
+          console.log(selectData, 'selectData')
+
           if (Array.isArray(selectData)) {
             setSelectedOptions(selectData)
             setOldSelectedOptions(selectData)
