@@ -127,13 +127,14 @@ function AddField() {
       field: 'relation',
       disableColumnMenu: true,
       headerName: messages.dialogs.relation,
+      
       renderCell: ({ row }) => (
         <Typography
           variant='subtitle2'
           className='capitalize text-overflow'
           sx={{ fontWeight: 500, color: 'text.secondary' }}
         >
-          {true && (row.type === 'OneToOne' || row.type === 'ManyToMany') ? (
+          {true && (row.type === 'OneToOne' || row.type === 'ManyToMany'|| row.type === 'OneToMany') ? (
             <GetCollectionName name={row.options.source} />
           ) : (
             <Chip label={messages.dialogs.notFound} />
@@ -314,7 +315,6 @@ function AddField() {
                 </Button>
               )}
             </form>
-
             <TableEdit
               InvitationsColumns={columns}
               data={dataFilter?.map((ele, i) => {

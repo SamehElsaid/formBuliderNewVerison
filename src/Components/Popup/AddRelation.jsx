@@ -117,7 +117,7 @@ function AddRelation({ dataParent, relationOpen, setRelationOpen, setRefresh }) 
     axiosPost('collection-fields/configure-fields', locale, sendData)
       .then(res => {
         if (res.status) {
-          toast.success(messages.addedSuccessfully)
+          toast.success(res.message)
           resetForm()
           setRefresh(prev => prev + 1)
           setRelationOpen(false)
