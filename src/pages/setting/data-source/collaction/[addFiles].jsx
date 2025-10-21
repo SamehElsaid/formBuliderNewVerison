@@ -488,6 +488,7 @@ function AddField() {
                 data={manyToManyRelations.map((ele, i) => {
                   const fData = { ...ele }
                   fData.index = i
+
                   return fData
                 })}
                 getRowId={row => row.index}
