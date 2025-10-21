@@ -363,7 +363,7 @@ function Select({ onChange, data, type, buttonRef, title }) {
                   value.validationData.forEach(item => {
                     dataValidations[item.ruleType] = item.parameters
                   })
-                  if(value.options.isSystemField === false) {
+                  if(!value?.options?.isSystemField) {
                     return (
                     <FormControlLabel
                       key={value.key}
@@ -482,7 +482,7 @@ function Select({ onChange, data, type, buttonRef, title }) {
                               const fieldSelected = SelectedRelatedCollectionsFields?.find(
                                 s => s.collection.key === item.collection.key
                               )
-                            if(value.options.isSystemField === false) {
+                            if(value?.options?.isSystemField === false) {
 if(value.fieldCategory !== 'Associations') {
 
                               return (
