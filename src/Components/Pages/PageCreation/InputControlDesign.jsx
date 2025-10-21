@@ -550,10 +550,35 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                       variant='filled'
                       label={messages.dialogs.hintInEnglish}
                     />
-                    {open.key === "button"&&
-                    <>
-                    </>
-                    }
+                    {open.key === 'button' && (
+                      <>
+                        <TextField
+                          fullWidth
+                          type='text'
+                          defaultValue={roles?.externalApiUrl || ''}
+                          onBlur={e => {
+                            const additional_fields = data.additional_fields ?? []
+                            const findMyInput = additional_fields.find(inp => inp.key === open.id)
+                            if (findMyInput) {
+                              findMyInput.roles.externalApiUrl = e.target.value
+                            } else {
+                              const myEdit = {
+                                key: open.id,
+                                design: objectToCss(Css).replaceAll('NaN', ''),
+                                roles: {
+                                  ...roles,
+                                  externalApiUrl: e.target.value
+                                }
+                              }
+                              additional_fields.push(myEdit)
+                            }
+                            onChange({ ...data, additional_fields: additional_fields })
+                          }}
+                          variant='filled'
+                          label={messages.dialogs.externalApiUrl}
+                        />
+                      </>
+                    )}
 
                     {open.type === 'File' && (
                       <TextField
