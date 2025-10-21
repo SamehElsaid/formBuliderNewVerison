@@ -19,6 +19,7 @@ import useCellPlugins from './PageCreation/HooksDragDropComponents/useCellPlugin
 import { useDispatch } from 'react-redux'
 import { SET_ACTIVE_LOADING } from 'src/store/apps/LoadingPages/LoadingPages'
 
+
 const ReactPageEditor = ({ pageName, initialData, initialDataApi, workflowId }) => {
   const [newData, setNewData] = useState(initialData)
   const [editorValue, setEditorValue] = useState(initialData ?? null)
