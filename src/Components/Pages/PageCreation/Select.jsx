@@ -363,6 +363,7 @@ function Select({ onChange, data, type, buttonRef, title }) {
                   value.validationData.forEach(item => {
                     dataValidations[item.ruleType] = item.parameters
                   })
+                  
                   return (
                     <FormControlLabel
                       key={value.key}
