@@ -231,7 +231,7 @@ function AddField() {
       minWidth: 200,
       field: 'related_collection',
       disableColumnMenu: true,
-      headerName: 'Related Collection',
+      headerName: 'Related Data Model',
       renderCell: ({ row }) => (
         <Box sx={{ 
           display: 'flex',
@@ -264,7 +264,7 @@ function AddField() {
       minWidth: 200,
       field: 'junction_collection',
       disableColumnMenu: true,
-      headerName: 'Junction Collection',
+      headerName: 'Junction Data Model',
       renderCell: ({ row }) => (
         <Box sx={{ 
           display: 'flex',
@@ -481,7 +481,7 @@ function AddField() {
                   }}
                 
                 >
-                  Junction tables managing many-to-many relationships
+                  Junction Data Models are used to manage many-to-many relationships
                 </Typography>
               </Box>
               <TableEdit
