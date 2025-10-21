@@ -79,12 +79,9 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
   }, [roles.api_url])
 
   useEffect(() => {
-    if (open && (open.type === 'OneToOne' || open.type === 'ManyToMany')) {
+    if (open && (open.type === 'OneToOne' || open.type === 'OneToMany' || open.type === 'ManyToMany')) {
       try {
-        axiosGet(
-          `collections/get-by-key?key=${open.type === 'OneToOne' ? open.options.source : open.options.target}`,
-          locale
-        ).then(res => {
+        axiosGet(`collections/get-by-key?key=${open.options.source}`, locale).then(res => {
           if (res.status) {
             axiosGet(`collection-fields/get?CollectionId=${res.data.id}`, locale).then(res => {
               if (res.status) {
@@ -553,6 +550,10 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                       variant='filled'
                       label={messages.dialogs.hintInEnglish}
                     />
+                    {open.key === "button"&&
+                    <>
+                    </>
+                    }
 
                     {open.type === 'File' && (
                       <TextField
@@ -587,10 +588,7 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                     {open.type === 'Date' && (
                       <>
                         <FormControl fullWidth margin='normal'>
-                          <InputLabel>
-                            {' '}
-                            {messages.dialogs.beforeDateType}
-                          </InputLabel>
+                          <InputLabel> {messages.dialogs.beforeDateType}</InputLabel>
                           <Select
                             variant='filled'
                             value={roles?.beforeDateType}
@@ -672,10 +670,7 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                           </Collapse>
                         </FormControl>
                         <FormControl fullWidth margin='normal'>
-                          <InputLabel>
-                            {' '}
-                            {messages.dialogs.afterDateType}
-                          </InputLabel>
+                          <InputLabel> {messages.dialogs.afterDateType}</InputLabel>
                           <Select
                             variant='filled'
                             value={roles?.afterDateType}
@@ -1265,9 +1260,7 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                     )}
 
                     <div className='w-full'>
-                      <h2 className='mt-5 text-[#555] mb-3 font-bold'>
-                        {messages.dialogs.cssEditorForInput}
-                      </h2>
+                      <h2 className='mt-5 text-[#555] mb-3 font-bold'>{messages.dialogs.cssEditorForInput}</h2>
                       <CssEditor data={data} onChange={onChange} Css={design} open={open} roles={roles} />
                     </div>
                   </>
