@@ -5,7 +5,18 @@ import { useRef, useState } from 'react'
 import { Button, Dialog, DialogContent, Typography } from '@mui/material'
 import { LoadingButton } from '@mui/lab'
 
-function NewElement({ input, onBlur, value, setValue, roles, onChangeEvent, disabledBtn, isDisable, readOnly }) {
+function NewElement({
+  input,
+  onBlur,
+  value,
+  setValue,
+  roles,
+  onChangeEvent,
+  disabledBtn,
+  isDisable,
+  readOnly,
+  handleSubmit
+}) {
   const [open, setOpen] = useState(false)
   const { locale, messages } = useIntl()
   const [loadingButton, setLoadingButton] = useState(false)
@@ -76,6 +87,10 @@ function NewElement({ input, onBlur, value, setValue, roles, onChangeEvent, disa
       }
     } catch (err) {
       console.log(err)
+    }
+    console.log(roles, 'roles')
+    if (roles?.externalApiUrl) {
+      handleSubmit(e, roles?.externalApiUrl)
     }
   }
 
@@ -250,6 +265,8 @@ function NewElement({ input, onBlur, value, setValue, roles, onChangeEvent, disa
       )
     }
 
+    console.log(roles, 'roles')
+
     return (
       <button
         disabled={isDisable === 'disable'}
@@ -257,7 +274,7 @@ function NewElement({ input, onBlur, value, setValue, roles, onChangeEvent, disa
         type='button'
         className={`btn ${isDisable === 'hide' ? (readOnly ? '' : 'hidden') : ''} block `}
       >
-        {input[`name_${locale}`]}
+        {input[`name_${locale}`]}s
       </button>
     )
   }

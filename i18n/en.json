@@ -406,6 +406,7 @@
   },
   "dialogs": {
     "getRelatedCollections": "Get Related Collections",
+    "externalApiUrl": "External API URL",
     "addSuBForm": "Add Sub Form",
     "relatedCollectionAlreadyExists": "Related collection already exists",
     "returnToPreviousPageWithoutSaveChanges": "Return to Previous Page Without Save Changes",

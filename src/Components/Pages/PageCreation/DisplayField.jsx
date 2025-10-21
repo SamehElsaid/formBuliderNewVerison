@@ -18,6 +18,7 @@ export default function DisplayField({
   input,
   dirtyProps,
   data,
+  handleSubmit,
   reload,
   refError,
   dataRef,
@@ -1258,6 +1259,7 @@ export default function DisplayField({
           )}
           {input.type == 'new_element' ? (
             <NewElement
+              handleSubmit={handleSubmit}
               isDisable={isDisable}
               readOnly={readOnly}
               onChangeData={onChange}

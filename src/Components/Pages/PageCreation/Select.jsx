@@ -592,7 +592,7 @@ if(value.fieldCategory !== 'Associations') {
                   label={messages.dialogs.redirectTo}
                   variant='filled'
                 />
-                <div className="mt-2"></div>
+                <div className='mt-2'></div>
                 <JsEditorOnSubmit jsCode={data.onSubmit ?? ''} onChange={onChange} data={data} />
               </div>
 
