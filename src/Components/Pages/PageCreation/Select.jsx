@@ -363,7 +363,8 @@ function Select({ onChange, data, type, buttonRef, title }) {
                   value.validationData.forEach(item => {
                     dataValidations[item.ruleType] = item.parameters
                   })
-                  return (
+                  if(value.options.isSystemField === false) {
+                    return (
                     <FormControlLabel
                       key={value.key}
                       className='!w-fit capitalize'
@@ -385,6 +386,9 @@ function Select({ onChange, data, type, buttonRef, title }) {
                       }
                     />
                   )
+                } else {
+                  return null
+                }
                 })}
               </div>
             </FormControl>
@@ -478,7 +482,9 @@ function Select({ onChange, data, type, buttonRef, title }) {
                               const fieldSelected = SelectedRelatedCollectionsFields?.find(
                                 s => s.collection.key === item.collection.key
                               )
+                            if(value.options.isSystemField === false) {
 if(value.fieldCategory !== 'Associations') {
+
                               return (
                                 <FormControlLabel
                                   key={value.key}
@@ -543,7 +549,10 @@ if(value.fieldCategory !== 'Associations') {
                             } else {
                               return null
                             }
-                            })}
+                            } else {
+                              return null
+                            }
+                          })}
                           </div>
                         </FormControl>
                       </div>

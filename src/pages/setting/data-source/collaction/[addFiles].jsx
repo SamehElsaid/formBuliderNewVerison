@@ -479,6 +479,7 @@ function AddField() {
                     mt: 1,
                     fontStyle: 'italic'
                   }}
+                
                 >
                   Junction tables managing many-to-many relationships
                 </Typography>
@@ -488,6 +489,7 @@ function AddField() {
                 data={manyToManyRelations.map((ele, i) => {
                   const fData = { ...ele }
                   fData.index = i
+                  
                   return fData
                 })}
                 getRowId={row => row.index}
