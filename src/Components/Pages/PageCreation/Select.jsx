@@ -363,8 +363,7 @@ function Select({ onChange, data, type, buttonRef, title }) {
                   value.validationData.forEach(item => {
                     dataValidations[item.ruleType] = item.parameters
                   })
-                  if(value.options.isSystemField === false) {
-                    return (
+                  return (
                     <FormControlLabel
                       key={value.key}
                       className='!w-fit capitalize'
