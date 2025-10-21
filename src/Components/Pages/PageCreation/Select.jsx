@@ -363,7 +363,6 @@ function Select({ onChange, data, type, buttonRef, title }) {
                   value.validationData.forEach(item => {
                     dataValidations[item.ruleType] = item.parameters
                   })
-
                   return (
                     <FormControlLabel
                       key={value.key}
@@ -479,7 +478,7 @@ function Select({ onChange, data, type, buttonRef, title }) {
                               const fieldSelected = SelectedRelatedCollectionsFields?.find(
                                 s => s.collection.key === item.collection.key
                               )
-
+if(value.fieldCategory !== 'Associations') {
                               return (
                                 <FormControlLabel
                                   key={value.key}
@@ -541,6 +540,9 @@ function Select({ onChange, data, type, buttonRef, title }) {
                                   }
                                 />
                               )
+                            } else {
+                              return null
+                            }
                             })}
                           </div>
                         </FormControl>
