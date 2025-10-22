@@ -121,7 +121,7 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
     }
   }, [locale, data.collectionId, data.SelectedRelatedCollectionsFields, data.selected])
 
-  const handleSubmit = (e, externalApiUrl) => {
+  const handleSubmit = (e, handleSubmitEvent) => {
     e.preventDefault()
 
     const initialSendData = { ...dataRef.current }
@@ -191,13 +191,8 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
       }
     })
 
-    console.log(output, 'output')
 
-    const apiCall = externalApiUrl
-      ? externalApiUrl
-      : data.type_of_sumbit === 'collection'
-      ? `generic-entities/${data.collectionName}`
-      : data.submitApi
+    const apiCall = data.type_of_sumbit === 'collection' ? `generic-entities/${data.collectionName}` : data.submitApi
 
     axiosPost(apiCall, locale, output, false, false, data.type_of_sumbit !== 'collection' ? true : false).then(res => {
       if (res.status) {
@@ -205,8 +200,11 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
         toast.success(messages.dialogs.dataSentSuccessfully)
         if (data.onSubmit) {
           const evaluatedFn = eval('(' + data.onSubmit + ')')
-
-          evaluatedFn()
+          if (handleSubmitEvent) {
+            handleSubmitEvent()
+          } else {
+            evaluatedFn()
+          }
         }
         if (data.redirect === '{{redirect}}') {
           if (redirect) {

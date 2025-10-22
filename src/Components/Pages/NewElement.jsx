@@ -80,17 +80,20 @@ function NewElement({
       document.body.removeChild(link)
     }
 
-    try {
-      if (onChangeEvent) {
-        const evaluatedFn = eval('(' + onChangeEvent + ')')
-        evaluatedFn(e)
+    const handleSubmitEvent = () => {
+      try {
+        if (onChangeEvent) {
+          const evaluatedFn = eval('(' + onChangeEvent + ')')
+          evaluatedFn(e)
+        }
+      } catch (err) {
+        console.log(err)
       }
-    } catch (err) {
-      console.log(err)
     }
-    console.log(roles, 'roles')
-    if (roles?.externalApiUrl) {
-      handleSubmit(e, roles?.externalApiUrl)
+    if (roles?.type === 'submit') {
+      handleSubmit(e, handleSubmitEvent)
+    } else {
+      handleSubmitEvent()
     }
   }
 
@@ -274,7 +277,7 @@ function NewElement({
         type='button'
         className={`btn ${isDisable === 'hide' ? (readOnly ? '' : 'hidden') : ''} block `}
       >
-        {input[`name_${locale}`]}s
+        {input[`name_${locale}`]}
       </button>
     )
   }

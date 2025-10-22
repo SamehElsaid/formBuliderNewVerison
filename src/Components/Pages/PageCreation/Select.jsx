@@ -363,32 +363,32 @@ function Select({ onChange, data, type, buttonRef, title }) {
                   value.validationData.forEach(item => {
                     dataValidations[item.ruleType] = item.parameters
                   })
-                  if(!value?.options?.isSystemField) {
+                  if (!value?.options?.isSystemField) {
                     return (
-                    <FormControlLabel
-                      key={value.key}
-                      className='!w-fit capitalize'
-                      control={
-                        <>
-                          <Checkbox
-                            value={value.key}
-                            checked={selectedOptions.includes(value.key)}
-                            onChange={e => {
-                              handleChange(e, value.fieldCategory, false, value)
-                            }}
-                          />
-                        </>
-                      }
-                      label={
-                        <>
-                          {value.key} {dataValidations?.Required ? <span className='text-red-500'>*</span> : ''}
-                        </>
-                      }
-                    />
-                  )
-                } else {
-                  return null
-                }
+                      <FormControlLabel
+                        key={value.key}
+                        className='!w-fit capitalize'
+                        control={
+                          <>
+                            <Checkbox
+                              value={value.key}
+                              checked={selectedOptions.includes(value.key)}
+                              onChange={e => {
+                                handleChange(e, value.fieldCategory, false, value)
+                              }}
+                            />
+                          </>
+                        }
+                        label={
+                          <>
+                            {value.key} {dataValidations?.Required ? <span className='text-red-500'>*</span> : ''}
+                          </>
+                        }
+                      />
+                    )
+                  } else {
+                    return null
+                  }
                 })}
               </div>
             </FormControl>
@@ -482,77 +482,76 @@ function Select({ onChange, data, type, buttonRef, title }) {
                               const fieldSelected = SelectedRelatedCollectionsFields?.find(
                                 s => s.collection.key === item.collection.key
                               )
-                            if(value?.options?.isSystemField === false) {
-if(value.fieldCategory !== 'Associations') {
+                              if (value?.options?.isSystemField === false) {
+                                if (value.fieldCategory !== 'Associations') {
+                                  return (
+                                    <FormControlLabel
+                                      key={value.key}
+                                      className='!w-fit capitalize'
+                                      control={
+                                        <>
+                                          <Checkbox
+                                            value={value.key}
+                                            checked={fieldSelected?.selected?.includes(value.key)}
+                                            onChange={e => {
+                                              setSelectedRelatedCollectionsFields(prev => {
+                                                const fieldSelected = prev.find(
+                                                  itemS => itemS.collection.key === item.collection.key
+                                                )
 
-                              return (
-                                <FormControlLabel
-                                  key={value.key}
-                                  className='!w-fit capitalize'
-                                  control={
-                                    <>
-                                      <Checkbox
-                                        value={value.key}
-                                        checked={fieldSelected?.selected?.includes(value.key)}
-                                        onChange={e => {
-                                          setSelectedRelatedCollectionsFields(prev => {
-                                            const fieldSelected = prev.find(
-                                              itemS => itemS.collection.key === item.collection.key
-                                            )
+                                                // ✅ لو الـ collection موجودة
+                                                if (fieldSelected) {
+                                                  const isAlreadySelected = fieldSelected.selected.includes(value.key)
 
-                                            // ✅ لو الـ collection موجودة
-                                            if (fieldSelected) {
-                                              const isAlreadySelected = fieldSelected.selected.includes(value.key)
+                                                  // تحديث الـ selected داخل الـ collection المحددة
+                                                  const updated = prev.map(itemS => {
+                                                    if (itemS.collection.key === item.collection.key) {
+                                                      return {
+                                                        ...itemS,
+                                                        selected: isAlreadySelected
+                                                          ? itemS.selected.filter(k => k !== value.key) // شيل القيمة لو موجودة
+                                                          : [...itemS.selected, value.key] // ضيف القيمة لو مش موجودة
+                                                      }
+                                                    }
 
-                                              // تحديث الـ selected داخل الـ collection المحددة
-                                              const updated = prev.map(itemS => {
-                                                if (itemS.collection.key === item.collection.key) {
-                                                  return {
-                                                    ...itemS,
-                                                    selected: isAlreadySelected
-                                                      ? itemS.selected.filter(k => k !== value.key) // شيل القيمة لو موجودة
-                                                      : [...itemS.selected, value.key] // ضيف القيمة لو مش موجودة
-                                                  }
+                                                    return itemS
+                                                  })
+
+                                                  onChange({ ...data, SelectedRelatedCollectionsFields: updated })
+
+                                                  return updated
                                                 }
 
-                                                return itemS
+                                                // ✅ لو الـ collection مش موجودة، أضفها جديدة
+                                                onChange({
+                                                  ...data,
+                                                  SelectedRelatedCollectionsFields: [
+                                                    ...prev,
+                                                    { collection: item.collection, selected: [value.key] }
+                                                  ]
+                                                })
+
+                                                return [...prev, { collection: item.collection, selected: [value.key] }]
                                               })
-
-                                              onChange({ ...data, SelectedRelatedCollectionsFields: updated })
-
-                                              return updated
-                                            }
-
-                                            // ✅ لو الـ collection مش موجودة، أضفها جديدة
-                                            onChange({
-                                              ...data,
-                                              SelectedRelatedCollectionsFields: [
-                                                ...prev,
-                                                { collection: item.collection, selected: [value.key] }
-                                              ]
-                                            })
-
-                                            return [...prev, { collection: item.collection, selected: [value.key] }]
-                                          })
-                                        }}
-                                      />
-                                    </>
-                                  }
-                                  label={
-                                    <>
-                                      {value.key}{' '}
-                                      {dataValidations?.Required ? <span className='text-red-500'>*</span> : ''}
-                                    </>
-                                  }
-                                />
-                              )
-                            } else {
-                              return null
-                            }
-                            } else {
-                              return null
-                            }
-                          })}
+                                            }}
+                                          />
+                                        </>
+                                      }
+                                      label={
+                                        <>
+                                          {value.key}{' '}
+                                          {dataValidations?.Required ? <span className='text-red-500'>*</span> : ''}
+                                        </>
+                                      }
+                                    />
+                                  )
+                                } else {
+                                  return null
+                                }
+                              } else {
+                                return null
+                              }
+                            })}
                           </div>
                         </FormControl>
                       </div>

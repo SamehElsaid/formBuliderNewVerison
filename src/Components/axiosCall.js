@@ -42,8 +42,8 @@ export const axiosPatch = async (url, locale, data, file, close) => {
 
 
   const headerToken = file
-    ? { ...HeaderImg, Authorization: `Bearer ${decryptData(authToken).token}` }
-    : { Authorization: `Bearer ${decryptData(authToken).token}` }
+    ? { ...HeaderImg, Authorization: `Bearer ${decryptData(authToken).token.trim()}` }
+    : { Authorization: `Bearer ${decryptData(authToken).token.trim()}` }
 
   if (close) {
     delete headerToken.Authorization
@@ -99,8 +99,8 @@ export const axiosPut = async (url, locale, data, file, close) => {
   const HeaderImg = { 'Content-Type': 'multipart/form-data' }
 
   const headerToken = file
-    ? { ...HeaderImg, Authorization: `Bearer ${decryptData(authToken).token}` }
-    : { Authorization: `Bearer ${decryptData(authToken).token}` }
+    ? { ...HeaderImg, Authorization: `Bearer ${decryptData(authToken).token.trim()}` }
+    : { Authorization: `Bearer ${decryptData(authToken).token.trim()}` }
 
   if (close) {
     delete headerToken.Authorization
@@ -151,7 +151,7 @@ export const uploadImage = async (file, onProgress, locale, mult, index) => {
 
   const header = {
     headers: {
-      Authorization: `Bearer  ${decryptData(authToken).token}`,
+      Authorization: `Bearer  ${decryptData(authToken).token.trim()}`,
       'Accept-Language': locale
     }
   }

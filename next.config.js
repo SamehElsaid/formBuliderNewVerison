@@ -1,5 +1,3 @@
-//     IDENTITY_URL: 'https://localhost:7000/',
-
 const path = require('path')
 const withTM = require('next-transpile-modules')(['monaco-editor'])
 
@@ -10,10 +8,11 @@ module.exports = withTM({
     locales: ['ar', 'en'],
     defaultLocale: 'en',
     localeDetection: true
-  },    // API_URL: 'https://localhost:7101/api',
+  },
   env: {
-    // API_URL: 'https://localhost:7101/api',
     API_URL: 'https://lowcodetest-ayeuaucehyerfves.uaenorth-01.azurewebsites.net/api',
+
+    // IDENTITY_URL: 'https://localhost:7000/',
     IDENTITY_URL: 'https://identityserver-afbzgwf7eva5gdhe.uaenorth-01.azurewebsites.net/',
     DEV_MODE: false,
     DOMAIN: 'https://form-bulider-seven.vercel.app/'
@@ -29,7 +28,6 @@ module.exports = withTM({
       'react/jsx-dev-runtime.js': path.resolve(__dirname, 'node_modules/react/jsx-dev-runtime.js'),
       'react/jsx-runtime.js': path.resolve(__dirname, 'node_modules/react/jsx-runtime.js'),
       '@rsuite/icons/RemindFill.js': path.resolve(__dirname, 'node_modules/@rsuite/icons/RemindFill.js')
-
     }
 
     return config
