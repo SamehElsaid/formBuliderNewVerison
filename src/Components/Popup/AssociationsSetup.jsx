@@ -231,19 +231,20 @@ function AssociationsSetup({ open, onClose, onSave, initialConfig }) {
                 exclusive
                 onChange={(e, value) => value && setDataSourceType(value)}
               >
-                {open?.source && <ToggleButton value='collection'>form collection</ToggleButton>}
+                {open?.source && <ToggleButton value='collection'>{open?.source}</ToggleButton>}
                 {!open?.source && <ToggleButton value='api'>form external api</ToggleButton>}
                 {!open?.source && <ToggleButton value='static'>staticData</ToggleButton>}
               </ToggleButtonGroup>
             </Box>
 
-            {dataSourceType === 'collection' && (
+            {dataSourceType === 'collection' &&(
               <div className='px-4 mt-4'>
                 <FormControl component='fieldset' fullWidth>
                   <FormLabel component='legend'>{messages.View_Value}</FormLabel>
                   <div className='!flex !flex-row !flex-wrap gap-2'>
                     {getFields.map(field =>
                       field.type === 'OneToOne' || field.type === 'ManyToMany' || field.type === 'ManyToMany' ? null : (
+                        field.options?.isSystemField === false && (
                         <FormControlLabel
                           key={field.key}
                           className='!w-fit capitalize'
@@ -261,7 +262,7 @@ function AssociationsSetup({ open, onClose, onSave, initialConfig }) {
                           control={<Checkbox />}
                           label={field.key.replace('_', ' ')}
                         />
-                      )
+                      ))
                     )}
                   </div>
                 </FormControl>
