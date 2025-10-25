@@ -153,10 +153,16 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
   }
 
   const addTab = () => {
+    if(tabData.name_ar.trim().length > 100 || tabData.name_en.trim().length > 100){
+      toast.error(messages.Name_must_be_less_than_100_characters)
+
+      return
+    }
+
     if (tabData.name_ar && tabData.name_en && tabData.link) {
       const newTab = {
-        name_ar: tabData.name_ar,
-        name_en: tabData.name_en,
+        name_ar: tabData.name_ar.replace(/[^\w\sأ-ي]/g, ''),
+        name_en: tabData.name_en.replace(/[^\w\s]/g, ''),
         link: tabData.link,
         active: tabData.active
       }
@@ -586,7 +592,7 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                       <TextField
                         fullWidth
                         type='number'
-                        defaultValue={roles?.size || ''}
+                        defaultValue={roles?.size || '500'}
                         InputProps={{
                           endAdornment: <InputAdornment position='end'>KB</InputAdornment>
                         }}

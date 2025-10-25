@@ -343,8 +343,7 @@ const ViewInput = ({
               </svg>
 
               <p id='file-upload-text'>
-                <span className='font-semibold'>{locale == 'ar' ? 'اضف الصورة' : 'Add Image'} </span>
-                {locale == 'ar' ? 'أو اسحب وأفلت' : 'or drag and drop'}
+                {locale == 'ar' ? ' اسحب وأفلت' : 'Drag and Drop'}
               </p>
               <p id='file-upload-subtext'>
                 {locale == 'ar' ? 'SVG, PNG, JPG or GIF (MAX. 800x400px)' : 'SVG, PNG, JPG or GIF (MAX. 800x400px)'}

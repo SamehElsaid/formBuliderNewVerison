@@ -1530,3 +1530,10 @@ input:focus-visible ,textarea:focus-visible{
 .MuiDataGrid-panelFooter button:first-of-type {
   display: none; 
 }
+
+select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+ 
+}

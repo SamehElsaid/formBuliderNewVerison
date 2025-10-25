@@ -149,6 +149,7 @@ function NewElement({
             </a>
           ) : item.link ? (
             <Link
+              key={index}
               onClick={handleValidationChanges}
               href={`/${locale}/${item.link.replace(/^\/+/, '')}`}
               className={`btn-tabs ${item.active ? 'active' : ''}`}

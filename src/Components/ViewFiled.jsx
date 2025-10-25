@@ -30,7 +30,9 @@ function ViewField({ open, setOpen, setData }) {
   const maxLength = open?.validationData?.find(item => item.ruleType.toLowerCase() === 'maxlength')?.parameters
   const minLength = open?.validationData?.find(item => item.ruleType.toLowerCase() === 'minlength')?.parameters
   const required = open?.validationData?.find(item => item.ruleType.toLowerCase() === 'required')?.parameters
-  const unique = open?.validationData?.find(item => item.ruleType.toLowerCase() === 'unique')?.parameters || open?.key === 'Id'
+
+  const unique =
+    open?.validationData?.find(item => item.ruleType.toLowerCase() === 'unique')?.parameters || open?.key === 'Id'
   let data = {}
   try {
     data = JSON.parse(open?.descriptionEn)
@@ -39,7 +41,7 @@ function ViewField({ open, setOpen, setData }) {
   }
 
   return (
-    <Dialog open={open} onClose={() => setOpen(null)} fullWidth>
+    <Dialog open={Boolean(open)} onClose={() => setOpen(null)} fullWidth>
       <DialogTitle>{messages.field.view}</DialogTitle>
       <DialogContent>
         <TextField
@@ -48,16 +50,32 @@ function ViewField({ open, setOpen, setData }) {
           margin='normal'
           value={open?.type ? messages[getTypeFromCollection(open?.type, open?.descriptionAr)] : ''}
           variant='outlined'
+          disabled
         />
-        <TextField label={messages.filed_name_ar} fullWidth margin='normal' value={fieldLabel} variant='outlined' />
-        <TextField label={messages.filed_name_en} fullWidth variant='outlined' margin='normal' value={fieldLabelEn} />
-        <TextField label={messages.key} fullWidth variant='outlined' margin='normal' value={open?.key} />
+        <TextField
+          disabled
+          label={messages.filed_name_ar}
+          fullWidth
+          margin='normal'
+          value={fieldLabel}
+          variant='outlined'
+        />
+        <TextField
+          disabled
+          label={messages.filed_name_en}
+          fullWidth
+          variant='outlined'
+          margin='normal'
+          value={fieldLabelEn}
+        />
+        <TextField disabled label={messages.key} fullWidth variant='outlined' margin='normal' value={open?.key} />
         <TextField
           label={messages.field.maxLength}
           fullWidth
           variant='outlined'
           margin='normal'
           value={maxLength ?? 0}
+          disabled
         />
         <TextField
           label={messages.field.minLength}
@@ -65,22 +83,23 @@ function ViewField({ open, setOpen, setData }) {
           variant='outlined'
           margin='normal'
           value={minLength ?? 0}
+          disabled
         />
-        <FormControlLabel control={<Checkbox checked={required} />} label={messages.field.required} />
-        <FormControlLabel control={<Checkbox checked={unique} />} label={messages.field.unique} />
+        <FormControlLabel control={<Checkbox checked={required} disabled />} label={messages.field.required} />
+        <FormControlLabel control={<Checkbox checked={unique} disabled />} label={messages.field.unique} />
         {open?.type == 'Date' && (
           <>
-            <FormControlLabel control={<Checkbox checked={data.showTime} />} label={messages.field.showTime} />
+            <FormControlLabel control={<Checkbox checked={data.showTime} disabled />} label={messages.field.showTime} />
             <TextField
               label={messages.field.format}
               fullWidth
               variant='outlined'
               margin='normal'
               value={data.format ?? ''}
+              disabled
             />
           </>
         )}
-        <div className='mt-4'></div>
         <Typography
           variant='subtitle2'
           className='capitalize text-overflow'
@@ -104,6 +123,24 @@ function ViewField({ open, setOpen, setData }) {
             <Chip label={messages.notFound} />
           )}
         </Typography>
+        <div className='mt-4'></div>
+        {open?.type === 'File' && (
+          <>
+            <Typography
+              variant='subtitle2'
+              className='capitalize text-overflow'
+              sx={{ fontWeight: 500, color: 'text.secondary' }}
+            >
+              {messages.fileTypes}
+            </Typography>
+            <div className='flex flex-wrap gap-2 '>
+              {open.options.uiSchema.xComponentProps.fileTypes.map((item, index) => (
+                <Chip key={index} label={item} />
+              ))}
+            </div>
+          </>
+        )}
+        {console.log(open)}
       </DialogContent>
       <DialogActions>
         <Button variant='contained' color='secondary' onClick={() => setOpen(null)}>

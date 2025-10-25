@@ -7,7 +7,7 @@ import React, { useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { toast } from 'react-toastify'
 import CustomTextField from 'src/@core/components/mui/text-field'
-import { getTypeFromCollection, getTypeFromCollectionTarget } from 'src/Components/_Shared'
+import { getTypeFromCollectionTarget } from 'src/Components/_Shared'
 import { axiosDelete, axiosGet } from 'src/Components/axiosCall'
 import Breadcrumbs from 'src/Components/breadcrumbs'
 import FormBuilder from 'src/Components/Collection/FormBuilder'
@@ -127,14 +127,14 @@ function AddField() {
       field: 'relation',
       disableColumnMenu: true,
       headerName: messages.dialogs.relation,
-      
+
       renderCell: ({ row }) => (
         <Typography
           variant='subtitle2'
           className='capitalize text-overflow'
           sx={{ fontWeight: 500, color: 'text.secondary' }}
         >
-          {true && (row.type === 'OneToOne' || row.type === 'ManyToMany'|| row.type === 'OneToMany') ? (
+          {true && (row.type === 'OneToOne' || row.type === 'ManyToMany' || row.type === 'OneToMany') ? (
             <GetCollectionName name={row.options.source} />
           ) : (
             <Chip label={messages.dialogs.notFound} />
@@ -205,7 +205,7 @@ function AddField() {
   const dataFilter = data?.fields.filter(
     ele =>
       (ele.nameEn.toLowerCase().includes(startSearch.toLowerCase()) ||
-      ele.nameAr.toLowerCase().includes(startSearch.toLowerCase())) &&
+        ele.nameAr.toLowerCase().includes(startSearch.toLowerCase())) &&
       ele.type !== 'ManyToMany'
   )
 
@@ -233,23 +233,25 @@ function AddField() {
       disableColumnMenu: true,
       headerName: 'Related Data Model',
       renderCell: ({ row }) => (
-        <Box sx={{ 
-          display: 'flex',
-          alignItems: 'center',
-          gap: 1.5,
-          px: 2.5,
-          py: 1.5,
-          backgroundColor: '#f5f5f5',
-          border: '1px solid #e0e0e0',
-          borderRadius: '6px',
-          boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
-        }}>
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 1.5,
+            px: 2.5,
+            py: 1.5,
+            backgroundColor: '#f5f5f5',
+            border: '1px solid #e0e0e0',
+            borderRadius: '6px',
+            boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
+          }}
+        >
           <IconifyIcon icon='tabler:database' size={18} color='#666' />
           <Typography
             variant='body1'
             className='capitalize text-overflow'
-            sx={{ 
-              fontWeight: 500, 
+            sx={{
+              fontWeight: 500,
               color: '#333',
               fontSize: '0.9rem'
             }}
@@ -266,23 +268,25 @@ function AddField() {
       disableColumnMenu: true,
       headerName: 'Junction Data Model',
       renderCell: ({ row }) => (
-        <Box sx={{ 
-          display: 'flex',
-          alignItems: 'center',
-          gap: 1.5,
-          px: 2.5,
-          py: 1.5,
-          backgroundColor: '#f8f9fa',
-          border: '1px solid #dee2e6',
-          borderRadius: '6px',
-          boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
-        }}>
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 1.5,
+            px: 2.5,
+            py: 1.5,
+            backgroundColor: '#f8f9fa',
+            border: '1px solid #dee2e6',
+            borderRadius: '6px',
+            boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
+          }}
+        >
           <IconifyIcon icon='tabler:link' size={18} color='#666' />
           <Typography
             variant='body1'
             className='capitalize text-overflow'
-            sx={{ 
-              fontWeight: 500, 
+            sx={{
+              fontWeight: 500,
               color: '#333',
               fontSize: '0.9rem'
             }}
@@ -299,13 +303,13 @@ function AddField() {
       disableColumnMenu: true,
       headerName: 'Type',
       renderCell: ({ row }) => (
-        <Chip 
+        <Chip
           icon={<IconifyIcon icon='tabler:git-merge' size={16} />}
-          label="Many-to-Many" 
-          color="primary" 
-          variant="filled"
-          size="small"
-          sx={{ 
+          label='Many-to-Many'
+          color='primary'
+          variant='filled'
+          size='small'
+          sx={{
             fontWeight: 500,
             '& .MuiChip-label': {
               fontSize: '0.8rem'
@@ -330,7 +334,6 @@ function AddField() {
         })
     }
   }, [refresh, addFiles])
-
 
   return (
     <div>
@@ -445,11 +448,11 @@ function AddField() {
       {/* ManyToMany Relations Table */}
       {manyToManyRelations.length > 0 && (
         <Box sx={{ mb: 4 }}>
-          <Card 
-            className='flex gap-3 flex-wrap md:px-[36px] px-0' 
-            sx={{ 
-              mb: 6, 
-              width: '100%', 
+          <Card
+            className='flex gap-3 flex-wrap md:px-[36px] px-0'
+            sx={{
+              mb: 6,
+              width: '100%',
               py: '2rem',
               border: '1px solid',
               borderColor: 'divider',
@@ -459,10 +462,10 @@ function AddField() {
           >
             <div className='w-full'>
               <Box sx={{ mb: 4, pb: 2, borderBottom: '2px solid', borderColor: 'primary.main' }}>
-                <Typography 
-                  variant='h5' 
-                  sx={{ 
-                    color: 'primary.main', 
+                <Typography
+                  variant='h5'
+                  sx={{
+                    color: 'primary.main',
                     fontWeight: 600,
                     display: 'flex',
                     alignItems: 'center',
@@ -472,14 +475,13 @@ function AddField() {
                   <IconifyIcon icon='tabler:git-merge' />
                   Many-to-Many Relations
                 </Typography>
-                <Typography 
-                  variant='body2' 
-                  sx={{ 
-                    color: 'text.secondary', 
+                <Typography
+                  variant='body2'
+                  sx={{
+                    color: 'text.secondary',
                     mt: 1,
                     fontStyle: 'italic'
                   }}
-                
                 >
                   Junction Data Models are used to manage many-to-many relationships
                 </Typography>
@@ -489,13 +491,13 @@ function AddField() {
                 data={manyToManyRelations.map((ele, i) => {
                   const fData = { ...ele }
                   fData.index = i
-                  
+
                   return fData
                 })}
                 getRowId={row => row.index}
                 loading={loading}
                 locale={locale}
-                noRow="No Many-to-Many relations found"
+                noRow='No Many-to-Many relations found'
                 paginationModel={paginationModel}
                 setPaginationModel={setPaginationModel}
               />

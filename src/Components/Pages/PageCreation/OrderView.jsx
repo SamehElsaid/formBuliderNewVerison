@@ -8,6 +8,7 @@ import { DndContext, closestCenter, PointerSensor, useSensor, useSensors } from 
 import { arrayMove, SortableContext, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import EditListItem from './EditListItem'
+import { useIntl } from 'react-intl'
 
 function SortableItem({ item, index, locale, type, readOnly, onDelete, setOpen }) {
   const { messages } = useIntl()

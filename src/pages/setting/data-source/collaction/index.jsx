@@ -12,7 +12,6 @@ import AddCollection from 'src/Components/Collection/AddCollection'
 import { useRouter } from 'next/router'
 import Breadcrumbs from 'src/Components/breadcrumbs'
 import { useTheme } from '@mui/material/styles'
-import useMediaQuery from '@mui/material/useMediaQuery'
 import GetTimeinTable from 'src/Components/GetTimeinTable'
 import DeletePopUp from 'src/Components/DeletePopUp'
 
@@ -28,7 +27,6 @@ export default function Index() {
   const [selectedDataSource, setSelectedDataSource] = useState('')
 
   const theme = useTheme()
-  const fullScreen = useMediaQuery(theme.breakpoints.down('sm'))
 
   const router = useRouter()
 
@@ -43,26 +41,21 @@ export default function Index() {
   // Fetch data sources
   useEffect(() => {
     setLoading(true)
-    const loadingToast = toast.loading(messages.loading)
-    axiosGet(`data-source/get`, locale)
-      .then(res => {
-        if (res.status) {
-          setDataSources(res.data)
-          if (!selectedDataSource && res.data.length > 0) {
-            setSelectedDataSource(res.data[0].id)
-          }
+
+    axiosGet(`data-source/get`, locale).then(res => {
+      if (res.status) {
+        setDataSources(res.data)
+        if (!selectedDataSource && res.data.length > 0) {
+          setSelectedDataSource(res.data[0].id)
         }
-      })
-      .finally(() => {
-        toast.dismiss(loadingToast)
-      })
+      }
+    })
   }, [locale, refresh])
 
   // Fetch collections based on selected data source
   useEffect(() => {
     if (!selectedDataSource) return
     setLoading(true)
-    const loadingToast = toast.loading(messages.loading)
     axiosGet(`collections/get/?dataSourceId=${selectedDataSource}`, locale)
       .then(res => {
         if (res.status) {
@@ -73,7 +66,6 @@ export default function Index() {
       })
       .finally(() => {
         setLoading(false)
-        toast.dismiss(loadingToast)
       })
   }, [locale, paginationModel.page, paginationModel.pageSize, refresh, selectedDataSource])
 
@@ -321,7 +313,7 @@ export default function Index() {
               InvitationsColumns={columns}
               data={dataFilter?.map((ele, i) => {
                 const fData = { ...ele }
-                fData.index = i 
+                fData.index = i
 
                 return fData
               })}

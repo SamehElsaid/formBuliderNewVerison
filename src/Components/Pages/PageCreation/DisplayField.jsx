@@ -868,6 +868,8 @@ export default function DisplayField({
         if (roles?.onMount?.type == 'disable') {
           setIsDisable('disabled')
         }
+        console.log(roles?.onMount?.type)
+
         if (roles?.onMount?.type == 'required') {
           setValidations(prev => ({ ...prev, Required: true }))
         }
@@ -1080,6 +1082,13 @@ export default function DisplayField({
   }, [refError, input, value, dataRef, validations, setTriggerData])
 
   useEffect(() => {
+    if (!input?.getDataForm) {
+      setSelectedOptions([])
+      setOldSelectedOptions([])
+      setLoading(false)
+
+      return
+    }
     if (input?.getDataForm === 'collection') {
       axiosGet(`generic-entities/${input?.options?.source}`)
         .then(res => {
@@ -1145,8 +1154,10 @@ export default function DisplayField({
 
   const onChangeFile = async e => {
     const file = e.target.files[0]
-    if (file?.size > roles?.size * 1024) {
-      toast.error(locale == 'ar' ? `حجم الملف أكبر من ${roles?.size} كيلوبايت` : `File size exceeds ${roles?.size}KB`)
+    const size = roles?.size ? roles?.size * 1024 : 500 * 1024
+
+    if (file?.size > size) {
+      toast.error(locale == 'ar' ? `حجم الملف أكبر من ${size / 1024} كيلوبايت` : `File size exceeds ${size / 1024}KB`)
 
       return
     }

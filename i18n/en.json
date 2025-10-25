@@ -767,7 +767,9 @@
   "maxLengthMustBeGreaterThanMinLength": "Max Length must be greater than Min Length",
   "maxLengthMustBe512": "Max Length must be less than 512 characters",
   "pageUpdatedSuccessfully": "Page updated successfully",
-  "onSubmit": "On Submit"
+  "onSubmit": "On Submit",
+  "fileTypes": "File Types",
+  "Name_must_be_less_than_100_characters": "Name must be less than 100 characters"
 }
 
 

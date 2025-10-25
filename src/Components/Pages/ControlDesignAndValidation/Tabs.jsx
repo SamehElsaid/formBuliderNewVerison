@@ -12,7 +12,7 @@ import {
 function Tabs({ openTab, handleCloseTab, messages, editTab, tabData, setTabData, addTab }) {
 
   return (
-    <Dialog open={openTab} onClose={handleCloseTab} fullWidth>
+    <Dialog open={Boolean(openTab)} onClose={handleCloseTab} fullWidth>
       <DialogTitle>{editTab ? messages.Edit_Tab : messages.Add_Tab}</DialogTitle>
       <DialogContent>
         <div className='p-4 mt-5 rounded-md border border-dashed border-main-color'>
