@@ -128,7 +128,7 @@ function TableView({ data, locale, onChange, readOnly, disabled }) {
       filteredFields = data.sortWithId.map(ele => filteredFields.find(e => e?.id === ele))
     }
     setFilterWithSelect(filteredFields)
-  }, [collectionFields.length, data?.selected?.length, data.sortWithId, data.edit, data.delete])
+  }, [collectionFields.length, data?.selected?.length, data.sortWithId])
 
   const SortableButton = SortableElement(({ value }) => (
     <div className='flex gap-2 items-center p-2 text-white rounded-md cursor-pointer select-none text-nowrap bg-main-color'>

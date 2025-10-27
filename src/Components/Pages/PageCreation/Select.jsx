@@ -966,7 +966,7 @@ function Select({ onChange, data, type, buttonRef, title }) {
 
               <h2 className='text-lg font-bold'>{messages.dialogs.actions}</h2>
               <FormControlLabel
-                key={data.edit}
+                key="edit-data-checkbox"
                 className='!w-fit capitalize'
                 control={
                   <Checkbox
@@ -980,7 +980,7 @@ function Select({ onChange, data, type, buttonRef, title }) {
                 label={messages.dialogs.editData}
               />
               <FormControlLabel
-                key={data.delete}
+                key="delete-data-checkbox"
                 className='!w-fit capitalize'
                 control={
                   <Checkbox
