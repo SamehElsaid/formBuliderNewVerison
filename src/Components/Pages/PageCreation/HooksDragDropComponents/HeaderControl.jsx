@@ -40,8 +40,8 @@ const HeaderControl = ({ data = {}, onChange, locale, buttonRef }) => {
     rightLinksColor: '#374151',
     rightLinksFontWeight: 'normal',
     showRightButton: false,
-    rightButtonText_en: 'Button',
-    rightButtonText_ar: 'زر',
+    rightButtonText_en: 'English Button Text',
+    rightButtonText_ar: 'Arabic Button Text',
     rightButtonBgColor: '#4f46e5',
     rightButtonTextColor: '#ffffff',
     rightButtonBorder: 'none',
@@ -592,7 +592,7 @@ const HeaderControl = ({ data = {}, onChange, locale, buttonRef }) => {
           {headerData.showRightButton && (
             <>
               <div className='mb-3'>
-                <label className='block mb-1 text-sm font-medium'>{messages.dialogs.buttonText}</label>
+                <label className='block mb-1 text-sm font-medium'>{messages.dialogs.buttonText} (English)</label>
                 <input
                   type='text'
                   value={headerData.rightButtonText_en}
@@ -602,17 +602,7 @@ const HeaderControl = ({ data = {}, onChange, locale, buttonRef }) => {
               </div>
 
               <div className='mb-3'>
-                <label className='block mb-1 text-sm font-medium'>{messages.dialogs.buttonText}</label>
-                <input
-                  type='text'
-                  value={headerData.rightButtonText_ar}
-                  onChange={e => handleChange('rightButtonText_ar', e.target.value)}
-                  className='p-1 w-full border border-gray-300'
-                />
-              </div>
-
-              <div className='mb-3'>
-                <label className='block mb-1 text-sm font-medium'>{messages.dialogs.buttonText}</label>
+                <label className='block mb-1 text-sm font-medium'>{messages.dialogs.buttonText} (Arabic)</label>
                 <input
                   type='text'
                   value={headerData.rightButtonText_ar}
