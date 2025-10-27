@@ -15,8 +15,8 @@ const HeaderControl = ({ data = {}, onChange, locale, buttonRef }) => {
   const headerData = {
     backgroundColor: '#ffffff',
     borderColor: '#e5e7eb',
-    paddingX: '16',
-    paddingY: '12',
+    paddingX: '',
+    paddingY: '',
     showShadow: false,
     showSelector: false,
     selectorBgColor: '#f3f4f6',
