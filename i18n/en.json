@@ -250,7 +250,7 @@
     "videoFormatError": "Unsupported video format. Please upload mp4 or webm."
   },
   "card": {
-    "name": "Card",
+    "name": "Cart",
     "type": "Type",
     "api": "Get From API",
     "clearData": "Clear Data",
