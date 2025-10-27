@@ -27,8 +27,9 @@ import {
 import { HexColorPicker } from 'react-colorful';
 import IconifyIcon from 'src/Components/icon';
 import { useIntl } from 'react-intl';
+import CloseNav from './CloseNav';
 
-const DynamicTableControl = ({ data, onChange, title, locale }) => {
+const DynamicTableControl = ({ data, onChange, title, locale, buttonRef }) => {
   const { messages } = useIntl()
   const [expanded, setExpanded] = useState(false);
   const [showColorPicker, setShowColorPicker] = useState(false);
@@ -176,6 +177,7 @@ const DynamicTableControl = ({ data, onChange, title, locale }) => {
 
   return (
     <div className="p-4">
+      <CloseNav text={title} buttonRef={buttonRef} />
       <Typography className='text-black' variant="h6" gutterBottom>
         {title} {messages.dialogs.settings}
       </Typography>

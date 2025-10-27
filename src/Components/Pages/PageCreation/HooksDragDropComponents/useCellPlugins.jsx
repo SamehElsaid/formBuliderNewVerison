@@ -12,12 +12,11 @@ import useButton from './useButton'
 import useIconView from './useIconView'
 import useCart from './useCart'
 import slate from '@react-page/plugins-slate'
-import spacer from '@react-page/plugins-spacer'
+import useSpacer from './useSpacer'
 import useProgressBar from './useProgressBar'
 import useOtp from './useOtp'
 import useOrder from './useOrder'
 import '@react-page/plugins-slate/lib/index.css'
-import '@react-page/plugins-spacer/lib/index.css'
 import useHeader from './useHeader'
 import useSection from './UseSection'
 import useDynamicTable from './useDynamicTable'
@@ -49,6 +48,7 @@ export default function useCellPlugins({ advancedEdit, locale, readOnly, buttonR
   const { SectionControl } = useSection({ locale, buttonRef })
   const { dynamicTable } = useDynamicTable({ locale, buttonRef, advancedEdit })
   const { GoogleMap } = useGoogleMap({ locale, buttonRef })
+  const { spacer } = useSpacer({ locale, buttonRef })
 
   const cellPlugins = useMemo(
     () => [
@@ -81,6 +81,7 @@ export default function useCellPlugins({ advancedEdit, locale, readOnly, buttonR
       BoxControl,
       UploadImage,
       UploadVideo,
+      spacer,
       collection,
       chart,
       order,

@@ -37,7 +37,6 @@ function SortableItem({ item, index, locale, type, readOnly, onDelete, setOpen }
       borderWidth: item.borderWidth + 'px' || '1px',
       borderColor: hover ? item.hoverBorderColor || 'white' : item.borderColor || 'white',
       borderStyle: item.borderStyle || 'solid',
-      transition: 'all 0.1s ease-in-out',
       transform: CSS.Transform.toString(transform),
       transition
     }
@@ -156,7 +155,7 @@ function OrderView({ data, locale, onChange, readOnly }) {
 
   const handleDragEnd = event => {
     const { active, over } = event
-    if (active.id !== over.id) {
+    if (over && active.id !== over.id) {
       const oldIndex = dataView.findIndex(item => item.id === active.id)
       const newIndex = dataView.findIndex(item => item.id === over.id)
       const newDataView = arrayMove(dataView, oldIndex, newIndex)

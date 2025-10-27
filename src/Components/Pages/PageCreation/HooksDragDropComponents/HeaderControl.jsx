@@ -3,6 +3,7 @@ import React, { useState, useRef } from 'react'
 import { ChromePicker } from 'react-color'
 import { FaPlus, FaMinus, FaTimes, FaUpload } from 'react-icons/fa'
 import { useIntl } from 'react-intl'
+import CloseNav from '../CloseNav'
 
 const HeaderControl = ({ data = {}, onChange, locale, buttonRef }) => {
   const { messages } = useIntl()
@@ -231,6 +232,7 @@ const HeaderControl = ({ data = {}, onChange, locale, buttonRef }) => {
 
   return (
     <div className='p-4 max-h-[60vh] overflow-y-auto'>
+      <CloseNav text={messages.dialogs.header} buttonRef={buttonRef} />
       <h3 className='mb-4 font-bold'>{messages.dialogs.headerConfiguration}</h3>
 
       {/* General Settings */}
