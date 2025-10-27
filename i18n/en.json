@@ -663,7 +663,9 @@
     "rightButtonAlertMessage": "Right Button Alert Message",
     "analytics": "Analytics",
     "backgroundDescription": "Backgrounds can include solid colors or images",
-    "box": "Box",
+    "box": "Content",
+    "boxContent": "Content",
+
     "boxDescription": "A structured content block that can hold text, images, or other elements",
     "cart": "Cart",
     "cartDescription": "A styled container for grouping related content.",
