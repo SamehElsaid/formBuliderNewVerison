@@ -665,7 +665,7 @@
     "backgroundDescription": "Backgrounds can include solid colors or images",
     "box": "Content",
     "boxContent": "Content",
-
+"verificationLink": "Verification Link",
     "boxDescription": "A structured content block that can hold text, images, or other elements",
     "cart": "Cart",
     "cartDescription": "A styled container for grouping related content.",
