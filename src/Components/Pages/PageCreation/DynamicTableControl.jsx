@@ -425,7 +425,7 @@ const DynamicTableControl = ({ data, onChange, title, locale, buttonRef }) => {
             {selectionStep === 2 && (
               <>
                 <Typography className='text-black' variant="subtitle1">
-                  {messages.dialogs.step2} (${selectedColumns.join(', ')})
+                  {messages.dialogs.step2} ({selectedColumns.join(', ')})
                 </Typography>
                 {data?.rows?.length > 0 ? (
                   <FormControl fullWidth>
