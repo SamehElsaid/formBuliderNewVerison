@@ -12,6 +12,8 @@ import { IoMdInformationCircleOutline } from 'react-icons/io'
 import { formatDate } from '@fullcalendar/core'
 import ViewInput from '../FiledesComponent/ViewInput'
 import axios from 'axios'
+import Cookies from 'js-cookie'
+import { decryptData } from 'src/Components/encryption'
 
 export default function DisplayField({
   from,
@@ -1105,9 +1107,13 @@ export default function DisplayField({
     if (input?.getDataForm === 'api') {
       console.log(input?.externalApi, input.apiHeaders)
       const apiHeaders = input.apiHeaders ?? {}
+      const authToken = Cookies.get('sub')
+      if (authToken) {
+        apiHeaders.Authorization = `Bearer ${decryptData(authToken).token.trim()}`
+      }
       axios
         .get(input?.externalApi, {
-          headers: input.apiHeaders
+          headers: apiHeaders
         })
 
         .then(res => {
