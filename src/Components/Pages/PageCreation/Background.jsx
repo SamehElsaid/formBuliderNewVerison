@@ -18,16 +18,22 @@ export default function Background({ data, onChange, buttonRef }) {
   const getApiData = useSelector(rx => rx.api.data)
 
   const handleFileUpload = event => {
-    const file = event.target.files[0]
-    if (file) {
-      const loading = toast.loading(messages.dialogs.uploading)
+      const file = event.target.files[0]
       if (file) {
+        // Remove all spaces from filename and replace with underscores
+        const fileName = file.name.replace(/\s+/g, '_')
+        console.log('Original filename:', file.name)
+        console.log('Processed filename:', fileName)
+        const loading = toast.loading(messages.dialogs.uploading)
+        if (file) {
+          // Create FormData to properly handle filenames with spaces
+          const formData = new FormData()
+          formData.append('file', file, fileName)
+        
         axiosPost(
           'file/upload',
           'en',
-          {
-            file: file
-          },
+          formData,
           true
         )
           .then(res => {
