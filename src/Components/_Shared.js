@@ -57,7 +57,6 @@ export const getType = type => {
 }
 
 export const getTypeFromCollection = (type, kind) => {
-  
   const baseTypes = {
     SingleText: 'text',
     URL: 'url',
@@ -140,8 +139,6 @@ const styleMap = {
 }
 
 export const DefaultStyle = type => {
-
-  
   return styleMap[type] || text
 }
 
@@ -254,4 +251,13 @@ export const getDomain = () => {
 
 export const getZIndex = value => {
   return `!z-[${value}]`
+}
+
+export const replacePlaceholders = (url, windowLocation) => {
+  return url.replace(/\{([^}]+)\}/g, (_, paramName) => {
+    const params = new URLSearchParams(windowLocation.search)
+    const value = params.get(paramName)
+
+    return value ? value : ''
+  })
 }

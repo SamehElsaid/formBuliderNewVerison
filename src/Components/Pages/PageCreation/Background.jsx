@@ -1,17 +1,6 @@
 import { Icon } from '@iconify/react'
 import Collapse from '@kunukn/react-collapse'
-import {
-  Button,
-  FormControlLabel,
-  IconButton,
-  InputAdornment,
-  MenuItem,
-  Radio,
-  RadioGroup,
-  Select,
-  TextField,
-  Typography
-} from '@mui/material'
+import { Button, FormControlLabel, InputAdornment, MenuItem, Radio, RadioGroup, Select, TextField } from '@mui/material'
 import { useEffect, useState } from 'react'
 import { SketchPicker } from 'react-color'
 import { useIntl } from 'react-intl'
@@ -91,6 +80,7 @@ export default function Background({ data, onChange, buttonRef }) {
               >
                 <MenuItem value='px'>PX</MenuItem>
                 <MenuItem value='vw'>VW</MenuItem>
+                <MenuItem value='%'>%</MenuItem>
               </Select>
             </InputAdornment>
           )
@@ -115,6 +105,7 @@ export default function Background({ data, onChange, buttonRef }) {
               >
                 <MenuItem value='px'>PX</MenuItem>
                 <MenuItem value='vh'>VH</MenuItem>
+                <MenuItem value='%'>%</MenuItem>
               </Select>
             </InputAdornment>
           )
@@ -133,11 +124,7 @@ export default function Background({ data, onChange, buttonRef }) {
         <MenuItem value='end'>End</MenuItem>
       </TextField>
       <RadioGroup value={selectedOption} onChange={e => setSelectedOption(e.target.value)} row>
-        <FormControlLabel
-          value='color'
-          control={<Radio />}
-          label={messages.dialogs.backgroundColor}
-        />
+        <FormControlLabel value='color' control={<Radio />} label={messages.dialogs.backgroundColor} />
         <FormControlLabel value='image' control={<Radio />} label={messages.dialogs.image} />
       </RadioGroup>
       <Collapse transition={`height 300ms cubic-bezier(.4, 0, .2, 1)`} isOpen={Boolean(selectedOption === 'color')}>

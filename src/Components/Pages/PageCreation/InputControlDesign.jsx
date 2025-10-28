@@ -153,7 +153,7 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
   }
 
   const addTab = () => {
-    if(tabData.name_ar.trim().length > 100 || tabData.name_en.trim().length > 100){
+    if (tabData.name_ar.trim().length > 100 || tabData.name_en.trim().length > 100) {
       toast.error(messages.Name_must_be_less_than_100_characters)
 
       return
@@ -1323,6 +1323,35 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                       <UnmountClosed isOpened={Boolean(showEvent)}>
                         <div className='px-2 pb-2'>
                           <>
+                            <FormControlLabel
+                              control={
+                                <Checkbox
+                                  checked={Boolean(roles?.onMount?.includeInQuery)}
+                                  onChange={e => {
+                                    const additional_fields = data.additional_fields ?? []
+                                    const findMyInput = additional_fields.find(inp => inp.key === open.id)
+                                    if (findMyInput) {
+                                      findMyInput.roles.onMount.includeInQuery = e.target.checked
+                                    } else {
+                                      const myEdit = {
+                                        key: open.id,
+                                        design: objectToCss(Css).replaceAll('NaN', ''),
+                                        roles: {
+                                          ...roles,
+                                          onMount: {
+                                            ...roles.onMount,
+                                            includeInQuery: e.target.checked
+                                          }
+                                        }
+                                      }
+                                      additional_fields.push(myEdit)
+                                    }
+                                    onChange({ ...data, additional_fields: additional_fields })
+                                  }}
+                                />
+                              }
+                              label={'Include in URL query'}
+                            />
                             <h2 className='mt-2 text-lg font-bold text-main-color'>{messages.OnMount}</h2>
                             <FormControl fullWidth margin='normal'>
                               <InputLabel>{messages.State}</InputLabel>

@@ -1,105 +1,73 @@
-import Breadcrumbs from 'src/Components/breadcrumbs'
-import { useIntl } from 'react-intl'
+import React, { useState } from "react";
+import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+import { ResizableBox } from "react-resizable";
+import "react-resizable/css/styles.css";
 
-import React, { useEffect, useState } from 'react'
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  TablePagination,
-  CircularProgress
-} from '@mui/material'
+export default function DndResizableExample() {
+  const [items, setItems] = useState([
+    { id: "1", content: "Item 1", width: 200 },
+    { id: "2", content: "Item 2", width: 200 },
+    { id: "3", content: "Item 3", width: 200 }
+  ]);
 
-function Setting() {
-  const { messages } = useIntl()
-  
+  const onDragEnd = (result) => {
+    if (!result.destination) return;
+    const newItems = Array.from(items);
+    const [moved] = newItems.splice(result.source.index, 1);
+    newItems.splice(result.destination.index, 0, moved);
+    setItems(newItems);
+  };
 
-  return (
-    <div>
-      <Breadcrumbs routers={[{ name: messages.dialogs.settings }]} isDashboard />
-      <UsersTable />
-    </div>
-  )
-}
-
-export default Setting
-
-function UsersTable() {
-  const [users, setUsers] = useState([])
-  const [loading, setLoading] = useState(false)
-
-  // Pagination states
-  const [page, setPage] = useState(0) // current page
-  const [rowsPerPage, setRowsPerPage] = useState(5) // rows per page
-
-  // Fake API (jsonplaceholder users)
-  useEffect(() => {
-    setLoading(true)
-    fetch('https://jsonplaceholder.typicode.com/users')
-      .then(res => res.json())
-      .then(data => {
-        setUsers(data)
-        setLoading(false)
-      })
-  }, [])
-
-  // Pagination handlers
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage)
-  }
-
-  const handleChangeRowsPerPage = event => {
-    setRowsPerPage(parseInt(event.target.value, 10))
-    setPage(0)
-  }
+  const handleResize = (index, newWidth) => {
+    const newItems = [...items];
+    newItems[index].width = newWidth;
+    setItems(newItems);
+  };
 
   return (
-    <Paper sx={{ width: '100%', overflow: 'hidden' }}>
-      {loading ? (
-        <div className='flex justify-center items-center p-4'>
-          <CircularProgress />
-        </div>
-      ) : (
-        <>
-          <TableContainer>
-            <Table stickyHeader>
-              <TableHead>
-                <TableRow>
-                  <TableCell>ID</TableCell>
-                  <TableCell>Name</TableCell>
-                  <TableCell>Email</TableCell>
-                  <TableCell>Company</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {users.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(user => (
-                  <TableRow key={user.id}>
-                    <TableCell>{user.id}</TableCell>
-                    <TableCell>{user.name}</TableCell>
-                    <TableCell>{user.email}</TableCell>
-                    <TableCell>{user.company.name}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-
-          {/* Pagination */}
-          <TablePagination
-            component='div'
-            count={users.length}
-            page={page}
-            onPageChange={handleChangePage}
-            rowsPerPage={rowsPerPage}
-            onRowsPerPageChange={handleChangeRowsPerPage}
-            rowsPerPageOptions={[5, 10, 15]}
-          />
-        </>
-      )}
-    </Paper>
-  )
+    <DragDropContext onDragEnd={onDragEnd}>
+      <Droppable droppableId="list">
+        {(provided) => (
+          <div {...provided.droppableProps} ref={provided.innerRef}>
+            {items.map((item, index) => (
+              <Draggable key={item.id} draggableId={item.id} index={index}>
+                {(provided) => (
+                  <div
+                    ref={provided.innerRef}
+                    {...provided.draggableProps}
+                    {...provided.dragHandleProps}
+                    style={{ margin: 10, ...provided.draggableProps.style }}
+                  >
+                    <ResizableBox
+                      width={item.width}
+                      height={50}
+                      minConstraints={[100, 50]}
+                      maxConstraints={[400, 50]}
+                      axis="x"
+                      onResizeStop={(e, { size }) => handleResize(index, size.width)}
+                    >
+                      <div
+                        style={{
+                          width: "100%",
+                          height: "100%",
+                          background: "#80d8ff",
+                          color: "#fff",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                        }}
+                      >
+                        {item.content}
+                      </div>
+                    </ResizableBox>
+                  </div>
+                )}
+              </Draggable>
+            ))}
+            {provided.placeholder}
+          </div>
+        )}
+      </Droppable>
+    </DragDropContext>
+  );
 }

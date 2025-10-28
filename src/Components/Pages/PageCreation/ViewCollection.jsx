@@ -7,10 +7,10 @@ import { useRouter } from 'next/router'
 import InputControlDesign from './InputControlDesign'
 import GridLayout, { WidthProvider } from 'react-grid-layout'
 import 'react-grid-layout/css/styles.css'
-import 'react-resizable/css/styles.css'
-import { DefaultStyle, getTypeFromCollection, getZIndex, VaildId } from 'src/Components/_Shared'
+import { DefaultStyle, getTypeFromCollection } from 'src/Components/_Shared'
 import { IoMdSettings } from 'react-icons/io'
 import { useIntl } from 'react-intl'
+import { CircularProgress } from '@mui/material'
 
 const ResponsiveGridLayout = WidthProvider(GridLayout)
 
@@ -191,7 +191,6 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
       }
     })
 
-
     const apiCall = data.type_of_sumbit === 'collection' ? `generic-entities/${data.collectionName}` : data.submitApi
 
     axiosPost(apiCall, locale, output, false, false, data.type_of_sumbit !== 'collection' ? true : false).then(res => {
@@ -334,6 +333,12 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
 
   return (
     <div className={`${disabled ? 'text-main' : ''}`}>
+      {loading && (
+        <div className='fixed inset-0 z-10 flex justify-center items-center w-full h-full bg-white/50'>
+          {/* <img src={photo.src} alt='loading' className='w-[25px] h-[25px] scale-150 ' /> */}
+        <CircularProgress />
+        </div>
+      )}
       <InputControlDesign
         open={open}
         handleClose={handleClose}
@@ -363,7 +368,7 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
             draggableHandle='.drag-handle'
             isResizable={!readOnly}
             isDraggable={!readOnly}
-            margin={[10, 10]} // هامش بين العناصر
+            margin={[10, 10]}
           >
             {sortedLoop.map((filed, i) => {
               const roles = data?.additional_fields?.find(ele => ele.key === filed.id)?.roles ?? {
@@ -436,6 +441,7 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
 
                   <DisplayField
                     handleSubmit={handleSubmit}
+                    loadingBtn={loading}
                     input={filed}
                     setRedirect={setRedirect}
                     isRedirect={data.redirect === '{{redirect}}'}
