@@ -521,6 +521,83 @@ export default function DisplayField({
       }
     }
 
+    // ! Start Required Control (mirror of optional)
+    if (roles?.trigger?.typeOfValidation == 'required' && roles?.trigger?.mainValue && !loading) {
+      const setReq = (shouldBeRequired) => {
+        if (shouldBeRequired) {
+          if (!validations?.Required) setValidations(prev => ({ ...prev, Required: true }))
+        } else {
+          if (validations?.Required) {
+            setValidations(prev => {
+              const newPrev = { ...prev }
+              delete newPrev.Required
+              return newPrev
+            })
+          }
+        }
+      }
+
+      const compare = (left, right, equalMode) => equalMode ? left == right : left != right
+
+      const handleLocal = () => {
+        const equalMode = roles?.trigger.isEqual == 'equal'
+        const left = dataRef?.current?.[roles?.trigger?.selectedField]
+        const requiredNow = compare(left, roles?.trigger?.mainValue, equalMode)
+        setReq(requiredNow)
+      }
+
+      if (input.fieldCategory == 'Basic') {
+        if (roles?.trigger?.parentKey) {
+          if (dataRef?.current?.[roles?.trigger?.selectedField]) {
+            axiosGet(`generic-entities/${roles?.trigger?.parentKey}/${dataRef?.current?.[roles?.trigger?.selectedField]}`).then(res => {
+              if (res.status) {
+                const ent = res.entities?.[0] ?? false
+                if (ent) {
+                  const equalMode = roles?.trigger.isEqual == 'equal'
+                  const requiredNow = compare(ent?.[roles?.trigger?.triggerKey], roles?.trigger?.mainValue, equalMode)
+                  setReq(requiredNow)
+                }
+              }
+            })
+          }
+        } else {
+          handleLocal()
+        }
+      } else {
+        if (roles?.trigger?.parentKey) {
+          if (dataRef?.current?.[roles?.trigger?.selectedField]) {
+            axiosGet(`generic-entities/${roles?.trigger?.parentKey}/${dataRef?.current?.[roles?.trigger?.selectedField]}`).then(res => {
+              if (res.status) {
+                const ent = res.entities?.[0] ?? false
+                if (ent) {
+                  const equalMode = roles?.trigger.isEqual == 'equal'
+                  const requiredNow = compare(ent?.[roles?.trigger?.triggerKey], roles?.trigger?.mainValue, equalMode)
+                  setReq(requiredNow)
+                }
+              }
+            })
+          }
+        } else {
+          handleLocal()
+        }
+      }
+    }
+
+    if (roles?.trigger?.typeOfValidation == 'required' && !roles?.trigger?.mainValue && !loading) {
+      const hasValue = dataRef?.current?.[roles?.trigger?.selectedField]?.length != 0
+      if (hasValue) {
+        if (!validations?.Required) setValidations(prev => ({ ...prev, Required: true }))
+      } else {
+        if (validations?.Required) {
+          setValidations(prev => {
+            delete prev.Required
+            return prev
+          })
+        }
+      }
+    }
+    //  End Required Control
+
     //  End enable Control
 
     // ! Start Empty Control

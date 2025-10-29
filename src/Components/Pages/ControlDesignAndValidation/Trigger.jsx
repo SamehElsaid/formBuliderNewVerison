@@ -164,6 +164,9 @@ function Trigger({
                   <MenuItem value={'enable'} disabled={open.type === 'new_element'}>
                     {messages.enable}
                   </MenuItem>
+                  <MenuItem value={'required'} disabled={open.type === 'new_element'}>
+                    {messages.Required}
+                  </MenuItem>
                   <MenuItem value={'empty'} disabled={open.type === 'new_element'}>
                     {messages.empty}
                   </MenuItem>
