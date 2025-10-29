@@ -160,6 +160,7 @@ function Trigger({
                   }}
                 >
                   <MenuItem value={'filter'}>{messages.filter}</MenuItem>
+                  <MenuItem value={'disable'}>{messages.Disable}</MenuItem>
                   <MenuItem value={'enable'} disabled={open.type === 'new_element'}>
                     {messages.enable}
                   </MenuItem>

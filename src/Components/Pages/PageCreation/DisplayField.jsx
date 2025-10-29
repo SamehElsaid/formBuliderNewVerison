@@ -103,17 +103,105 @@ export default function DisplayField({
 
     // ! Start disable Control
 
-    if (roles?.trigger?.typeOfValidation == 'disable' && !roles?.trigger?.mainValue && !loading) {
-      if (dataRef?.current?.[roles?.trigger?.selectedField]?.length != 0) {
-        setIsDisable('disabled')
-      } else {
-        setIsDisable(prev => {
-          if (roles?.onMount?.type == 'hide') {
-            return 'hidden'
+    if (roles?.trigger?.typeOfValidation == 'disable' && !loading) {
+      // If a specific mainValue is provided, disable when condition matches
+      if (roles?.trigger?.mainValue) {
+        if (input.fieldCategory == 'Basic') {
+          if (roles?.trigger?.parentKey) {
+            if (dataRef?.current?.[roles?.trigger?.selectedField]) {
+              axiosGet(
+                `generic-entities/${roles?.trigger?.parentKey}/${dataRef?.current?.[roles?.trigger?.selectedField]}`
+              ).then(res => {
+                if (res.status) {
+                  const data = res.entities?.[0] ?? false
+                  if (data) {
+                    if (roles?.trigger.isEqual == 'equal') {
+                      if (data?.[roles?.trigger?.triggerKey] == roles?.trigger?.mainValue) {
+                        setIsDisable('disabled')
+                      } else {
+                        setIsDisable(prev => (roles?.onMount?.type == 'hide' ? 'hidden' : null))
+                      }
+                    } else {
+                      if (data?.[roles?.trigger?.triggerKey] != roles?.trigger?.mainValue) {
+                        setIsDisable('disabled')
+                      } else {
+                        setIsDisable(prev => (roles?.onMount?.type == 'hide' ? 'hidden' : null))
+                      }
+                    }
+                  }
+                }
+              })
+            }
+          } else {
+            if (roles?.trigger.isEqual == 'equal') {
+              if (dataRef?.current?.[roles?.trigger?.selectedField] == roles?.trigger?.mainValue) {
+                setIsDisable('disabled')
+              } else {
+                setIsDisable(prev => (roles?.onMount?.type == 'hide' ? 'hidden' : null))
+              }
+            } else {
+              if (dataRef?.current?.[roles?.trigger?.selectedField] != roles?.trigger?.mainValue) {
+                setIsDisable('disabled')
+              } else {
+                setIsDisable(prev => (roles?.onMount?.type == 'hide' ? 'hidden' : null))
+              }
+            }
           }
+        } else {
+          if (roles?.trigger?.parentKey) {
+            if (dataRef?.current?.[roles?.trigger?.selectedField]) {
+              axiosGet(
+                `generic-entities/${roles?.trigger?.parentKey}/${dataRef?.current?.[roles?.trigger?.selectedField]}`
+              ).then(res => {
+                if (res.status) {
+                  const data = res.entities?.[0] ?? false
+                  if (data) {
+                    if (roles?.trigger.isEqual == 'equal') {
+                      if (data?.[roles?.trigger?.triggerKey] == roles?.trigger?.mainValue) {
+                        setIsDisable('disabled')
+                      } else {
+                        setIsDisable(prev => (roles?.onMount?.type == 'hide' ? 'hidden' : null))
+                      }
+                    } else {
+                      if (data?.[roles?.trigger?.triggerKey] != roles?.trigger?.mainValue) {
+                        setIsDisable('disabled')
+                      } else {
+                        setIsDisable(prev => (roles?.onMount?.type == 'hide' ? 'hidden' : null))
+                      }
+                    }
+                  }
+                }
+              })
+            }
+          } else {
+            if (roles?.trigger.isEqual == 'equal') {
+              if (dataRef?.current?.[roles?.trigger?.selectedField] == roles?.trigger?.mainValue) {
+                setIsDisable('disabled')
+              } else {
+                setIsDisable(prev => (roles?.onMount?.type == 'hide' ? 'hidden' : null))
+              }
+            } else {
+              if (dataRef?.current?.[roles?.trigger?.selectedField] != roles?.trigger?.mainValue) {
+                setIsDisable('disabled')
+              } else {
+                setIsDisable(prev => (roles?.onMount?.type == 'hide' ? 'hidden' : null))
+              }
+            }
+          }
+        }
+      } else {
+        // No mainValue provided: if selectedField has any value, disable
+        if (dataRef?.current?.[roles?.trigger?.selectedField]?.length != 0) {
+          setIsDisable('disabled')
+        } else {
+          setIsDisable(prev => {
+            if (roles?.onMount?.type == 'hide') {
+              return 'hidden'
+            }
 
-          return null
-        })
+            return null
+          })
+        }
       }
     }
 
