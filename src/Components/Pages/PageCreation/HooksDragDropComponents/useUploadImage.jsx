@@ -24,8 +24,10 @@ export default function useUploadImage({ locale, buttonRef }) {
         </>
       ),
       id: 'uploadImage',
-      title: messages.useUploadImage.image,
-      description: messages.useUploadImage.uploadImageDescription,
+      title: messages.useUploadImage?.image || (locale === 'ar' ? 'صورة' : 'Image'),
+      description:
+        messages.useUploadImage?.uploadImageDescription ||
+        (locale === 'ar' ? 'عرض الصور أو الأيقونات أو الرسومات.' : 'Display photos, icons, or illustrations.'),
       version: 1,
       icon: <CiImageOn className='text-2xl' />,
       controls: {

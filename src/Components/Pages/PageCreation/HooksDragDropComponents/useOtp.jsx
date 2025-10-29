@@ -9,7 +9,7 @@ import { useIntl } from 'react-intl'
 import { IoTimerOutline } from 'react-icons/io5'
 
 export default function useOtp({ locale, buttonRef }) {
-  const { messages } = useIntl()
+  const { messages, locale: intlLocale } = useIntl()
 
   const Otp = useMemo(() => {
     return {
@@ -73,7 +73,9 @@ export default function useOtp({ locale, buttonRef }) {
                     toast.success(messages.useOtp.processHasCompleted)
                     setOtp('')
                     if (data?.redirectLink) {
-                      router.push(data?.redirectLink)
+                      const currentLocale = router.locale || intlLocale || 'en'
+                      const cleaned = (data?.redirectLink || '').replace(/^\/+/, '')
+                      router.push(`/${currentLocale}/${cleaned}`)
                     }
                   }
                 })
