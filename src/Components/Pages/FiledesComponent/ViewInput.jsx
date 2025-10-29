@@ -352,17 +352,34 @@ const ViewInput = ({
               {value && (
                 <div className='flex flex-col gap-1 p-2 mt-5 rounded-md shadow-inner shadow-gray-300 file-names-container'>
                   <div className='flex gap-3 items-center file-name-item'>
-                    <span className='flex gap-1 items-center file-name w-[calc(100%-25px)]'>
+                    <span className='flex gap-1 items-center file-name w-[calc(100%-110px)]'>
                       <BsPaperclip className='text-xl text-main-color' />
                       <span className='flex-1'>{fileName}</span>
                     </span>
-                    <button
-                      type='button'
-                      className='delete-button w-[25px] h-[25px] bg-red-500/70 rounded-full text-white hover:bg-red-500/90 transition-all duration-300 flex items-center justify-center'
-                      onClick={e => handleDelete(e)}
-                    >
-                      <BsTrash />
-                    </button>
+                    <div className='flex gap-2 items-center'>
+                      <a
+                        href={process.env.API_URL + '/file/download/' + value.replaceAll('/Uploads/', '')}
+                        target='_blank'
+                        rel='noreferrer'
+                        className='px-2 py-1 text-xs rounded-md border border-main-color text-main-color hover:bg-main-color hover:text-white transition-colors'
+                      >
+                        {locale == 'ar' ? 'عرض' : 'View'}
+                      </a>
+                      <a
+                        href={process.env.API_URL + '/file/download/' + value.replaceAll('/Uploads/', '')}
+                        download
+                        className='px-2 py-1 text-xs rounded-md border border-main-color text-main-color hover:bg-main-color hover:text-white transition-colors'
+                      >
+                        {locale == 'ar' ? 'تنزيل' : 'Download'}
+                      </a>
+                      <button
+                        type='button'
+                        className='delete-button w-[25px] h-[25px] bg-red-500/70 rounded-full text-white hover:bg-red-500/90 transition-all duration-300 flex items-center justify-center'
+                        onClick={e => handleDelete(e)}
+                      >
+                        <BsTrash />
+                      </button>
+                    </div>
                   </div>
                 </div>
               )}

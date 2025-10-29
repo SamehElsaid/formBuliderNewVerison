@@ -1281,6 +1281,7 @@ export default function DisplayField({
               readOnly={readOnly}
               onChangeData={onChange}
               data={data}
+              dataRef={dataRef}
               disabledBtn={disabledBtn}
               input={input}
               roles={roles}

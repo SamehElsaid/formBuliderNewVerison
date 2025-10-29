@@ -15,7 +15,9 @@ function NewElement({
   disabledBtn,
   isDisable,
   readOnly,
-  handleSubmit
+  handleSubmit,
+  dataRef,
+  data
 }) {
   const [open, setOpen] = useState(false)
   const { locale, messages } = useIntl()
@@ -55,7 +57,73 @@ function NewElement({
     setValue(prev => !prev)
   }
 
+  const guardTermsChecked = e => {
+    try {
+      // find a terms checkbox new element if present
+      const checkboxElement = data?.addMoreElement?.find(ele => ele.key === 'check_box')
+      if (checkboxElement) {
+        const isChecked = Boolean(dataRef?.current?.[checkboxElement.id])
+        if (!isChecked) {
+          e?.preventDefault?.()
+          e?.stopPropagation?.()
+          const msg =
+            input?.[locale === 'ar' ? 'warningMessageAr' : 'warningMessageEn'] ||
+            (locale === 'ar' ? 'يجب الموافقة على الشروط والأحكام' : 'You should check terms & conditions')
+          // using react-toastify here because rest of app uses it for field errors
+          try {
+            // lazy import local toast if available in this module scope
+            const { toast } = require('react-toastify')
+            toast.error(msg)
+          } catch (_) {
+            alert(msg)
+          }
+
+          return false
+        }
+      }
+    } catch (_) {}
+
+    return true
+  }
+
+  const isConditionSatisfied = () => {
+    const trig = roles?.trigger
+    if (!trig || !trig?.typeOfValidation || !trig?.selectedField) return true
+
+    const selectedValue = dataRef?.current?.[trig.selectedField]
+    const compare = v => (trig?.isEqual === 'equal' ? v == trig?.mainValue : v != trig?.mainValue)
+
+    // For button gating, treat 'optional' and 'enable' as conditions to allow click
+    if (trig.typeOfValidation === 'optional' || trig.typeOfValidation === 'enable') {
+      return compare(selectedValue)
+    }
+
+    // Other trigger types default to allow
+    return true
+  }
+
+  const guardConditionalRequirement = e => {
+    if (!isConditionSatisfied()) {
+      e?.preventDefault?.()
+      e?.stopPropagation?.()
+      const msg =
+        input?.[locale === 'ar' ? 'warningMessageAr' : 'warningMessageEn'] ||
+        (locale === 'ar' ? 'الرجاء استيفاء الشرط قبل المتابعة' : 'Please satisfy the required condition before proceeding')
+      try {
+        const { toast } = require('react-toastify')
+        toast.error(msg)
+      } catch (_) {
+        alert(msg)
+      }
+
+      return false
+    }
+
+    return true
+  }
+
   const handleClick = e => {
+    if (!guardTermsChecked(e)) return
     setValue('checked')
     if (roles?.onMount?.print) {
       window.print()
@@ -180,7 +248,11 @@ function NewElement({
           <a
             href={roles?.onMount?.href}
             className={`btn ${isDisable === 'hide' ? (readOnly ? '' : 'hidden') : ''} block text-center`}
-            onClick={handleClick}
+            onClick={e => {
+              if (!guardConditionalRequirement(e)) return
+              if (!guardTermsChecked(e)) return
+              handleClick(e)
+            }}
             target='_blank'
             rel='noopener noreferrer'
             disabled={isDisable === 'disable'}
@@ -196,7 +268,11 @@ function NewElement({
           <Link
             href={`/${locale}${roles?.onMount?.href}`}
             className={`btn block text-center  ${isDisable === 'hide' ? (readOnly ? '' : 'hidden') : ''} block`}
-            onClick={handleClick}
+            onClick={e => {
+              if (!guardConditionalRequirement(e)) return
+              if (!guardTermsChecked(e)) return
+              handleClick(e)
+            }}
             disabled={isDisable === 'disable'}
           >
             {input[`name_${locale}`]}
@@ -251,6 +327,8 @@ function NewElement({
           <button
             ref={buttonRef}
             onClick={e => {
+              if (!guardConditionalRequirement(e)) return
+              if (!guardTermsChecked(e)) return
               if (input?.[locale === 'ar' ? 'warningMessageAr' : 'warningMessageEn']) {
                 if (!open) {
                   setOpen(true)
@@ -274,7 +352,11 @@ function NewElement({
     return (
       <button
         disabled={isDisable === 'disable'}
-        onClick={handleClick}
+        onClick={e => {
+          if (!guardConditionalRequirement(e)) return
+          if (!guardTermsChecked(e)) return
+          handleClick(e)
+        }}
         type='button'
         className={`btn ${isDisable === 'hide' ? (readOnly ? '' : 'hidden') : ''} block `}
       >
