@@ -469,14 +469,15 @@ const ViewInput = ({
           <div className='absolute top-0 z-10 w-full h-full cursor-pointer start-0'></div>
           <DatePickerWrapper className='w-full'>
             <DatePicker
-              selected={value}
+              selected={value || null}
               onChange={date => {
-                onChange(date)
+                onChange(date ?? '')
               }}
               dateFormat='h:mm aa'
               showTimeSelect
               showTimeSelectOnly
               locale={locale == 'ar' ? ar : en}
+              isClearable
               onBlur={e => {
                 if (onBlur) {
                   const evaluatedFn = eval('(' + onBlur + ')')
@@ -496,13 +497,14 @@ const ViewInput = ({
       </>
     ) : (
       <DatePicker
-        selected={value}
+      selected={value ? new Date(value) : null} 
         open={false}
         locale={locale == 'ar' ? ar : en}
         popperPlacement='bottom-start'
-        onChange={date => onChange(date)}
+        onChange={date => onChange(date ?? '')}
         timeInputLabel='Time:'
         dateFormat='h:mm aa'
+        isClearable
         onBlur={e => {
           if (onBlur) {
             const evaluatedFn = eval('(' + onBlur + ')')
@@ -548,15 +550,16 @@ const ViewInput = ({
           <div className='absolute top-0 z-10 w-full h-full cursor-pointer start-0'>
             <DatePickerWrapper className='w-full'>
               <DatePicker
-                selected={value}
+                selected={value || null}
                 onChange={date => {
-                  onChange(date)
+                  onChange(date ?? '')
                 }}
                 timeInputLabel={label.showTime == 'true' ? (locale == 'ar' ? 'الوقت:' : 'Time:') : ''}
                 dateFormat={`${label.format ? label.format : 'MM/dd/yyyy'}`}
                 showMonthDropdown
                 locale={locale == 'ar' ? ar : en}
                 showYearDropdown
+                isClearable
                 onBlur={e => {
                   if (onBlur) {
                     const evaluatedFn = eval('(' + onBlur + ')')
@@ -576,14 +579,15 @@ const ViewInput = ({
       </>
     ) : (
       <DatePicker
-        selected={value}
+        selected={value || null}
         open={false}
         locale={locale == 'ar' ? ar : en}
         popperPlacement='bottom-start'
-        onChange={date => onChange(date)}
+        onChange={date => onChange(date ?? '')}
         timeInputLabel='Time:'
         dateFormat={`${label.format ? label.format : 'MM/dd/yyyy'}`}
         showMonthDropdown
+        isClearable
         onBlur={e => {
           if (onBlur) {
             const evaluatedFn = eval('(' + onBlur + ')')

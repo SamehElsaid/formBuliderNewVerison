@@ -1119,7 +1119,7 @@ export default function DisplayField({
       }
     } else {
       if (input?.type == 'Date') {
-        setValue(new Date(e))
+        setValue(e || '')
       } else {
         input.type == 'Number' ? setValue(+e.target.value) : setValue(e.target.value)
       }
