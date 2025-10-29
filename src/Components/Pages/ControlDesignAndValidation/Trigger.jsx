@@ -170,7 +170,12 @@ function Trigger({
                   <MenuItem value={'optional'} disabled={open.type === 'new_element'}>
                     {messages.optional}
                   </MenuItem>
-                  <MenuItem value={'hidden'}>{messages.hidden}</MenuItem>
+                  <MenuItem
+                    value={'hidden'}
+                    disabled={open?.key === 'button' && roles?.onMount?.type === 'hide'}
+                  >
+                    {messages.hidden}
+                  </MenuItem>
                 </Select>
                 <UnmountClosed isOpened={Boolean(typeOfValidation === 'filter')}>
                   <div className='flex mt-2 rounded-md border border-main-color'>
