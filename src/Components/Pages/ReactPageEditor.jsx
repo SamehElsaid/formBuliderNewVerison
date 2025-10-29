@@ -174,7 +174,7 @@ const ReactPageEditor = ({ pageName, initialData, initialDataApi, workflowId }) 
                   VersionReason: new Date().toISOString(),
                   description: '',
                   pageComponents: [],
-                  jsonData: JSON.stringify({ editorValue, apiData })
+                  jsonData: JSON.stringify({ editorValue, apiData: apiData.map(item => ({ ...item, data: null ,loading: true })) })
                 })
                   .then(res => {
                     if (res.status) {
