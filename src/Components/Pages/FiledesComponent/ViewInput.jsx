@@ -399,7 +399,11 @@ const ViewInput = ({
                   evaluatedFn(e)
                 }
               }}
-              accept={input?.options?.uiSchema?.xComponentProps?.fileTypes?.join(',')}
+              accept={
+                input?.options?.uiSchema?.xComponentProps?.fileTypes?.length
+                  ? input.options.uiSchema.xComponentProps.fileTypes.join(',')
+                  : undefined
+              }
             />
           </label>
         </div>
@@ -441,7 +445,11 @@ const ViewInput = ({
                   evaluatedFn(e)
                 }
               }}
-              accept={input?.options?.uiSchema?.xComponentProps?.fileTypes?.join(',')}
+              accept={
+                input?.options?.uiSchema?.xComponentProps?.fileTypes?.length
+                  ? input.options.uiSchema.xComponentProps.fileTypes.join(',')
+                  : undefined
+              }
             />
           </Button>
         </div>

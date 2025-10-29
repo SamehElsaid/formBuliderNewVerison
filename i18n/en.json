@@ -570,6 +570,7 @@
     "orderList": "Order List",
     "unorderedList": "Unordered List",
     "orderKind": "Order Kind",
+    "fileTypesRequired": "File type is required. Select at least one type",
     "toControlTheListCompletely": "To control the list completely, go to the edit mode",
     "goToTheEditMode": "Go to the edit mode",
     "drag": "Drag",
