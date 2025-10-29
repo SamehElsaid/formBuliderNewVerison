@@ -176,6 +176,7 @@ function Trigger({
                   >
                     {messages.hidden}
                   </MenuItem>
+                  <MenuItem value={'visible'}>{messages.visible}</MenuItem>
                 </Select>
                 <UnmountClosed isOpened={Boolean(typeOfValidation === 'filter')}>
                   <div className='flex mt-2 rounded-md border border-main-color'>

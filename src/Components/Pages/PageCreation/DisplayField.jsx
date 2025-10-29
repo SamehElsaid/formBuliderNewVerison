@@ -898,6 +898,102 @@ export default function DisplayField({
     }
 
     // End Visible Control
+
+    // ! Start Visible Control for Hidden Fields
+    if (roles?.trigger?.typeOfValidation == 'visible' && roles?.trigger?.mainValue && !loading) {
+      if (input.fieldCategory == 'Basic') {
+        if (roles?.trigger?.parentKey) {
+          if (dataRef?.current?.[roles?.trigger?.selectedField]) {
+            axiosGet(
+              `generic-entities/${roles?.trigger?.parentKey}/${dataRef?.current?.[roles?.trigger?.selectedField]}`
+            ).then(res => {
+              if (res.status) {
+                const data = res.entities?.[0] ?? false
+                if (data) {
+                  if (roles?.trigger.isEqual == 'equal') {
+                    if (data?.[roles?.trigger?.triggerKey] == roles?.trigger?.mainValue) {
+                      setIsDisable(null) // Make visible
+                    } else {
+                      setIsDisable('hidden') // Keep hidden
+                    }
+                  } else {
+                    if (data?.[roles?.trigger?.triggerKey] != roles?.trigger?.mainValue) {
+                      setIsDisable(null) // Make visible
+                    } else {
+                      setIsDisable('hidden') // Keep hidden
+                    }
+                  }
+                }
+              }
+            })
+          }
+        } else {
+          if (roles?.trigger.isEqual == 'equal') {
+            if (dataRef?.current?.[roles?.trigger?.selectedField] == roles?.trigger?.mainValue) {
+              setIsDisable(null) // Make visible
+            } else {
+              setIsDisable('hidden') // Keep hidden
+            }
+          } else {
+            if (dataRef?.current?.[roles?.trigger?.selectedField] != roles?.trigger?.mainValue) {
+              setIsDisable(null) // Make visible
+            } else {
+              setIsDisable('hidden') // Keep hidden
+            }
+          }
+        }
+      } else {
+        if (roles?.trigger?.parentKey) {
+          if (dataRef?.current?.[roles?.trigger?.selectedField]) {
+            axiosGet(
+              `generic-entities/${roles?.trigger?.parentKey}/${dataRef?.current?.[roles?.trigger?.selectedField]}`
+            ).then(res => {
+              if (res.status) {
+                const data = res.entities?.[0] ?? false
+                if (data) {
+                  if (roles?.trigger.isEqual == 'equal') {
+                    if (data?.[roles?.trigger?.triggerKey] == roles?.trigger?.mainValue) {
+                      setIsDisable(null) // Make visible
+                    } else {
+                      setIsDisable('hidden') // Keep hidden
+                    }
+                  } else {
+                    if (data?.[roles?.trigger?.triggerKey] != roles?.trigger?.mainValue) {
+                      setIsDisable(null) // Make visible
+                    } else {
+                      setIsDisable('hidden') // Keep hidden
+                    }
+                  }
+                }
+              }
+            })
+          }
+        } else {
+          if (roles?.trigger.isEqual == 'equal') {
+            if (dataRef?.current?.[roles?.trigger?.selectedField] == roles?.trigger?.mainValue) {
+              setIsDisable(null) // Make visible
+            } else {
+              setIsDisable('hidden') // Keep hidden
+            }
+          } else {
+            if (dataRef?.current?.[roles?.trigger?.selectedField] != roles?.trigger?.mainValue) {
+              setIsDisable(null) // Make visible
+            } else {
+              setIsDisable('hidden') // Keep hidden
+            }
+          }
+        }
+      }
+    }
+    if (roles?.trigger?.typeOfValidation == 'visible' && !roles?.trigger?.mainValue && !loading) {
+      if (dataRef?.current?.[roles?.trigger?.selectedField]?.length != 0) {
+        setIsDisable(null) // Make visible when field has value
+      } else {
+        setIsDisable('hidden') // Keep hidden when field is empty
+      }
+    }
+
+    // End Visible Control for Hidden Fields
   }, [roles, loading, triggerData])
 
   useEffect(() => {
