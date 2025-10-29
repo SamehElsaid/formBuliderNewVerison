@@ -1097,9 +1097,6 @@ sortable-list {
   height: 100%; /* Set a height */
 }
 
-.dark-mode .logoControl {
-  filter: invert(1);
-}
 .MuiDrawer-root.MuiDrawer-modal.MuiModal-root {
   z-index: 11111;
 }
