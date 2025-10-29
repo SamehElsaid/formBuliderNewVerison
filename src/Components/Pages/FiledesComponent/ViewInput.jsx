@@ -346,7 +346,10 @@ const ViewInput = ({
                 {locale == 'ar' ? ' اسحب وأفلت' : 'Drag and Drop'}
               </p>
               <p id='file-upload-subtext'>
-                {locale == 'ar' ? 'SVG, PNG, JPG or GIF (MAX. 800x400px)' : 'SVG, PNG, JPG or GIF (MAX. 800x400px)'}
+                {input?.options?.uiSchema?.xComponentProps?.fileTypes?.length > 0 
+                  ? input.options.uiSchema.xComponentProps.fileTypes.join(', ').toUpperCase()
+                  : (locale == 'ar' ? 'SVG, PNG, JPG أو GIF (MAX. 800x400px)' : 'SVG, PNG, JPG or GIF (MAX. 800x400px)')
+                }
               </p>
 
               {value && (
