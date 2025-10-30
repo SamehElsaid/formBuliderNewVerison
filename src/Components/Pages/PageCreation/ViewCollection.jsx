@@ -23,6 +23,10 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
   const refError = useRef({})
   const dataRef = useRef({})
   const [triggerData, setTriggerData] = useState(0)
+  const [assignTabIndex, setAssignTabIndex] = useState(0)
+  const [renameTabIndex, setRenameTabIndex] = useState(0)
+  const [renameTabValueAr, setRenameTabValueAr] = useState('')
+  const [renameTabValueEn, setRenameTabValueEn] = useState('')
 
   console.log(data, 'data')
 
@@ -344,6 +348,200 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
         onChange={onChange}
         fields={filterSelect}
       />
+      {!readOnly && (
+        <div className='flex flex-col gap-2 mb-3'>
+          <div className='flex justify-between items-center p-2 rounded-md border-2 border-dashed border-main-color bg-white/70'>
+          {(() => {
+            const tabsElement = (data.addMoreElement || []).find(ele => ele.key === 'tabs')
+            if (tabsElement) {
+              return (
+                <div className='flex gap-2 items-center'>
+                  <button
+                    type='button'
+                    className='px-3 py-1 rounded text-sm bg-main-color text-white hover:bg-main-color/90 shadow'
+                    onClick={() => {
+                      const addMore = [...(data.addMoreElement || [])]
+                      const idx = addMore.findIndex(ele => ele.id === tabsElement.id)
+                      if (idx > -1) {
+                        const next = { ...addMore[idx] }
+                        const count = (next.data || []).length + 1
+                        next.data = [
+                          { name_ar: `تبويب ${count}`, name_en: `Tab ${count}`, link: '', active: false, fields: [] },
+                          ...(next.data || [])
+                        ]
+                        addMore[idx] = next
+                        onChange({ ...data, addMoreElement: addMore })
+                      }
+                    }}
+                  >
+                    {messages?.Add_Tab || 'Add Tab'}
+                  </button>
+                  <span className='text-xs text-gray-500'>|</span>
+                  <button
+                    type='button'
+                    className='px-3 py-1 rounded text-sm border border-main-color text-main-color hover:bg-main-color/5 shadow'
+                    onClick={() => {
+                      // Auto-arrange all inputs sequentially (x=0, w=12) with Tabs pinned to top if present
+                      const tabsEl = (addMoreElement || []).find(ele => ele.key === 'tabs')
+                      const fields = [...(getFields || [])]
+                      const extras = (addMoreElement || []).filter(ele => ele?.id !== tabsEl?.id)
+                      const items = tabsEl ? [tabsEl, ...fields, ...extras] : [...fields, ...extras]
+                      const newLayout = items.map((item, index) => ({ i: item.id, x: 0, y: index, w: 12, h: item.type === 'LongText' ? 1.8 : 1 }))
+                      setLayout(newLayout)
+                      onChange({ ...data, layout: newLayout })
+                    }}
+                  >
+                    {messages?.Arrange_Inputs || 'Arrange Inputs'}
+                  </button>
+                </div>
+              )
+            }
+
+            return (
+              <button
+                type='button'
+                  className='px-3 py-1 rounded text-sm bg-main-color text-white hover:bg-main-color/90 shadow'
+                onClick={() => {
+                  const addMore = [...(data.addMoreElement || [])]
+                  addMore.push({
+                    name_ar: 'التبويبات',
+                    name_en: 'Tabs',
+                    key: 'tabs',
+                    type: 'new_element',
+                    data: [
+                      { name_ar: 'التبويب الاول', name_en: 'Tab 1', link: '', active: true, fields: [] }
+                    ],
+                    id: 's' + new Date().getTime()
+                  })
+                  onChange({ ...data, addMoreElement: addMore })
+                }}
+              >
+                {messages?.Add_Tabs || 'Add Tabs'}
+              </button>
+            )
+          })()}
+          </div>
+          {/* Rename tab UI */}
+          {(() => {
+            const tabsElement = (data.addMoreElement || []).find(ele => ele.key === 'tabs')
+            if (!tabsElement) return null
+            const tabs = Array.isArray(tabsElement.data) ? tabsElement.data : []
+            const safeIndex = Math.min(Math.max(renameTabIndex, 0), Math.max(0, tabs.length - 1))
+            return (
+              <div className='flex flex-wrap gap-2 items-center p-3 rounded-md border-2 border-dashed border-main-color bg-white/70'>
+                <span className='text-sm font-semibold text-main-color'>{messages?.Rename_Tab || 'Rename Tab'}</span>
+                <select
+                  className='px-2 py-1 border border-main-color rounded text-sm bg-white focus:outline-none'
+                  value={safeIndex}
+                  onChange={e => {
+                    const idx = parseInt(e.target.value, 10) || 0
+                    setRenameTabIndex(idx)
+                    const t = tabs[idx] || {}
+                    setRenameTabValueAr(t?.name_ar || '')
+                    setRenameTabValueEn(t?.name_en || '')
+                  }}
+                >
+                  {tabs.map((t, ti) => (
+                    <option key={ti} value={ti}>
+                      {t?.[`name_${locale}`] || t?.name_en || t?.name_ar || `Tab ${ti + 1}`}
+                    </option>
+                  ))}
+                </select>
+                <input
+                  className='px-2 py-1 border border-main-color rounded text-sm focus:outline-none'
+                  placeholder='Name (AR)'
+                  value={renameTabValueAr}
+                  onChange={e => setRenameTabValueAr(e.target.value)}
+                />
+                <input
+                  className='px-2 py-1 border border-main-color rounded text-sm focus:outline-none'
+                  placeholder='Name (EN)'
+                  value={renameTabValueEn}
+                  onChange={e => setRenameTabValueEn(e.target.value)}
+                />
+                <button
+                  type='button'
+                  className='px-3 py-1 rounded text-sm bg-main-color text-white hover:bg-main-color/90 shadow'
+                  onClick={() => {
+                    const addMore = [...(data.addMoreElement || [])]
+                    const tabsIdx = addMore.findIndex(ele => ele.id === tabsElement.id)
+                    if (tabsIdx === -1) return
+                    const nextTabsEl = { ...addMore[tabsIdx] }
+                    const nextData = [...(nextTabsEl.data || [])]
+                    const t = { ...(nextData[safeIndex] || {}) }
+                    t.name_ar = (renameTabValueAr || '').trim()
+                    t.name_en = (renameTabValueEn || '').trim()
+                    nextData[safeIndex] = t
+                    nextTabsEl.data = nextData
+                    addMore[tabsIdx] = nextTabsEl
+                    onChange({ ...data, addMoreElement: addMore })
+                  }}
+                >
+                  {messages?.Save || 'Save'}
+                </button>
+              </div>
+            )
+          })()}
+          {(() => {
+            const tabsElement = (data.addMoreElement || []).find(ele => ele.key === 'tabs')
+            if (!tabsElement) return null
+            const tabs = Array.isArray(tabsElement.data) ? tabsElement.data : []
+            const currentIndex = Math.min(Math.max(assignTabIndex, 0), Math.max(0, tabs.length - 1))
+            const fieldsList = filterSelect || []
+            return (
+              <div className='flex flex-col gap-2 p-2 border rounded'>
+                <div className='flex items-center gap-2'>
+                  <span className='text-sm'>{messages?.Select_Tab || 'Select Tab'}</span>
+                  <select
+                    className='px-2 py-1 border rounded text-sm bg-white'
+                    value={currentIndex}
+                    onChange={e => setAssignTabIndex(parseInt(e.target.value, 10) || 0)}
+                  >
+                    {tabs.map((t, ti) => (
+                      <option key={ti} value={ti}>
+                        {t?.[`name_${locale}`] || t?.name_en || t?.name_ar || `Tab ${ti + 1}`}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className='flex flex-wrap gap-2'>
+                  {fieldsList.map(f => {
+                    const fieldId = f?.key ?? f?.id
+                    const assigned = Array.isArray(tabs[currentIndex]?.fields)
+                      ? tabs[currentIndex].fields.includes(fieldId)
+                      : false
+                    return (
+                      <label key={fieldId} className='flex items-center gap-1 text-sm border rounded px-2 py-1'>
+                        <input
+                          type='checkbox'
+                          checked={assigned}
+                          onChange={() => {
+                            const addMore = [...(data.addMoreElement || [])]
+                            const tabsIdx = addMore.findIndex(ele => ele.id === tabsElement.id)
+                            if (tabsIdx === -1) return
+                            const nextTabsEl = { ...addMore[tabsIdx] }
+                            const nextData = [...(nextTabsEl.data || [])]
+                            const tabObj = { ...(nextData[currentIndex] || {}) }
+                            const current = Array.isArray(tabObj.fields) ? tabObj.fields : []
+                            tabObj.fields = assigned
+                              ? current.filter(id => id !== fieldId)
+                              : [...current, fieldId]
+                            nextData[currentIndex] = tabObj
+                            nextTabsEl.data = nextData
+                            addMore[tabsIdx] = nextTabsEl
+                            onChange({ ...data, addMoreElement: addMore })
+                          }}
+                        />
+                        <span>{locale === 'ar' ? f.nameAr : f.nameEn}</span>
+                      </label>
+                    )
+                  })}
+                </div>
+              </div>
+            )
+          })()}
+        </div>
+      )}
       {loading ? (
         <div className='h-[300px]  flex justify-center items-center text-2xl font-bold border-2 border-dashed border-main rounded-md'>
           {messages.pleaseSelectDataModel}
@@ -431,6 +629,59 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
                       >
                         <IoMdSettings />
                       </button>
+                      {/* Quick tab assign */}
+                      {(() => {
+                        const tabsElement = (data.addMoreElement || []).find(ele => ele.key === 'tabs')
+                        if (!tabsElement) return null
+                        const tabs = tabsElement.data || []
+                        const fieldId = filed.type === 'new_element' ? filed.id : filed.key
+                        const currentIndex = Math.max(
+                          -1,
+                          tabs.findIndex(t => Array.isArray(t.fields) && t.fields.includes(fieldId))
+                        )
+                        return (
+                          <select
+                            className='ml-2 p-1 border rounded text-sm bg-white'
+                            value={currentIndex}
+                            onChange={e => {
+                              const idx = parseInt(e.target.value, 10)
+                              const addMore = [...(data.addMoreElement || [])]
+                              const tabsIdx = addMore.findIndex(ele => ele.id === tabsElement.id)
+                              if (tabsIdx === -1) return
+                              const nextTabsEl = { ...addMore[tabsIdx] }
+                              const nextData = [...(nextTabsEl.data || [])]
+                              // remove from all
+                              for (let i = 0; i < nextData.length; i++) {
+                                const t = { ...(nextData[i] || {}) }
+                                const arr = Array.isArray(t.fields) ? t.fields : []
+                                if (arr.includes(fieldId)) {
+                                  t.fields = arr.filter(id => id !== fieldId)
+                                  nextData[i] = t
+                                }
+                              }
+                              // assign if not -1
+                              if (!Number.isNaN(idx) && idx > -1 && idx < nextData.length) {
+                                const t = { ...(nextData[idx] || {}) }
+                                const arr = Array.isArray(t.fields) ? t.fields : []
+                                if (!arr.includes(fieldId)) {
+                                  t.fields = [...arr, fieldId]
+                                  nextData[idx] = t
+                                }
+                              }
+                              nextTabsEl.data = nextData
+                              addMore[tabsIdx] = nextTabsEl
+                              onChange({ ...data, addMoreElement: addMore })
+                            }}
+                          >
+                            <option value={-1}>{messages?.None || 'None'}</option>
+                            {tabs.map((t, ti) => (
+                              <option key={ti} value={ti}>
+                                {t?.[`name_${locale}`] || t?.name_en || t?.name_ar || `Tab ${ti + 1}`}
+                              </option>
+                            ))}
+                          </select>
+                        )
+                      })()}
                     </div>
                   )}
 

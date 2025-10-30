@@ -1,7 +1,7 @@
 import { useIntl } from 'react-intl'
 import { axiosGet } from '../axiosCall'
 import Link from 'next/link'
-import { useRef, useState } from 'react'
+import { useRef, useState, useEffect } from 'react'
 import { Button, Dialog, DialogContent, Typography } from '@mui/material'
 import { LoadingButton } from '@mui/lab'
 
@@ -17,7 +17,9 @@ function NewElement({
   readOnly,
   handleSubmit,
   dataRef,
-  data
+  data,
+  refError,
+  setTriggerData
 }) {
   const [open, setOpen] = useState(false)
   const { locale, messages } = useIntl()
@@ -201,40 +203,93 @@ function NewElement({
     )
   }
   if (input.key === 'tabs') {
+    const [activeIndex, setActiveIndex] = useState(
+      Math.max(0, input.data.findIndex(t => t.active) || 0)
+    )
+
+    // Ensure runtime visibility works before any click by publishing the initial active index
+    useEffect(() => {
+      try {
+        setValue(activeIndex)
+        if (setTriggerData) {
+          setTriggerData(prev => prev + 1)
+        }
+      } catch (_) {}
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [])
+
+    const onTabClick = (index) => {
+      setActiveIndex(index)
+      // Store active tab index in dataRef via setValue so other fields can read it
+      const selectedValue = index
+      setValue(selectedValue)
+      try {
+        if (setTriggerData) {
+          setTriggerData(prev => prev + 1)
+        }
+      } catch (_) {}
+      try {
+        if (onChangeEvent) {
+          const evaluatedFn = eval('(' + onChangeEvent + ')')
+          evaluatedFn({ type: 'tabChange', index })
+        }
+      } catch {}
+    }
+
+    // Determine if Next should be disabled based on assigned fields' errors or an optional per-tab condition
+    const isNextDisabled = (() => {
+      try {
+        const tabsElement = (data?.addMoreElement || []).find(ele => ele.id === input.id)
+        const currentTab = tabsElement?.data?.[activeIndex] || {}
+        // Optional custom condition (string function) evaluated with access to dataRef
+        if (currentTab.nextCondition && typeof currentTab.nextCondition === 'string') {
+          try {
+            const fn = eval('(' + currentTab.nextCondition + ')')
+            if (typeof fn === 'function') {
+              return !fn({ data: dataRef?.current })
+            }
+          } catch (_) {}
+        }
+        const assigned = Array.isArray(currentTab.fields) ? currentTab.fields : []
+        if (!assigned.length) return false
+        return assigned.some(fid => Array.isArray(refError?.current?.[fid]) && refError.current[fid].length > 0)
+      } catch (_) {
+        return false
+      }
+    })()
+
     return (
-      <div className='flex flex-wrap w-full parent-tabs'>
-        {input.data.map((item, index) =>
-          isValidURL(item.link) ? (
-            <a
-              onClick={handleValidationChanges}
-              key={index}
-              href={item.link}
-              target='_blank'
-              rel='noopener noreferrer'
-              className={`btn-tabs ${item.active ? 'active' : ''}`}
-            >
-              {item[`name_${locale}`]}
-            </a>
-          ) : item.link ? (
-            <Link
-              key={index}
-              onClick={handleValidationChanges}
-              href={`/${locale}/${item.link.replace(/^\/+/, '')}`}
-              className={`btn-tabs ${item.active ? 'active' : ''}`}
-            >
-              {item[`name_${locale}`]}
-            </Link>
-          ) : (
+      <div className='flex flex-col w-full gap-2'>
+        <div className='flex flex-wrap w-full parent-tabs'>
+          {input.data.map((item, index) => (
             <button
-              onClick={handleValidationChanges}
               key={index}
               type='button'
-              className={`btn-tabs ${item.active ? 'active' : ''}`}
+              className={`btn-tabs ${index === activeIndex ? 'active' : ''}`}
+              onClick={() => onTabClick(index)}
             >
               {item[`name_${locale}`]}
             </button>
-          )
-        )}
+          ))}
+        </div>
+        <div className='flex items-center gap-2'>
+          <button
+            type='button'
+            className='px-3 py-1 border rounded text-sm disabled:opacity-50'
+            onClick={() => activeIndex > 0 && onTabClick(activeIndex - 1)}
+            disabled={activeIndex <= 0}
+          >
+            {messages?.dialogs?.previous || 'Previous'}
+          </button>
+          <button
+            type='button'
+            className='px-3 py-1 border rounded text-sm disabled:opacity-50'
+            onClick={() => activeIndex < input.data.length - 1 && onTabClick(activeIndex + 1)}
+            disabled={activeIndex >= input.data.length - 1 || isNextDisabled}
+          >
+            {messages?.dialogs?.next || 'Next'}
+          </button>
+        </div>
       </div>
     )
   }

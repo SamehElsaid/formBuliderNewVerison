@@ -175,7 +175,7 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
       } else {
         const findMyInput = addMoreElement.find(inp => inp.id === open?.id)
         if (findMyInput) {
-          findMyInput.data.push(newTab)
+          findMyInput.data = [newTab, ...(findMyInput.data || [])]
           onChange({ ...data, addMoreElement: addMoreElement })
         }
       }
@@ -1958,36 +1958,71 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                       {open?.data?.map((item, index) => (
                         <div
                           key={index}
-                          className='flex justify-between items-center p-2 w-full rounded-md border-2 border-main-color'
+                          className='flex flex-col gap-2 p-2 w-full rounded-md border-2 border-main-color'
                         >
-                          <span>{item?.[`name_${locale}`]}</span>
-                          <div className='flex items-center'>
-                            <IconButton
-                              onClick={() => {
-                                setEditTab(index + 1)
-                                setTabData({
-                                  name_ar: item.name_ar,
-                                  name_en: item.name_en,
-                                  link: item.link,
-                                  active: item.active
-                                })
-                                setOpenTab(true)
-                              }}
-                            >
-                              <IconifyIcon icon='mdi:edit' />
-                            </IconButton>
-                            <IconButton
-                              onClick={() => {
-                                const findMyInput = addMoreElement.find(inp => inp.id === open?.id)
+                          <div className='flex justify-between items-center'>
+                            <span>{item?.[`name_${locale}`]}</span>
+                            <div className='flex items-center'>
+                              <IconButton
+                                onClick={() => {
+                                  setEditTab(index + 1)
+                                  setTabData({
+                                    name_ar: item.name_ar,
+                                    name_en: item.name_en,
+                                    link: item.link,
+                                    active: item.active
+                                  })
+                                  setOpenTab(true)
+                                }}
+                              >
+                                <IconifyIcon icon='mdi:edit' />
+                              </IconButton>
+                              <IconButton
+                                onClick={() => {
+                                  const findMyInput = addMoreElement.find(inp => inp.id === open?.id)
 
-                                if (findMyInput) {
-                                  findMyInput.data.splice(index, 1)
-                                }
-                                onChange({ ...data, addMoreElement: addMoreElement })
-                              }}
-                            >
-                              <IconifyIcon icon='tabler:trash' />
-                            </IconButton>
+                                  if (findMyInput) {
+                                    findMyInput.data.splice(index, 1)
+                                  }
+                                  onChange({ ...data, addMoreElement: addMoreElement })
+                                }}
+                              >
+                                <IconifyIcon icon='tabler:trash' />
+                              </IconButton>
+                            </div>
+                          </div>
+                          <div className='flex flex-col gap-2'>
+                            <span className='text-sm text-main-color'>
+                              {messages?.Select_Fields || 'Select Fields for this Tab'}
+                            </span>
+                            <div className='flex flex-wrap gap-2'>
+                              {fields?.map(f => {
+                                const fieldId = f?.id ?? f?.key
+                                const isAssigned = Array.isArray(item.fields) && item.fields.includes(fieldId)
+                                return (
+                                  <label key={f.id} className='flex items-center gap-1 text-sm border rounded px-2 py-1'>
+                                    <input
+                                      type='checkbox'
+                                      checked={isAssigned}
+                                      onChange={() => {
+                                        const findMyInput = addMoreElement.find(inp => inp.id === open?.id)
+                                        if (!findMyInput) return
+                                        const next = [...(findMyInput.data || [])]
+                                        const tabObj = { ...(next[index] || {}) }
+                                        const current = Array.isArray(tabObj.fields) ? tabObj.fields : []
+                                        tabObj.fields = isAssigned
+                                          ? current.filter(id => id !== fieldId)
+                                          : [...current, fieldId]
+                                        next[index] = tabObj
+                                        findMyInput.data = next
+                                        onChange({ ...data, addMoreElement })
+                                      }}
+                                    />
+                                    <span>{locale === 'ar' ? f.nameAr : f.nameEn}</span>
+                                  </label>
+                                )
+                              })}
+                            </div>
                           </div>
                         </div>
                       ))}

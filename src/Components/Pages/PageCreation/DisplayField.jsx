@@ -1413,7 +1413,7 @@ export default function DisplayField({
         }
       }
     }, 100)
-  }, [isDisable, readOnly, layout?.length, loading])
+  }, [isDisable, readOnly, layout?.length, loading, triggerData])
 
   const mainRef = useRef()
 
@@ -1494,10 +1494,33 @@ export default function DisplayField({
   const hoverText = roles?.hover?.hover_ar || roles?.hover?.hover_en
   const hintText = roles?.hint?.hint_ar || roles?.hint?.hint_en
 
+  const shouldHideForTab = (() => {
+    try {
+      const tabsElement = data?.addMoreElement?.find(ele => ele.key === 'tabs')
+      if (tabsElement && input.type !== 'new_element') {
+        const assignedIndex = Array.isArray(tabsElement.data)
+          ? tabsElement.data.findIndex(t => {
+              const fieldId = input.type === 'new_element' ? input.id : input.key
+              return Array.isArray(t.fields) && t.fields.includes(fieldId)
+            })
+          : -1
+        if (assignedIndex > -1) {
+          const activeIndex = Number(dataRef?.current?.[tabsElement.id])
+          if (!Number.isNaN(activeIndex) && activeIndex !== assignedIndex) {
+            return true
+          }
+        }
+      }
+    } catch (_) {}
+
+    return false
+  })()
+
   return (
     <div
       className={`reset ${isDisable == 'hidden' && !readOnly ? 'hidden' : ''} relative group w-full`}
       id={input.type == 'new_element' ? `s${input.id}` : VaildId(input.key.trim() + input.nameEn.trim())}
+      style={{ display: shouldHideForTab ? 'none' : undefined }}
     >
       <style>{`#${input.type == 'new_element' ? `s${input.id}` : VaildId(input.key.trim() + input.nameEn.trim())} {
         ${input.kind == 'search' ? '' : design}
@@ -1525,7 +1548,31 @@ export default function DisplayField({
             </button>
           )}
         </div>
-        <div className='relative' style={{ display: 'flex' }}>
+        <div
+          className='relative'
+          style={{
+            display: (() => {
+              try {
+                const tabsElement = data?.addMoreElement?.find(ele => ele.key === 'tabs')
+                if (tabsElement && input.type !== 'new_element') {
+                  const assignedIndex = Array.isArray(tabsElement.data)
+                    ? tabsElement.data.findIndex(t => {
+                        const fieldId = input.type === 'new_element' ? input.id : input.key
+                        return Array.isArray(t.fields) && t.fields.includes(fieldId)
+                      })
+                    : -1
+                  if (assignedIndex > -1) {
+                    const activeIndex = Number(dataRef?.current?.[tabsElement.id])
+                    if (!Number.isNaN(activeIndex) && activeIndex !== assignedIndex) {
+                      return 'none'
+                    }
+                  }
+                }
+              } catch (_) {}
+              return 'flex'
+            })()
+          }}
+        >
           {isDisable == 'hidden' && readOnly && (
             <div className='flex absolute inset-0 z-10 justify-center items-center text-sm text-white rounded-md bg-main-color/20'>
               <div className=' w-[30px] || h-[30px] || bg-main-color || rounded-full || flex || items-center || justify-center'>
@@ -1541,6 +1588,7 @@ export default function DisplayField({
               onChangeData={onChange}
               data={data}
               dataRef={dataRef}
+              refError={refError}
               disabledBtn={disabledBtn}
               input={input}
               roles={roles}
@@ -1548,6 +1596,7 @@ export default function DisplayField({
               onBlur={roles?.event?.onBlur}
               value={value}
               setValue={setValue}
+              setTriggerData={setTriggerData}
             />
           ) : (
             <ViewInput

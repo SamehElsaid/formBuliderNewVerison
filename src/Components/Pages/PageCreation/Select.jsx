@@ -147,6 +147,9 @@ function Select({ onChange, data, type, buttonRef, title }) {
     const filteredAdditionalFields = oldAdditionalFields.filter(inp => inp.key !== field?.id)
 
     console.log(filteredAdditionalFields, field)
+    // Tabs assignment logic removed from here; use the inline dropdowns instead
+    const addMoreElementLocal = [...(data?.addMoreElement ?? [])]
+
     if (skipCheck) {
       console.log(skipCheck)
       onChange({
@@ -154,6 +157,7 @@ function Select({ onChange, data, type, buttonRef, title }) {
         selected,
         associationsConfig: skipCheck,
         additional_fields: filteredAdditionalFields,
+        addMoreElement: addMoreElementLocal,
         type_of_sumbit: data.type_of_sumbit === 'collection' ? '' : data.type_of_sumbit
       })
     } else {
@@ -161,6 +165,7 @@ function Select({ onChange, data, type, buttonRef, title }) {
         ...data,
         selected,
         additional_fields: filteredAdditionalFields,
+        addMoreElement: addMoreElementLocal,
         type_of_sumbit: data.type_of_sumbit === 'collection' ? '' : data.type_of_sumbit
       })
     }
@@ -377,6 +382,78 @@ function Select({ onChange, data, type, buttonRef, title }) {
                                 handleChange(e, value.fieldCategory, false, value)
                               }}
                             />
+                            {(() => {
+                              const tabsElement = (data.addMoreElement || []).find(ele => ele.key === 'tabs')
+                              if (!tabsElement) return null
+                              const tabs = Array.isArray(tabsElement.data) ? tabsElement.data : []
+                              const currentIndex = Math.max(
+                                -1,
+                                tabs.findIndex(t => Array.isArray(t.fields) && t.fields.includes(value.key))
+                              )
+                              return (
+                                <span className='!ml-2 !flex !items-center !gap-1'>
+                                  <select
+                                    className='px-1 py-0.5 border rounded text-xs bg-white'
+                                    value={currentIndex}
+                                    onChange={e => {
+                                      const idx = parseInt(e.target.value, 10)
+                                      const addMore = [...(data.addMoreElement || [])]
+                                      const tabsIdx = addMore.findIndex(ele => ele.id === tabsElement.id)
+                                      if (tabsIdx === -1) return
+                                      const nextTabsEl = { ...addMore[tabsIdx] }
+                                      const nextData = [...(nextTabsEl.data || [])]
+                                      // remove from all
+                                      for (let i = 0; i < nextData.length; i++) {
+                                        const t = { ...(nextData[i] || {}) }
+                                        const arr = Array.isArray(t.fields) ? t.fields : []
+                                        if (arr.includes(value.key)) {
+                                          t.fields = arr.filter(id => id !== value.key)
+                                          nextData[i] = t
+                                        }
+                                      }
+                                      // assign if not -1
+                                      if (!Number.isNaN(idx) && idx > -1 && idx < nextData.length) {
+                                        const t = { ...(nextData[idx] || {}) }
+                                        const arr = Array.isArray(t.fields) ? t.fields : []
+                                        if (!arr.includes(value.key)) {
+                                          t.fields = [...arr, value.key]
+                                          nextData[idx] = t
+                                        }
+                                      }
+                                      nextTabsEl.data = nextData
+                                      addMore[tabsIdx] = nextTabsEl
+                                      onChange({ ...data, addMoreElement: addMore })
+                                    }}
+                                  >
+                                    <option value={-1}>{messages?.None || 'None'}</option>
+                                    {tabs.map((t, ti) => (
+                                      <option key={ti} value={ti}>
+                                        {t?.[locale === 'ar' ? 'name_ar' : 'name_en'] || `Tab ${ti + 1}`}
+                                      </option>
+                                    ))}
+                                  </select>
+                                  <button
+                                    type='button'
+                                    className='px-2 py-0.5 border rounded text-xs'
+                                    onClick={() => {
+                                      const addMore = [...(data.addMoreElement || [])]
+                                      const tabsIdx = addMore.findIndex(ele => ele.id === tabsElement.id)
+                                      if (tabsIdx === -1) return
+                                      const nextTabsEl = { ...addMore[tabsIdx] }
+                                              const count = (nextTabsEl.data || []).length + 1
+                                              nextTabsEl.data = [
+                                                { name_ar: `تبويب ${count}`, name_en: `Tab ${count}`, link: '', active: false, fields: [] },
+                                                ...(nextTabsEl.data || [])
+                                              ]
+                                      addMore[tabsIdx] = nextTabsEl
+                                      onChange({ ...data, addMoreElement: addMore })
+                                    }}
+                                  >
+                                    {messages?.Add_Tab || 'Add Tab'}
+                                  </button>
+                                </span>
+                              )
+                            })()}
                           </>
                         }
                         label={
@@ -535,6 +612,78 @@ function Select({ onChange, data, type, buttonRef, title }) {
                                               })
                                             }}
                                           />
+                                          {(() => {
+                                            const tabsElement = (data.addMoreElement || []).find(ele => ele.key === 'tabs')
+                                            if (!tabsElement) return null
+                                            const tabs = Array.isArray(tabsElement.data) ? tabsElement.data : []
+                                            const currentIndex = Math.max(
+                                              -1,
+                                              tabs.findIndex(t => Array.isArray(t.fields) && t.fields.includes(value.key))
+                                            )
+                                            return (
+                                              <span className='!ml-2 !flex !items-center !gap-1'>
+                                                <select
+                                                  className='px-1 py-0.5 border rounded text-xs bg-white'
+                                                  value={currentIndex}
+                                                  onChange={e => {
+                                                    const idx = parseInt(e.target.value, 10)
+                                                    const addMore = [...(data.addMoreElement || [])]
+                                                    const tabsIdx = addMore.findIndex(ele => ele.id === tabsElement.id)
+                                                    if (tabsIdx === -1) return
+                                                    const nextTabsEl = { ...addMore[tabsIdx] }
+                                                    const nextData = [...(nextTabsEl.data || [])]
+                                                    // remove from all
+                                                    for (let i = 0; i < nextData.length; i++) {
+                                                      const t = { ...(nextData[i] || {}) }
+                                                      const arr = Array.isArray(t.fields) ? t.fields : []
+                                                      if (arr.includes(value.key)) {
+                                                        t.fields = arr.filter(id => id !== value.key)
+                                                        nextData[i] = t
+                                                      }
+                                                    }
+                                                    // assign if not -1
+                                                    if (!Number.isNaN(idx) && idx > -1 && idx < nextData.length) {
+                                                      const t = { ...(nextData[idx] || {}) }
+                                                      const arr = Array.isArray(t.fields) ? t.fields : []
+                                                      if (!arr.includes(value.key)) {
+                                                        t.fields = [...arr, value.key]
+                                                        nextData[idx] = t
+                                                      }
+                                                    }
+                                                    nextTabsEl.data = nextData
+                                                    addMore[tabsIdx] = nextTabsEl
+                                                    onChange({ ...data, addMoreElement: addMore })
+                                                  }}
+                                                >
+                                                  <option value={-1}>{messages?.None || 'None'}</option>
+                                                  {tabs.map((t, ti) => (
+                                                    <option key={ti} value={ti}>
+                                                      {t?.[locale === 'ar' ? 'name_ar' : 'name_en'] || `Tab ${ti + 1}`}
+                                                    </option>
+                                                  ))}
+                                                </select>
+                                                <button
+                                                  type='button'
+                                                  className='px-2 py-0.5 border rounded text-xs'
+                                                  onClick={() => {
+                                                    const addMore = [...(data.addMoreElement || [])]
+                                                    const tabsIdx = addMore.findIndex(ele => ele.id === tabsElement.id)
+                                                    if (tabsIdx === -1) return
+                                                    const nextTabsEl = { ...addMore[tabsIdx] }
+                                                    const count = (nextTabsEl.data || []).length + 1
+                                                    nextTabsEl.data = [
+                                                      ...(nextTabsEl.data || []),
+                                                      { name_ar: `تبويب ${count}`, name_en: `Tab ${count}`, link: '', active: false, fields: [] }
+                                                    ]
+                                                    addMore[tabsIdx] = nextTabsEl
+                                                    onChange({ ...data, addMoreElement: addMore })
+                                                  }}
+                                                >
+                                                  {messages?.Add_Tab || 'Add Tab'}
+                                                </button>
+                                              </span>
+                                            )
+                                          })()}
                                         </>
                                       }
                                       label={
@@ -678,13 +827,15 @@ function Select({ onChange, data, type, buttonRef, title }) {
                                       name_ar: 'التبويب الاول',
                                       name_en: 'Tab 1',
                                       link: '',
-                                      active: true
+                                      active: true,
+                                      fields: []
                                     },
                                     {
                                       name_ar: 'التبويب الثاني',
                                       name_en: 'Tab 2',
                                       link: '',
-                                      active: false
+                                      active: false,
+                                      fields: []
                                     }
                                   ],
                                   id: 's' + new Date().getTime()
@@ -888,18 +1039,20 @@ function Select({ onChange, data, type, buttonRef, title }) {
                                     key: 'tabs',
                                     type: 'new_element',
                                     data: [
-                                      {
-                                        name_ar: 'التبويب الاول',
-                                        name_en: 'Tab 1',
-                                        link: 'https://www.google.com',
-                                        active: true
-                                      },
-                                      {
-                                        name_ar: 'التبويب الثاني',
-                                        name_en: 'Tab 2',
-                                        link: 'https://www.google.com',
-                                        active: false
-                                      }
+                                    {
+                                      name_ar: 'التبويب الاول',
+                                      name_en: 'Tab 1',
+                                      link: 'https://www.google.com',
+                                      active: true,
+                                      fields: []
+                                    },
+                                    {
+                                      name_ar: 'التبويب الثاني',
+                                      name_en: 'Tab 2',
+                                      link: 'https://www.google.com',
+                                      active: false,
+                                      fields: []
+                                    }
                                     ],
                                     id: 's' + new Date().getTime()
                                   }
