@@ -130,7 +130,7 @@
   "Min_Length": "Minimum Length",
   "Max_Length": "Maximum Length",
   "Invalid_Email": "Invalid Email",
-  "Invalid_Phone": "Invalid Phone Number",
+  "Invalid_Phone": "Invalid Phone Number. Make sure to include Country Code",
   "ReturnToPrevious": "Return to previous page without saving changes",
   "AreYouSureYouWantToSaveTheChanges": "Are you sure you want to save the changes? Please confirm before proceeding",
   "ChangesSaved": "Changes saved",
