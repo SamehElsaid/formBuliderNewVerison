@@ -1463,7 +1463,8 @@ sortable-list {
   }
 }
 .page-control input:disabled,
-.page-control select:disabled {
+.page-control select:disabled ,
+.page-control textarea:disabled {
   @apply !bg-gray-200 hover:!border-gray-200;
 }
 .MuiInputBase-input.MuiFilledInput-input[type='color'] {
