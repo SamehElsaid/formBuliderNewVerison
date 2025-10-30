@@ -1320,12 +1320,10 @@ export default function DisplayField({
     if (dataRef) {
       if (input.type == 'Date') {
         try {
-          const lable = JSON.parse(input?.descriptionEn) ?? {
-            format: 'yyyy-MM-dd',
-            showTime: 'false'
-          }
+          const parsed = JSON.parse(input?.descriptionEn)
+          const lable = parsed && typeof parsed === 'object' ? parsed : { format: 'yyyy-MM-dd', showTime: 'false' }
 
-          dataRef.current[input.type == 'new_element' ? input.id : input.key] = value ?? formatDate(value, lable.format)
+          dataRef.current[input.type == 'new_element' ? input.id : input.key] = value ?? formatDate(value, lable?.format)
         } catch (error) {
           dataRef.current[input.type == 'new_element' ? input.id : input.key] = ''
         }

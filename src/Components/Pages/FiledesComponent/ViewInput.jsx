@@ -530,7 +530,13 @@ const ViewInput = ({
   }
 
   if (input.type == 'Date') {
-    const raw = JSON.parse(input?.descriptionEn ?? '{}')
+    let raw = {}
+    try {
+      const parsed = JSON.parse(input?.descriptionEn ?? '{}')
+      raw = parsed || {}
+    } catch (e) {
+      raw = {}
+    }
 
     const format = convertMomentToDateFnsFormat(raw.format)
 
@@ -565,7 +571,7 @@ const ViewInput = ({
                 onChange={date => {
                   onChange(date ?? '')
                 }}
-                timeInputLabel={label.showTime == 'true' ? (locale == 'ar' ? 'الوقت:' : 'Time:') : ''}
+                timeInputLabel={label.showTime ? (locale == 'ar' ? 'الوقت:' : 'Time:') : ''}
                 dateFormat={`${label.format ? label.format : 'MM/dd/yyyy'}`}
                 showMonthDropdown
                 locale={locale == 'ar' ? ar : en}
@@ -578,7 +584,7 @@ const ViewInput = ({
                     evaluatedFn(e)
                   }
                 }}
-                showTimeSelect={label.showTime == 'true'}
+                showTimeSelect={label.showTime}
                 customInput={<ExampleCustomInput className='example-custom-input' />}
                 disabled={isDisable == 'disabled'}
                 minDate={minDate}
@@ -607,7 +613,7 @@ const ViewInput = ({
           }
         }}
         showYearDropdown
-        showTimeInput={label.showTime == 'true'}
+        showTimeInput={label.showTime}
         customInput={<ExampleCustomInput className='example-custom-input' />}
         disabled={isDisable == 'disabled'}
       />

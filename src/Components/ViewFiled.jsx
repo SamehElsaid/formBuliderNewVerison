@@ -89,13 +89,13 @@ function ViewField({ open, setOpen, setData }) {
         <FormControlLabel control={<Checkbox checked={unique} disabled />} label={messages.field.unique} />
         {open?.type == 'Date' && (
           <>
-            <FormControlLabel control={<Checkbox checked={data.showTime} disabled />} label={messages.field.showTime} />
+            <FormControlLabel control={<Checkbox checked={!!data?.showTime} disabled />} label={messages.field.showTime} />
             <TextField
               label={messages.field.format}
               fullWidth
               variant='outlined'
               margin='normal'
-              value={data.format ?? ''}
+              value={data?.format ? data.format : 'MM/dd/yyyy'}
               disabled
             />
           </>

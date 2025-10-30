@@ -89,7 +89,7 @@ const CssEditorView = ({ data, locale, defaultValue, type, readOnly }) => {
               dateFormat={`${data.format ? data.format : 'MM/dd/yyyy'}`}
               showMonthDropdown
               showYearDropdown
-              showTimeInput={data.showTime === 'true'}
+              showTimeInput={data?.showTime === 'true'}
               customInput={<ExampleCustomInput className='example-custom-input' />}
             />
           </DatePickerWrapper>
@@ -101,7 +101,7 @@ const CssEditorView = ({ data, locale, defaultValue, type, readOnly }) => {
             dateFormat={`${data.format ? data.format : 'MM/dd/yyyy'}`}
             showMonthDropdown
             showYearDropdown
-            showTimeInput={data.showTime === 'true'}
+            showTimeInput={data?.showTime === 'true'}
             customInput={<ExampleCustomInput className='example-custom-input' />}
           />
         )}

@@ -239,7 +239,8 @@ export const formatDate = (value, format) => {
   const day = String(date.getDate()).padStart(2, '0')
 
   let time = ''
-  if (format.includes('HH:mm')) {
+  const safeFormat = typeof format === 'string' ? format : 'yyyy-MM-dd'
+  if (safeFormat.includes('HH:mm')) {
     const hours = String(date.getHours()).padStart(2, '0')
     const minutes = String(date.getMinutes()).padStart(2, '0')
     time = `T${hours}:${minutes}`
