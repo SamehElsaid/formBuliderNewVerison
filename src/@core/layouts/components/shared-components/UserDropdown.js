@@ -159,12 +159,12 @@ const UserDropdown = props => {
             anchorEl={anchorEl}
             open={Boolean(anchorEl)}
             onClose={() => handleDropdownClose()}
-            sx={{ '& .MuiMenu-paper': { width: 230, mt: 4.75 } }}
+            sx={{ '& .MuiMenu-paper': { width: 360, maxWidth: '80vw', mt: 4.75 } }}
             anchorOrigin={{ vertical: 'bottom', horizontal: direction === 'ltr' ? 'right' : 'left' }}
             transformOrigin={{ vertical: 'top', horizontal: direction === 'ltr' ? 'right' : 'left' }}
           >
             <Box sx={{ py: 1.75, px: 6 }}>
-              <Box sx={{ display: 'flex', alignItems: 'center' }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', maxWidth: '100%' }}>
                 <Badge
                   overlap='circular'
                   badgeContent={<BadgeContentSpan />}
@@ -192,11 +192,11 @@ const UserDropdown = props => {
                     )}
                   </Avatar>
                 </Badge>
-                <Box sx={{ display: 'flex', ml: 2.5, alignItems: 'flex-start', flexDirection: 'column' }}>
-                  <Typography className='uppercase' sx={{ fontWeight: 500 }}>
+                <Box sx={{ display: 'flex', ml: 2.5, alignItems: 'flex-start', flexDirection: 'column', minWidth: 0, flex: 1 }}>
+                  <Typography className='uppercase' sx={{ fontWeight: 500, maxWidth: '100%', wordBreak: 'break-word', whiteSpace: 'normal' }}>
                     {profile?.name}
                   </Typography>
-                  <Typography className='capitalize' variant='body2'>
+                  <Typography className='capitalize' variant='body2' sx={{ maxWidth: '100%', wordBreak: 'break-word', whiteSpace: 'normal' }}>
                     {profile?.kind && profile?.kind}
                   </Typography>
                 </Box>
