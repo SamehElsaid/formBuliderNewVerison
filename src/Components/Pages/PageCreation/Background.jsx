@@ -30,35 +30,43 @@ export default function Background({ data, onChange, buttonRef }) {
 
   const handleFileUpload = event => {
       const file = event.target.files[0]
-      if (file) {
-        // Remove all spaces from filename and replace with underscores
-        const fileName = file.name.replace(/\s+/g, '_')
-        console.log('Original filename:', file.name)
-        console.log('Processed filename:', fileName)
-        const loading = toast.loading(messages.dialogs.uploading)
-        if (file) {
-          // Create FormData to properly handle filenames with spaces
-          const formData = new FormData()
-          formData.append('file', file, fileName)
-        
-        axiosPost(
-          'file/upload',
-          'en',
-          formData,
-          true
-        )
-          .then(res => {
-            if (res.status) {
-              onChange({ ...data, backgroundImage: res.filePath.data })
-            }
-          })
-          .finally(() => {
-            toast.dismiss(loading)
-          })
+      if (!file) return
+
+      const allowedImageTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/webp']
+      if (!allowedImageTypes.includes(file.type)) {
+        toast.error((messages.useUploadImage && messages.useUploadImage.imageFormatError) || 'Unsupported image format. Please upload png, jpg, or jpeg.')
         event.target.value = ''
+        return
       }
-    }
-  }
+
+      const fileName = file.name.replace(/\s+/g, '_')
+      const loading = toast.loading(messages.dialogs.uploading)
+
+      const formData = new FormData()
+      formData.append('file', file, fileName)
+
+      axiosPost(
+        'file/upload',
+        'en',
+        formData,
+        true
+      )
+        .then(res => {
+          if (res.status) {
+            onChange({ ...data, backgroundImage: res.filePath.data })
+            toast.success(messages.dialogs.uploadSuccess || 'Uploaded successfully')
+          } else {
+            toast.error(messages.dialogs.uploadError || 'Upload failed')
+          }
+        })
+        .catch(() => {
+          toast.error(messages.dialogs.uploadError || 'Upload failed')
+        })
+        .finally(() => {
+          toast.dismiss(loading)
+          event.target.value = ''
+        })
+   }
 
   const [obj, setObj] = useState(false)
 
@@ -215,7 +223,7 @@ export default function Background({ data, onChange, buttonRef }) {
             fullWidth
             startIcon={<Icon icon='ph:upload-fill' fontSize='2.25rem' className='!text-2xl ' />}
           >
-            <input type='file' accept={'image/*'} hidden name='json' onChange={handleFileUpload} />
+            <input type='file' accept={'image/png,image/jpeg,image/jpg,image/webp'} hidden name='json' onChange={handleFileUpload} />
             {messages.dialogs.uploadImage}
           </Button>
         </Collapse>
