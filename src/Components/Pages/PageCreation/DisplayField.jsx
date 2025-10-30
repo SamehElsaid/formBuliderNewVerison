@@ -1137,6 +1137,8 @@ export default function DisplayField({
 
   const [queryParams, setQueryParams] = useState(null)
 
+  // console.log(, 'input?.getDataForm');
+
   useEffect(() => {
     const handleChange = () => {
       const params = new URLSearchParams(window.location.search)
@@ -1315,9 +1317,15 @@ export default function DisplayField({
     }
   }
 
+  useEffect(() => {
+    if (data?.type_of_sumbit === 'read-only') {
+      setIsDisable('disabled')
+    }
+  }, [data?.type_of_sumbit])
+
   const label = hiddenLabel ? null : (
     <label htmlFor={input.key} style={{ textTransform: 'capitalize' }}>
-      {locale == 'ar' ? input.nameAr : input.nameEn}
+      {locale == 'ar' ? roles?.label?.label_ar || input.nameAr : roles?.label?.label_en || input.nameEn}
     </label>
   )
 
@@ -1327,9 +1335,9 @@ export default function DisplayField({
   return (
     <div
       className={`reset ${isDisable == 'hidden' && !readOnly ? 'hidden' : ''} relative group w-full`}
-      id={input.type == 'new_element' ? `s${input.id}` : VaildId(input.key.trim() + input.nameEn.trim())}
+      id={input.type == 'new_element' ? `s${input.id}` : VaildId(input.key.trim() + input.nameEn.trim().replaceAll('.', ''))}
     >
-      <style>{`#${input.type == 'new_element' ? `s${input.id}` : VaildId(input.key.trim() + input.nameEn.trim())} {
+      <style>{`#${input.type == 'new_element' ? `s${input.id}` : VaildId(input.key.trim() + input.nameEn.trim().replaceAll('.', ''))} {
         ${input.kind == 'search' ? '' : design}
       }`}</style>
       {hoverText && (
@@ -1365,6 +1373,7 @@ export default function DisplayField({
           )}
           {input.type == 'new_element' ? (
             <NewElement
+              typeOfSubmit={data?.type_of_sumbit}
               handleSubmit={handleSubmit}
               loadingBtn={loadingBtn}
               isDisable={isDisable}

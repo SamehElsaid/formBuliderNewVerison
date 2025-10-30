@@ -342,6 +342,68 @@ export default function InputControlDesign({ open, handleClose, design, locale, 
                         )}
                       </div>
                     )}
+
+                    <TextField
+                      fullWidth
+                      type='text'
+                      defaultValue={roles?.label?.label_en || ''}
+                      onBlur={e => {
+                        const additional_fields = data.additional_fields ?? []
+                        const findMyInput = additional_fields.find(inp => inp.key === open.id)
+                        if (findMyInput) {
+                          findMyInput.roles = findMyInput.roles ?? {}
+                          findMyInput.roles.label = findMyInput.roles.label ?? {}
+                          findMyInput.roles.label.label_en = e.target.value
+                        } else {
+                          const myEdit = {
+                            key: open.id,
+                            design: objectToCss(Css).replaceAll('NaN', ''),
+                            roles: {
+                              ...roles,
+                              label: {
+                                label_ar: roles?.label?.label_ar || '',
+                                label_en: e.target.value
+                              }
+                            }
+                          }
+                          additional_fields.push(myEdit)
+                        }
+                        onChange({ ...data, additional_fields: additional_fields })
+                      }}
+                      variant='filled'
+                      label={messages.dialogs.labelInEnglish || 'Label in English'}
+                    />
+                    <TextField
+                      fullWidth
+                      type='text'
+                      defaultValue={roles?.label?.label_ar || ''}
+                      onBlur={e => {
+                        const additional_fields = data.additional_fields ?? []
+                        const findMyInput = additional_fields.find(inp => inp.key === open.id)
+                        if (findMyInput) {
+                          findMyInput.roles = findMyInput.roles ?? {}
+                          findMyInput.roles.label = findMyInput.roles.label ?? {}
+
+                          findMyInput.roles.label.label_ar = e.target.value
+                        } else {
+                          const myEdit = {
+                            key: open.id,
+                            design: objectToCss(Css).replaceAll('NaN', ''),
+                            roles: {
+                              ...roles,
+                              label: {
+                                label_ar: e.target.value,
+                                label_en: roles?.label?.label_en || ''
+                              }
+                            }
+                          }
+                          additional_fields.push(myEdit)
+                        }
+                        onChange({ ...data, additional_fields: additional_fields })
+                      }}
+                      variant='filled'
+                      label={messages.dialogs.labelInArabic || 'Label in Arabic'}
+                    />
                     {open?.descriptionEn == 'rate' ? (
                       <>
                         <TextField

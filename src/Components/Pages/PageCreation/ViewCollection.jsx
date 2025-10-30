@@ -24,7 +24,6 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
   const dataRef = useRef({})
   const [triggerData, setTriggerData] = useState(0)
 
-
   const {
     query: { entityid },
     push
@@ -81,7 +80,6 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
         axiosGet(`collection-fields/get?CollectionId=${data.collectionId}`, locale).then(res => {
           if (res.status) {
             const associationsConfig = data.associationsConfig || []
-
 
             const filterData = res.data
               .filter(field => data?.selected?.includes(field?.key))
@@ -193,6 +191,7 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
 
     const apiCall = data.type_of_sumbit === 'collection' ? `generic-entities/${data.collectionName}` : data.submitApi
 
+    setLoading(true)
     axiosPost(apiCall, locale, output, false, false, data.type_of_sumbit !== 'collection' ? true : false).then(res => {
       if (res.status) {
         setReload(prev => prev + 1)
@@ -215,8 +214,8 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
         if (data?.redirect) {
           push(`/${locale}/${finalUrl}`)
         }
-      }
-    })
+      } 
+    }).finally(() => setLoading(false))
   }
 
   const [open, setOpen] = useState(false)
@@ -336,7 +335,7 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
       {loading && (
         <div className='fixed inset-0 z-10 flex justify-center items-center w-full h-full bg-white/50'>
           {/* <img src={photo.src} alt='loading' className='w-[25px] h-[25px] scale-150 ' /> */}
-        <CircularProgress />
+          <CircularProgress />
         </div>
       )}
       <InputControlDesign

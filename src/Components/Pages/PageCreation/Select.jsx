@@ -570,6 +570,7 @@ function Select({ onChange, data, type, buttonRef, title }) {
               >
                 <MenuItem value={'collection'}>{messages.dialogs.thisDataModel}</MenuItem>
                 <MenuItem value={'api'}>{messages.dialogs.otherApi}</MenuItem>
+                <MenuItem value={'read-only'}>{messages.dialogs.readOnly || 'Read Only'}</MenuItem>
               </TextField>
               <Collapse
                 transition={`height 300ms cubic-bezier(.4, 0, .2, 1)`}
