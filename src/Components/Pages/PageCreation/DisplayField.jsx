@@ -1183,46 +1183,49 @@ export default function DisplayField({
       const apiHeaders = input.apiHeaders ?? {}
       const authToken = Cookies.get('sub')
       const resolvedLink = replacePlaceholders(input?.externalApi, window.location)
-      const body = replaceVars(input?.body ?? "")
+      const body = replaceVars(input?.body ?? '')
       const method = input?.method ?? 'GET'
 
       console.log(body, method)
 
       let sendBody = {}
-          
+
       try {
         sendBody = JSON.parse(body)
       } catch (error) {
         sendBody = {}
       }
 
-
       if (authToken) {
         apiHeaders.Authorization = `Bearer ${decryptData(authToken).token.trim()}`
       }
-      method === 'GET'
-        ? axios.get(resolvedLink, {
-            headers: apiHeaders
-          })
-        : axios[method.toLowerCase()](resolvedLink, sendBody, {
-            headers: apiHeaders
-          })
 
-            .then(res => {
-              const selectData = res?.data?.data || res.result || res.data.result || res.data
+      setLoading(true)
 
-              if (Array.isArray(selectData)) {
-                setSelectedOptions(selectData)
-                setOldSelectedOptions(selectData)
-              }
-            })
-            .catch(err => {
-              setSelectedOptions([])
-              setOldSelectedOptions([])
-            })
-            .finally(() => {
-              setLoading(false)
-            })
+      let request
+
+      if (method === 'GET') {
+        request = axios.get(resolvedLink, { headers: apiHeaders })
+      } else {
+        request = axios[method.toLowerCase()](resolvedLink, sendBody, { headers: apiHeaders })
+      }
+
+      request
+        .then(res => {
+          const selectData = res?.data?.data || res.result || res.data.result || res.data
+
+          if (Array.isArray(selectData)) {
+            setSelectedOptions(selectData)
+            setOldSelectedOptions(selectData)
+          }
+        })
+        .catch(err => {
+          setSelectedOptions([])
+          setOldSelectedOptions([])
+        })
+        .finally(() => {
+          setLoading(false)
+        })
     }
   }, [input?.getDataForm, queryParams])
 
