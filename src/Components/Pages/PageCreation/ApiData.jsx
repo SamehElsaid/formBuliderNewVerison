@@ -27,7 +27,6 @@ export default function ApiData({ open, setOpen, initialDataApi }) {
   const [link, setLink] = useState('')
   const dispatch = useDispatch()
 
-  console.log(links, 'link')
 
   useEffect(() => {
     setLinks(initialDataApi ?? [])
@@ -60,16 +59,13 @@ export default function ApiData({ open, setOpen, initialDataApi }) {
     if (authToken) {
       apiHeaders.Authorization = `Bearer ${decryptData(authToken).token.trim()}`
     }
-    console.log(linksToFetch, 'linksToFetch')
     
     if (linksToFetch.length > 0) {
       Promise.all(
         linksToFetch.map(linkObj => {
           const resolvedLink = replacePlaceholders(linkObj.link, window.location)
           const body = replaceVars(linkObj.headers)
-          console.log(body, 'body')
           let headers = {}
-          console.log(linkObj.headers, 'linkObj.headers')
           
           try {
             headers = JSON.parse(body)
@@ -101,7 +97,6 @@ export default function ApiData({ open, setOpen, initialDataApi }) {
                 }))
         })
       ).then(updatedLinks => {
-        console.log(updatedLinks, 'updatedLinks')
         dispatch(setApiData(updatedLinks))
       })
     }

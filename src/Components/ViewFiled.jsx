@@ -140,7 +140,6 @@ function ViewField({ open, setOpen, setData }) {
             </div>
           </>
         )}
-        {console.log(open)}
       </DialogContent>
       <DialogActions>
         <Button variant='contained' color='secondary' onClick={() => setOpen(null)}>

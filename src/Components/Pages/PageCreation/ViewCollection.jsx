@@ -24,7 +24,6 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
   const dataRef = useRef({})
   const [triggerData, setTriggerData] = useState(0)
 
-  console.log(data, 'data')
 
   const {
     query: { entityid },
@@ -83,7 +82,6 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
           if (res.status) {
             const associationsConfig = data.associationsConfig || []
 
-            console.log(associationsConfig, 'associationsConfig')
 
             const filterData = res.data
               .filter(field => data?.selected?.includes(field?.key))
@@ -98,6 +96,8 @@ export default function ViewCollection({ data, locale, onChange, readOnly, disab
                   filedData.staticData = find.staticData
                   filedData.selectedValueSend = JSON.stringify(find.selectedValueSend)
                   filedData.apiHeaders = find.apiHeaders
+                  filedData.body = find.body
+                  filedData.method = find.method
                 }
 
                 return filedData

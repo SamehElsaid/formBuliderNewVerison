@@ -22,8 +22,6 @@ export default function Background({ data, onChange, buttonRef }) {
       if (file) {
         // Remove all spaces from filename and replace with underscores
         const fileName = file.name.replace(/\s+/g, '_')
-        console.log('Original filename:', file.name)
-        console.log('Processed filename:', fileName)
         const loading = toast.loading(messages.dialogs.uploading)
         if (file) {
           // Create FormData to properly handle filenames with spaces

@@ -7,13 +7,14 @@ import { Icon } from '@iconify/react'
 import { FaEyeSlash } from 'react-icons/fa'
 import NewElement from '../NewElement'
 import { toast } from 'react-toastify'
-import { replacePlaceholders, VaildId } from 'src/Components/_Shared'
+import { getData, replacePlaceholders, VaildId } from 'src/Components/_Shared'
 import { IoMdInformationCircleOutline } from 'react-icons/io'
 import { formatDate } from '@fullcalendar/core'
 import ViewInput from '../FiledesComponent/ViewInput'
 import axios from 'axios'
 import Cookies from 'js-cookie'
 import { decryptData } from 'src/Components/encryption'
+import { useSelector } from 'react-redux'
 
 export default function DisplayField({
   from,
@@ -55,6 +56,7 @@ export default function DisplayField({
   const [isOpen, setIsOpen] = useState(false)
   const [regex, setRegex] = useState(roles?.regex?.regex)
   const [isDisable, setIsDisable] = useState(null)
+  const getApiData = useSelector(rx => rx.api.data)
   const [lastValue, setLastValue] = useState(null)
 
   useEffect(() => {
@@ -871,7 +873,6 @@ export default function DisplayField({
         if (roles?.onMount?.type == 'disable') {
           setIsDisable('disabled')
         }
-        console.log(roles?.onMount?.type)
 
         if (roles?.onMount?.type == 'required') {
           setValidations(prev => ({ ...prev, Required: true }))
@@ -888,10 +889,13 @@ export default function DisplayField({
 
         if (roles?.onMount?.value) {
           if (roles?.api_url) {
-            setValue(roles?.apiKeyData)
+            const items = getApiData.find(item => item.link === roles.api_url)?.data
+            const valueFromApi = getData(items, roles?.onMount?.value, '')
+            setValue(valueFromApi)
           } else {
-            console.log(input?.type, 'input?.type')
             let newValue = roles?.onMount?.value
+            const searchParams = new URLSearchParams(window.location.search)
+
             if (input?.type == 'Date') {
               const valueDate = new Date(roles?.onMount?.value)
 
@@ -901,9 +905,11 @@ export default function DisplayField({
               } else {
                 newValue = valueDate
               }
-
             }
-
+            if (newValue.startsWith('{') && newValue.endsWith('}')) {
+              const key = newValue.slice(1, -1)
+              newValue = searchParams.get(key) || ''
+            }
             setValue(newValue)
           }
         }
@@ -927,7 +933,6 @@ export default function DisplayField({
 
     setDirty(true)
     let isTypeNew = true
-    console.log('here')
 
     if (input?.kind == 'search' || input?.kind == 'checkbox') {
       isTypeNew = false
@@ -1125,7 +1130,6 @@ export default function DisplayField({
     }
 
     if (input?.getDataForm === 'static') {
-      console.log(input?.staticData)
       setSelectedOptions(input?.staticData)
       setOldSelectedOptions(input?.staticData)
     }
@@ -1133,7 +1137,6 @@ export default function DisplayField({
 
   const [queryParams, setQueryParams] = useState(null)
 
-  console.log(queryParams, 'name')
   useEffect(() => {
     const handleChange = () => {
       const params = new URLSearchParams(window.location.search)
@@ -1156,37 +1159,70 @@ export default function DisplayField({
     }
   }, [])
 
+  const replaceVars = value => {
+    const params = new URLSearchParams(window.location.search)
+    const query = Object.fromEntries(params.entries())
+    if (typeof value === 'string') {
+      return value.replace(/\{\{(.*?)\}\}/g, (_, key) => query[key] ?? '')
+    }
+    if (Array.isArray(value)) {
+      return value.map(replaceVars)
+    }
+    if (typeof value === 'object' && value !== null) {
+      const result = {}
+      for (const k in value) result[k] = replaceVars(value[k])
+
+      return result
+    }
+
+    return value
+  }
+
   useEffect(() => {
     if (input?.getDataForm === 'api') {
-      console.log(input?.externalApi, input.apiHeaders)
       const apiHeaders = input.apiHeaders ?? {}
       const authToken = Cookies.get('sub')
       const resolvedLink = replacePlaceholders(input?.externalApi, window.location)
+      const body = replaceVars(input?.body ?? "")
+      const method = input?.method ?? 'GET'
+
+      console.log(body, method)
+
+      let sendBody = {}
+          
+      try {
+        sendBody = JSON.parse(body)
+      } catch (error) {
+        sendBody = {}
+      }
+
+
       if (authToken) {
         apiHeaders.Authorization = `Bearer ${decryptData(authToken).token.trim()}`
       }
-      axios
-        .get(resolvedLink, {
-          headers: apiHeaders
-        })
+      method === 'GET'
+        ? axios.get(resolvedLink, {
+            headers: apiHeaders
+          })
+        : axios[method.toLowerCase()](resolvedLink, sendBody, {
+            headers: apiHeaders
+          })
 
-        .then(res => {
-          console.log(res.data.result, 'res')
-          const selectData = res?.data?.data || res.result || res.data.result || res.data
-          console.log(selectData, 'selectData')
+            .then(res => {
+              const selectData = res?.data?.data || res.result || res.data.result || res.data
 
-          if (Array.isArray(selectData)) {
-            setSelectedOptions(selectData)
-            setOldSelectedOptions(selectData)
-          }
-        })
-        .catch(err => {
-          setSelectedOptions([])
-          setOldSelectedOptions([])
-        })
-        .finally(() => {
-          setLoading(false)
-        })
+              if (Array.isArray(selectData)) {
+                setSelectedOptions(selectData)
+                setOldSelectedOptions(selectData)
+              }
+            })
+            .catch(err => {
+              setSelectedOptions([])
+              setOldSelectedOptions([])
+            })
+            .finally(() => {
+              setLoading(false)
+            })
     }
   }, [input?.getDataForm, queryParams])
 
